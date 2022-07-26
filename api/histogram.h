@@ -599,12 +599,12 @@ class Histogram
       return NO_INDEX_LINK;
     }
 
-    virtual SelectionManagement< TObjectOrder, TWindowLevel > * getRowSelectionManagement()
+    virtual SelectionManagement< TObjectOrder, TTraceLevel > * getRowSelectionManagement()
     {
-      return ( SelectionManagement< TObjectOrder, TWindowLevel > * ) nullptr;
+      return ( SelectionManagement< TObjectOrder, TTraceLevel > * ) nullptr;
     }
 
-    virtual void setRowSelectionManager( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel )
+    virtual void setRowSelectionManager( SelectionManagement< TObjectOrder, TTraceLevel > &rowSel )
     {}
 
     virtual std::vector< TObjectOrder > getSelectedRows() const
@@ -928,8 +928,8 @@ class HistogramProxy : public Histogram
     virtual void setCFGS4DIndexLink( TCFGS4DIndexLink whichLink ) override;
     virtual TCFGS4DIndexLink getCFGS4DIndexLink() const override;
     
-    virtual SelectionManagement< TObjectOrder, TWindowLevel > * getRowSelectionManagement() override;
-    virtual void setRowSelectionManager( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel ) override;
+    virtual SelectionManagement< TObjectOrder, TTraceLevel > * getRowSelectionManagement() override;
+    virtual void setRowSelectionManager( SelectionManagement< TObjectOrder, TTraceLevel > &rowSel ) override;
 
     virtual std::vector< TObjectOrder > getSelectedRows() const override;
     virtual std::vector< TObjectOrder > getSelectedRows( TObjectOrder whichBeginRow, TObjectOrder whichEndRow ) const override;
@@ -1024,7 +1024,7 @@ class HistogramProxy : public Histogram
     TCFGS4DIndexLink globalIndexLink;
 
     //Selection of rows
-    SelectionManagement< TObjectOrder, TWindowLevel > rowSelection;
+    SelectionManagement< TObjectOrder, TTraceLevel > rowSelection;
 
     HistogramProxy( KernelConnection *whichKernel );
 

@@ -27,42 +27,42 @@
 using namespace std;
 
 void SelectionRowsUtils::getAllLevelsSelectedRows( const Trace* whichTrace,
-                                                   const SelectionManagement< TObjectOrder, TWindowLevel > &selectedRow,
-                                                   TWindowLevel onLevel,
+                                                   const SelectionManagement< TObjectOrder, TTraceLevel > &selectedRow,
+                                                   TTraceLevel onLevel,
                                                    vector< TObjectOrder > &selected )
 {
   vector< TObjectOrder > allLevelsSelected;
   TObjectOrder iAppl, iTask, globalTask, iNode, aux;
   switch ( onLevel )
   {
-    case TASK:
+    case TTraceLevel::TASK:
       for ( vector< TObjectOrder >::iterator it = selected.begin(); it != selected.end(); ++it )
       {
         whichTrace->getTaskLocation( *it, iAppl, aux );
-        if ( selectedRow.isSelectedPosition( iAppl, APPLICATION ) )
+        if ( selectedRow.isSelectedPosition( iAppl, TTraceLevel::APPLICATION ) )
           allLevelsSelected.push_back( *it );
       }
 
       break;
 
-    case THREAD:
+    case TTraceLevel::THREAD:
       for ( vector< TObjectOrder >::iterator it = selected.begin(); it != selected.end(); ++it )
       {
         whichTrace->getThreadLocation( *it, iAppl, iTask, aux );
         globalTask = whichTrace->getGlobalTask( iAppl, iTask );
 
-        if ( selectedRow.isSelectedPosition( iAppl, APPLICATION ) &&
-             selectedRow.isSelectedPosition( globalTask, TASK ) )
+        if ( selectedRow.isSelectedPosition( iAppl, TTraceLevel::APPLICATION ) &&
+             selectedRow.isSelectedPosition( globalTask, TTraceLevel::TASK ) )
           allLevelsSelected.push_back( *it );
       }
 
       break;
 
-    case CPU:
+    case TTraceLevel::CPU:
       for ( vector< TObjectOrder >::iterator it = selected.begin(); it != selected.end(); ++it )
       {
         whichTrace->getCPULocation( *it, iNode, aux );
-        if ( selectedRow.isSelectedPosition( iNode, NODE ) )
+        if ( selectedRow.isSelectedPosition( iNode, TTraceLevel::NODE ) )
           allLevelsSelected.push_back( *it );
       }
       break;

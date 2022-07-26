@@ -41,8 +41,6 @@ libparaver_kernel_la_SOURCES = \
     ParaverMetadataManager.cpp \
     plainblocks.cpp \
     plaintrace.cpp \
-    processmodel.cpp \
-    resourcemodel.cpp \
     semanticcomposefunctions.cpp \
     semanticcpufunctions.cpp \
     semanticderivedfunctions.cpp \
@@ -51,8 +49,7 @@ libparaver_kernel_la_SOURCES = \
     semanticnotthreadfunctions.cpp \
     semanticthreadfunctions.cpp \
     statisticmanagement.cpp \
-    tracebodyio.cpp \
-    tracebodyio_v1.cpp \
+    tracebodyiofactory.cpp \
     tracebodyio_v2.cpp \
     tracebodyio_csv.cpp \
     traceeditblocks.cpp \

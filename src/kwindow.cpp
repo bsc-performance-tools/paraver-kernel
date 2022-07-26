@@ -59,9 +59,9 @@ TObjectOrder KTimeline::cpuObjectToWindowObject( TCPUOrder whichCPU )
 {
   TObjectOrder tmpObject = 0;
 
-  if( level == CPU )
+  if( level == TTraceLevel::CPU )
     tmpObject = whichCPU;
-  else if( level == NODE )
+  else if( level == TTraceLevel::NODE )
   {
     TCPUOrder myCPU;
     TNodeOrder myNode;
@@ -69,7 +69,7 @@ TObjectOrder KTimeline::cpuObjectToWindowObject( TCPUOrder whichCPU )
     myTrace->getCPULocation( whichCPU, myNode, myCPU );
     tmpObject = myNode;
   }
-  else if( level == SYSTEM )
+  else if( level == TTraceLevel::SYSTEM )
   {
     tmpObject = 0;
   }
@@ -82,9 +82,9 @@ TObjectOrder KTimeline::threadObjectToWindowObject( TThreadOrder whichThread )
 {
   TObjectOrder tmpObject = 0;
 
-  if( level == THREAD )
+  if( level == TTraceLevel::THREAD )
     tmpObject = whichThread;
-  else if( level == TASK )
+  else if( level == TTraceLevel::TASK )
   {
     TThreadOrder myThread;
     TTaskOrder myTask;
@@ -93,7 +93,7 @@ TObjectOrder KTimeline::threadObjectToWindowObject( TThreadOrder whichThread )
     myTrace->getThreadLocation( whichThread, myAppl, myTask, myThread );
     tmpObject = myTrace->getGlobalTask( myAppl, myTask );
   }
-  else if( level == APPLICATION )
+  else if( level == TTraceLevel::APPLICATION )
   {
     TThreadOrder myThread;
     TTaskOrder myTask;
@@ -102,7 +102,7 @@ TObjectOrder KTimeline::threadObjectToWindowObject( TThreadOrder whichThread )
     myTrace->getThreadLocation( whichThread, myAppl, myTask, myThread );
     tmpObject = myAppl;
   }
-  else if( level == WORKLOAD )
+  else if( level == TTraceLevel::WORKLOAD )
   {
     tmpObject = 0;
   }
@@ -114,21 +114,21 @@ TObjectOrder KTimeline::threadObjectToWindowObject( TThreadOrder whichThread )
 TObjectOrder KTimeline::getWindowLevelObjects() const
 {
   TObjectOrder objectSize = 0;
-  TWindowLevel whichLevel = getLevel();
+  TTraceLevel whichLevel = getLevel();
 
-  if( whichLevel == WORKLOAD )
+  if( whichLevel == TTraceLevel::WORKLOAD )
     objectSize = 1;
-  else if( whichLevel == APPLICATION )
+  else if( whichLevel == TTraceLevel::APPLICATION )
     objectSize = myTrace->totalApplications();
-  else if( whichLevel == TASK )
+  else if( whichLevel == TTraceLevel::TASK )
     objectSize = myTrace->totalTasks();
-  else if( whichLevel == THREAD )
+  else if( whichLevel == TTraceLevel::THREAD )
     objectSize = myTrace->totalThreads();
-  else if( whichLevel == SYSTEM )
+  else if( whichLevel == TTraceLevel::SYSTEM )
     objectSize = 1;
-  else if( whichLevel == NODE )
+  else if( whichLevel == TTraceLevel::NODE )
     objectSize = myTrace->totalNodes();
-  else if( whichLevel == CPU )
+  else if( whichLevel == TTraceLevel::CPU )
     objectSize = myTrace->totalCPUs();
 
   return objectSize;
@@ -395,7 +395,7 @@ void KSingleWindow::init( TRecordTime initialTime, TCreateList create, bool upda
     }
   }
 
-  if( level >= SYSTEM )
+  if( level >= TTraceLevel::SYSTEM )
   {
     if( initialTime > 0 && !initFromBegin() )
       myTrace->getRecordByTimeCPU( recordsByTimeCPU, initialTime );
@@ -475,10 +475,10 @@ string KSingleWindow::getFirstUsefulFunction()
     return functions[ TOPCOMPOSE1 ]->getName();
   if( typeid( *functions[ TOPCOMPOSE2 ] ) != typeid( ComposeAsIs ) )
     return functions[ TOPCOMPOSE2 ]->getName();
-  if( typeid( *functions[ getComposeLevel( getLevel() )] ) != typeid( ComposeAsIs ) )
+  if( typeid( *functions[ getComposeLevel( getLevel() ) ] ) != typeid( ComposeAsIs ) )
     return functions[ getComposeLevel( getLevel() )]->getName();
 
-  return functions[ getLevel()]->getName();
+  return functions[ static_cast<TWindowLevel>( getLevel() ) ]->getName();
 }
 
 TWindowLevel KSingleWindow::getFirstFreeCompose() const
@@ -496,10 +496,10 @@ SemanticFunction *KSingleWindow::getFirstSemUsefulFunction()
     return functions[ TOPCOMPOSE1 ];
   if( typeid( *functions[ TOPCOMPOSE2 ] ) != typeid( ComposeAsIs ) )
     return functions[ TOPCOMPOSE2 ];
-  if( typeid( *functions[ getComposeLevel( getLevel() )] ) != typeid( ComposeAsIs ) )
-    return functions[ getComposeLevel( getLevel() )];
+  if( typeid( *functions[ getComposeLevel( getLevel() ) ] ) != typeid( ComposeAsIs ) )
+    return functions[ getComposeLevel( getLevel() ) ];
 
-  return functions[ getLevel()];
+  return functions[ static_cast<TWindowLevel>( getLevel() ) ];
 }
 
 
@@ -712,7 +712,7 @@ bool KSingleWindow::initFromBegin() const
   tmp = tmp || functions[ TOPCOMPOSE1 ]->getInitFromBegin();
   tmp = tmp || functions[ TOPCOMPOSE2 ]->getInitFromBegin();
 
-  if( level == WORKLOAD )
+  if( level == TTraceLevel::WORKLOAD )
   {
     tmp = tmp || functions[ COMPOSEWORKLOAD ]->getInitFromBegin();
     tmp = tmp || functions[ WORKLOAD ]->getInitFromBegin();
@@ -721,19 +721,19 @@ bool KSingleWindow::initFromBegin() const
     tmp = tmp || functions[ COMPOSETASK ]->getInitFromBegin();
     tmp = tmp || functions[ TASK ]->getInitFromBegin();
   }
-  else if( level == APPLICATION )
+  else if( level == TTraceLevel::APPLICATION )
   {
     tmp = tmp || functions[ COMPOSEAPPLICATION ]->getInitFromBegin();
     tmp = tmp || functions[ APPLICATION ]->getInitFromBegin();
     tmp = tmp || functions[ COMPOSETASK ]->getInitFromBegin();
     tmp = tmp || functions[ TASK ]->getInitFromBegin();
   }
-  else if( level == TASK )
+  else if( level == TTraceLevel::TASK )
   {
     tmp = tmp || functions[ COMPOSETASK ]->getInitFromBegin();
     tmp = tmp || functions[ TASK ]->getInitFromBegin();
   }
-  else if( level == SYSTEM )
+  else if( level == TTraceLevel::SYSTEM )
   {
     tmp = tmp || functions[ COMPOSESYSTEM ]->getInitFromBegin();
     tmp = tmp || functions[ SYSTEM ]->getInitFromBegin();
@@ -742,14 +742,14 @@ bool KSingleWindow::initFromBegin() const
     tmp = tmp || functions[ COMPOSECPU ]->getInitFromBegin();
     tmp = tmp || functions[ CPU ]->getInitFromBegin();
   }
-  else if( level == NODE )
+  else if( level == TTraceLevel::NODE )
   {
     tmp = tmp || functions[ COMPOSENODE ]->getInitFromBegin();
     tmp = tmp || functions[ NODE ]->getInitFromBegin();
     tmp = tmp || functions[ COMPOSECPU ]->getInitFromBegin();
     tmp = tmp || functions[ CPU ]->getInitFromBegin();
   }
-  else if( level == CPU )
+  else if( level == TTraceLevel::CPU )
   {
     tmp = tmp || functions[ COMPOSECPU ]->getInitFromBegin();
     tmp = tmp || functions[ CPU ]->getInitFromBegin();
@@ -888,21 +888,21 @@ SemanticInfoType KSingleWindow::getSemanticInfoType() const
   if( functions[ TOPCOMPOSE2 ]->getSemanticInfoType() != SAME_TYPE )
     return functions[ TOPCOMPOSE2 ]->getSemanticInfoType();
 
-  if( level >= SYSTEM && level <= CPU )
+  if( level >= TTraceLevel::SYSTEM && level <= TTraceLevel::CPU )
   {
     switch( level )
     {
-      case SYSTEM:
+      case TTraceLevel::SYSTEM:
         if( functions[ COMPOSESYSTEM ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSESYSTEM ]->getSemanticInfoType();
         if( functions[ SYSTEM ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ SYSTEM ]->getSemanticInfoType();
-      case NODE:
+      case TTraceLevel::NODE:
         if( functions[ COMPOSENODE ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSENODE ]->getSemanticInfoType();
         if( functions[ NODE ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ NODE ]->getSemanticInfoType();
-      case CPU:
+      case TTraceLevel::CPU:
         if( functions[ COMPOSECPU ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSECPU ]->getSemanticInfoType();
         if( functions[ CPU ]->getSemanticInfoType() != SAME_TYPE )
@@ -911,21 +911,21 @@ SemanticInfoType KSingleWindow::getSemanticInfoType() const
         break;
     }
   }
-  else if( level >= WORKLOAD && level <= THREAD )
+  else if( level >= TTraceLevel::WORKLOAD && level <= TTraceLevel::THREAD )
   {
     switch( level )
     {
-      case WORKLOAD:
+      case TTraceLevel::WORKLOAD:
         if( functions[ COMPOSEWORKLOAD ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSEWORKLOAD ]->getSemanticInfoType();
         if( functions[ WORKLOAD ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ WORKLOAD ]->getSemanticInfoType();
-      case APPLICATION:
+      case TTraceLevel::APPLICATION:
         if( functions[ COMPOSEAPPLICATION ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSEAPPLICATION ]->getSemanticInfoType();
         if( functions[ APPLICATION ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ APPLICATION ]->getSemanticInfoType();
-      case TASK:
+      case TTraceLevel::TASK:
         if( functions[ COMPOSETASK ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSETASK ]->getSemanticInfoType();
         if( functions[ TASK ]->getSemanticInfoType() != SAME_TYPE )
@@ -1183,18 +1183,18 @@ string KDerivedWindow::getFirstUsefulFunction()
   if( typeid( *functions[ TOPCOMPOSE2 ] ) != typeid( ComposeAsIs ) )
     return functions[ TOPCOMPOSE2 ]->getName();
   if( typeid( *functions[ getComposeLevel( getLevel() )] ) != typeid( ComposeAsIs ) )
-    return functions[ getComposeLevel( getLevel() )]->getName();
+    return functions[ getComposeLevel( getLevel()  )]->getName();
 
   if( getLevel() == getMinAcceptableLevel() )
     return functions[ DERIVED ]->getName();
 
-  return functions[ getLevel() ]->getName();
+  return functions[ static_cast<TWindowLevel>( getLevel() ) ]->getName();
 }
 
 TWindowLevel KDerivedWindow::getFirstFreeCompose() const
 {
   if( typeid( *functions[ getComposeLevel( getLevel() )] ) == typeid( ComposeAsIs ) )
-    return getComposeLevel( getLevel() );
+    return getComposeLevel( getLevel()  );
   if( typeid( *functions[ TOPCOMPOSE2 ] ) == typeid( ComposeAsIs ) )
     return TOPCOMPOSE2;
   return TOPCOMPOSE1;
@@ -1206,13 +1206,13 @@ SemanticFunction *KDerivedWindow::getFirstSemUsefulFunction()
     return functions[ TOPCOMPOSE1 ];
   if( typeid( *functions[ TOPCOMPOSE2 ] ) != typeid( ComposeAsIs ) )
     return functions[ TOPCOMPOSE2 ];
-  if( typeid( *functions[ getComposeLevel( getLevel() ) ] ) != typeid( ComposeAsIs ) )
-    return functions[ getComposeLevel( getLevel() ) ];
+  if( typeid( *functions[ getComposeLevel( getLevel()  ) ] ) != typeid( ComposeAsIs ) )
+    return functions[ getComposeLevel( getLevel()  ) ];
 
   if( getLevel() == getMinAcceptableLevel() )
     return functions[ DERIVED ];
 
-  return functions[ getLevel() ];
+  return functions[ static_cast<TWindowLevel>( getLevel() ) ];
 }
 
 void KDerivedWindow::setFunctionParam( TWindowLevel whichLevel,
@@ -1427,7 +1427,7 @@ bool KDerivedWindow::initFromBegin() const
   tmp = tmp || functions[ TOPCOMPOSE1 ]->getInitFromBegin();
   tmp = tmp || functions[ TOPCOMPOSE2 ]->getInitFromBegin();
 
-  if( level == WORKLOAD )
+  if( level == TTraceLevel::WORKLOAD )
   {
     tmp = tmp || functions[ COMPOSEWORKLOAD ]->getInitFromBegin();
     tmp = tmp || functions[ WORKLOAD ]->getInitFromBegin();
@@ -1436,19 +1436,19 @@ bool KDerivedWindow::initFromBegin() const
     tmp = tmp || functions[ COMPOSETASK ]->getInitFromBegin();
     tmp = tmp || functions[ TASK ]->getInitFromBegin();
   }
-  else if( level == APPLICATION )
+  else if( level == TTraceLevel::APPLICATION )
   {
     tmp = tmp || functions[ COMPOSEAPPLICATION ]->getInitFromBegin();
     tmp = tmp || functions[ APPLICATION ]->getInitFromBegin();
     tmp = tmp || functions[ COMPOSETASK ]->getInitFromBegin();
     tmp = tmp || functions[ TASK ]->getInitFromBegin();
   }
-  else if( level == TASK )
+  else if( level == TTraceLevel::TASK )
   {
     tmp = tmp || functions[ COMPOSETASK ]->getInitFromBegin();
     tmp = tmp || functions[ TASK ]->getInitFromBegin();
   }
-  else if( level == SYSTEM )
+  else if( level == TTraceLevel::SYSTEM )
   {
     tmp = tmp || functions[ COMPOSESYSTEM ]->getInitFromBegin();
     tmp = tmp || functions[ SYSTEM ]->getInitFromBegin();
@@ -1457,18 +1457,18 @@ bool KDerivedWindow::initFromBegin() const
     tmp = tmp || functions[ COMPOSECPU ]->getInitFromBegin();
     tmp = tmp || functions[ CPU ]->getInitFromBegin();
   }
-  else if( level == NODE )
+  else if( level == TTraceLevel::NODE )
   {
     tmp = tmp || functions[ COMPOSENODE ]->getInitFromBegin();
     tmp = tmp || functions[ NODE ]->getInitFromBegin();
     tmp = tmp || functions[ COMPOSECPU ]->getInitFromBegin();
     tmp = tmp || functions[ CPU ]->getInitFromBegin();
   }
-  else if( level == CPU )
+  else if( level == TTraceLevel::CPU )
   {
     tmp = tmp || functions[ COMPOSECPU ]->getInitFromBegin();
   }
-  else if( level == THREAD )
+  else if( level == TTraceLevel::THREAD )
     tmp = tmp || functions[ COMPOSETHREAD ]->getInitFromBegin();
 
   tmp = tmp || functions[ DERIVED ]->getInitFromBegin();
@@ -1611,7 +1611,7 @@ Interval *KDerivedWindow::getLevelInterval( TWindowLevel whichLevel,
                                             TObjectOrder whichOrder,
                                             bool includeExtraCompose )
 {
-  if( whichLevel == getMinAcceptableLevel() )
+  if( whichLevel == static_cast<TWindowLevel>( getMinAcceptableLevel() ) )
     whichLevel = DERIVED;
 
   if( whichLevel == TOPCOMPOSE1 )
@@ -1672,15 +1672,15 @@ Timeline *KDerivedWindow::getParent( PRV_UINT16 whichParent ) const
   return parents[whichParent];
 }
 
-void KDerivedWindow::setLevel( TWindowLevel whichLevel )
+void KDerivedWindow::setLevel( TTraceLevel whichLevel )
 {
   if( whichLevel <= getMinAcceptableLevel() )
     level = whichLevel;
 }
 
-TWindowLevel KDerivedWindow::getMinAcceptableLevel() const
+TTraceLevel KDerivedWindow::getMinAcceptableLevel() const
 {
-  TWindowLevel tmp = NONE;
+  TTraceLevel tmp = TTraceLevel::NONE;
 
   for( PRV_UINT16 i = 0; i < parents.size(); i++ )
   {
@@ -1688,8 +1688,8 @@ TWindowLevel KDerivedWindow::getMinAcceptableLevel() const
       tmp = parents[ i ]->getLevel();
   }
 
-  if( tmp == NONE )
-    return THREAD;
+  if( tmp == TTraceLevel::NONE )
+    return TTraceLevel::THREAD;
   return tmp;
 }
 
@@ -1766,45 +1766,45 @@ SemanticInfoType KDerivedWindow::getSemanticInfoType() const
   if( functions[ TOPCOMPOSE2 ]->getSemanticInfoType() != SAME_TYPE )
     return functions[ TOPCOMPOSE2 ]->getSemanticInfoType();
 
-  if( level >= SYSTEM && level <= CPU )
+  if( level >= TTraceLevel::SYSTEM && level <= TTraceLevel::CPU )
   {
     switch( level )
     {
-      case SYSTEM:
+      case TTraceLevel::SYSTEM:
         if( functions[ COMPOSESYSTEM ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSESYSTEM ]->getSemanticInfoType();
-        if( getMinAcceptableLevel() > SYSTEM && functions[ SYSTEM ]->getSemanticInfoType() != SAME_TYPE )
+        if( getMinAcceptableLevel() > TTraceLevel::SYSTEM && functions[ SYSTEM ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ SYSTEM ]->getSemanticInfoType();
-      case NODE:
+      case TTraceLevel::NODE:
         if( functions[ COMPOSENODE ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSENODE ]->getSemanticInfoType();
-        if( getMinAcceptableLevel() > NODE && functions[ NODE ]->getSemanticInfoType() != SAME_TYPE )
+        if( getMinAcceptableLevel() > TTraceLevel::NODE && functions[ NODE ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ NODE ]->getSemanticInfoType();
-      case CPU:
+      case TTraceLevel::CPU:
         if( functions[ COMPOSECPU ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSECPU ]->getSemanticInfoType();
       default:
         break;
     }
   }
-  else if( level >= WORKLOAD && level <= THREAD )
+  else if( level >= TTraceLevel::WORKLOAD && level <= TTraceLevel::THREAD )
   {
     switch( level )
     {
-      case WORKLOAD:
-        if( getMinAcceptableLevel() > WORKLOAD && functions[ COMPOSEWORKLOAD ]->getSemanticInfoType() != SAME_TYPE )
+      case TTraceLevel::WORKLOAD:
+        if( getMinAcceptableLevel() > TTraceLevel::WORKLOAD && functions[ COMPOSEWORKLOAD ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSEWORKLOAD ]->getSemanticInfoType();
         if( functions[ WORKLOAD ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ WORKLOAD ]->getSemanticInfoType();
-      case APPLICATION:
+      case TTraceLevel::APPLICATION:
         if( functions[ COMPOSEAPPLICATION ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSEAPPLICATION ]->getSemanticInfoType();
-        if( getMinAcceptableLevel() > APPLICATION && functions[ APPLICATION ]->getSemanticInfoType() != SAME_TYPE )
+        if( getMinAcceptableLevel() > TTraceLevel::APPLICATION && functions[ APPLICATION ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ APPLICATION ]->getSemanticInfoType();
-      case TASK:
+      case TTraceLevel::TASK:
         if( functions[ COMPOSETASK ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSETASK ]->getSemanticInfoType();
-        if( getMinAcceptableLevel() > TASK && functions[ TASK ]->getSemanticInfoType() != SAME_TYPE )
+        if( getMinAcceptableLevel() > TTraceLevel::TASK && functions[ TASK ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ TASK ]->getSemanticInfoType();
       default:
         break;

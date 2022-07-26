@@ -57,21 +57,21 @@ class LabelConstructor
     static void init();
 
     static std::string objectLabel( TObjectOrder globalOrder,
-                               TWindowLevel level,
-                               Trace *whichTrace,
-                               bool showLevelTag = true,
-                               bool showRowText = true );
+                                    TTraceLevel level,
+                                    Trace *whichTrace,
+                                    bool showLevelTag = true,
+                                    bool showRowText = true );
 
     static std::string histoColumnLabel( THistogramColumn whichColumn,
-                                    const Timeline *whichWindow,
-                                    THistogramLimit min,
-                                    THistogramLimit max,
-                                    THistogramLimit delta,
-                                    bool shortLabels );
+                                         const Timeline *whichWindow,
+                                         THistogramLimit min,
+                                         THistogramLimit max,
+                                         THistogramLimit delta,
+                                         bool shortLabels );
 
     static std::string histoCellLabel( const Histogram *whichHisto,
-                                  TSemanticValue value,
-                                  bool showUnits );
+                                       TSemanticValue value,
+                                       bool showUnits );
 
     static std::string histoTotalLabel( THistoTotals whichTotal );
 
@@ -88,13 +88,13 @@ class LabelConstructor
                                    bool text );
  
     static std::string eventTypeLabel( Timeline *whichWindow,
-                                  TEventType whichType,
-                                  bool text );
+                                       TEventType whichType,
+                                       bool text );
 
     static std::string eventValueLabel( Timeline *whichWindow,
-                                   TEventType whichType,
-                                   TSemanticValue whichValue,
-                                   bool writeValueAsPrefix = false );
+                                        TEventType whichType,
+                                        TSemanticValue whichValue,
+                                        bool writeValueAsPrefix = false );
 
     static bool getTimeValue( const std::string& timeLabel,
                               TTimeUnit unit,

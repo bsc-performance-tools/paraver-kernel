@@ -25,16 +25,16 @@
 #include "trace.h"
 #include "plaintrace.h"
 #include "plainblocks.h"
-#include "processmodel.h"
-#include "resourcemodel.h"
+#include "utils/traceparser/processmodel.h"
+#include "utils/traceparser/resourcemodel.h"
 #include <iostream>
 
 using namespace Plain;
 using namespace std;
 
 PlainTrace::PlainTrace( const Trace *whichTrace,
-                        const ProcessModel& whichProcessModel,
-                        const ResourceModel& whichResourceModel ):
+                        const ProcessModel<>& whichProcessModel,
+                        const ResourceModel<>& whichResourceModel ):
     myTrace( whichTrace ), processModel( whichProcessModel ), resourceModel( whichResourceModel )
 
 {

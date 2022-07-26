@@ -259,7 +259,7 @@ MemoryTrace::iterator *IntervalCPU::getPrevRecord( MemoryTrace::iterator *it,
   return it;
 }
 
-TWindowLevel IntervalCPU::getWindowLevel() const
+TTraceLevel IntervalCPU::getWindowLevel() const
 {
   return window->getLevel();
 }
@@ -278,7 +278,7 @@ bool IntervalCPU::IsDerivedWindow() const
 }
 
 
-TWindowLevel IntervalCPU::getComposeLevel( TWindowLevel whichLevel ) const
+TWindowLevel IntervalCPU::getComposeLevel( TTraceLevel whichLevel ) const
 {
   return window->getComposeLevel( whichLevel );
 }

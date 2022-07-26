@@ -23,14 +23,14 @@
 
 #include "traceeditblocks.h"
 #include "paraverkernelexception.h"
+#include "tracebodyiofactory.h"
 
 using namespace NoLoad;
 
-class TraceBodyIO;
 class TraceStream;
 
-TraceEditBlocks::TraceEditBlocks( const ResourceModel& resource, const ProcessModel& process,
-                            TraceBodyIO *whichBody, TraceStream *whichFile, TRecordTime endTime )
+TraceEditBlocks::TraceEditBlocks( const ResourceModel<>& resource, const ProcessModel<>& process,
+                            TraceBodyIO<PARAM_TRACEBODY_CLASS> *whichBody, TraceStream *whichFile, TRecordTime endTime )
     : NoLoadBlocks( resource, process ),
       resourceModel( resource ), processModel( process ),
       body( whichBody ), file( whichFile )
@@ -394,7 +394,7 @@ void TraceEditBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UI
   {
     PRV_UINT16 previousSize = lastData.records.size();
 
-    body->read( file, *this, notUsedStates, notUsedEvents, dummyTraceInfo, dummyEndTime );
+    body->read( *file, *this, processModel, resourceModel, notUsedStates, notUsedEvents, dummyTraceInfo, dummyEndTime );
 
     if ( previousSize < lastData.records.size() )
       ++numLines;

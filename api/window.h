@@ -260,12 +260,12 @@ class Timeline
 
     //------------------------------------------------------------
     virtual Trace *getTrace() const = 0;
-    virtual TWindowLevel getLevel() const = 0;
-    virtual void setLevel( TWindowLevel whichLevel ) = 0;
-    virtual TWindowLevel getMinAcceptableLevel() const = 0;
+    virtual TTraceLevel getLevel() const = 0;
+    virtual void setLevel( TTraceLevel whichLevel ) = 0;
+    virtual TTraceLevel getMinAcceptableLevel() const = 0;
     virtual void setTimeUnit( TTimeUnit whichUnit ) = 0;
     virtual TTimeUnit getTimeUnit() const = 0;
-    virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const = 0;
+    virtual TWindowLevel getComposeLevel( TTraceLevel whichLevel ) const = 0;
     virtual bool setLevelFunction( TWindowLevel whichLevel,
                                    const std::string& whichFunction ) = 0;
     virtual std::string getLevelFunction( TWindowLevel whichLevel ) const = 0;
@@ -576,35 +576,35 @@ class Timeline
     }
 
 
-    virtual SelectionManagement< TObjectOrder, TWindowLevel > *getSelectedRows()
+    virtual SelectionManagement< TObjectOrder, TTraceLevel > *getSelectedRows()
     {
       return nullptr;
     }
-    virtual void setSelectedRows( TWindowLevel onLevel, std::vector< bool > &selected )
+    virtual void setSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected )
     {}
-    virtual void setSelectedRows( TWindowLevel onLevel, std::vector< TObjectOrder > &selection )
+    virtual void setSelectedRows( TTraceLevel onLevel, std::vector< TObjectOrder > &selection )
     {}
-    virtual void getSelectedRows( TWindowLevel onLevel, std::vector< bool > &selected, bool lookUpLevels = false )
+    virtual void getSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected, bool lookUpLevels = false )
     {}
-    virtual void getSelectedRows( TWindowLevel onLevel, std::vector< bool > &selected,
+    virtual void getSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected,
                                   TObjectOrder first, TObjectOrder last, bool lookUpLevels = false )
     {}
-    virtual void getSelectedRows( TWindowLevel onLevel, std::vector< TObjectOrder > &selection, bool lookUpLevels = false )
+    virtual void getSelectedRows( TTraceLevel onLevel, std::vector< TObjectOrder > &selection, bool lookUpLevels = false )
     {}
-    virtual void getSelectedRows( TWindowLevel onLevel,
+    virtual void getSelectedRows( TTraceLevel onLevel,
                                   std::vector< TObjectOrder > &selection,
                                   TObjectOrder first, TObjectOrder last, bool lookUpLevels = false )
     {}
-    virtual TObjectOrder shiftFirst( TObjectOrder whichFirst, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TWindowLevel level ) const
+    virtual TObjectOrder shiftFirst( TObjectOrder whichFirst, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TTraceLevel level ) const
     {
       return 0;
     }
-    virtual TObjectOrder shiftLast( TObjectOrder whichLast, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TWindowLevel level ) const
+    virtual TObjectOrder shiftLast( TObjectOrder whichLast, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TTraceLevel level ) const
     {
       return 0;
     }
 
-    virtual bool hasLevelSomeSelectedObject( TWindowLevel onLevel )
+    virtual bool hasLevelSomeSelectedObject( TTraceLevel onLevel )
     {
       return true;
     }
@@ -893,13 +893,13 @@ class TimelineProxy: public Timeline
 
     //------------------------------------------------------------
     virtual Trace *getTrace() const override;
-    virtual TWindowLevel getLevel() const override;
-    virtual void setLevel( TWindowLevel whichLevel ) override;
+    virtual TTraceLevel getLevel() const override;
+    virtual void setLevel( TTraceLevel whichLevel ) override;
     virtual bool isLevelProcessModel() const override;
-    virtual TWindowLevel getMinAcceptableLevel() const override;
+    virtual TTraceLevel getMinAcceptableLevel() const override;
     virtual void setTimeUnit( TTimeUnit whichUnit ) override;
     virtual TTimeUnit getTimeUnit() const override;
-    virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const override;
+    virtual TWindowLevel getComposeLevel( TTraceLevel whichLevel ) const override;
     virtual bool setLevelFunction( TWindowLevel whichLevel,
                                    const std::string& whichFunction ) override;
     virtual std::string getLevelFunction( TWindowLevel whichLevel ) const override;
@@ -1042,18 +1042,18 @@ class TimelineProxy: public Timeline
     virtual bool isSync() const override;
     virtual TGroupId getSyncGroup() const override;
 
-    virtual SelectionManagement< TObjectOrder, TWindowLevel > *getSelectedRows() override;
-    virtual void setSelectedRows( TWindowLevel onLevel, std::vector< bool > &selected ) override;
-    virtual void setSelectedRows( TWindowLevel onLevel, std::vector< TObjectOrder > &selected ) override;
-    virtual void getSelectedRows( TWindowLevel onLevel, std::vector< bool > &selected, bool lookUpLevels = false ) override;
-    virtual void getSelectedRows( TWindowLevel onLevel, std::vector< bool > &selected,
+    virtual SelectionManagement< TObjectOrder, TTraceLevel > *getSelectedRows() override;
+    virtual void setSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected ) override;
+    virtual void setSelectedRows( TTraceLevel onLevel, std::vector< TObjectOrder > &selected ) override;
+    virtual void getSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected, bool lookUpLevels = false ) override;
+    virtual void getSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected,
                                   TObjectOrder first, TObjectOrder last, bool lookUpLevels = false ) override;
-    virtual void getSelectedRows( TWindowLevel onLevel, std::vector< TObjectOrder > &selected, bool lookUpLevels = false ) override;
-    virtual void getSelectedRows( TWindowLevel onLevel, std::vector< TObjectOrder > &selected,
+    virtual void getSelectedRows( TTraceLevel onLevel, std::vector< TObjectOrder > &selected, bool lookUpLevels = false ) override;
+    virtual void getSelectedRows( TTraceLevel onLevel, std::vector< TObjectOrder > &selected,
                                   TObjectOrder first, TObjectOrder last, bool lookUpLevels = false ) override;
-    virtual TObjectOrder shiftFirst( TObjectOrder whichFirst, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TWindowLevel level ) const override;
-    virtual TObjectOrder shiftLast( TObjectOrder whichLast, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TWindowLevel level ) const override;
-    virtual bool hasLevelSomeSelectedObject( TWindowLevel onLevel ) override;
+    virtual TObjectOrder shiftFirst( TObjectOrder whichFirst, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TTraceLevel level ) const override;
+    virtual TObjectOrder shiftLast( TObjectOrder whichLast, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TTraceLevel level ) const override;
+    virtual bool hasLevelSomeSelectedObject( TTraceLevel onLevel ) override;
 
     virtual void getGroupLabels( PRV_UINT32 whichGroup, std::vector<std::string>& onVector ) const override;
     virtual bool getParametersOfFunction( std::string whichFunction,
@@ -1250,7 +1250,7 @@ class TimelineProxy: public Timeline
     TGroupId syncGroup;
 
     // Row selection
-    SelectionManagement< TObjectOrder, TWindowLevel > selectedRow;
+    SelectionManagement< TObjectOrder, TTraceLevel > selectedRow;
 
     TObjectLabels objectLabels;
     TObjectAxisSize objectAxisSize;

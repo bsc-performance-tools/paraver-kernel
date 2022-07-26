@@ -30,12 +30,11 @@
 #include "paraverkerneltypes.h"
 #include "trace.h"
 #include "memorytrace.h"
-#include "processmodel.h"
-#include "resourcemodel.h"
+#include "utils/traceparser/processmodel.h"
+#include "utils/traceparser/resourcemodel.h"
+#include "tracebodyiofactory.h"
 
 #include "ParaverMetadataManager.h"
-
-class TraceBodyIO;
 
 /*
 class TraceInfo
@@ -64,8 +63,8 @@ class KTrace: public Trace
     std::string getTraceName() const override;
     TTraceSize getTraceSize() const override;
 
-    void dumpFileHeader( std::fstream& file, bool newFormat = false, PRV_INT32 numIter = 1 ) const override;
-    void dumpFile( const std::string& whichFile, PRV_INT32 numIter = 1 ) const override;
+    void dumpFileHeader( std::fstream& file, bool newFormat = false ) const override;
+    void dumpFile( const std::string& whichFile ) const override;
 
     TApplOrder totalApplications() const override;
     TTaskOrder totalTasks() const override;
@@ -103,11 +102,11 @@ class KTrace: public Trace
     TCPUOrder getLastCPU( TNodeOrder inNode ) const override;
 
     TObjectOrder getFirst( TObjectOrder globalOrder,
-                           TWindowLevel fromLevel,
-                           TWindowLevel toLevel ) const override;
+                           TTraceLevel fromLevel,
+                           TTraceLevel toLevel ) const override;
     TObjectOrder getLast( TObjectOrder globalOrder,
-                          TWindowLevel fromLevel,
-                          TWindowLevel toLevel ) const override;
+                          TTraceLevel fromLevel,
+                          TTraceLevel toLevel ) const override;
 
     bool isSameObjectStruct( Trace *compareTo, bool compareProcessModel ) const override;
     bool isSubsetObjectStruct( Trace *compareTo, bool compareProcessModel ) const override;
@@ -124,6 +123,16 @@ class KTrace: public Trace
     TRecordTime getLogicalReceive( TCommID whichComm ) const override;
     TRecordTime getPhysicalSend( TCommID whichComm ) const override;
     TRecordTime getPhysicalReceive( TCommID whichComm ) const override;
+
+    const ProcessModel<>& getProcessModel() const
+    {
+      return traceProcessModel;
+    }
+
+    const ResourceModel<>& getResourceModel() const
+    {
+      return traceResourceModel;
+    }
 
     inline TTime getEndTime() const override
     {
@@ -207,13 +216,13 @@ class KTrace: public Trace
 
   protected:
     bool ready;
-    ProcessModel traceProcessModel;
-    ResourceModel traceResourceModel;
+    ProcessModel<> traceProcessModel;
+    ResourceModel<> traceResourceModel;
     TTime traceEndTime;
     TTimeUnit traceTimeUnit;
     MemoryBlocks *blocks;
     MemoryTrace *memTrace;
-    TraceBodyIO *body;
+    TraceBodyIO< PARAM_TRACEBODY_CLASS > *body;
     ptime myTraceTime;
     string rawTraceTime = "";
 

@@ -54,10 +54,10 @@ class IntervalHigh: public Interval
 
     virtual void setChildren() = 0;
 
-    virtual TWindowLevel getWindowLevel() const = 0;
+    virtual TTraceLevel getWindowLevel() const = 0;
     virtual Interval *getWindowInterval( TWindowLevel whichLevel, TObjectOrder whichOrder ) = 0;
     virtual bool IsDerivedWindow() const = 0;
-    virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const = 0;
+    virtual TWindowLevel getComposeLevel( TTraceLevel whichLevel ) const = 0;
     virtual KTrace *getWindowTrace() const = 0;
 
   private:

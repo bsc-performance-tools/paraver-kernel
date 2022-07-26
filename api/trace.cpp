@@ -21,23 +21,14 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#include "kernelconnection.h"
-#include "trace.h"
-
-#ifdef OLD_PCFPARSER
-#include "utils/pcfparser/old/ParaverTraceConfig.h"
-#include "utils/pcfparser/old/ParaverStatesColor.h"
-#include "utils/pcfparser/old/ParaverGradientColor.h"
-#else
-#include "utils/pcfparser/UIParaverTraceConfig.h"
-#endif
-
-#include "progresscontroller.h"
 #include <sstream>
-#include "paraverconfig.h"
-//#include "extrae_user_events.h"
 
-using namespace libparaver;
+#include "kernelconnection.h"
+#include "paraverconfig.h"
+#include "progresscontroller.h"
+#include "trace.h"
+#include "utils/traceparser/pcffileparser.h"
+
 using namespace std;
 
 Trace *Trace::create( KernelConnection *whichKernel, const string& whichFile,
@@ -63,27 +54,27 @@ Trace::Trace( KernelConnection *whichKernel ):
     myKernel( whichKernel )
 {}
 
-TObjectOrder Trace::getLevelObjects( TWindowLevel onLevel ) const
+TObjectOrder Trace::getLevelObjects( TTraceLevel onLevel ) const
 {
   switch ( onLevel )
   {
-    case WORKLOAD:
-    case SYSTEM:
+    case TTraceLevel::WORKLOAD:
+    case TTraceLevel::SYSTEM:
       return 1;
       break;
-    case APPLICATION:
+    case TTraceLevel::APPLICATION:
       return totalApplications();
       break;
-    case TASK:
+    case TTraceLevel::TASK:
       return totalTasks();
       break;
-    case THREAD:
+    case TTraceLevel::THREAD:
       return totalThreads();
       break;
-    case NODE:
+    case TTraceLevel::NODE:
       return totalNodes();
       break;
-    case CPU:
+    case TTraceLevel::CPU:
       return totalCPUs();
       break;
     default:
@@ -139,7 +130,7 @@ TObjectOrder getNumLevelObjects( TWindowLevel whichLevel, Trace *myTrace )
 
 void TraceProxy::setFixedLabels()
 {
-  RowLabels tmpRowLabels;
+  RowFileParser<> tmpRowLabels;
   int maxLabelLength = 0;
   std::string tmpObjectLabel;
   std::string newObjectLabel;
@@ -224,14 +215,14 @@ void TraceProxy::setInstanceNumber( PRV_UINT32 whichInstanceNumber )
   instanceNumber = whichInstanceNumber;
 }
 
-void TraceProxy::dumpFileHeader( std::fstream& file, bool newFormat, PRV_INT32 numIter ) const
+void TraceProxy::dumpFileHeader( std::fstream& file, bool newFormat ) const
 {
-  myTrace->dumpFileHeader( file, newFormat, numIter );
+  myTrace->dumpFileHeader( file, newFormat );
 }
 
-void TraceProxy::dumpFile( const string& whichFile, PRV_INT32 numIter ) const
+void TraceProxy::dumpFile( const string& whichFile ) const
 {
-  myTrace->dumpFile( whichFile, numIter );
+  myTrace->dumpFile( whichFile );
 }
 
 TApplOrder TraceProxy::totalApplications() const
@@ -346,15 +337,15 @@ TCPUOrder TraceProxy::getLastCPU( TNodeOrder inNode ) const
 }
 
 TObjectOrder TraceProxy::getFirst( TObjectOrder globalOrder,
-                                   TWindowLevel fromLevel,
-                                   TWindowLevel toLevel ) const
+                                   TTraceLevel fromLevel,
+                                   TTraceLevel toLevel ) const
 {
   return myTrace->getFirst( globalOrder, fromLevel, toLevel );
 }
 
 TObjectOrder TraceProxy::getLast( TObjectOrder globalOrder,
-                                  TWindowLevel fromLevel,
-                                  TWindowLevel toLevel ) const
+                                  TTraceLevel fromLevel,
+                                  TTraceLevel toLevel ) const
 {
   return myTrace->getLast( globalOrder, fromLevel, toLevel );
 }
@@ -464,139 +455,37 @@ Trace *TraceProxy::getConcrete() const
   return myTrace;
 }
 
-#ifdef OLD_PCFPARSER
 void TraceProxy::parsePCF( const string& whichFile )
 {
-  ParaverTraceConfig *config;
-
-  try
-  {
-    config = new ParaverTraceConfig( whichFile );
-    config->parse();
-  }
-  catch ( ... )
-  {
-    myEventLabels = EventLabels( myTrace->getLoadedEvents() );
-    return;
-  }
+  PCFFileParser<> pcfParser( whichFile );
 
   rgb tmpColor;
-
-  if ( config->get_statesColor().begin() != config->get_statesColor().end() )
+  const std::map< uint32_t, PCFFileParser<>::rgb >& semanticColors = pcfParser.getSemanticColors();
+  for ( auto it : semanticColors )
   {
-    for ( vector<ParaverStatesColor *>::const_iterator it = config->get_statesColor().begin();
-          it != config->get_statesColor().end(); ++it )
-    {
-      tmpColor.red = ( *it )->get_color1();
-      tmpColor.green = ( *it )->get_color2();
-      tmpColor.blue = ( *it )->get_color3();
-      myCodeColor.setColor( ( PRV_UINT32 )( *it )->get_key(), tmpColor );
-    }
+    std::tie( tmpColor.red, tmpColor.green, tmpColor.blue ) = it.second;
+    myCodeColor.setColor( it.first, tmpColor );
   }
 
-  if ( config->get_gradientColors().begin() != config->get_gradientColors().end() )
+  myEventLabels = EventLabels( pcfParser );
+  myStateLabels = StateLabels( pcfParser );
+
+  vector< TEventType > types;
+  pcfParser.getEventTypes( types );
+  for( auto it : types )
   {
-    ParaverGradientColor *grad = ( config->get_gradientColors() )[ 0 ];
-    tmpColor.red = grad->get_color1();
-    tmpColor.green = grad->get_color2();
-    tmpColor.blue = grad->get_color3();
-    myGradientColor.setBeginGradientColor( tmpColor );
-
-    grad = ( config->get_gradientColors() )[ config->get_gradientColors().size() - 1 ];
-    tmpColor.red = grad->get_color1();
-    tmpColor.green = grad->get_color2();
-    tmpColor.blue = grad->get_color3();
-    myGradientColor.setEndGradientColor( tmpColor );
+    setEventTypePrecision( it, pow( (double)10, (double)pcfParser.getEventPrecision( it ) ) );
   }
-  myEventLabels = EventLabels( *config, myTrace->getLoadedEvents() );
-  myStateLabels = StateLabels( *config );
-
-  //myDefaultTaskSemanticFunc = config->get_default_task_semantic_func();
-  //myDefaultThreadSemanticFunc = config->get_default_thread_semantic_func();
-
-  delete config;
 }
-
-#else
-
-void TraceProxy::parsePCF( const string& whichFile )
-{
-  UIParaverTraceConfig *config;
-
-  try
-  {
-    config = new UIParaverTraceConfig();
-    config->parse( whichFile /* true */ );
-  }
-  catch ( ... )
-  {
-    myEventLabels = EventLabels( myTrace->getLoadedEvents() );
-    return;
-  }
-
-  rgb tmpColor;
-
-  const vector< int >& stateColors = config->getStateColors();
-  for ( vector< int >::const_iterator it = stateColors.begin(); it != stateColors.end(); ++it )
-  {
-    tmpColor.red = config->getStateColor( *it ).getRed();
-    tmpColor.green = config->getStateColor( *it ).getGreen();
-    tmpColor.blue = config->getStateColor( *it ).getBlue();
-    myCodeColor.setColor( ( PRV_UINT32 )( *it ), tmpColor );
-  }
-
-
-
-  const vector< int >& gradientColors = config->getGradientColors();
-  if ( gradientColors.begin() != gradientColors.end() )
-  {
-    tmpColor.red = config->getGradientColor( gradientColors[0] ).getRed();
-    tmpColor.green = config->getGradientColor( gradientColors[0] ).getGreen();
-    tmpColor.blue = config->getGradientColor( gradientColors[0] ).getBlue();
-    myGradientColor.setBeginGradientColor( tmpColor );
-
-    size_t last = gradientColors.size() - 1;
-    tmpColor.red = config->getGradientColor( gradientColors[ last ] ).getRed();
-    tmpColor.green = config->getGradientColor( gradientColors[ last ] ).getGreen();
-    tmpColor.blue = config->getGradientColor( gradientColors[ last ] ).getBlue();
-    myGradientColor.setEndGradientColor( tmpColor );
-  }
-  myEventLabels = EventLabels( *config, myTrace->getLoadedEvents() );
-  myStateLabels = StateLabels( *config );
-
-  try
-  {
-    const vector<unsigned int>& types = config->getEventTypes();
-    for( vector<unsigned int>::const_iterator it = types.begin(); it != types.end(); ++it )
-    {
-      setEventTypePrecision( *it, pow( (double)10, (double)-config->getEventTypePrecision( *it ) ) );
-    }
-  }
-  catch( libparaver::UIParaverTraceConfig::value_not_found )
-  {
-  }
-
-  // myDefaultTaskSemanticFunc = config->get_default_task_semantic_func();
-  // myDefaultThreadSemanticFunc = config->get_default_thread_semantic_func();
-
-  delete config;
-}
-
-#endif
 
 void TraceProxy::parseROW( const string& whichFile )
 {
-  myRowLabels = RowLabels( whichFile );
+  myRowLabels = RowFileParser<>( whichFile );
 }
 
 const CodeColor& TraceProxy::getCodeColor() const
 {
   return myCodeColor;
-}
-
-const GradientColor& TraceProxy::getGradientColor() const
-{
-  return myGradientColor;
 }
 
 const EventLabels& TraceProxy::getEventLabels() const
@@ -609,13 +498,13 @@ const StateLabels& TraceProxy::getStateLabels() const
   return myStateLabels;
 }
 
-string TraceProxy::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const
+string TraceProxy::getRowLabel( TTraceLevel whichLevel, TObjectOrder whichRow ) const
 {
   return myRowLabels.getRowLabel( whichLevel, whichRow );
 }
 
 // NONE ==> globalMaxLevel
-size_t TraceProxy::getMaxLengthRow( TWindowLevel whichLevel = NONE ) const
+size_t TraceProxy::getMaxLengthRow( TTraceLevel whichLevel = TTraceLevel::NONE ) const
 {
   return myRowLabels.getMaxLength( whichLevel );
 }

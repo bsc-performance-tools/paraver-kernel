@@ -29,7 +29,8 @@
 
 #include "traceeditactions.h"
 #include "memorytrace.h"
-#include "tracebodyio_v1.h"
+#include "tracebodyiofactory.h"
+#include "utils/traceparser/tracebodyio_v1.h"
 
 class TraceToRecordAction: public TraceEditAction
 {
@@ -275,7 +276,7 @@ class TraceWriterAction: public RecordToTraceAction
 
   private:
     std::fstream outputTrace;
-    TraceBodyIO_v1 body;
+    TraceBodyIO_v1< PARAM_TRACEBODY_CLASS > body;
 };
 
 
@@ -300,7 +301,7 @@ class EventDrivenCutterAction: public RecordToTraceAction
     vector<std::fstream *> outputTraces;
     vector<PRV_UINT32> currentThreadFile;
     map<PRV_INT32, TObjectOrder> countThreadsPerFile;
-    TraceBodyIO_v1 body;
+    TraceBodyIO_v1< PARAM_TRACEBODY_CLASS > body;
 };
 
 //

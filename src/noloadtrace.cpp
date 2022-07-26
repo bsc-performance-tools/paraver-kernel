@@ -25,16 +25,18 @@
 #include "noloadtrace.h"
 #include "noloadblocks.h"
 #include "traceeditblocks.h"
-#include "processmodel.h"
-#include "resourcemodel.h"
+#include "utils/traceparser/processmodel.h"
+#include "utils/traceparser/resourcemodel.h"
+#include "ktrace.h"
 
 using namespace NoLoad;
 using namespace std;
 
-NoLoadTrace::NoLoadTrace( MemoryBlocks *whichBlocks,
-                          const ProcessModel& whichProcessModel,
-                          const ResourceModel& whichResourceModel )
-    : processModel( whichProcessModel ), resourceModel( whichResourceModel )
+NoLoadTrace::NoLoadTrace( const Trace *whichTrace,
+                          MemoryBlocks *whichBlocks,
+                          const ProcessModel<>& whichProcessModel,
+                          const ResourceModel<>& whichResourceModel )
+    : myTrace( whichTrace ), processModel( whichProcessModel ), resourceModel( whichResourceModel )
 {
   blocks = dynamic_cast<NoLoadBlocks *>( whichBlocks );
 }
@@ -62,7 +64,7 @@ MemoryTrace::iterator* NoLoadTrace::empty() const
   blocks->getEndRecord( &tmpRec, tmpOffset, tmpPos );
 
   TThreadOrder dummyThread = 0;
-  MemoryTrace::iterator *it = new NoLoadTrace::iterator( blocks, dummyThread, tmpRec, tmpOffset, tmpPos );
+  MemoryTrace::iterator *it = new NoLoadTrace::iterator( myTrace, blocks, dummyThread, tmpRec, tmpOffset, tmpPos );
   //it->setType( EMPTYREC );
 
   return it;
@@ -78,7 +80,7 @@ MemoryTrace::iterator* NoLoadTrace::begin() const
   blocks->getBeginRecord( &tmpRec, tmpOffset, tmpPos );
 
   TThreadOrder dummyThread = 0;
-  return new iterator( blocks, dummyThread, tmpRec, tmpOffset, tmpPos );
+  return new iterator( myTrace, blocks, dummyThread, tmpRec, tmpOffset, tmpPos );
 }
 
 
@@ -91,7 +93,7 @@ MemoryTrace::iterator* NoLoadTrace::end() const
   blocks->getEndRecord( &tmpRec, tmpOffset, tmpPos );
 
   TThreadOrder dummyThread = 0;
-  return new iterator( blocks, dummyThread, tmpRec, tmpOffset, tmpPos );
+  return new iterator( myTrace, blocks, dummyThread, tmpRec, tmpOffset, tmpPos );
 }
 
 
@@ -103,7 +105,7 @@ MemoryTrace::iterator* NoLoadTrace::threadBegin( TThreadOrder whichThread ) cons
 
   blocks->getBeginThreadRecord( whichThread, &tmpRec, tmpOffset, tmpPos );
 
-  return new ThreadIterator( blocks, whichThread, tmpRec, tmpOffset, tmpPos );
+  return new ThreadIterator( myTrace, blocks, whichThread, tmpRec, tmpOffset, tmpPos );
 }
 
 MemoryTrace::iterator* NoLoadTrace::threadEnd( TThreadOrder whichThread ) const
@@ -114,7 +116,7 @@ MemoryTrace::iterator* NoLoadTrace::threadEnd( TThreadOrder whichThread ) const
 
   blocks->getEndThreadRecord( whichThread, &tmpRec, tmpOffset, tmpPos );
 
-  return new ThreadIterator( blocks, whichThread, tmpRec, tmpOffset, tmpPos );
+  return new ThreadIterator( myTrace, blocks, whichThread, tmpRec, tmpOffset, tmpPos );
 }
 
 MemoryTrace::iterator* NoLoadTrace::CPUBegin( TCPUOrder whichCPU ) const
@@ -141,7 +143,7 @@ MemoryTrace::iterator* NoLoadTrace::CPUBegin( TCPUOrder whichCPU ) const
     pos.push_back( tmpPos );
   }
 
-  return new CPUIterator( blocks, whichCPU, threads, records, offsets, pos );
+  return new CPUIterator( myTrace, blocks, whichCPU, threads, records, offsets, pos );
 }
 
 MemoryTrace::iterator* NoLoadTrace::CPUEnd( TCPUOrder whichCPU ) const
@@ -167,7 +169,7 @@ MemoryTrace::iterator* NoLoadTrace::CPUEnd( TCPUOrder whichCPU ) const
     offsets.push_back( tmpOffset );
     pos.push_back( tmpPos );
   }
-  return new CPUIterator( blocks, whichCPU, threads, records, offsets, pos, true );
+  return new CPUIterator( myTrace, blocks, whichCPU, threads, records, offsets, pos, true );
 }
 
 void NoLoadTrace::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter,
@@ -193,7 +195,7 @@ void NoLoadTrace::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIt
     if( tmpRec == nullptr )
       it = ( NoLoadTrace::ThreadIterator * )threadEnd( iThread );
     else
-      it = new ThreadIterator( blocks, iThread, tmpRec, tmpOffset, tmpPos );
+      it = new ThreadIterator( myTrace, blocks, iThread, tmpRec, tmpOffset, tmpPos );
     while ( !it->isNull() && it->getTime() > whichTime )
       --( *it );
     if ( it->isNull() )
@@ -248,7 +250,7 @@ void NoLoadTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
       pos.push_back( tmpPos );
     }
 
-    CPUIterator *tmpIt = new CPUIterator( blocks, ii, threads, records, offsets, pos );
+    CPUIterator *tmpIt = new CPUIterator( myTrace, blocks, ii, threads, records, offsets, pos );
 
     while ( !tmpIt->isNull() && tmpIt->getTime() > whichTime )
       --( *tmpIt );
@@ -263,14 +265,18 @@ void NoLoadTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
 }
 
 
-NoLoadTrace::iterator::iterator( NoLoadBlocks *whichBlocks )
-    : blocks( whichBlocks ), destroyed( false )
+NoLoadTrace::iterator::iterator( const Trace *whichTrace, NoLoadBlocks *whichBlocks )
+    : MemoryTrace::iterator( whichTrace ), blocks( whichBlocks ), destroyed( false )
 {}
 
 
-NoLoadTrace::iterator::iterator( NoLoadBlocks *whichBlocks, TThreadOrder whichThread,
-    TRecord *whichRecord, PRV_INT64 whichOffset, PRV_INT16 whichPos )
-    : blocks( whichBlocks ), thread( whichThread ),
+NoLoadTrace::iterator::iterator( const Trace *whichTrace,
+                                 NoLoadBlocks *whichBlocks,
+                                 TThreadOrder whichThread,
+                                 TRecord *whichRecord,
+                                 PRV_INT64 whichOffset,
+                                 PRV_INT16 whichPos )
+    : MemoryTrace::iterator( whichTrace ), blocks( whichBlocks ), thread( whichThread ),
     offset( whichOffset ), recPos( whichPos ), destroyed( false )
 {
   record = whichRecord;
@@ -413,9 +419,13 @@ inline void NoLoadTrace::iterator::setStateEndTime( const TRecordTime whichEndTi
 }
 
 
-NoLoadTrace::ThreadIterator::ThreadIterator( NoLoadBlocks *whichBlocks, TThreadOrder whichThread,
-    TRecord *whichRecord, PRV_INT64 whichOffset, PRV_INT16 whichPos )
-    : NoLoadTrace::iterator( whichBlocks, whichThread, whichRecord, whichOffset, whichPos )
+NoLoadTrace::ThreadIterator::ThreadIterator( const Trace *whichTrace,
+                                             NoLoadBlocks *whichBlocks,
+                                             TThreadOrder whichThread,
+                                             TRecord *whichRecord,
+                                             PRV_INT64 whichOffset,
+                                             PRV_INT16 whichPos )
+    : NoLoadTrace::iterator( whichTrace, whichBlocks, whichThread, whichRecord, whichOffset, whichPos )
 {
   record = whichRecord;
 }
@@ -467,11 +477,15 @@ inline NoLoadTrace::ThreadIterator *NoLoadTrace::ThreadIterator::clone() const
   return new NoLoadTrace::ThreadIterator( *this );
 }
 
-NoLoadTrace::CPUIterator::CPUIterator( NoLoadBlocks *whichBlocks, TCPUOrder whichCPU,
-                                       vector<TThreadOrder>& whichThreads, vector<TRecord *>& whichRecords,
-                                       vector<PRV_INT64>& whichOffsets, vector<PRV_UINT16>& whichPos,
+NoLoadTrace::CPUIterator::CPUIterator( const Trace *whichTrace, 
+                                       NoLoadBlocks *whichBlocks,
+                                       TCPUOrder whichCPU,
+                                       vector<TThreadOrder>& whichThreads,
+                                       vector<TRecord *>& whichRecords,
+                                       vector<PRV_INT64>& whichOffsets,
+                                       vector<PRV_UINT16>& whichPos,
                                        bool notMove )
-    : NoLoadTrace::iterator( whichBlocks ), cpu( whichCPU ), threads( whichThreads ),
+    : NoLoadTrace::iterator( whichTrace, whichBlocks ), cpu( whichCPU ), threads( whichThreads ),
     threadRecords( whichRecords ), offset( whichOffsets ), recPos( whichPos )
 {
   if( notMove )

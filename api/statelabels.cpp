@@ -24,10 +24,6 @@
 
 #include "statelabels.h"
 
-#ifdef OLD_PCFPARSER
-#include "utils/pcfparser/old/ParaverState.h"
-#endif
-
 using namespace std;
 
 const string StateLabels::unknownLabel = "Unknown";
@@ -35,26 +31,10 @@ const string StateLabels::unknownLabel = "Unknown";
 StateLabels::StateLabels()
 {}
 
-#ifdef OLD_PCFPARSER
-
-StateLabels::StateLabels( const ParaverTraceConfig& config )
+StateLabels::StateLabels( const PCFFileParser<>& pcfParser )
 {
-  const vector<ParaverState *>& states = config.get_states();
-  for ( vector<ParaverState *>::const_iterator it = states.begin();
-        it != states.end(); ++it )
-    stateLabel[ ( *it )->get_key() ] = ( *it )->get_value();
+  stateLabel = pcfParser.getStates();
 }
-
-#else
-
-StateLabels::StateLabels( const UIParaverTraceConfig& config )
-{
-  const vector<int>& states = config.getStates();
-  for ( vector<int>::const_iterator it = states.begin(); it != states.end(); ++it )
-    stateLabel[ *it ] = config.getState( *it );
-}
-
-#endif
 
 StateLabels::~StateLabels()
 {}

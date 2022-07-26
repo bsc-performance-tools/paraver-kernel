@@ -31,7 +31,7 @@
 #include "semanticcolor.h"
 #include "eventlabels.h"
 #include "statelabels.h"
-#include "rowlabels.h"
+#include "utils/traceparser/rowfileparser.h"
 
 using boost::posix_time::ptime;
 
@@ -50,14 +50,14 @@ class Trace
     Trace( KernelConnection *whichKernel );
     virtual ~Trace() {}
 
-    TObjectOrder getLevelObjects( TWindowLevel onLevel ) const;
+    TObjectOrder getLevelObjects( TTraceLevel onLevel ) const;
 
     virtual std::string getFileName() const = 0;
     virtual std::string getTraceName() const = 0;
     virtual TTraceSize getTraceSize() const = 0;
 
-    virtual void dumpFileHeader( std::fstream& file, bool newFormat = false, PRV_INT32 numIter = 1 ) const = 0;
-    virtual void dumpFile( const std::string& whichFile, PRV_INT32 numIter = 1 ) const = 0;
+    virtual void dumpFileHeader( std::fstream& file, bool newFormat = false ) const = 0;
+    virtual void dumpFile( const std::string& whichFile ) const = 0;
 
     virtual TApplOrder totalApplications() const = 0;
     virtual TTaskOrder totalTasks() const = 0;
@@ -95,11 +95,11 @@ class Trace
     virtual TCPUOrder getLastCPU( TNodeOrder inNode ) const = 0;
 
     virtual TObjectOrder getFirst( TObjectOrder globalOrder,
-                                   TWindowLevel fromLevel,
-                                   TWindowLevel toLevel ) const = 0;
+                                   TTraceLevel fromLevel,
+                                   TTraceLevel toLevel ) const = 0;
     virtual TObjectOrder getLast( TObjectOrder globalOrder,
-                                  TWindowLevel fromLevel,
-                                  TWindowLevel toLevel ) const = 0;
+                                  TTraceLevel fromLevel,
+                                  TTraceLevel toLevel ) const = 0;
 
     virtual bool isSameObjectStruct( Trace *compareTo, bool compareProcessModel ) const = 0;
     virtual bool isSubsetObjectStruct( Trace *compareTo, bool compareProcessModel ) const = 0;
@@ -183,11 +183,6 @@ class Trace
       CodeColor *tmp = nullptr;
       return *tmp;
     }
-    virtual const GradientColor& getGradientColor() const
-    {
-      GradientColor *tmp = nullptr;
-      return *tmp;
-    }
     virtual const EventLabels& getEventLabels() const
     {
       EventLabels *tmp = nullptr;
@@ -198,12 +193,12 @@ class Trace
       StateLabels *tmp = nullptr;
       return *tmp;
     }
-    virtual std::string getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const
+    virtual std::string getRowLabel( TTraceLevel whichLevel, TObjectOrder whichRow ) const
     {
       return "";
     }
 
-    virtual size_t getMaxLengthRow( TWindowLevel whichLevel = NONE ) const
+    virtual size_t getMaxLengthRow( TTraceLevel whichLevel = TTraceLevel::NONE ) const
     {
       return 0;
     }
@@ -246,8 +241,8 @@ class TraceProxy: public Trace
     virtual std::string getTraceNameNumbered() const override;
     virtual void setInstanceNumber( PRV_UINT32 whichInstanceNumber ) override;
 
-    virtual void dumpFileHeader( std::fstream& file, bool newFormat = false, PRV_INT32 numIter = 1 ) const override;
-    virtual void dumpFile( const std::string& whichFile, PRV_INT32 numIter = 1 ) const override;
+    virtual void dumpFileHeader( std::fstream& file, bool newFormat = false ) const override;
+    virtual void dumpFile( const std::string& whichFile ) const override;
 
     virtual TTraceSize getTraceSize() const override;
 
@@ -287,11 +282,11 @@ class TraceProxy: public Trace
     virtual TCPUOrder getLastCPU( TNodeOrder inNode ) const override;
 
     virtual TObjectOrder getFirst( TObjectOrder globalOrder,
-                                   TWindowLevel fromLevel,
-                                   TWindowLevel toLevel ) const override;
+                                   TTraceLevel fromLevel,
+                                   TTraceLevel toLevel ) const override;
     virtual TObjectOrder getLast( TObjectOrder globalOrder,
-                                  TWindowLevel fromLevel,
-                                  TWindowLevel toLevel ) const override;
+                                  TTraceLevel fromLevel,
+                                  TTraceLevel toLevel ) const override;
 
     virtual bool isSameObjectStruct( Trace *compareTo, bool compareProcessModel ) const override;
     virtual bool isSubsetObjectStruct( Trace *compareTo, bool compareProcessModel ) const override;
@@ -320,11 +315,10 @@ class TraceProxy: public Trace
     virtual void setUnload( bool newValue ) override;
     virtual Trace *getConcrete() const override;
     virtual const CodeColor& getCodeColor() const override;
-    virtual const GradientColor& getGradientColor() const override;
     virtual const EventLabels& getEventLabels() const override;
     virtual const StateLabels& getStateLabels() const override;
-    virtual std::string getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const override;
-    virtual size_t getMaxLengthRow( TWindowLevel whichLevel ) const override;
+    virtual std::string getRowLabel( TTraceLevel whichLevel, TObjectOrder whichRow ) const override;
+    virtual size_t getMaxLengthRow( TTraceLevel whichLevel ) const override;
 
 //    virtual std::string getDefaultSemanticFunc( TWindowLevel whichLevel ) const;
     virtual void setShowProgressBar( bool whichShow ) override;
@@ -371,11 +365,10 @@ class TraceProxy: public Trace
     PRV_UINT32 instanceNumber;
 
     CodeColor myCodeColor;
-    GradientColor myGradientColor;
 
     EventLabels myEventLabels;
     StateLabels myStateLabels;
-    RowLabels myRowLabels;
+    RowFileParser<> myRowLabels;
 
     bool showProgressBar;
 

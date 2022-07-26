@@ -65,11 +65,11 @@ Timeline *Timeline::create( KernelConnection *whichKernel, Timeline *parent1, Ti
 
 bool Timeline::compatibleLevels( Timeline *window1, Timeline *window2 )
 {
-  return ( window1->getLevel() >= WORKLOAD && window1->getLevel() <= THREAD &&
-           window2->getLevel() >= WORKLOAD && window2->getLevel() <= THREAD )
+  return ( window1->getLevel() >= TTraceLevel::WORKLOAD && window1->getLevel() <= TTraceLevel::THREAD &&
+           window2->getLevel() >= TTraceLevel::WORKLOAD && window2->getLevel() <= TTraceLevel::THREAD )
          ||
-         ( window1->getLevel() >= SYSTEM && window1->getLevel() <= CPU &&
-           window2->getLevel() >= SYSTEM && window2->getLevel() <= CPU );
+         ( window1->getLevel() >= TTraceLevel::SYSTEM && window1->getLevel() <= TTraceLevel::CPU &&
+           window2->getLevel() >= TTraceLevel::SYSTEM && window2->getLevel() <= TTraceLevel::CPU );
 }
 
 Timeline::Timeline( KernelConnection *whichKernel ) : myKernel( whichKernel )
@@ -669,12 +669,12 @@ Trace *TimelineProxy::getTrace() const
   return myTrace;
 }
 
-TWindowLevel TimelineProxy::getLevel() const
+TTraceLevel TimelineProxy::getLevel() const
 {
   return myWindow->getLevel();
 }
 
-void TimelineProxy::setLevel( TWindowLevel whichLevel )
+void TimelineProxy::setLevel( TTraceLevel whichLevel )
 {
   if ( whichLevel == myWindow->getLevel() )
     return;
@@ -688,10 +688,10 @@ void TimelineProxy::setLevel( TWindowLevel whichLevel )
 
 bool TimelineProxy::isLevelProcessModel() const
 {
-  return getLevel() >= WORKLOAD && getLevel() <= THREAD;
+  return getLevel() >= TTraceLevel::WORKLOAD && getLevel() <= TTraceLevel::THREAD;
 }
 
-TWindowLevel TimelineProxy::getMinAcceptableLevel() const
+TTraceLevel TimelineProxy::getMinAcceptableLevel() const
 {
   return myWindow->getMinAcceptableLevel();
 }
@@ -708,13 +708,13 @@ TTimeUnit TimelineProxy::getTimeUnit() const
   return myWindow->getTimeUnit();
 }
 
-TWindowLevel TimelineProxy::getComposeLevel( TWindowLevel whichLevel ) const
+TWindowLevel TimelineProxy::getComposeLevel( TTraceLevel whichLevel ) const
 {
   return myWindow->getComposeLevel( whichLevel );
 }
 
 bool TimelineProxy::setLevelFunction( TWindowLevel whichLevel,
-                                    const string& whichFunction )
+                                      const string& whichFunction )
 {
   bool result = myWindow->setLevelFunction( whichLevel, whichFunction );
   if ( result )
@@ -1484,23 +1484,23 @@ TGroupId TimelineProxy::getSyncGroup() const
   return syncGroup;
 }
 
-SelectionManagement< TObjectOrder, TWindowLevel > *TimelineProxy::getSelectedRows()
+SelectionManagement< TObjectOrder, TTraceLevel > *TimelineProxy::getSelectedRows()
 {
   return &selectedRow;
 }
 
-void TimelineProxy::setSelectedRows( TWindowLevel onLevel, vector< bool > &selected )
+void TimelineProxy::setSelectedRows( TTraceLevel onLevel, vector< bool > &selected )
 {
   if( selected.size() == myTrace->getLevelObjects( onLevel ) )
     selectedRow.setSelected( selected, onLevel );
 }
 
-void TimelineProxy::setSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected )
+void TimelineProxy::setSelectedRows( TTraceLevel onLevel, vector< TObjectOrder > &selected )
 {
   selectedRow.setSelected( selected, myTrace->getLevelObjects( onLevel ), onLevel );
 }
 
-void TimelineProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selected, bool lookUpLevels )
+void TimelineProxy::getSelectedRows( TTraceLevel onLevel, vector< bool > &selected, bool lookUpLevels )
 {
   selectedRow.getSelected( selected, onLevel );
 
@@ -1510,34 +1510,34 @@ void TimelineProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selec
     // Only deselect those with higher levels deselected
     switch ( onLevel )
     {
-      case TASK:
+      case TTraceLevel::TASK:
         for ( TTaskOrder iTask = 0; iTask < getTrace()->totalTasks(); ++iTask )
         {
           getTrace()->getTaskLocation( iTask, iAppl, aux );
-          selected[ iTask ] = selectedRow.isSelectedPosition( iAppl, APPLICATION ) &&
+          selected[ iTask ] = selectedRow.isSelectedPosition( iAppl, TTraceLevel::APPLICATION ) &&
                               selected[ iTask ];
         }
 
         break;
 
-      case THREAD:
+      case TTraceLevel::THREAD:
         for ( TThreadOrder iThread = 0; iThread < getTrace()->totalThreads(); ++iThread )
         {
           getTrace()->getThreadLocation( iThread, iAppl, jTask, aux );
           globalTask = getTrace()->getGlobalTask( iAppl, jTask );
-          selected[ iThread ] = selectedRow.isSelectedPosition( iAppl, APPLICATION ) &&
-                                selectedRow.isSelectedPosition( globalTask, TASK ) &&
+          selected[ iThread ] = selectedRow.isSelectedPosition( iAppl, TTraceLevel::APPLICATION ) &&
+                                selectedRow.isSelectedPosition( globalTask, TTraceLevel::TASK ) &&
                                 selected[ iThread ];
         }
 
         break;
 
-      case CPU:
+      case TTraceLevel::CPU:
         for ( TCPUOrder iCPU = 0; iCPU < getTrace()->totalCPUs(); ++iCPU )
         {
           getTrace()->getCPULocation( iCPU, iNode, aux );
           selected[ iCPU ] = selected[ iCPU ] &&
-                             selectedRow.isSelectedPosition( iNode, NODE );
+                             selectedRow.isSelectedPosition( iNode, TTraceLevel::NODE );
         }
         break;
 
@@ -1547,8 +1547,8 @@ void TimelineProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selec
   }
 }
 
-void TimelineProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selected,
-                                   TObjectOrder first, TObjectOrder last, bool lookUpLevels )
+void TimelineProxy::getSelectedRows( TTraceLevel onLevel, vector< bool > &selected,
+                                     TObjectOrder first, TObjectOrder last, bool lookUpLevels )
 {
   selectedRow.getSelected( selected, first, last, onLevel );
 
@@ -1557,34 +1557,34 @@ void TimelineProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selec
     TObjectOrder iAppl, jTask, globalTask, iNode, aux;
     switch ( onLevel )
     {
-      case TASK:
+      case TTraceLevel::TASK:
         for ( TObjectOrder iTask = first; iTask <= last; ++iTask )
         {
           getTrace()->getTaskLocation( iTask, iAppl, aux );
-          selected[ iTask ] = selectedRow.isSelectedPosition( iAppl, APPLICATION ) &&
+          selected[ iTask ] = selectedRow.isSelectedPosition( iAppl, TTraceLevel::APPLICATION ) &&
                               selected[ iTask ];
         }
 
         break;
 
-      case THREAD:
+      case TTraceLevel::THREAD:
         for ( TObjectOrder iThread = first; iThread <= last; ++iThread )
         {
           getTrace()->getThreadLocation( iThread, iAppl, jTask, aux );
           globalTask = getTrace()->getGlobalTask( iAppl, jTask );
-          selected[ iThread ] = selectedRow.isSelectedPosition( iAppl, APPLICATION ) &&
-                                selectedRow.isSelectedPosition( globalTask, TASK ) &&
+          selected[ iThread ] = selectedRow.isSelectedPosition( iAppl, TTraceLevel::APPLICATION ) &&
+                                selectedRow.isSelectedPosition( globalTask, TTraceLevel::TASK ) &&
                                 selected[ iThread ];
         }
 
         break;
 
-      case CPU:
+      case TTraceLevel::CPU:
         for ( TObjectOrder iCPU = first; iCPU <= last; ++iCPU )
         {
           getTrace()->getCPULocation( iCPU, iNode, aux );
           selected[ iCPU ] = selected[ iCPU ] &&
-                             selectedRow.isSelectedPosition( iNode, NODE );
+                             selectedRow.isSelectedPosition( iNode, TTraceLevel::NODE );
         }
         break;
 
@@ -1595,7 +1595,7 @@ void TimelineProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selec
 }
 
 
-void TimelineProxy::getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected, bool lookUpLevels )
+void TimelineProxy::getSelectedRows( TTraceLevel onLevel, vector< TObjectOrder > &selected, bool lookUpLevels )
 {
   selectedRow.getSelected( selected, onLevel );
 
@@ -1605,9 +1605,9 @@ void TimelineProxy::getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder 
   }
 }
 
-void TimelineProxy::getSelectedRows( TWindowLevel onLevel,
-                                   vector< TObjectOrder > &selected,
-                                   TObjectOrder first, TObjectOrder last, bool lookUpLevels )
+void TimelineProxy::getSelectedRows( TTraceLevel onLevel,
+                                     vector< TObjectOrder > &selected,
+                                     TObjectOrder first, TObjectOrder last, bool lookUpLevels )
 {
   selectedRow.getSelected( selected, first, last, onLevel );
 
@@ -1617,12 +1617,12 @@ void TimelineProxy::getSelectedRows( TWindowLevel onLevel,
   }
 }
 
-TObjectOrder TimelineProxy::shiftFirst( TObjectOrder whichFirst, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TWindowLevel level ) const
+TObjectOrder TimelineProxy::shiftFirst( TObjectOrder whichFirst, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TTraceLevel level ) const
 {
   return selectedRow.shiftFirst( whichFirst, shiftAmount, appliedAmount, level );
 }
 
-TObjectOrder TimelineProxy::shiftLast( TObjectOrder whichLast, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TWindowLevel level ) const
+TObjectOrder TimelineProxy::shiftLast( TObjectOrder whichLast, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TTraceLevel level ) const
 {
   return selectedRow.shiftLast( whichLast, shiftAmount, appliedAmount, level );
 }
@@ -1664,7 +1664,7 @@ TObjectAxisSize TimelineProxy::getObjectAxisSize() const
 }
 
 
-bool TimelineProxy::hasLevelSomeSelectedObject( TWindowLevel onLevel )
+bool TimelineProxy::hasLevelSomeSelectedObject( TTraceLevel onLevel )
 {
   std::vector< TObjectOrder > selection;
 
@@ -1873,7 +1873,7 @@ const vector< Timeline::TParamAliasKey > TimelineProxy::getCFG4DCurrentSelectedF
   PRV_UINT32 numParameter;
   TParamAliasKey key;
 
-  beginLevel = getLevel();
+  beginLevel = static_cast<TWindowLevel>( getLevel() );
 
   switch ( beginLevel )
   {
@@ -2483,9 +2483,9 @@ void TimelineProxy::computeEventsCommsParallel( RecordList *records,
     else
     {
       TObjectOrder partnerObject;
-      if ( getLevel() >= WORKLOAD && getLevel() <= THREAD )
+      if ( getLevel() >= TTraceLevel::WORKLOAD && getLevel() <= TTraceLevel::THREAD )
         partnerObject = threadObjectToWindowObject( it->getCommPartnerObject() );
-      else if( getLevel() >= SYSTEM && getLevel() <= NODE )
+      else if( getLevel() >= TTraceLevel::SYSTEM && getLevel() <= TTraceLevel::NODE )
         partnerObject = cpuObjectToWindowObject( it->getCommPartnerObject() );
       else //CPU
         partnerObject = cpuObjectToWindowObject( it->getCommPartnerObject() ) - 1;

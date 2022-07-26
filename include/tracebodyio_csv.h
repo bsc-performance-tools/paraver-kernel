@@ -23,17 +23,24 @@
 
 #pragma once
 
-
-#include "tracebodyio.h"
+#include "utils/traceparser/tracebodyio.h"
 #include "tracestream.h"
-
+#include "ktrace.h"
 
 // Paraver trace old format file
-class TraceBodyIO_csv : public TraceBodyIO
+class TraceBodyIO_csv : public TraceBodyIO<TraceStream,
+                                           MemoryBlocks,
+                                           ProcessModel<>,
+                                           ResourceModel<>,
+                                           TState,
+                                           TEventType,
+                                           MetadataManager,
+                                           TRecordTime,
+                                           MemoryTrace::iterator>
 {
   public:
     TraceBodyIO_csv( ) {}
-    TraceBodyIO_csv( Trace* trace );
+    TraceBodyIO_csv( Trace* trace, ProcessModel<>& whichProcessModel );
 
     static const PRV_UINT8 CommentRecord = '#';
     static const PRV_UINT8 StateRecord = '1';
@@ -42,48 +49,42 @@ class TraceBodyIO_csv : public TraceBodyIO
     static const PRV_UINT8 GlobalCommRecord = '4';
 
     bool ordered() const override;
-    void read( TraceStream *file, MemoryBlocks& records,
-               std::unordered_set<TState>& states, std::unordered_set<TEventType>& events,
-               MetadataManager& traceInfo, TRecordTime& endTime ) const override;
+    void read( TraceStream& file,
+               MemoryBlocks& records,
+               const ProcessModel<>& whichProcessModel,
+               const ResourceModel<>& whichResourceModel,
+               std::unordered_set<TState>& states,
+               std::unordered_set<TEventType>& events,
+               MetadataManager& traceInfo,
+               TRecordTime& endTime ) const override;
     void write( std::fstream& whichStream,
-                const KTrace& whichTrace,
-                MemoryTrace::iterator *record,
-                PRV_INT32 numIter = 0 ) const override;
-    void writeCommInfo( std::fstream& whichStream,
-                        const KTrace& whichTrace,
-                        PRV_INT32 numIter = 1 ) const override;
-    void writeEvents( std::fstream& whichStream,
-                      const KTrace& whichTrace,
-                      std::vector<MemoryTrace::iterator *>& recordList ) const;
-
+                const ProcessModel<>& whichProcessModel,
+                const ResourceModel<>& whichResourceModel,
+                MemoryTrace::iterator *record ) const override;
 
   protected:
 
   private:
-    // Multievent lines
-    typedef struct TMultiEventCommonInfo
-    {
-      TThreadOrder thread;
-      TCPUOrder cpu;
-      TRecordTime time;
-    }
-    TMultiEventCommonInfo;
-
-    static TMultiEventCommonInfo multiEventCommonInfo;
-    static std::string multiEventLine;
-
     static std::istringstream fieldStream;
     static std::istringstream strLine;
     static std::string tmpstring;
     static std::string line;
     static std::ostringstream ostr;
-    Trace* whichTrace;
+
+     ProcessModel<> *myProcessModel;
+
+    Trace* myTrace;
 
     void readTraceInfo( const std::string& line, MetadataManager& traceInfo ) const;
 
-    void readEvents( const std::string& line, MemoryBlocks& records,
-                    std::unordered_set<TState>& states, TRecordTime& endTime ) const;
-    bool readCommon( std::istringstream& line,
+    void readEvents( const ResourceModel<>& whichResourceModel,
+                     const std::string& line,
+                     MemoryBlocks& records,
+                     std::unordered_set<TState>& states,
+                     TRecordTime& endTime ) const;
+
+    bool readCommon( const ResourceModel<>& whichResourceModel,
+                     std::istringstream& line,
                      TCPUOrder& CPU,
                      TApplOrder& appl,
                      TTaskOrder& task,
@@ -94,24 +95,6 @@ class TraceBodyIO_csv : public TraceBodyIO
                      double& decimals ) const;
 
     void bufferWrite( std::fstream& whichStream, bool writeReady, bool lineClear = true  ) const;
-
-    bool writeState( const KTrace& whichTrace,
-                     const MemoryTrace::iterator *record ) const;
-    bool writePendingMultiEvent( const KTrace& whichTrace ) const;
-    void appendEvent( const MemoryTrace::iterator *record ) const;
-    bool writeEvent( const KTrace& whichTrace,
-                     const MemoryTrace::iterator *record,
-                     bool needCommons = true ) const;
-    bool writeComm( const KTrace& whichTrace,
-                    const MemoryTrace::iterator *record ) const;
-    bool writeGlobalComm( const KTrace& whichTrace,
-                          const MemoryTrace::iterator *record ) const;
-    void writeCommon( std::ostringstream& line,
-                      const KTrace& whichTrace,
-                      const MemoryTrace::iterator *record ) const;
-
-    bool sameMultiEvent( const MemoryTrace::iterator *record ) const;
-    bool updateATT( TApplOrder& appl, TTaskOrder& task, TThreadOrder& thread ) const;
 
 };
 

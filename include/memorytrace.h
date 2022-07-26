@@ -24,7 +24,6 @@
 
 #pragma once
 
-
 #include <vector>
 #include "paraverkerneltypes.h"
 
@@ -65,9 +64,20 @@ class MemoryTrace
         virtual TRecordTime    getStateEndTime() const = 0;
         virtual TCommID        getCommIndex() const = 0;
 
-        virtual void setTime( const TRecordTime time ) = 0;
-        virtual void setType( const TRecordType whichType ) = 0;
-        virtual void setStateEndTime( const TRecordTime whichEndTime ) = 0;
+        virtual TThreadOrder getSenderThread() const;
+        virtual TCPUOrder    getSenderCPU() const;
+        virtual TThreadOrder getReceiverThread() const;
+        virtual TCPUOrder    getReceiverCPU() const;
+        virtual TCommTag     getCommTag() const;
+        virtual TCommSize    getCommSize() const;
+        virtual TRecordTime  getLogicalSend() const;
+        virtual TRecordTime  getLogicalReceive() const;
+        virtual TRecordTime  getPhysicalSend() const;
+        virtual TRecordTime  getPhysicalReceive() const;
+
+        virtual void         setTime( const TRecordTime time ) = 0;
+        virtual void         setType( const TRecordType whichType ) = 0;
+        virtual void         setStateEndTime( const TRecordTime whichEndTime ) = 0;
 
         virtual TData *getRecord() const
         {

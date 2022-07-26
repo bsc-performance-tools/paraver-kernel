@@ -32,7 +32,8 @@
 
 #include "ktrace.h"
 #include "traceheaderexception.h"
-#include "tracebodyio.h"
+#include "tracebodyiofactory.h"
+#include "tracebodyio_v2.h"
 #include "tracestream.h"
 #include "kprogresscontroller.h"
 #include "bplustree.h"
@@ -43,6 +44,7 @@
 #include "noloadblocks.h"
 #include "traceeditblocks.h"
 #include "customalgorithms.h"
+#include "utils/traceparser/traceheader.h"
 
 using namespace std;
 #ifdef _MSC_VER
@@ -209,28 +211,28 @@ TCPUOrder KTrace::getLastCPU( TNodeOrder inNode ) const
 
 // PRECOND: fromLevel > toLevel
 TObjectOrder KTrace::getFirst( TObjectOrder globalOrder,
-                               TWindowLevel fromLevel,
-                               TWindowLevel toLevel  ) const
+                               TTraceLevel fromLevel,
+                               TTraceLevel toLevel  ) const
 {
-  if ( fromLevel == WORKLOAD || fromLevel == SYSTEM )
+  if ( fromLevel == TTraceLevel::WORKLOAD || fromLevel == TTraceLevel::SYSTEM )
   {
     return 0;
   }
-  else if ( fromLevel == APPLICATION )
+  else if ( fromLevel == TTraceLevel::APPLICATION )
   {
-    if ( toLevel == TASK )
+    if ( toLevel == TTraceLevel::TASK )
       return getFirstTask( globalOrder );
     else
       return getFirstThread( globalOrder, 0 );
   }
-  else if ( fromLevel == TASK )
+  else if ( fromLevel == TTraceLevel::TASK )
   {
     TApplOrder application;
     TTaskOrder task;
     getTaskLocation( globalOrder, application, task );
     return getFirstThread( application, task );
   }
-  else if ( fromLevel == NODE )
+  else if ( fromLevel == TTraceLevel::NODE )
   {
     return getFirstCPU( globalOrder );
   }
@@ -240,40 +242,40 @@ TObjectOrder KTrace::getFirst( TObjectOrder globalOrder,
 
 
 TObjectOrder KTrace::getLast( TObjectOrder globalOrder,
-                              TWindowLevel fromLevel,
-                              TWindowLevel toLevel ) const
+                              TTraceLevel fromLevel,
+                              TTraceLevel toLevel ) const
 {
-  if ( fromLevel == WORKLOAD )
+  if ( fromLevel == TTraceLevel::WORKLOAD )
   {
-    if ( toLevel == APPLICATION )
+    if ( toLevel == TTraceLevel::APPLICATION )
       return totalApplications() - 1;
-    else if ( toLevel == TASK )
+    else if ( toLevel == TTraceLevel::TASK )
       return totalTasks() - 1;
     else
       return totalThreads() - 1;
   }
-  else if ( fromLevel == APPLICATION )
+  else if ( fromLevel == TTraceLevel::APPLICATION )
   {
-    if ( toLevel == TASK )
+    if ( toLevel == TTraceLevel::TASK )
       return getLastTask( globalOrder );
     else
       return getLastThread( globalOrder, getLastTask( globalOrder ) );
   }
-  else if ( fromLevel == TASK )
+  else if ( fromLevel == TTraceLevel::TASK )
   {
     TApplOrder application;
     TTaskOrder task;
     getTaskLocation( globalOrder, application, task );
     return getLastThread( application, task );
   }
-  else if ( fromLevel == SYSTEM )
+  else if ( fromLevel == TTraceLevel::SYSTEM )
   {
-    if ( toLevel == NODE )
+    if ( toLevel == TTraceLevel::NODE )
       return totalNodes() - 1;
     else
       return totalCPUs() - 1;
   }
-  else if ( fromLevel == NODE )
+  else if ( fromLevel == TTraceLevel::NODE )
   {
     return getLastCPU( globalOrder );
   }
@@ -406,48 +408,23 @@ TRecordTime KTrace::traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit wh
 }
 
 
-void KTrace::dumpFileHeader( std::fstream& file, bool newFormat, PRV_INT32 numIter ) const
+void KTrace::dumpFileHeader( std::fstream& file, bool newFormat ) const
 {
-  ostringstream ostr;
-
-  ostr << fixed;
-  ostr << dec;
-  ostr.precision( 0 );
-
-  file << fixed;
-  file << dec;
-  file.precision( 0 );
-
-  if( newFormat )
-    file << "new format" << endl;
-
-  file << "#Paraver (";
+  string tmpTraceTime;
   if ( !myTraceTime.is_not_a_date_time() )
-    file << myTraceTime << "):";
-  else
-    file << rawTraceTime << "):";
-
-  ostr << traceEndTime * numIter;
-  file << ostr.str();
-  if ( traceTimeUnit != US )
-    file << "_ns";
-  file << ':';
-  traceResourceModel.dumpToFile( file );
-  file << ':';
-  traceProcessModel.dumpToFile( file, existResourceInfo() );
-  if ( communicators.begin() != communicators.end() )
   {
-    file << ',' << communicators.size() << endl;
-    for ( vector<string>::const_iterator it = communicators.begin();
-          it != communicators.end(); ++it )
-      file << ( *it ) << endl;
+    ostringstream tmpostr;
+    tmpostr << myTraceTime;
+    tmpTraceTime = tmpostr.str();
   }
   else
-    file << endl;
+    tmpTraceTime = rawTraceTime;
+
+  dumpTraceHeader( file, tmpTraceTime, traceEndTime, traceTimeUnit, traceResourceModel, traceProcessModel, communicators );
 }
 
 
-void KTrace::dumpFile( const string& whichFile, PRV_INT32 numIter ) const
+void KTrace::dumpFile( const string& whichFile ) const
 {
   ostringstream ostr;
 
@@ -456,41 +433,22 @@ void KTrace::dumpFile( const string& whichFile, PRV_INT32 numIter ) const
   ostr.precision( 0 );
 
   std::fstream file( whichFile.c_str(), fstream::out | fstream::trunc );
-  dumpFileHeader( file, true, numIter );
+  dumpFileHeader( file, true );
 
-#ifdef BYTHREAD
-  TraceBodyIO *body = TraceBodyIO::createTraceBody();
-  body->writeCommInfo( file, *this, numIter );
-
-  for ( TThreadOrder iThread = 0; iThread < totalThreads(); ++iThread )
-  {
-    for ( PRV_INT32 iter = 0; iter < numIter; ++iter )
-    {
-      MemoryTrace::iterator *it = memTrace->threadBegin( iThread );
-
-      while ( !it->isNull() )
-      {
-        body->write( file, *this, it, iter );
-        if ( it->getTime() == traceEndTime ) break;
-        ++( *it );
-      }
-
-      delete it;
-    }
-  }
-#else
   MemoryTrace::iterator *it = memTrace->begin();
-  TraceBodyIO *body = TraceBodyIO::createTraceBody();
-  body->writeCommInfo( file, *this );
+  TraceBodyIO< PARAM_TRACEBODY_CLASS > *body = TraceBodyIOFactory::createTraceBody();
+  if( TraceBodyIO_v2 *tmpBody = dynamic_cast<TraceBodyIO_v2 *>( body ) )
+    tmpBody->writeCommInfo( file, *this );
 
   while ( !it->isNull() )
   {
-    body->write( file, *this, it );
+    body->write( file, traceProcessModel, traceResourceModel, it );
     ++( *it );
+
   }
 
   delete it;
-#endif
+
   file.close();
 }
 
@@ -635,7 +593,6 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
       progress->setEndLimit( file->tellg() );
     file->seekbegin();
   }
-  body = TraceBodyIO::createTraceBody( file, this );
 
 // Reading the header
   string fileType = whichFile.substr( whichFile.find_last_of( '.' ) + 1 );
@@ -644,11 +601,9 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     // Saved CSV traces are in nanoseconds.
     traceTimeUnit = NS;
     traceEndTime = 0;
-    traceProcessModel = ProcessModel( );
-    traceResourceModel = ResourceModel( );
+    traceProcessModel = ProcessModel<>( );
+    traceResourceModel = ResourceModel<>( );
 
-    body->setProcessModel( &traceProcessModel );
-    body->setResourceModel( &traceResourceModel );
     traceProcessModel.setReady( true );
 
     if ( !file->canseekend() && progress != nullptr )
@@ -658,105 +613,38 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   }
   else
   {
-    file->getline( tmpstr );
-    istringstream header( tmpstr );
-
     string tmpDate;
-    std::getline( header, tmpDate, ')' );
-    tmpDate = tmpDate.substr( tmpDate.find_first_of( '(' ) + 1 );
+    try
+    {
+      parseTraceHeader( *file, tmpDate, traceTimeUnit, traceEndTime, traceResourceModel, traceProcessModel, communicators );
+    }
+    catch( TraceHeaderException& e )
+    {
+      delete file;
+      throw e;
+    }
+
     parseDateTime( tmpDate );
-
-    header.get();
-
-    std::getline( header, tmpstr, ':' );
-    size_t pos = tmpstr.find( '_' );
-    if ( pos == string::npos )
-    {
-      // No '_' char found. The trace is in us.
-      traceTimeUnit = US;
-      istringstream stringEndTime( tmpstr );
-      if ( !( stringEndTime >> traceEndTime ) )
-      {
-        delete file;
-        throw TraceHeaderException( TTraceHeaderErrorCode::invalidTime,
-                                    tmpstr.c_str() );
-      }
-    }
-    else
-    {
-      string strTimeUnit( tmpstr.substr( pos, tmpstr.length() ) );
-      if ( strTimeUnit == "_ns" )
-        traceTimeUnit = NS;
-      else if ( strTimeUnit == "_ms" )
-        traceTimeUnit = MS;
-      else //if ( strTimeUnit == "_us" )
-        traceTimeUnit = US;
-
-      istringstream stringEndTime( tmpstr.substr( 0, pos ) );
-      if ( !( stringEndTime >> traceEndTime ) )
-      {
-        delete file;
-        throw TraceHeaderException( TTraceHeaderErrorCode::invalidTime,
-                                    tmpstr.c_str() );
-      }
-    }
 
     if ( !file->canseekend() && progress != nullptr )
     {
       progress->setEndLimit( traceEndTime );
     }
-
-    traceResourceModel = ResourceModel( header );
-    traceProcessModel = ProcessModel( header, existResourceInfo() );
-
-    body->setProcessModel( &traceProcessModel );
-    body->setResourceModel( &traceResourceModel );
-
-    // Communicators
-    PRV_UINT32 numberComm = 0;
-    if ( !header.eof() )
-    {
-      std::getline( header, tmpstr );
-      if ( tmpstr != "" )
-      {
-        istringstream streamComm( tmpstr );
-
-        if ( !( streamComm >> numberComm ) )
-        {
-          delete file;
-          throw TraceHeaderException( TTraceHeaderErrorCode::invalidCommNumber,
-                                      tmpstr.c_str() );
-        }
-      }
-    }
-
-    for ( PRV_UINT32 count = 0; count < numberComm; count++ )
-    {
-      file->getline( tmpstr );
-      if ( tmpstr[0] != 'C' && tmpstr[0] != 'c' && tmpstr[0] != 'I' && tmpstr[0] != 'i' )
-      {
-        delete file;
-        throw TraceHeaderException( TTraceHeaderErrorCode::unknownCommLine,
-                                    tmpstr.c_str() );
-      }
-      communicators.push_back( tmpstr );
-    }
-    // End communicators
   }
-// End reading the header
 
 // Reading the body
+  body = TraceBodyIOFactory::createTraceBody( file, this, traceProcessModel );
 
   if ( noLoad && body->ordered() )
   {
     blocks = new NoLoadBlocks( traceResourceModel, traceProcessModel, body, file, traceEndTime );
-    memTrace = new NoLoadTrace( blocks, traceProcessModel, traceResourceModel );
+    memTrace = new NoLoadTrace( this, blocks, traceProcessModel, traceResourceModel );
     ( ( NoLoadBlocks * )blocks )->setFirstOffset( file->tellg() );
   }
   else if( noLoad && !body->ordered() )
   {
     blocks = new TraceEditBlocks( traceResourceModel, traceProcessModel, body, file, traceEndTime );
-    memTrace = new NoLoadTrace( blocks, traceProcessModel, traceResourceModel );
+    memTrace = new NoLoadTrace( this, blocks, traceProcessModel, traceResourceModel );
     ( ( TraceEditBlocks * )blocks )->setFirstOffset( file->tellg() );
   }
   else if ( body->ordered() )
@@ -782,7 +670,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   {
     while ( !file->eof() )
     {
-      body->read( file, *blocks, hashstates, hashevents, myTraceInfo, traceEndTime );
+      body->read( *file, *blocks, traceProcessModel, traceResourceModel, hashstates, hashevents, myTraceInfo, traceEndTime );
       if( blocks->getCountInserted() > 0 )
         ++count;
 

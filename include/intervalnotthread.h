@@ -136,10 +136,10 @@ class IntervalNotThread: public IntervalHigh
     }
 
     virtual KTrace *getWindowTrace() const override;
-    virtual TWindowLevel getWindowLevel() const override;
+    virtual TTraceLevel getWindowLevel() const override;
     virtual Interval *getWindowInterval( TWindowLevel whichLevel, TObjectOrder whichOrder ) override;
     virtual bool IsDerivedWindow() const override;
-    virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const override;
+    virtual TWindowLevel getComposeLevel( TTraceLevel whichLevel ) const override;
 
   private:
     SemanticHighInfo info;

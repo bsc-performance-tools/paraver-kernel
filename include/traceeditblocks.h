@@ -27,11 +27,12 @@
 #include <fstream>
 #include <map>
 #include "noloadblocks.h"
-#include "resourcemodel.h"
-#include "processmodel.h"
+#include "utils/traceparser/resourcemodel.h"
+#include "utils/traceparser/processmodel.h"
 #include "index.h"
 #include "plaintypes.h"
-#include "tracebodyio.h"
+#include "utils/traceparser/tracebodyio.h"
+#include "tracebodyiofactory.h"
 #include "tracestream.h"
 
 using Plain::TRecord;
@@ -42,8 +43,8 @@ namespace NoLoad
   class TraceEditBlocks: public NoLoadBlocks
   {
     public:
-      TraceEditBlocks( const ResourceModel& resource, const ProcessModel& process,
-                    TraceBodyIO *whichBody, TraceStream *whichFile, TRecordTime endTime );
+      TraceEditBlocks( const ResourceModel<>& resource, const ProcessModel<>& process,
+                       TraceBodyIO< PARAM_TRACEBODY_CLASS > *whichBody, TraceStream *whichFile, TRecordTime endTime );
 
       virtual ~TraceEditBlocks();
 
@@ -135,9 +136,9 @@ namespace NoLoad
         std::vector<TRecord> records;
       };
 
-      const ResourceModel& resourceModel;
-      const ProcessModel& processModel;
-      TraceBodyIO *body;
+      const ResourceModel<>& resourceModel;
+      const ProcessModel<>& processModel;
+      TraceBodyIO< PARAM_TRACEBODY_CLASS > *body;
       TraceStream *file;
       PRV_INT64 endFileOffset;
       PRV_INT64 initialOffset;

@@ -22,28 +22,15 @@
 \*****************************************************************************/
 
 
-#include "tracecutter.h"
-//#include "ktraceoptions.h"
-#include "traceoptions.h"
-//#include "ktracecutter.h"
-#include "kernelconnection.h"
-
-#ifdef OLD_PCFPARSER
-#include "utils/pcfparser/old/ParaverTraceConfig.h"
-#else
-#include "utils/pcfparser/UIParaverTraceConfig.h"
-#endif
-
-using namespace libparaver;
-
 #include <map>
 #include <string.h>
-#include "eventlabels.h"
-
-//#ifdef _WIN32
 #include <sys/types.h>
 #include <sys/stat.h>
-//#endif
+
+#include "eventlabels.h"
+#include "kernelconnection.h"
+#include "tracecutter.h"
+#include "traceoptions.h"
 
 using namespace std;
 
@@ -103,15 +90,9 @@ TraceCutterProxy::TraceCutterProxy( const KernelConnection *whichKernel,
 
   if( statReturn == 0 && tmpStatBuffer.st_size > 0 )
   {
-#ifdef OLD_PCFPARSER
-    ParaverTraceConfig *config = new ParaverTraceConfig( pcf_name );
-    config->parse();
-#else
-    UIParaverTraceConfig *config = new UIParaverTraceConfig();
-    config->parse( pcf_name );
-#endif
+    PCFFileParser<> pcfParser( pcf_name );
 
-    EventLabels myEventLabels = EventLabels( *config, set<TEventType>() );
+    EventLabels myEventLabels = EventLabels( pcfParser );
     vector< TEventType > allTypes;
     myEventLabels.getTypes( allTypes );
     for( vector< TEventType >::iterator it = allTypes.begin(); it != allTypes.end(); ++it )
@@ -119,8 +100,6 @@ TraceCutterProxy::TraceCutterProxy( const KernelConnection *whichKernel,
       if( *it >= 42000000 && *it < 43000000 )
         HWCTypes.push_back( *it );
     }
-
-    delete config;
   }
 
   myTraceCutter = whichKernel->newTraceCutter( options, HWCTypes );

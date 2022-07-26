@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include "utils/traceparser/tracelabels.h"
+
 constexpr char CFG_CURRENT_VERSION[] = "3.4";
 
 constexpr char OLDCFG_HEADER_VERSION[] = "version";
@@ -234,15 +236,6 @@ constexpr char CFG_TAG_DRAWMODE_OBJECTS[] = "Analyzer2D.DrawModeObjects:";
 constexpr char CFG_TAG_DRAWMODE_COLUMNS[] = "Analyzer2D.DrawModeColumns:";
 constexpr char CFG_TAG_AN2D_COMPUTEYSCALE_ZERO[] = "Analyzer2D.ComputeYScaleZero:";
 
-
-// STRING CONSTRUCTION LABELS FOR THE GUI
-constexpr char LEVEL_WORKLOAD[] =     "WORKLOAD";
-constexpr char LEVEL_APPLICATION[] =  "APPL";
-constexpr char LEVEL_TASK[] =         "TASK";
-constexpr char LEVEL_THREAD[] =       "THREAD";
-constexpr char LEVEL_SYSTEM[] =       "SYSTEM";
-constexpr char LEVEL_NODE[] =         "NODE";
-constexpr char LEVEL_CPU[] =          "CPU";
 
 static const std::string LABEL_TIMEUNIT[ DAY + 1 ] =
 {

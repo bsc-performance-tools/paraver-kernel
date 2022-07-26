@@ -1086,7 +1086,7 @@ string HistogramProxy::getRowLabel( TObjectOrder whichRow ) const
   if( controlWindow == nullptr )
     return "";
 
-  if( controlWindow->getLevel() == CPU || controlWindow->getLevel() == NODE )
+  if( controlWindow->getLevel() == TTraceLevel::CPU || controlWindow->getLevel() == TTraceLevel::NODE )
     ++whichRow;
 
   return LabelConstructor::objectLabel( whichRow, controlWindow->getLevel(),
@@ -1845,12 +1845,12 @@ TCFGS4DIndexLink HistogramProxy::getCFGS4DIndexLink() const
   return globalIndexLink;
 }
 
-SelectionManagement< TObjectOrder, TWindowLevel > * HistogramProxy::getRowSelectionManagement()
+SelectionManagement< TObjectOrder, TTraceLevel > * HistogramProxy::getRowSelectionManagement()
 {
   return &rowSelection;
 }
 
-void HistogramProxy::setRowSelectionManager( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel )
+void HistogramProxy::setRowSelectionManager( SelectionManagement< TObjectOrder, TTraceLevel > &rowSel )
 {
   rowSelection = rowSel;
 }

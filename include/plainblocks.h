@@ -26,8 +26,8 @@
 
 
 #include "memoryblocks.h"
-#include "resourcemodel.h"
-#include "processmodel.h"
+#include "utils/traceparser/resourcemodel.h"
+#include "utils/traceparser/processmodel.h"
 #include "plaintypes.h"
 #include "plaintrace.h"
 
@@ -44,7 +44,7 @@ namespace Plain
   class PlainBlocks: public MemoryBlocks
   {
     public:
-      PlainBlocks( const ResourceModel& resource, const ProcessModel& process,
+      PlainBlocks( const ResourceModel<>& resource, const ProcessModel<>& process,
                    TRecordTime endTime );
 
       ~PlainBlocks();
@@ -129,8 +129,8 @@ namespace Plain
       std::vector<std::vector<TRecord *> > blocks;
       std::vector<TCommInfo *> communications;
       TCommID currentComm;
-      const ResourceModel& resourceModel;
-      const ProcessModel& processModel;
+      const ResourceModel<>& resourceModel;
+      const ProcessModel<>& processModel;
       TRecord tmpRecord;
       bool inserted;
       TThreadOrder insertedOnThread;

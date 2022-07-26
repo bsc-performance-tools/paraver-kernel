@@ -28,14 +28,14 @@
 #include <vector>
 #include "memoryblocks.h"
 #include "bplustreetypes.h"
-#include "processmodel.h"
+#include "utils/traceparser/processmodel.h"
 
 namespace bplustree
 {
   class BPlusTreeBlocks : public MemoryBlocks
   {
     public:
-      BPlusTreeBlocks( ProcessModel& whichModel ) : traceModel( whichModel )
+      BPlusTreeBlocks( ProcessModel<>& whichModel ) : traceModel( whichModel )
       {
         blocks.push_back( nullptr );
         currentBlock = nullptr;
@@ -144,7 +144,7 @@ namespace bplustree
       std::vector<TCommInfo *> communications;
       TCommID currentComm;
       TRecord *commRecords[ commTypeSize ];
-      ProcessModel& traceModel;
+      ProcessModel<>& traceModel;
   };
 }
 

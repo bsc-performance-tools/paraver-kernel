@@ -28,10 +28,6 @@
 
 using namespace std;
 
-string TraceBodyIO_csv::multiEventLine;
-TraceBodyIO_csv::TMultiEventCommonInfo TraceBodyIO_csv::multiEventCommonInfo =
-        { (TThreadOrder)0, (TCPUOrder)0, (TRecordTime)0 };
-
 istringstream TraceBodyIO_csv::fieldStream;
 istringstream TraceBodyIO_csv::strLine;
 string TraceBodyIO_csv::tmpstring;
@@ -107,8 +103,8 @@ bool prv_atoll( const char *p, T *result, double *decimals )
   return true;
 }
 
-TraceBodyIO_csv::TraceBodyIO_csv( Trace* trace )
-: whichTrace( trace )
+TraceBodyIO_csv::TraceBodyIO_csv( Trace* trace, ProcessModel<>& whichProcessModel )
+: myTrace( trace ),  myProcessModel( &whichProcessModel )
 {}
 
 
@@ -117,15 +113,20 @@ bool TraceBodyIO_csv::ordered() const
   return true;
 }
 
-void TraceBodyIO_csv::read( TraceStream *file, MemoryBlocks& records,
-                           unordered_set<TState>& states, unordered_set<TEventType>& events,
-                           MetadataManager& traceInfo, TRecordTime& endTime ) const
+void TraceBodyIO_csv::read( TraceStream& file,
+                            MemoryBlocks& records,
+                            const ProcessModel<>& whichProcessModel,
+                            const ResourceModel<>& whichResourceModel,
+                            std::unordered_set<TState>& states,
+                            std::unordered_set<TEventType>& events,
+                            MetadataManager& traceInfo,
+                            TRecordTime& endTime ) const
 {
-  file->getline( line );
+  file.getline( line );
   if ( line.size() == 0 )
     return;
 
-  readEvents( line, records, states, endTime );  
+  readEvents( whichResourceModel, line, records, states, endTime );
 }
 
 void TraceBodyIO_csv::bufferWrite( fstream& whichStream, bool writeReady, bool lineClear ) const
@@ -139,75 +140,13 @@ void TraceBodyIO_csv::bufferWrite( fstream& whichStream, bool writeReady, bool l
 }
 
 
-void TraceBodyIO_csv::write( fstream& whichStream,
-                            const KTrace& whichTrace,
-                            MemoryTrace::iterator *record,
-                            PRV_INT32 numIter ) const
+void TraceBodyIO_csv::write( std::fstream& whichStream,
+                             const ProcessModel<>& whichProcessModel,
+                             const ResourceModel<>& whichResourceModel,
+                             MemoryTrace::iterator *record ) const
 {
-  bool writeReady = false;
-  TRecordType type = record->getType();
-  line.clear();
-
-  if ( type == EMPTYREC )
-  {
-    writeReady = writePendingMultiEvent( whichTrace );
-    bufferWrite( whichStream, writeReady );
-  }
-  else
-  {
-    if ( type & STATE )
-    {
-      writeReady = writePendingMultiEvent( whichTrace );
-      bufferWrite( whichStream, writeReady );
-      writeReady = writeState( whichTrace, record );
-    }
-    else if ( type & EVENT )
-    {
-      if ( !sameMultiEvent( record ) )
-      {
-        writeReady = writePendingMultiEvent( whichTrace );
-
-        multiEventCommonInfo.cpu = record->getCPU();
-        multiEventCommonInfo.thread = record->getThread();
-        multiEventCommonInfo.time = record->getTime();
-
-        multiEventLine.clear();
-      }
-
-      appendEvent( record );
-    }
-    else if ( type & COMM )
-    {
-      writeReady = writePendingMultiEvent( whichTrace );
-      bufferWrite( whichStream, writeReady );
-
-      writeReady = writeComm( whichTrace, record );
-    }
-    else if ( type & GLOBCOMM )
-    {
-      writeReady = writePendingMultiEvent( whichTrace );
-      bufferWrite( whichStream, writeReady );
-
-      writeReady = writeGlobalComm( whichTrace, record );
-    }
-    else if ( type & RSEND || type & RRECV )
-      writeReady = false;
-    else
-    {
-      writeReady = false;
-      cerr << "No logging system yet. TraceBodyIO_csv::write()" << endl;
-      cerr << "Unkwnown record type in memory." << endl;
-    }
-
-    bufferWrite( whichStream, writeReady, false );
-  }
 }
 
-
-void TraceBodyIO_csv::writeCommInfo( fstream& whichStream,
-                                    const KTrace& whichTrace,
-                                    PRV_INT32 numIter ) const
-{}
 
 /**********************
   Read line functions
@@ -219,8 +158,11 @@ inline void TraceBodyIO_csv::readTraceInfo(  const std::string& line, MetadataMa
 }
 
 
-inline void TraceBodyIO_csv::readEvents( const string& line, MemoryBlocks& records,
-                                       unordered_set<TEventType>& events, TRecordTime& endTime ) const
+inline void TraceBodyIO_csv::readEvents( const ResourceModel<>& whichResourceModel,
+                                         const string& line,
+                                         MemoryBlocks& records,
+                                         unordered_set<TEventType>& events,
+                                         TRecordTime& endTime ) const
 { 
   TCPUOrder CPU = 0;
   TApplOrder appl;
@@ -234,7 +176,8 @@ inline void TraceBodyIO_csv::readEvents( const string& line, MemoryBlocks& recor
   strLine.clear();
   strLine.str( line );
   // Read the common info
-  if ( !readCommon( strLine, CPU, appl, task, thread, 
+  if ( !readCommon( whichResourceModel,
+                    strLine, CPU, appl, task, thread, 
                     begintime, time, eventvalue, decimals ) )
   {
     cerr << "Error reading state record (error in Common)." << endl;
@@ -255,21 +198,22 @@ inline void TraceBodyIO_csv::readEvents( const string& line, MemoryBlocks& recor
   records.setEventValue( eventvalue );
   events.insert( eventtype );
 
-  whichTrace->setEventTypePrecision( eventtype, decimals );
+  myTrace->setEventTypePrecision( eventtype, decimals );
 }
 
 
-inline bool TraceBodyIO_csv::readCommon( istringstream& line,
-                                        TCPUOrder& CPU,
-                                        TApplOrder& appl,
-                                        TTaskOrder& task,
-                                        TThreadOrder& thread,
-                                        TRecordTime& begintime,
-                                        TRecordTime& time,
-                                        TEventValue& eventvalue,
-                                        double& decimals ) const
+inline bool TraceBodyIO_csv::readCommon( const ResourceModel<>& whichResourceModel,
+                                         istringstream& line,
+                                         TCPUOrder& CPU,
+                                         TApplOrder& appl,
+                                         TTaskOrder& task,
+                                         TThreadOrder& thread,
+                                         TRecordTime& begintime,
+                                         TRecordTime& time,
+                                         TEventValue& eventvalue,
+                                         double& decimals ) const
 { 
-  static ProcessModel::ThreadLocation lastATT = { 0, 0, 0 };
+  static ProcessModel<>::ThreadLocation lastATT = { 0, 0, 0 };
 
   std::getline( line, tmpstring, '.' ); 
 #ifdef USE_ATOLL
@@ -319,14 +263,14 @@ inline bool TraceBodyIO_csv::readCommon( istringstream& line,
   }
 #endif
 
-  ProcessModel::ThreadLocation currATT = { appl, task, thread };
+  ProcessModel<>::ThreadLocation currATT = { appl, task, thread };
   if ( !( currATT == lastATT ) )
   {
     lastATT = currATT;
     --currATT.appl;
     --currATT.task;
     --currATT.thread;
-    processModel->addApplTaskThread( currATT );
+    myProcessModel->addApplTaskThread( currATT );
   }
 
 
@@ -381,115 +325,4 @@ inline bool TraceBodyIO_csv::readCommon( istringstream& line,
   }
 #endif
   return true;
-}
-
-bool TraceBodyIO_csv::updateATT( TApplOrder &appl, TTaskOrder &task, TThreadOrder &thread ) const
-{ 
-}
-
-/**************************
-  Write records functions
-***************************/
-bool TraceBodyIO_csv::writeState( const KTrace& whichTrace,
-                                 const MemoryTrace::iterator *record ) const
-{
-  if ( record->getType() & END )
-    return false;
-
-  ostr.clear();
-  ostr.str( "" );
-  ostr << fixed;
-  ostr << dec;
-  ostr.precision( 0 );
-
-  ostr << StateRecord << '\t';
-  writeCommon( ostr, whichTrace, record );
-  ostr << record->getStateEndTime() << '\t' << record->getState();
-
-  line += ostr.str();
-  return true;
-}
-
-
-bool TraceBodyIO_csv::writePendingMultiEvent( const KTrace& whichTrace ) const
-{ 
-  return true;
-}
-
-
-void TraceBodyIO_csv::appendEvent( const MemoryTrace::iterator *record ) const
-{ }
-
-
-bool TraceBodyIO_csv::writeComm( const KTrace& whichTrace,
-                                const MemoryTrace::iterator *record ) const
-{
-  TCommID commID;
-  TApplOrder recvAppl;
-  TTaskOrder recvTask;
-  TThreadOrder recvThread;
-
-  ostr.clear();
-  ostr.str( "" );
-  ostr << fixed;
-  ostr << dec;
-  ostr.precision( 0 );
-
-  if ( !( record->getType() == ( COMM + LOG + SEND ) ) )
-    return false;
-
-  commID = record->getCommIndex();
-
-  ostr << CommRecord << '\t';
-  writeCommon( ostr, whichTrace, record );
-  ostr << whichTrace.getPhysicalSend( commID ) << '\t';
-  if ( whichTrace.existResourceInfo() )
-    ostr << whichTrace.getReceiverCPU( commID ) << '\t';
-  else
-    ostr << '0' << '\t';
-  whichTrace.getThreadLocation( whichTrace.getReceiverThread( commID ),
-                                recvAppl, recvTask, recvThread );
-  ostr << recvAppl + 1 << '\t' << recvTask + 1 << '\t' << recvThread + 1 << '\t';
-  ostr << whichTrace.getLogicalReceive( commID ) << '\t';
-  ostr << whichTrace.getPhysicalReceive( commID ) << '\t';
-
-  ostr << whichTrace.getCommSize( commID ) << '\t';
-  ostr << whichTrace.getCommTag( commID );
-
-  line += ostr.str();
-  return true;
-}
-
-
-bool TraceBodyIO_csv::writeGlobalComm( const KTrace& whichTrace,
-                                      const MemoryTrace::iterator *record ) const
-{
-  return true;
-}
-
-
-void TraceBodyIO_csv::writeCommon( ostringstream& line,
-                                  const KTrace& whichTrace,
-                                  const MemoryTrace::iterator *record ) const
-{
-  TApplOrder appl;
-  TTaskOrder task;
-  TThreadOrder thread;
-
-  if ( whichTrace.existResourceInfo() )
-    line << record->getCPU() << '\t';
-  else
-    line << '0' << '\t';
-
-  whichTrace.getThreadLocation( record->getThread(), appl, task, thread );
-  line << appl + 1 << '\t' << task + 1 << '\t' << thread + 1 << '\t';
-  line << record->getTime() << '\t';
-}
-
-
-bool TraceBodyIO_csv::sameMultiEvent( const MemoryTrace::iterator *record ) const
-{
-  return ( multiEventCommonInfo.cpu == record->getCPU() &&
-           multiEventCommonInfo.thread == record->getThread() &&
-           multiEventCommonInfo.time == record->getTime() );
 }

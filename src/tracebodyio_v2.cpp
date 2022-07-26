@@ -29,23 +29,23 @@
 using namespace std;
 
 
-
-TraceBodyIO_v2::TraceBodyIO_v2( Trace* trace )
-: whichTrace( trace )
-{}
-
 bool TraceBodyIO_v2::ordered() const
 {
   return true;
 }
 
-void TraceBodyIO_v2::read( TraceStream *file, MemoryBlocks& records,
-                           unordered_set<TState>& states,unordered_set<TEventType>& events,
-                           MetadataManager& traceInfo, TRecordTime& endTime  ) const
+void TraceBodyIO_v2::read( TraceStream& file,
+                           MemoryBlocks& records,
+                           const ProcessModel<>& whichProcessModel,
+                           const ResourceModel<>& whichResourceModel,
+                           unordered_set<TState>& states,
+                           unordered_set<TEventType>& events,
+                           MetadataManager& traceInfo,
+                           TRecordTime& endTime  ) const
 {
   string line;
 
-  file->getline( line );
+  file.getline( line );
 
   if ( line[0] == '#' || line.size() == 0 )
     return;
@@ -54,11 +54,11 @@ void TraceBodyIO_v2::read( TraceStream *file, MemoryBlocks& records,
   {
     case StateBeginRecord:
     case StateEndRecord:
-      readState( line, records, states );
+      readState( line, whichProcessModel, whichResourceModel, records, states );
       break;
 
     case EventRecord:
-      readEvent( line, records, events );
+      readEvent( line, whichProcessModel, whichResourceModel, records, events );
       break;
 
     case CommRecord:
@@ -66,13 +66,7 @@ void TraceBodyIO_v2::read( TraceStream *file, MemoryBlocks& records,
     case LogicalRecvRecord:
     case PhysicalSendRecord:
     case PhysicalRecvRecord:
-#ifdef BYTHREAD
-    case RemoteLogicalSendRecord:
-    case RemoteLogicalRecvRecord:
-    case RemotePhysicalSendRecord:
-    case RemotePhysicalRecvRecord:
-#endif
-      readComm( line, records );
+      readComm( line, whichProcessModel, whichResourceModel, records );
       break;
 
     case GlobalCommRecord:
@@ -87,10 +81,10 @@ void TraceBodyIO_v2::read( TraceStream *file, MemoryBlocks& records,
 }
 
 
-void TraceBodyIO_v2::write( fstream& whichStream,
-                            const KTrace& whichTrace,
-                            MemoryTrace::iterator *record,
-                            PRV_INT32 numIter ) const
+void TraceBodyIO_v2::write( std::fstream& whichStream,
+                            const ProcessModel<>& whichProcessModel,
+                            const ResourceModel<>& whichResourceModel,
+                            MemoryTrace::iterator *record ) const
 {
   string line;
   bool writeReady;
@@ -99,19 +93,15 @@ void TraceBodyIO_v2::write( fstream& whichStream,
   if ( type == EMPTYREC )
     return;
   else if ( type & STATE )
-    writeReady = writeState( line, whichTrace, record, numIter );
+    writeReady = writeState( line, whichProcessModel, whichResourceModel, record );
   else if ( type & EVENT )
-    writeReady = writeEvent( line, whichTrace, record, true, numIter );
+    writeReady = writeEvent( line, whichProcessModel, whichResourceModel, record, true );
   else if ( type & COMM )
-    writeReady = writeCommRecord( line, whichTrace, record, numIter );
+    writeReady = writeCommRecord( line, record );
   else if ( type & GLOBCOMM )
-    writeReady = writeGlobalComm( line, whichTrace, record, numIter );
+    writeReady = writeGlobalComm( line, whichProcessModel, record );
   else if ( type & RSEND || type & RRECV )
-#ifdef BYTHREAD
-    writeReady = writeCommRecord( line, whichTrace, record, numIter );
-#else
     writeReady = false;
-#endif
   else
   {
     writeReady = false;
@@ -127,9 +117,9 @@ void TraceBodyIO_v2::write( fstream& whichStream,
 
 
 void TraceBodyIO_v2::writeEvents( fstream& whichStream,
-                                  const KTrace& whichTrace,
-                                  vector<MemoryTrace::iterator *>& recordList,
-                                  PRV_INT32 numIter ) const
+                                  const ProcessModel<>& whichProcessModel,
+                                  const ResourceModel<>& whichResourceModel,
+                                  vector<MemoryTrace::iterator *>& recordList ) const
 {
   string line;
 
@@ -138,10 +128,10 @@ void TraceBodyIO_v2::writeEvents( fstream& whichStream,
     if ( i > 0 )
     {
       line += ':';
-      writeEvent( line, whichTrace, recordList[i], false, numIter );
+      writeEvent( line, whichProcessModel, whichResourceModel, recordList[i], false );
     }
     else // i == 0
-      writeEvent( line, whichTrace, recordList[i], true, numIter );
+      writeEvent( line, whichProcessModel, whichResourceModel, recordList[i], true );
   }
 
   whichStream << line << endl;
@@ -193,7 +183,11 @@ void TraceBodyIO_v2::writeCommInfo( fstream& whichStream,
 /**********************
   Read line functions
 ***********************/
-void TraceBodyIO_v2::readState( const string& line, MemoryBlocks& records, unordered_set<TState>& states ) const
+void TraceBodyIO_v2::readState( const string& line, 
+                                const ProcessModel<>& whichProcessModel,
+                                const ResourceModel<>& whichResourceModel,
+                                MemoryBlocks& records,
+                                unordered_set<TState>& states ) const
 {
   string tmpstring;
   TCPUOrder CPU;
@@ -208,7 +202,7 @@ void TraceBodyIO_v2::readState( const string& line, MemoryBlocks& records, unord
   std::getline( strLine, tmpstring, ':' );
 
   // Read the common info
-  if ( !readCommon( strLine, CPU, thread, time ) )
+  if ( !readCommon( strLine, whichProcessModel, whichResourceModel, CPU, thread, time ) )
   {
     cerr << "No logging system yet. TraceBodyIO_v2::readState()" << endl;
     cerr << "Error reading state record." << endl;
@@ -253,7 +247,10 @@ void TraceBodyIO_v2::readState( const string& line, MemoryBlocks& records, unord
 }
 
 
-void TraceBodyIO_v2::readEvent( const string& line, MemoryBlocks& records,
+void TraceBodyIO_v2::readEvent( const string& line,
+                                const ProcessModel<>& whichProcessModel,
+                                const ResourceModel<>& whichResourceModel,
+                                MemoryBlocks& records,
                                 unordered_set<TEventType>& events ) const
 {
   string tmpstring;
@@ -269,7 +266,7 @@ void TraceBodyIO_v2::readEvent( const string& line, MemoryBlocks& records,
   std::getline( strLine, tmpstring, ':' );
 
   // Read the common info
-  if ( !readCommon( strLine, CPU, thread, time ) )
+  if ( !readCommon( strLine, whichProcessModel, whichResourceModel, CPU, thread, time ) )
   {
     cerr << "No logging system yet. TraceBodyIO_v2::readEvent()" << endl;
     cerr << "Error reading event record." << endl;
@@ -312,7 +309,10 @@ void TraceBodyIO_v2::readEvent( const string& line, MemoryBlocks& records,
 }
 
 
-void TraceBodyIO_v2::readComm( const string& line, MemoryBlocks& records ) const
+void TraceBodyIO_v2::readComm( const string& line,
+                               const ProcessModel<>& whichProcessModel,
+                               const ResourceModel<>& whichResourceModel,
+                               MemoryBlocks& records ) const
 {
   string tmpstring;
   TCPUOrder CPU;
@@ -335,7 +335,7 @@ void TraceBodyIO_v2::readComm( const string& line, MemoryBlocks& records ) const
   if ( line[0] == CommRecord )
   {
     // Read the common info
-    if ( !readCommon( strLine, CPU, thread, logSend ) )
+    if ( !readCommon( strLine, whichProcessModel, whichResourceModel, CPU, thread, logSend ) )
     {
       cerr << "No logging system yet. TraceBodyIO_v2::readComm()" << endl;
       cerr << "Error reading communication record." << endl;
@@ -353,8 +353,7 @@ void TraceBodyIO_v2::readComm( const string& line, MemoryBlocks& records ) const
       return;
     }
 
-    if ( !readCommon( strLine, remoteCPU, remoteThread,
-                      logReceive ) )
+    if ( !readCommon( strLine, whichProcessModel, whichResourceModel, remoteCPU, remoteThread, logReceive ) )
     {
       cerr << "No logging system yet. TraceBodyIO_v2::readComm()" << endl;
       cerr << "Error reading communication record." << endl;
@@ -444,35 +443,6 @@ void TraceBodyIO_v2::readComm( const string& line, MemoryBlocks& records ) const
         records.setThread( records.getReceiverThread( commid ) );
         break;
 
-#ifdef BYTHREAD
-      case RemoteLogicalSendRecord:
-        records.setType( RSEND + LOG );
-        records.setTime( records.getLogicalSend( commid ) );
-        records.setCPU( records.getReceiverCPU( commid ) );
-        records.setThread( records.getReceiverThread( commid ) );
-        break;
-
-      case RemoteLogicalRecvRecord:
-        records.setType( RRECV + LOG );
-        records.setTime( records.getLogicalReceive( commid ) );
-        records.setCPU( records.getSenderCPU( commid ) );
-        records.setThread( records.getSenderThread( commid ) );
-        break;
-
-      case RemotePhysicalSendRecord:
-        records.setType( RSEND + PHY );
-        records.setTime( records.getPhysicalSend( commid ) );
-        records.setCPU( records.getReceiverCPU( commid ) );
-        records.setThread( records.getReceiverThread( commid ) );
-        break;
-
-      case RemotePhysicalRecvRecord:
-        records.setType( RRECV + PHY );
-        records.setTime( records.getPhysicalReceive( commid ) );
-        records.setCPU( records.getSenderCPU( commid ) );
-        records.setThread( records.getSenderThread( commid ) );
-        break;
-#endif
     }
     records.setCommIndex( commid );
   }
@@ -484,6 +454,8 @@ void TraceBodyIO_v2::readGlobalComm( const string& line, MemoryBlocks& records )
 
 
 bool TraceBodyIO_v2::readCommon( istringstream& line,
+                                 const ProcessModel<>& whichProcessModel,
+                                 const ResourceModel<>& whichResourceModel,
                                  TCPUOrder& CPU,
                                  TThreadOrder& thread,
                                  TRecordTime& time ) const
@@ -497,6 +469,9 @@ bool TraceBodyIO_v2::readCommon( istringstream& line,
     return false;
   }
 
+  if ( !whichResourceModel.isValidGlobalCPU( CPU ) )
+    return false;
+
   std::getline( line, tmpstring, ':' );
   istringstream threadStream( tmpstring );
   if ( !( threadStream >> thread ) )
@@ -504,7 +479,7 @@ bool TraceBodyIO_v2::readCommon( istringstream& line,
     return false;
   }
 
-  if ( !processModel->isValidThread( thread - 1 ) )
+  if ( !whichProcessModel.isValidThread( thread - 1 ) )
     return false;
 
   std::getline( line, tmpstring, ':' );
@@ -522,9 +497,9 @@ bool TraceBodyIO_v2::readCommon( istringstream& line,
   Write records functions
 ***************************/
 bool TraceBodyIO_v2::writeState( string& line,
-                                 const KTrace& whichTrace,
-                                 MemoryTrace::iterator *record,
-                                 PRV_INT32 numIter ) const
+                                 const ProcessModel<>& whichProcessModel,
+                                 const ResourceModel<>& whichResourceModel,
+                                 MemoryTrace::iterator *record ) const
 {
   ostringstream ostr;
   ostr << fixed;
@@ -535,8 +510,8 @@ bool TraceBodyIO_v2::writeState( string& line,
     ostr << StateBeginRecord << ':';
   else if ( record->getType() == ( STATE + END ) )
     ostr << StateEndRecord << ':';
-  writeCommon( ostr, whichTrace, record, numIter );
-  ostr << ( record->getStateEndTime() + ( whichTrace.getEndTime() * numIter ) );
+  writeCommon( ostr, whichProcessModel, whichResourceModel, record );
+  ostr << record->getStateEndTime();
   ostr << ':' << record->getState();
 
   line += ostr.str();
@@ -545,10 +520,10 @@ bool TraceBodyIO_v2::writeState( string& line,
 
 
 bool TraceBodyIO_v2::writeEvent( string& line,
-                                 const KTrace& whichTrace,
+                                 const ProcessModel<>& whichProcessModel,
+                                 const ResourceModel<>& whichResourceModel,
                                  MemoryTrace::iterator *record,
-                                 bool needCommons,
-                                 PRV_INT32 numIter ) const
+                                 bool needCommons ) const
 {
   TRecordType firstType;
   TRecordTime firstTime;
@@ -561,7 +536,7 @@ bool TraceBodyIO_v2::writeEvent( string& line,
   if ( needCommons )
   {
     ostr << EventRecord << ':';
-    writeCommon( ostr, whichTrace, record, numIter );
+    writeCommon( ostr, whichProcessModel, whichResourceModel, record );
   }
   ostr << record->getEventType() << ':' << record->getEventValueAsIs();
   firstType = record->getType();
@@ -583,9 +558,7 @@ bool TraceBodyIO_v2::writeEvent( string& line,
 
 
 bool TraceBodyIO_v2::writeCommRecord( string& line,
-                                      const KTrace& whichTrace,
-                                      MemoryTrace::iterator *record,
-                                      PRV_INT32 numIter ) const
+                                      MemoryTrace::iterator *record ) const
 {
   ostringstream ostr;
   TRecordType type;
@@ -603,17 +576,7 @@ bool TraceBodyIO_v2::writeCommRecord( string& line,
     ostr << PhysicalSendRecord << ':';
   else if ( type == ( COMM + PHY + RECV ) )
     ostr << PhysicalRecvRecord << ':';
-#ifdef BYTHREAD
-  else if ( type == ( LOG + RSEND ) )
-    ostr << RemoteLogicalSendRecord << ':';
-  else if ( type == ( LOG + RRECV ) )
-    ostr << RemoteLogicalRecvRecord << ':';
-  else if ( type == ( PHY + RSEND ) )
-    ostr << RemotePhysicalSendRecord << ':';
-  else if ( type == ( PHY + RRECV ) )
-    ostr << RemotePhysicalRecvRecord << ':';
-#endif
-  ostr << ( record->getCommIndex() + ( whichTrace.getTotalComms() * numIter ) );
+  ostr << record->getCommIndex();
 
   line += ostr.str();
   return true;
@@ -621,26 +584,25 @@ bool TraceBodyIO_v2::writeCommRecord( string& line,
 
 
 bool TraceBodyIO_v2::writeGlobalComm( string& line,
-                                      const KTrace& whichTrace,
-                                      MemoryTrace::iterator *record,
-                                      PRV_INT32 numIter ) const
+                                      const ProcessModel<>& whichProcessModel,
+                                      MemoryTrace::iterator *record ) const
 {
   return true;
 }
 
 
 void TraceBodyIO_v2::writeCommon( ostringstream& line,
-                                  const KTrace& whichTrace,
-                                  MemoryTrace::iterator *record,
-                                  PRV_INT32 numIter ) const
+                                  const ProcessModel<>& whichProcessModel,
+                                  const ResourceModel<>& whichResourceModel,
+                                  MemoryTrace::iterator *record ) const
 {
-  if ( whichTrace.existResourceInfo() )
+  if ( whichResourceModel.isReady() )
     line << record->getCPU() + 1 << ':';
   else
     line << '0' << ':';
 
   line << record->getThread() + 1 << ':';
-  line << ( record->getTime() + ( whichTrace.getEndTime() * numIter ) ) << ':';
+  line << ( record->getTime() ) << ':';
 }
 
 

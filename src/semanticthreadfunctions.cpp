@@ -1168,7 +1168,7 @@ void SendBandWidth::init( KTimeline *whichWindow )
 
   bandwidth.clear();
 
-  if ( whichWindow->getLevel() >= SYSTEM )
+  if ( whichWindow->getLevel() >= TTraceLevel::SYSTEM )
     size = whichWindow->getTrace()->totalCPUs();
   else
     size = whichWindow->getTrace()->totalThreads();
@@ -1375,7 +1375,7 @@ void RecvBandWidth::init( KTimeline *whichWindow )
 
   bandwidth.clear();
 
-  if ( whichWindow->getLevel() >= SYSTEM )
+  if ( whichWindow->getLevel() >= TTraceLevel::SYSTEM )
     size = whichWindow->getTrace()->totalCPUs();
   else
     size = whichWindow->getTrace()->totalThreads();

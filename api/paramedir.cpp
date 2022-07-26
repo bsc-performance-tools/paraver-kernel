@@ -54,11 +54,6 @@
 #include "eventdrivencutter.h"
 #include "eventtranslator.h"
 
-#ifdef OLD_PCFPARSER
-#include "utils/pcfparser/old/ParaverTraceConfig.h"
-#else
-#include "utils/pcfparser/UIParaverTraceConfig.h"
-#endif
 
 // PARAMEDIR OPTIONS
 typedef struct TOptionParamedir
@@ -158,10 +153,6 @@ TOptionParamedir definedOption[] =
 
 // Options
 std::map< TOptionID, TOptionParamedir > option;
-
-#ifdef BYTHREAD
-PRV_INT32 numIter = 1; // DUMP_TRACE by THREAD
-#endif
 
 // PRVs
 string sourceTraceName( "" );
@@ -417,24 +408,6 @@ void registerTool( TOptionID whichOption,
 }
 
 
-#ifdef BYTHREAD
-void getDumpIterations( int &numArg, char *argv[] )
-{
-  if ( option[ DUMP_TRACE ].active )
-  {
-    ++numArg;
-    string strNumIter( argv[ numArg ] );
-    std::stringstream tmpNumIter( strNumIter );
-    if( !( tmpNumIter >> numIter ) )
-    {
-      numIter = 1;
-      --numArg;
-    }
-  }
-}
-#endif
-
-
 bool parseArguments( KernelConnection *myKernel,
                      int argc,
                      char *arguments[],
@@ -479,9 +452,6 @@ bool parseArguments( KernelConnection *myKernel,
 
       readParameter = option[ currentOption ].numParameters;
       registerTool( currentOption, registeredTool, needXMLOptionsFile );
-#ifdef BYTHREAD
-      getDumpIterations( numArg, arguments );
-#endif
     }
     else if ( readParameter > 0 )
     {
@@ -605,12 +575,6 @@ string applyFilters( KernelConnection *myKernel,
   vector< TEventType > typesWithValueZero;
   EventLabels labels;
   std::map< TEventValue, string > currentEventValues;
-#ifdef OLD_PCFPARSER
-  ParaverTraceConfig *config;
-#else
-  UIParaverTraceConfig *config;
-#endif
-  FILE *pcfFile;
 
   // Name initializations
   if ( outputTraceName.empty() )
@@ -883,7 +847,10 @@ void testReadWritePerformance( KernelConnection *myKernel )
          ( it->getType() == COMM + LOG + SEND )
        )
     {
-      body.write( outputTrace, myTrace, it );
+      body.write( outputTrace,
+                  myTrace->getProcessModel(),
+                  myTrace->getResourceModel(),
+                  it );
     }
 
     ++(*it);
@@ -921,7 +888,10 @@ void testNewIteratorCloneMethod( KernelConnection *myKernel )
       //MemoryTrace::iterator *itClone = myTrace.copyIterator( it );
       //MemoryTrace::iterator *itClone = myTrace.copyThreadIterator( it );
       MemoryTrace::iterator *itClone = it->clone();
-      body.write( outputTrace, myTrace, itClone );
+      body.write( outputTrace,
+                  myTrace->getProcessModel(),
+                  myTrace->getResourceModel(),
+                  itClone );
       delete itClone;
     }
 
@@ -1055,11 +1025,7 @@ int main( int argc, char *argv[] )
           }
 
           if ( option[ DUMP_TRACE ].active )
-      #ifdef BYTHREAD
-            trace->dumpFile( sourceTraceName + ".new.bythread", numIter );
-      #else
             trace->dumpFile( sourceTraceName + ".new.global" );
-      #endif
 
           loadCFGs( myKernel );
 

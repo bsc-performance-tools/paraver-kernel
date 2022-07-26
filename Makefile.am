@@ -5,7 +5,31 @@ SUBDIRS = \
 	api \
 	utils
 
+nobase_include_HEADERS = \
+	utils/traceparser/pcffileparser.cpp \
+	utils/traceparser/pcffileparser.h \
+	utils/traceparser/processmodelappl.h \
+	utils/traceparser/processmodel.cpp \
+	utils/traceparser/processmodel.h \
+	utils/traceparser/processmodeltask.h \
+	utils/traceparser/processmodelthread.h \
+	utils/traceparser/prvgetline.h \
+	utils/traceparser/resourcemodel.cpp \
+	utils/traceparser/resourcemodelcpu.h \
+	utils/traceparser/resourcemodel.h \
+	utils/traceparser/resourcemodelnode.h \
+	utils/traceparser/rowfileparser.cpp \
+	utils/traceparser/rowfileparser.h \
+	utils/traceparser/tracebodyio.h \
+	utils/traceparser/tracebodyio_v1.cpp \
+	utils/traceparser/tracebodyio_v1.h \
+	utils/traceparser/traceheader.h \
+  utils/traceparser/tracelabels.h \
+	utils/traceparser/tracetypes.h
+
 bin_PROGRAMS = paramedir.bin
+
+paramedir_bin_CPPFLAGS = -I$(top_srcdir)/utils/traceparser -I$(top_srcdir)/api -I$(top_srcdir)/include
 
 paramedir_bin_SOURCES = \
 	api/paramedir.cpp

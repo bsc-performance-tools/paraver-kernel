@@ -238,7 +238,7 @@ KRecordList *IntervalDerived::calcPrev( KRecordList *displayList, bool initCalc 
 }
 
 
-TWindowLevel IntervalDerived::getWindowLevel() const
+TTraceLevel IntervalDerived::getWindowLevel() const
 {
   return window->getLevel();
 }
@@ -257,7 +257,7 @@ bool IntervalDerived::IsDerivedWindow() const
 }
 
 
-TWindowLevel IntervalDerived::getComposeLevel( TWindowLevel whichLevel ) const
+TWindowLevel IntervalDerived::getComposeLevel( TTraceLevel whichLevel ) const
 {
   return window->getComposeLevel( whichLevel );
 }
@@ -295,23 +295,23 @@ void IntervalDerived::setChildren()
     window2 = (KTimeline *) window->getParent( 0 );
   }
 
-  if ( window1->getLevel() == APPLICATION )
+  if ( window1->getLevel() == TTraceLevel::APPLICATION )
   {
     tmpAppl = order;
   }
-  else if ( window1->getLevel() == TASK )
+  else if ( window1->getLevel() == TTraceLevel::TASK )
   {
     window1->getTrace()->getTaskLocation( order, tmpAppl, tmpTask );
   }
-  else if ( window1->getLevel() == THREAD )
+  else if ( window1->getLevel() == TTraceLevel::THREAD )
   {
     window1->getTrace()->getThreadLocation( order, tmpAppl, tmpTask, tmpThread );
   }
-  else if ( window1->getLevel() == NODE )
+  else if ( window1->getLevel() == TTraceLevel::NODE )
   {
     tmpNode = order;
   }
-  else if ( window1->getLevel() == CPU )
+  else if ( window1->getLevel() == TTraceLevel::CPU )
   {
     window1->getTrace()->getCPULocation( order, tmpNode, tmpCPU );
   }
@@ -324,7 +324,7 @@ void IntervalDerived::setChildren()
   else
     childIntervals.push_back( window1->getLevelInterval( TOPCOMPOSE1, order, true ) );
 
-  if ( window2->getLevel() == WORKLOAD )
+  if ( window2->getLevel() == TTraceLevel::WORKLOAD )
   {
     if( window->getShift( 1 ) != 0 )
     {
@@ -334,7 +334,7 @@ void IntervalDerived::setChildren()
     else
       childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1, 0, true ) );
   }
-  else if ( window2->getLevel() == APPLICATION )
+  else if ( window2->getLevel() == TTraceLevel::APPLICATION )
   {
     if( window->getShift( 1 ) != 0 )
     {
@@ -344,7 +344,7 @@ void IntervalDerived::setChildren()
     else
       childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1, tmpAppl, true ) );
   }
-  else if ( window2->getLevel() == TASK )
+  else if ( window2->getLevel() == TTraceLevel::TASK )
   {
     if( window->getShift( 1 ) != 0 )
     {
@@ -357,7 +357,7 @@ void IntervalDerived::setChildren()
       childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1,
                                 window2->getTrace()->getGlobalTask( tmpAppl, tmpTask ), true ) );
   }
-  else if ( window2->getLevel() == THREAD )
+  else if ( window2->getLevel() == TTraceLevel::THREAD )
   {
     if( window->getShift( 1 ) != 0 )
     {
@@ -371,7 +371,7 @@ void IntervalDerived::setChildren()
                                                            window2->getTrace()->getGlobalThread( tmpAppl, tmpTask, tmpThread ),
                                                            true ) );
   }
-  else if ( window2->getLevel() == SYSTEM )
+  else if ( window2->getLevel() == TTraceLevel::SYSTEM )
   {
     if( window->getShift( 1 ) != 0 )
     {
@@ -381,7 +381,7 @@ void IntervalDerived::setChildren()
     else
       childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1, 0, true ) );
   }
-  else if ( window2->getLevel() == NODE )
+  else if ( window2->getLevel() == TTraceLevel::NODE )
   {
     if( window->getShift( 1 ) != 0 )
     {
@@ -391,7 +391,7 @@ void IntervalDerived::setChildren()
     else
       childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1, tmpNode, true ) );
   }
-  else if ( window2->getLevel() == CPU )
+  else if ( window2->getLevel() == TTraceLevel::CPU )
   {
     if( window->getShift( 1 ) != 0 )
     {

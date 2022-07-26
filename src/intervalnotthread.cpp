@@ -166,7 +166,7 @@ KRecordList *IntervalNotThread::calcPrev( KRecordList *displayList, bool initCal
 }
 
 
-TWindowLevel IntervalNotThread::getWindowLevel() const
+TTraceLevel IntervalNotThread::getWindowLevel() const
 {
   return window->getLevel();
 }
@@ -185,7 +185,7 @@ bool IntervalNotThread::IsDerivedWindow() const
 }
 
 
-TWindowLevel IntervalNotThread::getComposeLevel( TWindowLevel whichLevel ) const
+TWindowLevel IntervalNotThread::getComposeLevel( TTraceLevel whichLevel ) const
 {
   return window->getComposeLevel( whichLevel );
 }

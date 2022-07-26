@@ -1902,8 +1902,8 @@ bool WindowLevel::parseLine( KernelConnection *whichKernel, istringstream& line,
 
   getline( line, strLevel, ' ' );
 
-  TWindowLevel tmpLevel = stringToLevel( strLevel );
-  if ( tmpLevel >= SYSTEM && tmpLevel <= CPU && !whichTrace->existResourceInfo() )
+  TTraceLevel tmpLevel = static_cast<TTraceLevel>( stringToLevel( strLevel ) );
+  if ( tmpLevel >= TTraceLevel::SYSTEM && tmpLevel <= TTraceLevel::CPU && !whichTrace->existResourceInfo() )
     return false;
 
   windows[ windows.size() - 1 ]->setLevel( tmpLevel );
@@ -1914,7 +1914,7 @@ bool WindowLevel::parseLine( KernelConnection *whichKernel, istringstream& line,
 void WindowLevel::printLine( ofstream& cfgFile,
                              const vector<Timeline *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_LEVEL << " " << levelToString( ( *it )->getLevel() ) << endl;
+  cfgFile << OLDCFG_TAG_WNDW_LEVEL << " " << levelToString( static_cast<TWindowLevel>( ( *it )->getLevel() ) ) << endl;
 }
 
 
@@ -2136,7 +2136,7 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
 {
   string strVoid;
   string strLevel;
-  TWindowLevel level;
+  TTraceLevel level;
   string strNumObjects;
   TObjectOrder numObjects;
   vector<bool> selObjects;
@@ -2147,15 +2147,15 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
     return false;
 
   getline( line, strLevel, ' ' );
-  level = stringToLevel( strLevel );
+  level = static_cast<TTraceLevel>( stringToLevel( strLevel ) );
 
   getline( line, strVoid, ' ' );
 
   switch ( level )
   {
-    case APPLICATION:
+    case TTraceLevel::APPLICATION:
       {
-        win->getSelectedRows( APPLICATION, selObjects );
+        win->getSelectedRows( TTraceLevel::APPLICATION, selObjects );
         getline( line, strNumObjects, ',' );
         tmpNumObjects.str( strNumObjects );
         if ( !( tmpNumObjects >> numObjects ) )
@@ -2165,15 +2165,15 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
         getline( line, strVoid, '{' );
         if ( !genericParseObjects( line, numObjects, 0, selObjects, win->getLevel() == level ) )
           return false;
-        win->setSelectedRows( APPLICATION, selObjects );
+        win->setSelectedRows( TTraceLevel::APPLICATION, selObjects );
       }
       break;
 
-    case TASK:
+    case TTraceLevel::TASK:
       {
         string strAppl;
         TApplOrder appl;
-        win->getSelectedRows( TASK, selObjects );
+        win->getSelectedRows( TTraceLevel::TASK, selObjects );
         getline( line, strAppl, ',' );
         istringstream tmpAppl( strAppl );
         if ( !( tmpAppl >> appl ) )
@@ -2195,15 +2195,15 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
         TObjectOrder beginObject = win->getTrace()->getGlobalTask( appl, 0 );
         if ( !genericParseObjects( line, numObjects, beginObject, selObjects, win->getLevel() == level ) )
           return false;
-        win->setSelectedRows( TASK, selObjects );
+        win->setSelectedRows( TTraceLevel::TASK, selObjects );
       }
       break;
 
-    case THREAD:
+    case TTraceLevel::THREAD:
       {
         string strAppl, strTask;
         TApplOrder appl, task;
-        win->getSelectedRows( THREAD, selObjects );
+        win->getSelectedRows( TTraceLevel::THREAD, selObjects );
         getline( line, strAppl, ',' );
         istringstream tmpAppl( strAppl );
         if ( !( tmpAppl >> appl ) )
@@ -2234,13 +2234,13 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
         TObjectOrder beginObject = win->getTrace()->getGlobalThread( appl, task, 0 );
         if ( !genericParseObjects( line, numObjects, beginObject, selObjects, win->getLevel() == level ) )
           return false;
-        win->setSelectedRows( THREAD, selObjects );
+        win->setSelectedRows( TTraceLevel::THREAD, selObjects );
       }
       break;
 
-    case NODE:
+    case TTraceLevel::NODE:
       {
-        win->getSelectedRows( NODE, selObjects );
+        win->getSelectedRows( TTraceLevel::NODE, selObjects );
         getline( line, strNumObjects, ',' );
         tmpNumObjects.str( strNumObjects );
         if ( !( tmpNumObjects >> numObjects ) )
@@ -2251,15 +2251,15 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
         getline( line, strVoid, '{' );
         if ( !genericParseObjects( line, numObjects, 0, selObjects, win->getLevel() == level ) )
           return false;
-        win->setSelectedRows( NODE, selObjects );
+        win->setSelectedRows( TTraceLevel::NODE, selObjects );
       }
       break;
 
-    case CPU:
+    case TTraceLevel::CPU:
       {
         string strNode;
         TApplOrder node;
-        win->getSelectedRows( CPU, selObjects );
+        win->getSelectedRows( TTraceLevel::CPU, selObjects );
         getline( line, strNode, ',' );
         istringstream tmpNode( strNode );
         if ( !( tmpNode >> node ) )
@@ -2281,7 +2281,7 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
         TObjectOrder beginObject = win->getTrace()->getGlobalCPU( node, 1 );
         if ( !genericParseObjects( line, numObjects, beginObject, selObjects, win->getLevel() == level ) )
           return false;
-        win->setSelectedRows( CPU, selObjects );
+        win->setSelectedRows( TTraceLevel::CPU, selObjects );
       }
       break;
 
@@ -2320,9 +2320,9 @@ void writeAppl( ofstream& cfgFile,
 {
   vector<bool> selectedSet;
 
-  ( *it )->getSelectedRows( APPLICATION, selectedSet );
+  ( *it )->getSelectedRows( TTraceLevel::APPLICATION, selectedSet );
   cfgFile << OLDCFG_TAG_WNDW_OBJECT << " appl { " << selectedSet.size() << ", { ";
-  genericWriteObjects( cfgFile, selectedSet, ( *it )->getLevel() == APPLICATION );
+  genericWriteObjects( cfgFile, selectedSet, ( *it )->getLevel() == TTraceLevel::APPLICATION );
   cfgFile << " } }" << endl;
 }
 
@@ -2332,11 +2332,11 @@ void writeTask( ofstream& cfgFile,
 {
   vector<bool> selectedSet;
 
-  ( *it )->getSelectedRows( TASK, selectedSet,
+  ( *it )->getSelectedRows( TTraceLevel::TASK, selectedSet,
                             ( *it )->getTrace()->getFirstTask( whichAppl ),
                             ( *it )->getTrace()->getLastTask( whichAppl ) );
   cfgFile << OLDCFG_TAG_WNDW_OBJECT << " task { " << whichAppl << ", " << selectedSet.size() << ", { ";
-  genericWriteObjects( cfgFile, selectedSet, ( *it )->getLevel() == TASK );
+  genericWriteObjects( cfgFile, selectedSet, ( *it )->getLevel() == TTraceLevel::TASK );
   cfgFile << " } }" << endl;
 }
 
@@ -2347,14 +2347,14 @@ void writeTasks( ofstream& cfgFile,
   vector<TThreadOrder> tmpSelThreads;
   vector<bool> selectedAppl;
 
-  ( *it )->getSelectedRows( APPLICATION, selectedAppl );
+  ( *it )->getSelectedRows( TTraceLevel::APPLICATION, selectedAppl );
   for ( TApplOrder iAppl = 0; iAppl < ( *it )->getTrace()->totalApplications(); ++iAppl )
   {
     if ( !selectedAppl[ iAppl ] )
       continue;
     TTaskOrder begin = ( *it )->getTrace()->getFirstTask( iAppl );
     TTaskOrder last = ( *it )->getTrace()->getLastTask( iAppl );
-    ( *it )->getSelectedRows( TASK, tmpSel, begin, last );
+    ( *it )->getSelectedRows( TTraceLevel::TASK, tmpSel, begin, last );
     TApplOrder tmpAppl;
     TTaskOrder beginTask;
     TTaskOrder lastTask;
@@ -2362,7 +2362,7 @@ void writeTasks( ofstream& cfgFile,
     ( *it )->getTrace()->getTaskLocation( last, tmpAppl, lastTask );
     TThreadOrder beginThread = ( *it )->getTrace()->getFirstThread( iAppl, beginTask );
     TThreadOrder lastThread = ( *it )->getTrace()->getLastThread( iAppl, lastTask );
-    ( *it )->getSelectedRows( THREAD, tmpSelThreads, beginThread, lastThread );
+    ( *it )->getSelectedRows( TTraceLevel::THREAD, tmpSelThreads, beginThread, lastThread );
     if ( ( /*tmpSel.size() > 0  &&*/ tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
          || tmpSelThreads.size() != ( TObjectOrder )( lastThread - beginThread + 1 )
        )
@@ -2377,12 +2377,12 @@ void writeThread( ofstream& cfgFile,
 {
   vector<bool> selectedSet;
 
-  ( *it )->getSelectedRows( THREAD, selectedSet,
+  ( *it )->getSelectedRows( TTraceLevel::THREAD, selectedSet,
                             ( *it )->getTrace()->getFirstThread( whichAppl, whichTask ),
                             ( *it )->getTrace()->getLastThread( whichAppl, whichTask ) );
   cfgFile << OLDCFG_TAG_WNDW_OBJECT << " thread { " << whichAppl << ", ";
   cfgFile << whichTask << ", " << selectedSet.size() << ", { ";
-  genericWriteObjects( cfgFile, selectedSet, ( *it )->getLevel() == THREAD );
+  genericWriteObjects( cfgFile, selectedSet, ( *it )->getLevel() == TTraceLevel::THREAD );
   cfgFile << " } }" << endl;
 }
 
@@ -2393,21 +2393,21 @@ void writeThreads( ofstream& cfgFile,
   vector<bool> selectedAppl;
   vector<bool> selectedTask;
 
-  ( *it )->getSelectedRows( APPLICATION, selectedAppl );
+  ( *it )->getSelectedRows( TTraceLevel::APPLICATION, selectedAppl );
   for ( TApplOrder iAppl = 0; iAppl < ( *it )->getTrace()->totalApplications(); ++iAppl )
   {
     if ( !selectedAppl[ iAppl ] )
       continue;
     TTaskOrder beginTask = ( *it )->getTrace()->getFirstTask( iAppl );
     TTaskOrder lastTask = ( *it )->getTrace()->getLastTask( iAppl );
-    ( *it )->getSelectedRows( TASK, selectedTask, beginTask, lastTask );
+    ( *it )->getSelectedRows( TTraceLevel::TASK, selectedTask, beginTask, lastTask );
     for ( TTaskOrder iTask = beginTask; iTask <= lastTask; ++iTask )
     {
       if ( !selectedTask[ iTask - beginTask ] )
         continue;
       TTaskOrder begin = ( *it )->getTrace()->getFirstThread( iAppl, iTask - beginTask );
       TTaskOrder last = ( *it )->getTrace()->getLastThread( iAppl, iTask - beginTask );
-      ( *it )->getSelectedRows( THREAD, tmpSel, begin, last );
+      ( *it )->getSelectedRows( TTraceLevel::THREAD, tmpSel, begin, last );
       if ( /*tmpSel.size() > 0  &&*/ tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
         writeThread( cfgFile, it, iAppl, iTask - beginTask );
     }
@@ -2419,9 +2419,9 @@ void writeNode( ofstream& cfgFile,
 {
   vector<bool> selectedSet;
 
-  ( *it )->getSelectedRows( NODE, selectedSet );
+  ( *it )->getSelectedRows( TTraceLevel::NODE, selectedSet );
   cfgFile << OLDCFG_TAG_WNDW_OBJECT << " node { " << selectedSet.size() << ", { ";
-  genericWriteObjects( cfgFile, selectedSet, ( *it )->getLevel() == NODE );
+  genericWriteObjects( cfgFile, selectedSet, ( *it )->getLevel() == TTraceLevel::NODE );
   cfgFile << " } }" << endl;
 }
 
@@ -2431,11 +2431,11 @@ void writeCPU( ofstream& cfgFile,
 {
   vector<bool> selectedSet;
 
-  ( *it )->getSelectedRows( CPU, selectedSet,
+  ( *it )->getSelectedRows( TTraceLevel::CPU, selectedSet,
                             ( *it )->getTrace()->getFirstCPU( whichNode ) - 1,
                             ( *it )->getTrace()->getLastCPU( whichNode ) - 1 );
   cfgFile << OLDCFG_TAG_WNDW_OBJECT << " cpu { " << whichNode << ", " << selectedSet.size() << ", { ";
-  genericWriteObjects( cfgFile, selectedSet, ( *it )->getLevel() == CPU );
+  genericWriteObjects( cfgFile, selectedSet, ( *it )->getLevel() == TTraceLevel::CPU );
   cfgFile << " } }" << endl;
 }
 
@@ -2446,14 +2446,14 @@ void writeCPUs( ofstream& cfgFile,
   vector<TObjectOrder> tmpSelCPU;
   vector<bool> selectedNode;
 
-  ( *it )->getSelectedRows( NODE, selectedNode );
+  ( *it )->getSelectedRows( TTraceLevel::NODE, selectedNode );
   for ( TNodeOrder iNode = 0; iNode < ( *it )->getTrace()->totalNodes(); ++iNode )
   {
     if ( !selectedNode[ iNode ] )
       continue;
     TCPUOrder begin = ( *it )->getTrace()->getFirstCPU( iNode );
     TCPUOrder last = ( *it )->getTrace()->getLastCPU( iNode );
-    ( *it )->getSelectedRows( CPU, tmpSel, begin, last );
+    ( *it )->getSelectedRows( TTraceLevel::CPU, tmpSel, begin, last );
     if ( tmpSel.size() > 0  && tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
       writeCPU( cfgFile, it, iNode );
   }
@@ -2466,28 +2466,28 @@ void WindowObject::printLine( ofstream& cfgFile,
 
   switch ( ( *it )->getLevel() )
   {
-    case WORKLOAD:
-    case APPLICATION:
+    case TTraceLevel::WORKLOAD:
+    case TTraceLevel::APPLICATION:
       writeAppl( cfgFile, it );
       break;
 
-    case TASK:
+    case TTraceLevel::TASK:
       writeAppl( cfgFile, it );
       writeTasks( cfgFile, it );
       break;
 
-    case THREAD:
+    case TTraceLevel::THREAD:
       writeAppl( cfgFile, it );
       writeTasks( cfgFile, it );
       writeThreads( cfgFile, it );
       break;
 
-    case SYSTEM:
-    case NODE:
+    case TTraceLevel::SYSTEM:
+    case TTraceLevel::NODE:
       writeNode( cfgFile, it );
       break;
 
-    case CPU:
+    case TTraceLevel::CPU:
       writeNode( cfgFile, it );
       writeCPUs( cfgFile, it );
       break;
@@ -4348,7 +4348,7 @@ void Analyzer2DAccumulator::printLine( ofstream& cfgFile,
 {
   cfgFile << OLDCFG_TAG_AN2D_ACCUMULATOR << " ";
   if ( ( *it )->isCommunicationStat( ( *it )->getCurrentStat() ) )
-    cfgFile << levelToStringHisto( ( *it )->getControlWindow()->getLevel() );
+    cfgFile << levelToStringHisto( static_cast<TWindowLevel>( ( *it )->getControlWindow()->getLevel() ) );
   else
     cfgFile << OLDCFG_VAL_AN2D_ACCUM_SEMANTIC;
   cfgFile << endl;

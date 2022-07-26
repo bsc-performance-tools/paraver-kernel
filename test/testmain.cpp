@@ -35,11 +35,11 @@ int main( int argc, char *argv[] )
 
   cout << "For process model " << testStringProcessModel.str() << endl;
 
-  ProcessModel testProcessModel;
+   ProcessModel<> testProcessModel;
 
   try
   {
-    testProcessModel = ProcessModel( testStringProcessModel );
+    testProcessModel = ProcessModel<>( testStringProcessModel );
 
     if ( testProcessModel.isReady() )
     {
@@ -63,11 +63,11 @@ int main( int argc, char *argv[] )
 
   cout << "For process model " << testStringProcessModel2.str() << endl;
 
-  ProcessModel testBadProcessModel;
+   ProcessModel<> testBadProcessModel;
 
   try
   {
-    testBadProcessModel = ProcessModel( testStringProcessModel2 );
+    testBadProcessModel = ProcessModel<>( testStringProcessModel2 );
 
     if ( testBadProcessModel.isReady() )
       cout << testBadProcessModel.totalApplications() << endl;

@@ -42,11 +42,6 @@
 #include "traceoptions.h"
 #include "ParaverMetadataManager.h"
 #include "ktrace.h"
-#ifdef OLD_PCFPARSER
-#include "utils/pcfparser/old/ParaverTraceConfig.h"
-#else
-#include "utils/pcfparser/UIParaverTraceConfig.h"
-#endif
 
 using std::set;
 
@@ -491,7 +486,10 @@ bool TraceWriterAction::execute( MemoryTrace::iterator *it  )
        ( eofParsed )
      )
   {
-    body.write( outputTrace, *tmpSequence->getCurrentTrace(), it );
+    body.write( outputTrace,
+                tmpSequence->getCurrentTrace()->getProcessModel(),
+                tmpSequence->getCurrentTrace()->getResourceModel(),
+                it );
   }
 
   if ( eofParsed && outputTrace.is_open() )
@@ -601,7 +599,10 @@ bool EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
        ( eofParsed )
      )
   {
-    body.write( *outputTraces[ currentFile ], *tmpSequence->getCurrentTrace(), it );
+    body.write( *outputTraces[ currentFile ],
+                tmpSequence->getCurrentTrace()->getProcessModel(),
+                tmpSequence->getCurrentTrace()->getResourceModel(),
+                it );
   }
 
   if ( eofParsed )
@@ -647,19 +648,6 @@ bool TraceSortAction::execute( std::string whichTrace )
  ********                  PCFEventMergerAction                      ********
  ****************************************************************************/
 
-void cloneValuesIntoGroup( vector< unsigned int >::iterator begin,
-                           vector< unsigned int >::iterator end,
-                           unsigned int oldValue,
-                           unsigned int newValue,
-                           map< TTypeValuePair, TTypeValuePair > &translation )
-{
-  for ( vector< unsigned int >::iterator it = begin; it != end; ++it )
-  {
-    translation[ TTypeValuePair( *it, oldValue ) ] = TTypeValuePair( *it, newValue );
-  }
-}
-
-
 vector<TSequenceStates> PCFEventMergerAction::getStateDependencies() const
 {
   vector<TSequenceStates> tmpStates;
@@ -677,7 +665,6 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
   TraceEditSequence *tmpSequence = mySequence;
   bool translationOk = false;
 
-#ifndef OLD_PCFPARSER
   // Get new tracename
   std::string newName = ( (OutputTraceFileNameState *)tmpSequence->getState( TSequenceStates::outputTraceFileNameState ) )->getData();
   if ( newName.empty() )
@@ -708,81 +695,41 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
                                                            verbose, keepOpen, exitProgram ) )
     return false;
 
-  // Read reference pcf
-#ifdef OLD_PCFPARSER
-  ParaverTraceConfig *referenceTraceConfig = new ParaverTraceConfig( referencePCFFile );
-  referenceTraceConfig->parse();
-#else
-  UIParaverTraceConfig *referenceTraceConfig = new UIParaverTraceConfig();
-  referenceTraceConfig->parse( referencePCFFile );
-#endif
-
-  // Read source pcf
-#ifdef OLD_PCFPARSER
-  ParaverTraceConfig *sourceTraceConfig = new ParaverTraceConfig( sourceTrace );
-  sourceTraceConfig->parse();
-#else
-  UIParaverTraceConfig *sourceTraceConfig = new UIParaverTraceConfig();
-  sourceTraceConfig->parse( sourceTrace );
-#endif
+  PCFFileParser<> referenceTraceConfig( referencePCFFile );
+  PCFFileParser<> sourceTraceConfig( sourceTrace );
 
   // Translation algorithm
   map< TTypeValuePair, TTypeValuePair > translation;
 
-  vector< vector< unsigned int > > sourceGroupedTypes = sourceTraceConfig->getGroupedEventTypes();
-  vector< unsigned int > tmpCodes = referenceTraceConfig->getEventTypes();
+  vector< TEventType > sourceTypes;
+  sourceTraceConfig.getEventTypes( sourceTypes );
+  vector< TEventType > tmpCodes;
+  referenceTraceConfig.getEventTypes( tmpCodes );
   set< unsigned int > referenceTypes;
   referenceTypes.insert( tmpCodes.begin(), tmpCodes.end() );
 
-  for ( vector< vector< unsigned int > >::iterator itGroupType = sourceGroupedTypes.begin(); itGroupType != sourceGroupedTypes.end(); ++itGroupType )
+  for ( auto itSourceType : sourceTypes )
   {
-    vector< unsigned int >::iterator itSourceType;
-    itSourceType = (*itGroupType).begin();
-
-    if ( referenceTypes.find( *itSourceType ) != referenceTypes.end() )
+    if ( referenceTypes.find( itSourceType ) != referenceTypes.end() )
     {
-      vector< unsigned int > sourceValues;
-      try
-      {
-        sourceValues = sourceTraceConfig->getEventValues( *itSourceType );
-      }
-#ifdef OLD_PCFPARSER
-      catch( libparaver::ParaverTraceConfig::value_not_found )
-#else
-      catch( libparaver::UIParaverTraceConfig::value_not_found )
-#endif
-      {}
-
+      auto sourceValues = sourceTraceConfig.getEventValues( itSourceType );
       if ( sourceValues.empty() )
         continue;
 
-      map< std::string, unsigned int > referenceValues;
-      try
-      {
-        tmpCodes = referenceTraceConfig->getEventValues( *itSourceType );
-      }
-#ifdef OLD_PCFPARSER
-      catch( libparaver::ParaverTraceConfig::value_not_found )
-#else
-      catch( libparaver::UIParaverTraceConfig::value_not_found )
-#endif
-      {}
-
-      if ( tmpCodes.empty() )
+      map< std::string, TEventValue > referenceValues;
+      auto tmpReferenceValues = referenceTraceConfig.getEventValues( itSourceType );
+      if ( tmpReferenceValues.empty() )
         continue;
 
-      for ( vector< unsigned int >::iterator itReferenceValue = tmpCodes.begin(); itReferenceValue != tmpCodes.end(); ++itReferenceValue )
-      {
-        referenceValues[ referenceTraceConfig->getEventValue( *itSourceType, *itReferenceValue ) ] = *itReferenceValue;
-      }
+      for ( auto itTmpReferenceValue : tmpReferenceValues )
+        referenceValues[ itTmpReferenceValue.second ] = itTmpReferenceValue.first;
 
-      map< unsigned int, std::string > valuesColliding;
-      map< unsigned int, std::string > valuesFinal;
+      map< TEventValue, std::string > valuesColliding;
+      map< TEventValue, std::string > valuesFinal;
 
-      for ( vector< unsigned int >::iterator itSourceValue = sourceValues.begin(); itSourceValue != sourceValues.end(); ++itSourceValue )
+      for ( auto itSourceValue : sourceValues )
       {
-        std::string sourceTag = sourceTraceConfig->getEventValue( *itSourceType, *itSourceValue );
-        map< std::string, unsigned int >::iterator itRefValue = referenceValues.find( sourceTag );
+        auto itRefValue = referenceValues.find( itSourceValue.second );
         if ( itRefValue != referenceValues.end() )
         {
           if ( valuesFinal.find( (*itRefValue).second ) != valuesFinal.end() )
@@ -791,34 +738,30 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
           }
           else
           {
-            if ( *itSourceValue != (*itRefValue).second )
-              cloneValuesIntoGroup( itSourceType, (*itGroupType).end(), *itSourceValue, (*itRefValue).second, translation );
+            if ( itSourceValue.first != (*itRefValue).second )
+              translation[ TTypeValuePair( itSourceType, itSourceValue.first ) ] = TTypeValuePair( itSourceType, (*itRefValue).second );
           }
 
-          valuesFinal[ (*itRefValue).second ] = sourceTag;
+          valuesFinal[ (*itRefValue).second ] = itSourceValue.second;
         }
         else
         {
-          if ( valuesFinal.find( *itSourceValue ) != valuesFinal.end() )
-          {
-            valuesColliding[ *itSourceValue ] = sourceTag;
-          }
+          if ( valuesFinal.find( itSourceValue.first ) != valuesFinal.end() )
+            valuesColliding[ itSourceValue.first ] = itSourceValue.second;
           else
-          {
-            valuesFinal[ *itSourceValue ] = sourceTag;
-          }
+            valuesFinal[ itSourceValue.first ] = itSourceValue.second;
         }
       }
 
-      unsigned int maxValue = (--valuesFinal.end())->first;
-      for ( map< unsigned int, std::string >::iterator itCollision = valuesColliding.begin(); itCollision != valuesColliding.end(); ++itCollision )
+      TEventValue maxValue = (--valuesFinal.end())->first;
+      for ( auto itCollision : valuesColliding )
       {
-        valuesFinal[ ++maxValue ] = (*itCollision).second;
-        if ( (*itCollision).first != maxValue )
-          cloneValuesIntoGroup( itSourceType, (*itGroupType).end(), (*itCollision).first, maxValue, translation );
+        valuesFinal[ ++maxValue ] = itCollision.second;
+        if ( itCollision.first != maxValue )
+          translation[ TTypeValuePair( itSourceType, itCollision.first ) ] = TTypeValuePair( itSourceType, maxValue );
       }
 
-      sourceTraceConfig->setEventValues( *itSourceType, valuesFinal );
+      sourceTraceConfig.setEventValues( itSourceType, valuesFinal );
     }
   }
 
@@ -828,15 +771,8 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
   if ( !translation.empty() )
   {
     mySequence->getKernelConnection()->copyROW( whichTrace, newName );
-    std::fstream tmpFileDestiny;
-    tmpFileDestiny.open( LocalKernel::composeName( newName, std::string( "pcf" ) ).c_str(), std::ios::out );
-    tmpFileDestiny << sourceTraceConfig->toString();
-    tmpFileDestiny.close();
+    sourceTraceConfig.dumpToFile( LocalKernel::composeName( newName, std::string( "pcf" ) ) );
   }
-
-  delete sourceTraceConfig;
-  delete referenceTraceConfig;
-#endif
 
   tmpSequence->executeNextAction( whichTrace );
 
