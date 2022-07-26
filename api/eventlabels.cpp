@@ -68,6 +68,12 @@ void EventLabels::getTypes( vector<TEventType>& onVector ) const
     onVector.push_back( ( *it ).first );
 }
 
+void EventLabels::getTypes( std::function<void( TEventType, const std::string& )> insert ) const
+{
+  for( auto el : eventType2Label )
+    insert( el.first, el.second );
+}
+
 bool EventLabels::getEventTypeLabel( TEventType type, string& onStr ) const
 {
   map<TEventType, string>::const_iterator it = eventType2Label.find( type );
@@ -152,6 +158,18 @@ bool EventLabels::getValues( TEventType type, map<TEventValue, string> &values )
   return true;
 }
 
+
+void EventLabels::getValues( TEventType type, std::function<void( TEventValue, const std::string& )> insert ) const
+{
+  map< TEventType, map< TEventValue, string > >::const_iterator it = eventValue2Label.find( type );
+  if ( it == eventValue2Label.end() )
+    return;
+  else
+  {
+    for( auto el : it->second )
+      insert( el.first, el.second );
+  }
+}
 
 bool EventLabels::getEventType( const string& whichTypeLabel, vector<TEventType>& onVector ) const
 {
