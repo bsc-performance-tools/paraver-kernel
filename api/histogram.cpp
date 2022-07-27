@@ -408,7 +408,7 @@ THistogramColumn HistogramProxy::getNumPlanes() const
 THistogramColumn HistogramProxy::getNumColumns( const string& whichStat ) const
 {
   if ( isCommunicationStat( whichStat ) )
-    return ( THistogramColumn ) getNumRows();
+    return getCommNumColumns();
 
   return getNumColumns();
 }
@@ -416,6 +416,11 @@ THistogramColumn HistogramProxy::getNumColumns( const string& whichStat ) const
 THistogramColumn HistogramProxy::getNumColumns() const
 {
   return myHisto->getNumColumns();
+}
+
+THistogramColumn HistogramProxy::getCommNumColumns() const
+{
+  return myHisto->getCommNumColumns();
 }
 
 TObjectOrder HistogramProxy::getNumRows() const
@@ -440,8 +445,8 @@ PRV_UINT32 HistogramProxy::getSemanticSortedColumn( PRV_UINT32 col ) const
 }
 
 TSemanticValue HistogramProxy::getCurrentValue( PRV_UINT32 col,
-    PRV_UINT16 idStat,
-    PRV_UINT32 plane ) const
+                                                PRV_UINT16 idStat,
+                                                PRV_UINT32 plane ) const
 {
   return myHisto->getCurrentValue( getSemanticSortedColumn( col ), idStat, plane );
 }
@@ -489,8 +494,8 @@ bool HistogramProxy::getNotZeroValue( PRV_UINT32 whichRow,
 }
 
 TSemanticValue HistogramProxy::getCommCurrentValue( PRV_UINT32 col,
-    PRV_UINT16 idStat,
-    PRV_UINT32 plane ) const
+                                                    PRV_UINT16 idStat,
+                                                    PRV_UINT32 plane ) const
 {
   return myHisto->getCommCurrentValue( getSemanticSortedColumn( col ), idStat, plane );
 }

@@ -106,6 +106,7 @@ class Histogram
 
     virtual THistogramColumn getNumPlanes() const = 0;
     virtual THistogramColumn getNumColumns() const = 0;
+    virtual THistogramColumn getCommNumColumns() const = 0;
     virtual TObjectOrder getNumRows() const = 0;
 
     virtual TSemanticValue getCurrentValue( PRV_UINT32 col,
@@ -699,7 +700,9 @@ class HistogramProxy : public Histogram
 
     virtual THistogramColumn getNumPlanes() const override;
     virtual THistogramColumn getNumColumns( const std::string& whichStat ) const override;
-    virtual TObjectOrder getNumRows() const override;
+    virtual THistogramColumn getNumColumns() const override;
+    virtual THistogramColumn getCommNumColumns() const override;
+    virtual TObjectOrder     getNumRows() const override;
 
     virtual TSemanticValue getCurrentValue( PRV_UINT32 col,
                                             PRV_UINT16 idStat,
@@ -1027,8 +1030,6 @@ class HistogramProxy : public Histogram
     SelectionManagement< TObjectOrder, TTraceLevel > rowSelection;
 
     HistogramProxy( KernelConnection *whichKernel );
-
-    THistogramColumn getNumColumns() const override;
 
     void fillSemanticSort();
 

@@ -629,6 +629,12 @@ inline THistogramColumn KHistogram::getNumColumns() const
 }
 
 
+inline THistogramColumn KHistogram::getCommNumColumns() const
+{
+  return rowsTranslator->totalRows();
+}
+
+
 inline TObjectOrder KHistogram::getNumRows() const
 {
   return numRows;

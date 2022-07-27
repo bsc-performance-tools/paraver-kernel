@@ -192,6 +192,8 @@ class KHistogram : public Histogram
 
     THistogramColumn getNumPlanes() const override;
     THistogramColumn getNumColumns() const override;
+    THistogramColumn getCommNumColumns() const override;
+
     TObjectOrder getNumRows() const override;
 
     TSemanticValue getCurrentValue( PRV_UINT32 col,
