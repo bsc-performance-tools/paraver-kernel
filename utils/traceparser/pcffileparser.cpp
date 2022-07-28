@@ -314,9 +314,18 @@ class DefaultOptionsParser : public PCFFileParser<>::SectionParser<>
 template< typename dummyParser >
 void DefaultOptionsParser<dummyParser>::parseLine( const std::string& line )
 {
-  size_t firstSpacePos = line.find_first_of( ' ' );
-  std::string index = line.substr( 0, firstSpacePos );
-  std::string value = line.substr( line.find_first_not_of( ' ', firstSpacePos ), std::string::npos );
+  std::string index;
+  std::string value;
+  try
+  {
+    size_t firstSpacePos = line.find_first_of( ' ' );
+    index = line.substr( 0, firstSpacePos );
+    value = line.substr( line.find_first_not_of( ' ', firstSpacePos ), std::string::npos );
+  }
+  catch( ... )
+  {
+    return;
+  }
 
   auto it = parameterSetter.find( index );
   if( it != parameterSetter.end() )
@@ -366,9 +375,18 @@ class DefaultSemanticParser : public PCFFileParser<>::SectionParser<>
 template< typename dummyParser >
 void DefaultSemanticParser<dummyParser>::parseLine( const std::string& line )
 {
-  size_t firstSpacePos = line.find_first_of( ' ' );
-  std::string index = line.substr( 0, firstSpacePos );
-  std::string value = line.substr( line.find_first_not_of( ' ', firstSpacePos ), std::string::npos );
+  std::string index;
+  std::string value;
+  try
+  {
+    size_t firstSpacePos = line.find_first_of( ' ' );
+    index = line.substr( 0, firstSpacePos );
+    value = line.substr( line.find_first_not_of( ' ', firstSpacePos ), std::string::npos );
+  }
+  catch( ... )
+  {
+    return;
+  }
 
   auto it = parameterSetter.find( index );
   if( it != parameterSetter.end() )
@@ -405,19 +423,21 @@ class StatesParser : public PCFFileParser<>::SectionParser<>
 template< typename dummyParser >
 void StatesParser<dummyParser>::parseLine( const std::string& line )
 {
-  size_t firstSpacePos = line.find_first_of( ' ' );
-  std::string strState = line.substr( 0, firstSpacePos );
   TState tmpState;
+  std::string label;
   try
   {
+    size_t firstSpacePos = line.find_first_of( ' ' );
+    std::string strState = line.substr( 0, firstSpacePos );
     tmpState = std::stoi( strState );
+
+    label = line.substr( line.find_first_not_of( ' ', firstSpacePos ), std::string::npos );
   }
   catch(...)
   {
     return;
   }  
 
-  std::string label = line.substr( line.find_first_not_of( ' ', firstSpacePos ), std::string::npos );
 
   mainParser->states[ tmpState ] = label;
 }
@@ -453,11 +473,12 @@ class StatesColorParser : public PCFFileParser<>::SectionParser<>
 template< typename dummyParser >
 void StatesColorParser<dummyParser>::parseLine( const std::string& line )
 {
-  size_t firstSpacePos = line.find_first_of( ' ' );
-  std::string strSemanticValue = line.substr( 0, firstSpacePos );
+  size_t firstSpacePos;
   uint32_t tmpSemanticValue;
   try
   {
+    firstSpacePos = line.find_first_of( ' ' );
+    std::string strSemanticValue = line.substr( 0, firstSpacePos );
     tmpSemanticValue = std::stoi( strSemanticValue );
   }
   catch(...)
@@ -465,17 +486,17 @@ void StatesColorParser<dummyParser>::parseLine( const std::string& line )
     return;
   }  
 
-  std::string strRGB = line.substr( line.find_first_not_of( ' ', firstSpacePos ), std::string::npos );
-
-  size_t firstCommaPos  = strRGB.find_first_of( ',', 1 );
-  std::string strRed    = strRGB.substr( 1, firstCommaPos );
-  size_t secondCommaPos = strRGB.find_last_of( ',' );
-  std::string strGreen  = strRGB.substr( firstCommaPos + 1, secondCommaPos );
-  std::string strBlue   = strRGB.substr( secondCommaPos + 1, strRGB.length() - 1 );
-
   ParaverColor red, green, blue;
   try
   {
+    std::string strRGB = line.substr( line.find_first_not_of( ' ', firstSpacePos ), std::string::npos );
+
+    size_t firstCommaPos  = strRGB.find_first_of( ',', 1 );
+    std::string strRed    = strRGB.substr( 1, firstCommaPos );
+    size_t secondCommaPos = strRGB.find_last_of( ',' );
+    std::string strGreen  = strRGB.substr( firstCommaPos + 1, secondCommaPos );
+    std::string strBlue   = strRGB.substr( secondCommaPos + 1, strRGB.length() - 1 );
+
     red = std::stoi( strRed );
     green = std::stoi( strGreen );
     blue = std::stoi( strBlue );
@@ -538,10 +559,10 @@ void EventParser<dummyParser>::parseLine( const std::string& line )
 
   if( line.substr( 0, strlen( PCF_LABEL_EVENT_PRECISION ) ) == PCF_LABEL_EVENT_PRECISION )
   {
-    std::string precision = line.substr( line.find_first_not_of( ' ', strlen( PCF_LABEL_EVENT_PRECISION ) ), std::string::npos );
     unsigned int tmpPrecision;
     try
     {
+      std::string precision = line.substr( line.find_first_not_of( ' ', strlen( PCF_LABEL_EVENT_PRECISION ) ), std::string::npos );
       tmpPrecision = std::stoul( precision );
     }
     catch(...)
@@ -554,15 +575,16 @@ void EventParser<dummyParser>::parseLine( const std::string& line )
   }
   else if ( !readingEventValues )
   {
-    size_t firstSpacePos = line.find_first_of( ' ' );
-    std::string dummyColor = line.substr( 0, firstSpacePos );
-    size_t initTypePos = line.find_first_not_of( ' ', firstSpacePos );
-    size_t secondSpacePos = line.find_first_of( ' ', initTypePos );
-    std::string eventType = line.substr( initTypePos, secondSpacePos );
-    std::string label = line.substr( line.find_first_not_of( ' ', secondSpacePos ), std::string::npos );
     TEventType tmpEventType;
+    std::string label;
     try
     {
+      size_t firstSpacePos = line.find_first_of( ' ' );
+      std::string dummyColor = line.substr( 0, firstSpacePos );
+      size_t initTypePos = line.find_first_not_of( ' ', firstSpacePos );
+      size_t secondSpacePos = line.find_first_of( ' ', initTypePos );
+      std::string eventType = line.substr( initTypePos, secondSpacePos );
+      label = line.substr( line.find_first_not_of( ' ', secondSpacePos ), std::string::npos );
       tmpEventType = std::stoi( eventType );
     }
     catch(...)
@@ -575,12 +597,13 @@ void EventParser<dummyParser>::parseLine( const std::string& line )
   }
   else
   {
-    size_t firstSpacePos = line.find_first_of( ' ' );
-    std::string value = line.substr( 0, firstSpacePos );
-    std::string label = line.substr( line.find_first_not_of( ' ', firstSpacePos ), std::string::npos );
     TEventValue tmpValue;
+    std::string label;
     try
     {
+      size_t firstSpacePos = line.find_first_of( ' ' );
+      std::string value = line.substr( 0, firstSpacePos );
+      label = line.substr( line.find_first_not_of( ' ', firstSpacePos ), std::string::npos );
       tmpValue = std::stoi( value );
     }
     catch(...)
