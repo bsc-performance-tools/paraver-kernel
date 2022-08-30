@@ -55,7 +55,7 @@ class PCFFileParser
 
     static bool openPCFFileParser( const std::string& filename, PCFFileParser<dummy>& outPCFFile );
 
-    PCFFileParser() = delete;
+    PCFFileParser() = default;
     PCFFileParser( const std::string& filename );
     ~PCFFileParser() = default;
 
