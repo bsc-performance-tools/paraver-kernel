@@ -474,7 +474,7 @@ void TraceProxy::parsePCF( const string& whichFile )
   pcfParser.getEventTypes( types );
   for( auto it : types )
   {
-    setEventTypePrecision( it, pow( (double)10, (double)pcfParser.getEventPrecision( it ) ) );
+    setEventTypePrecision( it, pow( (double)10, -(double)pcfParser.getEventPrecision( it ) ) );
   }
 }
 
