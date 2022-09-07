@@ -172,7 +172,7 @@ typedef BaseTraceEditState< TraceEditSequence * > TraceEditState;
 
 typedef DerivedTraceEditState< TraceEditSequence *, TextOutput > CSVOutputState;
 typedef DerivedTraceEditState< TraceEditSequence *, TraceOptions * > TraceOptionsState;
-typedef DerivedTraceEditState< TraceEditSequence *, Timeline * > CSVWindowState;
+typedef DerivedTraceEditState< TraceEditSequence *, Timeline * > SourceTimelineState;
 typedef DerivedTraceEditState< TraceEditSequence *, std::vector< TTime > * > ShiftTimesState;
 typedef DerivedTraceEditState< TraceEditSequence *, std::map< TTypeValuePair, TTypeValuePair > > EventTranslationTableState;
 

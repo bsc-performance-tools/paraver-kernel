@@ -73,7 +73,7 @@ vector<TSequenceStates> TraceCutterAction::getStateDependencies() const
 {
   vector<TSequenceStates> tmpStates;
   tmpStates.push_back( TSequenceStates::traceOptionsState );
-  tmpStates.push_back( TSequenceStates::csvWindowState );
+  tmpStates.push_back( TSequenceStates::sourceTimelineState );
   return tmpStates;
 }
 
@@ -81,7 +81,7 @@ vector<TSequenceStates> TraceCutterAction::getStateDependencies() const
 bool TraceCutterAction::execute( std::string whichTrace )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
-  Timeline *tmpWindow = ( (CSVWindowState *)tmpSequence->getState( TSequenceStates::csvWindowState ) )->getData();
+  Timeline *tmpWindow = ( (SourceTimelineState *)tmpSequence->getState( TSequenceStates::sourceTimelineState ) )->getData();
   TraceOptions *options = ( (TraceOptionsState *)tmpSequence->getState( TSequenceStates::traceOptionsState ) )->getData();
 
   std::string tmpSuffix = ( (OutputDirSuffixState *)tmpSequence->getState( TSequenceStates::outputDirSuffixState ) )->getData();
@@ -210,7 +210,7 @@ bool TraceFilterAction::execute( std::string whichTrace )
 vector<TSequenceStates> CSVOutputAction::getStateDependencies() const
 {
   vector<TSequenceStates> tmpStates;
-  tmpStates.push_back(  TSequenceStates::csvWindowState );
+  tmpStates.push_back(  TSequenceStates::sourceTimelineState );
   tmpStates.push_back(  TSequenceStates::csvFileNameState );
   return tmpStates;
 }
@@ -219,7 +219,7 @@ vector<TSequenceStates> CSVOutputAction::getStateDependencies() const
 bool CSVOutputAction::execute( std::string whichTrace )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
-  Timeline *tmpWindow = ( (CSVWindowState *)tmpSequence->getState( TSequenceStates::csvWindowState ) )->getData();
+  Timeline *tmpWindow = ( (SourceTimelineState *)tmpSequence->getState( TSequenceStates::sourceTimelineState ) )->getData();
   std::string tmpFileName = ( (CSVFileNameState *)tmpSequence->getState( TSequenceStates::csvFileNameState ) )->getData();
   TextOutput output = ( (CSVOutputState *)tmpSequence->getState( TSequenceStates::csvOutputState ) )->getData();
 

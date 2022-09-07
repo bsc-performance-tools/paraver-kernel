@@ -42,7 +42,7 @@ enum class TSequenceStates
 {
   testState = 0,
   traceOptionsState,
-  csvWindowState,
+  sourceTimelineState,
   csvFileNameState,
   csvOutputState,
   outputDirSuffixState,
