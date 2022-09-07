@@ -139,37 +139,37 @@ PCFFileParser<dummy>::PCFFileParser( const std::string& filename )
 template<typename dummy>
 std::string PCFFileParser<dummy>::getLevel() const { return level; }
 template<typename dummy>
-void PCFFileParser<dummy>::setLevel( std::string& newValue ) { level = newValue; }
+void PCFFileParser<dummy>::setLevel( const std::string& newValue ) { level = newValue; }
 
 template<typename dummy>
 std::string PCFFileParser<dummy>::getUnits() const { return units; }
 template<typename dummy>
-void PCFFileParser<dummy>::setUnits( std::string& newValue ) { units = newValue; }
+void PCFFileParser<dummy>::setUnits( const std::string& newValue ) { units = newValue; }
 
 template<typename dummy>
 std::string PCFFileParser<dummy>::getLookBack() const { return lookBack; }
 template<typename dummy>
-void PCFFileParser<dummy>::setLookBack( std::string& newValue ) { lookBack = newValue; }
+void PCFFileParser<dummy>::setLookBack( const std::string& newValue ) { lookBack = newValue; }
 
 template<typename dummy>
 std::string PCFFileParser<dummy>::getSpeed() const { return speed; }
 template<typename dummy>
-void PCFFileParser<dummy>::setSpeed( std::string& newValue ) { speed = newValue; }
+void PCFFileParser<dummy>::setSpeed( const std::string& newValue ) { speed = newValue; }
 
 template<typename dummy>
 std::string PCFFileParser<dummy>::getFlagIcons() const { return flagIcons; }
 template<typename dummy>
-void PCFFileParser<dummy>::setFlagIcons( std::string& newValue ) { flagIcons = newValue; }
+void PCFFileParser<dummy>::setFlagIcons( const std::string& newValue ) { flagIcons = newValue; }
 
 template<typename dummy>
 std::string PCFFileParser<dummy>::getYmaxScale() const { return ymaxScale; }
 template<typename dummy>
-void PCFFileParser<dummy>::setYmaxScale( std::string& newValue ) { ymaxScale = newValue; }
+void PCFFileParser<dummy>::setYmaxScale( const std::string& newValue ) { ymaxScale = newValue; }
 
 template<typename dummy>
 std::string PCFFileParser<dummy>::getThreadFunc() const { return threadFunc; }
 template<typename dummy>
-void PCFFileParser<dummy>::setThreadFunc( std::string& newValue ) { threadFunc = newValue; }
+void PCFFileParser<dummy>::setThreadFunc( const std::string& newValue ) { threadFunc = newValue; }
 
 template<typename dummy>
 const std::map< TState, std::string >& PCFFileParser<dummy>::getStates() const { return states; }

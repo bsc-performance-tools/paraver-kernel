@@ -62,25 +62,25 @@ class PCFFileParser
     void dumpToFile( const std::string& filename ) const;
 
     std::string getLevel() const;
-    void setLevel( std::string& newValue );
+    void setLevel( const std::string& newValue );
 
     std::string getUnits() const;
-    void setUnits( std::string& newValue );
+    void setUnits( const std::string& newValue );
 
     std::string getLookBack() const;
-    void setLookBack( std::string& newValue );
+    void setLookBack( const std::string& newValue );
 
     std::string getSpeed() const;
-    void setSpeed( std::string& newValue );
+    void setSpeed( const std::string& newValue );
 
     std::string getFlagIcons() const;
-    void setFlagIcons( std::string& newValue );
+    void setFlagIcons( const std::string& newValue );
 
     std::string getYmaxScale() const;
-    void setYmaxScale( std::string& newValue );
+    void setYmaxScale( const  std::string& newValue );
 
     std::string getThreadFunc() const;
-    void setThreadFunc( std::string& newValue );
+    void setThreadFunc( const std::string& newValue );
 
     const std::map< TState, std::string >& getStates() const;
     void setState( TState state, const std::string& label );
