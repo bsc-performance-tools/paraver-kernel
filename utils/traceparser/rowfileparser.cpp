@@ -164,12 +164,21 @@ void RowFileParser<dummy>::dumpToFile( const std::string& filename ) const
   if ( !rowFile )
     throw std::ios_base::failure( "Error creating output row file." );
 
-  for( int i = static_cast<int>( TTraceLevel::CPU ); i >= static_cast<int>( TTraceLevel::WORKLOAD ); --i )
+  auto f = [&]( int first, int last )
   {
-    std::map<TTraceLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::const_iterator currentLevelLabels;
-    if( ( currentLevelLabels = levelLabels.find( static_cast<TTraceLevel>( i ) ) ) != levelLabels.end() )
-      dumpLevel( currentLevelLabels->second, rowFile );
-  }
+    for( int i = first; i >= last; --i )
+    {
+      std::map<TTraceLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::const_iterator currentLevelLabels;
+      if( ( currentLevelLabels = levelLabels.find( static_cast<TTraceLevel>( i ) ) ) != levelLabels.end() )
+        dumpLevel( currentLevelLabels->second, rowFile );
+    }
+  };
+
+  // Resources
+  f( static_cast<int>( TTraceLevel::CPU ), static_cast<int>( TTraceLevel::SYSTEM ) );
+
+  // Processes
+  f( static_cast<int>( TTraceLevel::THREAD ), static_cast<int>( TTraceLevel::WORKLOAD ) );
 
   rowFile.close();
 }
