@@ -1198,7 +1198,8 @@ void KTraceCutter::execute( std::string trace_in,
         threadInfoIt = threadsInfo.find( appl - 1, task - 1, thread - 1 );
 
         if( threadInfoIt != threadsInfo.end() &&
-            threadInfoIt->second.finished )
+            threadInfoIt->second.finished &&
+            time_1 != threadInfoIt->second.lastStateEndTime )
         {
           if( !( !remLastStates && !break_states && keep_boundary_events && time_1 <= threadInfoIt->second.lastStateEndTime ) )
             break;
