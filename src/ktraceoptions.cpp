@@ -76,6 +76,7 @@ KTraceOptions::KTraceOptions( const KTraceOptions *whichTraceOptions )
   set_remLastStates( whichTraceOptions->get_remLastStates() );
   set_keep_boundary_events( whichTraceOptions->get_keep_boundary_events() );
   set_keep_all_events( whichTraceOptions->get_keep_all_events() );
+  set_max_cut_time_to_first_finished_appl( whichTraceOptions->get_max_cut_time_to_first_finished_appl() );
 
   // Filter Default Options: states
   set_filter_states( whichTraceOptions->get_filter_states() );
@@ -119,7 +120,6 @@ KTraceOptions::KTraceOptions( const KTraceOptions *whichTraceOptions )
   set_sc_summarize_states( whichTraceOptions->get_sc_summarize_states() );
   set_sc_global_counters( whichTraceOptions->get_sc_global_counters() );
   set_sc_only_in_bursts( whichTraceOptions->get_sc_only_in_bursts() );
-  //set_sc_frequency( whichTraceOptions->getSoftwareCountersFrequency ); // not used!!!
   set_sc_types_kept( whichTraceOptions->get_sc_types_kept() );
 }
 
@@ -165,6 +165,7 @@ void KTraceOptions::init()
   set_remLastStates( ParaverConfig::getInstance()->getCutterRemoveLastStates() );
   set_keep_boundary_events( ParaverConfig::getInstance()->getCutterKeepEvents() );
   set_keep_all_events( false );
+  set_max_cut_time_to_first_finished_appl( false );
 
   // Filter Default Options
 // problem --> derived fields?; minimum default info?
@@ -186,10 +187,8 @@ void KTraceOptions::init()
   // Software Counters Default Options
   set_sc_onInterval( ParaverConfig::getInstance()->getSoftwareCountersInvervalsOrStates() );
 
-//  if ( ParaverConfig::getInstance()->getSoftwareCountersInvervalsOrStates() )
-    set_sc_sampling_interval( ParaverConfig::getInstance()->getSoftwareCountersSamplingInterval() );
-//  else
-    set_sc_minimum_burst_time( ParaverConfig::getInstance()->getSoftwareCountersMinimumBurstTime() );
+  set_sc_sampling_interval( ParaverConfig::getInstance()->getSoftwareCountersSamplingInterval() );
+  set_sc_minimum_burst_time( ParaverConfig::getInstance()->getSoftwareCountersMinimumBurstTime() );
 
   set_sc_types( (char *)ParaverConfig::getInstance()->getSoftwareCountersTypes().c_str() );
 
@@ -198,7 +197,6 @@ void KTraceOptions::init()
   set_sc_summarize_states( ParaverConfig::getInstance()->getSoftwareCountersSummarizeStates() );
   set_sc_global_counters( ParaverConfig::getInstance()->getSoftwareCountersGlobalCounters() );
   set_sc_only_in_bursts( ParaverConfig::getInstance()->getSoftwareCountersOnlyInBursts() );
-  //set_sc_frequency( ParaverConfig::getInstance()->getSoftwareCountersFrequency ); // not used!!!
   set_sc_types_kept( (char *)ParaverConfig::getInstance()->getSoftwareCountersTypesKept().c_str() );
 }
 
@@ -644,35 +642,6 @@ void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cu
   }
 }
 
-
-void KTraceOptions::parse_comm_fusion_params( xmlDocPtr doc, xmlNodePtr cur )
-{
-  xmlChar *word;
-
-  reduce_comms = 1;
-
-  while ( cur != nullptr )
-  {
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"sample_interval" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      comm_fusion_big_interval = atoi( ( char * )word );
-      xmlFree( word );
-    }
-
-
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"inter_comm_interval" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      comm_fusion_small_interval = atoi( ( char * )word );
-      xmlFree( word );
-    }
-
-    cur = cur->next;
-  }
-}
-
-
 void KTraceOptions::pushBackUniqueFilterIdentifier( string filterID, vector< string > &order )
 {
   // if same kind of filter is repeated, last is loaded, pushed in proper order
@@ -743,11 +712,6 @@ vector< string > KTraceOptions::parseDoc( char *docname )
       parse_software_counters_params( doc, cur->xmlChildrenNode );
       pushBackUniqueFilterIdentifier( TraceSoftwareCounters::getID(), order );
     }
-
-    /*
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"comm_fusion" ) )
-      parse_comm_fusion_params( doc, cur->xmlChildrenNode );
-    */
 
     cur = cur->next;
   }

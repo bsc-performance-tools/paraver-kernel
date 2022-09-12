@@ -26,6 +26,9 @@
 #include <array>
 #include <stddef.h>
 
+/******************************************************************************
+******************   cartesian_product      ***********************************
+******************************************************************************/
 template<typename T, class InputIt, class OutputIt, size_t sizeFactors, typename... Targs>
 constexpr void cartesian_product_impl( OutputIt& product,
                                        size_t indexFactor,

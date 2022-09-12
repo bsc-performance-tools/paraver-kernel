@@ -98,15 +98,8 @@ class KTraceOptions: public TraceOptions
     bool remLastStates;
     bool keep_boundary_events;
     bool keep_all_events;
+    bool max_cut_time_to_first_finished_appl;
     char tasks_list[256];
-
-    // not used?
-    // char *logfile;
-
-    /* Parameters for comm_fusion */
-    char reduce_comms;
-    unsigned long long comm_fusion_big_interval;
-    unsigned long long comm_fusion_small_interval;
 
     /* Parameters for software counters */
     bool sc_onInterval;
@@ -120,7 +113,6 @@ class KTraceOptions: public TraceOptions
     unsigned long long sc_sampling_interval;
     unsigned long long sc_minimum_burst_time;
 
-    int sc_frequency; // ??
     char *types;
     char *types_kept;
 
@@ -219,6 +211,12 @@ class KTraceOptions: public TraceOptions
       keep_all_events = whichKeepAllEvents;
     }
 
+    inline void set_max_cut_time_to_first_finished_appl( bool setOptions ) override
+    {
+      max_cut_time_to_first_finished_appl = setOptions;
+    }
+
+
     inline bool get_by_time() const override
     {
       return by_time;
@@ -289,6 +287,12 @@ class KTraceOptions: public TraceOptions
     {
       return keep_all_events;
     }
+
+    inline bool get_max_cut_time_to_first_finished_appl() const override
+    {
+      return max_cut_time_to_first_finished_appl;
+    }
+
 
     /* Sets for filtering */
     inline void set_filter_events( bool whichFilterEvents ) override
@@ -485,12 +489,7 @@ class KTraceOptions: public TraceOptions
     {
       sc_remove_states = whichSCRemoveStates;
     }
-/*
-    inline void set_sc_frequency( int whichSCFrequency ) override
-    {
-      sc_frequency = whichSCFrequency;
-    }
-*/
+
     inline void set_sc_types( char *whichTypes ) override
     {
       types = whichTypes;
@@ -540,12 +539,7 @@ class KTraceOptions: public TraceOptions
     {
       return sc_remove_states;
     }
-/*
-    inline int get_sc_frequency() override
-    {
-      return sc_frequency;
-    }
-*/
+
     inline char *get_sc_types() const override
     {
       return strdup( types );
@@ -554,23 +548,6 @@ class KTraceOptions: public TraceOptions
     inline char *get_sc_types_kept() const override
     {
       return strdup( types_kept );
-    }
-
-
-    /* Sets for comm_fusion */
-    inline void set_reduce_comms( char whichReduceComms ) override
-    {
-      reduce_comms = whichReduceComms;
-    }
-
-    inline void set_comm_fusion_big_interval( unsigned long long whichBigInterval ) override
-    {
-      comm_fusion_big_interval = whichBigInterval;
-    }
-
-    inline void set_comm_fusion_small_interval( unsigned long long whichSmallInterval ) override
-    {
-      comm_fusion_small_interval = whichSmallInterval;
     }
 
     std::vector< std::string > parseDoc( char *docname ) override;
@@ -586,7 +563,6 @@ class KTraceOptions: public TraceOptions
     void parse_filter_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cur );
-    void parse_comm_fusion_params( xmlDocPtr doc, xmlNodePtr cur );
 
     void pushBackUniqueFilterIdentifier( std::string filterID, std::vector< std::string > &order );
 

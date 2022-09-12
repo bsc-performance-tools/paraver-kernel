@@ -54,186 +54,90 @@ class TraceOptions
     virtual ~TraceOptions() {}
 
     /* Global Settings */
-    virtual void set_max_trace_size( int traceSize )
-    {}
-
-    virtual int get_max_trace_size( ) const
-    { return 0; }
+    virtual void set_max_trace_size( int traceSize ) = 0;
+    virtual int get_max_trace_size( ) const = 0;
 
     /* Sets for Cutter */
-    virtual void set_by_time( bool whichByTime )
-    {}
-    virtual void set_min_cutting_time( unsigned long long minCutTime )
-    {}
-    virtual void set_max_cutting_time( unsigned long long maxCutTime )
-    {}
-    virtual void set_minimum_time_percentage( unsigned long long whichMinimumTimePercentage )
-    {}
-    virtual void set_maximum_time_percentage( unsigned long long whichMaximumTimePercentage )
-    {}
-    virtual void set_tasks_list( char *tasksList )
-    {}
-    virtual void set_original_time( bool originalTime )
-    {}
-    virtual void set_break_states( bool breakStates )
-    {}
-    virtual void set_remFirstStates( bool remStates )
-    {}
-    virtual void set_remLastStates( bool remStates )
-    {}
-    virtual void set_keep_boundary_events( bool keepEvents )
-    {}
-    virtual void set_keep_all_events( bool keepAllEvents )
-    {}
+    virtual void set_by_time( bool whichByTime ) = 0;
+    virtual void set_min_cutting_time( unsigned long long minCutTime ) = 0;
+    virtual void set_max_cutting_time( unsigned long long maxCutTime ) = 0;
+    virtual void set_minimum_time_percentage( unsigned long long whichMinimumTimePercentage ) = 0;
+    virtual void set_maximum_time_percentage( unsigned long long whichMaximumTimePercentage ) = 0;
+    virtual void set_tasks_list( char *tasksList ) = 0;
+    virtual void set_original_time( bool originalTime ) = 0;
+    virtual void set_break_states( bool breakStates ) = 0;
+    virtual void set_remFirstStates( bool remStates ) = 0;
+    virtual void set_remLastStates( bool remStates ) = 0;
+    virtual void set_keep_boundary_events( bool keepEvents ) = 0;
+    virtual void set_keep_all_events( bool keepAllEvents ) = 0;
+    virtual void set_max_cut_time_to_first_finished_appl( bool setOption ) = 0;
 
-    virtual bool get_by_time() const
-    { return false; }
-    virtual unsigned long long get_min_cutting_time() const
-    { return 0; }
-    virtual unsigned long long get_max_cutting_time() const
-    { return 0; }
-    virtual unsigned long long get_minimum_time_percentage() const
-    { return 0; }
-    virtual unsigned long long get_maximum_time_percentage() const
-    { return 0; }
-    virtual void get_tasks_list( TTasksList &whichTasksList ) const
-    { }
-    virtual bool get_original_time() const
-    { return 0; }
-    virtual bool get_break_states() const
-    { return 0; }
-    virtual bool get_remFirstStates() const
-    { return 0; }
-    virtual bool get_remLastStates() const
-    { return 0; }
-    virtual bool get_keep_boundary_events() const
-    { return 0; }
-    virtual bool get_keep_all_events() const
-    { return 0; }
-
+    virtual bool get_by_time() const = 0;
+    virtual unsigned long long get_min_cutting_time() const = 0;
+    virtual unsigned long long get_max_cutting_time() const = 0;
+    virtual unsigned long long get_minimum_time_percentage() const = 0;
+    virtual unsigned long long get_maximum_time_percentage() const = 0;
+    virtual void get_tasks_list( TTasksList &whichTasksList ) const = 0;
+    virtual bool get_original_time() const = 0;
+    virtual bool get_break_states() const = 0;
+    virtual bool get_remFirstStates() const = 0;
+    virtual bool get_remLastStates() const = 0;
+    virtual bool get_keep_boundary_events() const = 0;
+    virtual bool get_keep_all_events() const = 0;
+    virtual bool get_max_cut_time_to_first_finished_appl() const = 0;
 
     /* Sets for filtering */
-    virtual void set_filter_events( bool filterEvents )
-    {}
-    virtual void set_filter_states( bool filterStates )
-    {}
-    virtual void set_filter_comms( bool filterComms )
-    {}
-    virtual void set_discard_given_types( bool discardGivenTypes )
-    {}
-    virtual void set_filter_by_call_time( bool filterByCallTime )
-    {}
-    virtual void set_state_names( TStateNames stateNames )
-    {}
-    virtual void set_all_states( bool allStates )
-    {}
-    virtual void set_min_state_time( unsigned long long minStateTime )
-    {}
-    virtual void set_min_comm_size( int minCommSize )
-    {}
-    virtual void set_filter_types( TFilterTypes filterTypes )
-    {}
-    virtual void set_filter_last_type( int filterLastType )
-    {}
+    virtual void set_filter_events( bool filterEvents ) = 0;
+    virtual void set_filter_states( bool filterStates ) = 0;
+    virtual void set_filter_comms( bool filterComms ) = 0;
+    virtual void set_discard_given_types( bool discardGivenTypes ) = 0;
+    virtual void set_filter_by_call_time( bool filterByCallTime ) = 0;
+    virtual void set_state_names( TStateNames stateNames ) = 0;
+    virtual void set_all_states( bool allStates ) = 0;
+    virtual void set_min_state_time( unsigned long long minStateTime ) = 0;
+    virtual void set_min_comm_size( int minCommSize ) = 0;
+    virtual void set_filter_types( TFilterTypes filterTypes ) = 0;
+    virtual void set_filter_last_type( int filterLastType ) = 0;
 
-    virtual bool get_filter_events() const
-    { return 0; }
-    virtual bool get_filter_states() const
-    { return 0; }
-    virtual bool get_filter_comms() const
-    { return 0; }
-    virtual bool get_discard_given_types() const
-    { return 0; }
-    virtual bool get_filter_by_call_time() const
-    { return 0; }
-    virtual void get_state_names( TStateNames &stateNames ) const
-    {}
-    virtual void get_state_names( std::string &stateList ) const
-    {}
-    virtual bool get_all_states() const
-    { return 0; }
-    virtual unsigned long long get_min_state_time() const
-    { return 0; }
-    virtual int get_min_comm_size() const
-    { return 0; }
-    virtual void get_filter_types( TFilterTypes &filterTypes ) const
-    {}
-    virtual int get_filter_last_type() const
-    { return 0; }
+    virtual bool get_filter_events() const = 0;
+    virtual bool get_filter_states() const = 0;
+    virtual bool get_filter_comms() const = 0;
+    virtual bool get_discard_given_types() const = 0;
+    virtual bool get_filter_by_call_time() const = 0;
+    virtual void get_state_names( TStateNames &stateNames ) const = 0;
+    virtual void get_state_names( std::string &stateList ) const = 0;
+    virtual bool get_all_states() const = 0;
+    virtual unsigned long long get_min_state_time() const = 0;
+    virtual int get_min_comm_size() const = 0;
+    virtual void get_filter_types( TFilterTypes &filterTypes ) const = 0;
+    virtual int get_filter_last_type() const = 0;
 
     /* Sets for Software Counters */
-    virtual void set_sc_onInterval( bool scOnInterval )
-    {}
-    virtual void set_sc_sampling_interval( unsigned long long scInterval )
-    {}
-    virtual void set_sc_minimum_burst_time( unsigned long long scInterval )
-    {}
-    virtual void set_sc_global_counters( bool scGlobalCounters )
-    {}
-    virtual void set_sc_acumm_counters( bool scAcummCounters )
-    {}
-    virtual void set_sc_summarize_states( bool scSummarizeStates )
-    {}
-    virtual void set_sc_only_in_bursts( bool scOnlyInBursts )
-    {}
-    virtual void set_sc_remove_states( bool scRemoveStates )
-    {}
-    virtual void set_sc_frequency( int scFrequency )
-    {}
-    virtual void set_sc_types( char *whichTypes )
-    {}
-    virtual void set_sc_types_kept( char *typesKept )
-    {}
+    virtual void set_sc_onInterval( bool scOnInterval ) = 0;
+    virtual void set_sc_sampling_interval( unsigned long long scInterval ) = 0;
+    virtual void set_sc_minimum_burst_time( unsigned long long scInterval ) = 0;
+    virtual void set_sc_global_counters( bool scGlobalCounters ) = 0;
+    virtual void set_sc_acumm_counters( bool scAcummCounters ) = 0;
+    virtual void set_sc_summarize_states( bool scSummarizeStates ) = 0;
+    virtual void set_sc_only_in_bursts( bool scOnlyInBursts ) = 0;
+    virtual void set_sc_remove_states( bool scRemoveStates ) = 0;
+    virtual void set_sc_types( char *whichTypes ) = 0;
+    virtual void set_sc_types_kept( char *typesKept ) = 0;
 
-    virtual bool get_sc_onInterval() const
-    { return 0; }
-    virtual unsigned long long get_sc_sampling_interval() const
-    { return 0; }
-    virtual unsigned long long get_sc_minimum_burst_time() const
-    { return 0; }
-    virtual bool get_sc_global_counters() const
-    { return 0; }
-    virtual bool get_sc_acumm_counters() const
-    { return 0; }
-    virtual bool get_sc_summarize_states() const
-    { return 0; }
-    virtual bool get_sc_only_in_bursts() const
-    { return 0; }
-    virtual bool get_sc_remove_states() const
-    { return 0; }
-    //virtual unsigned long long get_sc_interval()
-    //{ return 0; }
-    virtual char *get_sc_types() const
-    { return (char *)nullptr; }
-    virtual char *get_sc_types_kept() const
-    { return (char *)nullptr; }
+    virtual bool get_sc_onInterval() const = 0;
+    virtual unsigned long long get_sc_sampling_interval() const = 0;
+    virtual unsigned long long get_sc_minimum_burst_time() const = 0;
+    virtual bool get_sc_global_counters() const = 0;
+    virtual bool get_sc_acumm_counters() const = 0;
+    virtual bool get_sc_summarize_states() const = 0;
+    virtual bool get_sc_only_in_bursts() const = 0;
+    virtual bool get_sc_remove_states() const = 0;
+    virtual char *get_sc_types() const = 0;
+    virtual char *get_sc_types_kept() const = 0;
 
-    /* Sets for comm_fusion */
-    virtual void set_reduce_comms( char reduceComms )
-    {}
-    virtual void set_comm_fusion_big_interval( unsigned long long bigInterval )
-    {}
-    virtual void set_comm_fusion_small_interval( unsigned long long smallInterval )
-    {}
+    virtual std::vector< std::string > parseDoc( char *docname ) = 0;
 
-    /* Parameters for Stats */
-    virtual void set_bursts_plot( int burstsPlot )
-    {}
-    virtual void set_comms_plot( int commsPlot )
-    {}
-    virtual void set_events_plot( int eventsPlot )
-    {}
-
-    virtual std::vector< std::string > parseDoc( char *docname )
-    {
-      std::vector< std::string > v;
-      return v;
-    }
-
-    virtual bool saveXML( std::vector< std::string > &filterOrder, std::string fileName )
-    {
-      return true;
-    }
+    virtual bool saveXML( std::vector< std::string > &filterOrder, std::string fileName ) = 0;
 
 
     virtual TraceOptions *getConcrete()
@@ -268,6 +172,7 @@ class TraceOptionsProxy :public TraceOptions
     virtual void set_remLastStates( bool remStates ) override;
     virtual void set_keep_boundary_events( bool keepEvents ) override;
     virtual void set_keep_all_events( bool keepAllEvents ) override;
+    virtual void set_max_cut_time_to_first_finished_appl( bool setOption ) override;
 
     virtual bool get_by_time() const override;
     virtual unsigned long long get_min_cutting_time() const override;
@@ -281,6 +186,7 @@ class TraceOptionsProxy :public TraceOptions
     virtual bool get_remLastStates() const override;
     virtual bool get_keep_boundary_events() const override;
     virtual bool get_keep_all_events() const override;
+    virtual bool get_max_cut_time_to_first_finished_appl() const override;
 
     /* Sets for filtering */
     virtual void set_filter_events( bool filterEvents ) override;
@@ -317,7 +223,6 @@ class TraceOptionsProxy :public TraceOptions
     virtual void set_sc_summarize_states( bool scSummarizeStates ) override;
     virtual void set_sc_only_in_bursts( bool scOnlyInBursts ) override;
     virtual void set_sc_remove_states( bool scRemoveStates ) override;
-    virtual void set_sc_frequency( int scFrequency ) override;
     virtual void set_sc_types( char *whichTypes ) override;
     virtual void set_sc_types_kept( char *typesKept ) override;
 
@@ -331,16 +236,6 @@ class TraceOptionsProxy :public TraceOptions
     virtual bool get_sc_remove_states() const override;
     virtual char *get_sc_types() const override;
     virtual char *get_sc_types_kept() const override;
-
-    /* Sets for comm_fusion */
-    virtual void set_reduce_comms( char reduceComms ) override;
-    virtual void set_comm_fusion_big_interval( unsigned long long bigInterval ) override;
-    virtual void set_comm_fusion_small_interval( unsigned long long smallInterval ) override;
-
-    /* Parameters for Stats */
-    virtual void set_bursts_plot( int burstsPlot ) override;
-    virtual void set_comms_plot( int commsPlot ) override;
-    virtual void set_events_plot( int eventsPlot ) override;
 
     virtual std::vector< std::string > parseDoc( char *docname ) override;
     bool saveXML( std::vector< std::string > &filterOrder, std::string fileName ) override;

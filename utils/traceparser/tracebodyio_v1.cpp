@@ -22,14 +22,11 @@
 \*****************************************************************************/
 
 #include <iostream>
-#include <string>
 #include <sstream>
 #include <fstream>
 #include <type_traits>
 
 #include "prvgetline.h"
-
-using namespace std;
 
 #define PARAM_TYPENAME class    TraceStreamT, \
                        class    RecordContainerT, \
@@ -52,59 +49,22 @@ using namespace std;
                    RecordT
 
 template< PARAM_TYPENAME >
-string TraceBodyIO_v1< PARAM_LIST >::multiEventLine;
+std::string TraceBodyIO_v1< PARAM_LIST >::multiEventLine;
 
 template< PARAM_TYPENAME >
 typename TraceBodyIO_v1< PARAM_LIST >::TMultiEventCommonInfo TraceBodyIO_v1< PARAM_LIST >::multiEventCommonInfo =
         { nullptr, (TThreadOrder)0, (TCPUOrder)0, (RecordTimeT)0 };
 
 template< PARAM_TYPENAME >
-string TraceBodyIO_v1< PARAM_LIST >::line;
+std::string TraceBodyIO_v1< PARAM_LIST >::line;
 
 template< PARAM_TYPENAME >
-ostringstream TraceBodyIO_v1< PARAM_LIST >::ostr;
+std::ostringstream TraceBodyIO_v1< PARAM_LIST >::ostr;
 
 // Optimization on conversion string to numbers, but with no error control
 //#define USE_ATOLL
 // Even more optimization using custom function instead of atoll with error checking
 #define USE_PRV_ATOLL
-constexpr bool prv_atoll_v( string::const_iterator& it, const string::const_iterator& end )
-{
-  return true;
-}
-
-template <typename T, typename... Targs>
-constexpr bool prv_atoll_v( string::const_iterator& it, const string::const_iterator& end, T& result, Targs&... Fargs )
-{
-  result = 0;
-  int negative = 1;
-
-  if( it == end )
-    return false;
-
-  if( *it == '-' )
-  {
-    if( is_unsigned<T>::value )
-      return false;
-    negative = -1;
-    ++it;
-  }
-
-  if( *it >= '0' && *it <= '9' )
-  {
-    result = ( *it++ - '0' );
-    while( *it >= '0' && *it <= '9' )
-      result = ( result * 10 ) + ( *it++ - '0' );
-
-    result *= negative;
-  }
-
-  if( it == end )
-    return sizeof...( Targs ) == 0;
-
-  return prv_atoll_v( ++it, end, Fargs... );
-}
-
 
 template< PARAM_TYPENAME >
 bool TraceBodyIO_v1< PARAM_LIST >::ordered() const
@@ -151,14 +111,14 @@ void TraceBodyIO_v1< PARAM_LIST >::read( TraceStreamT& file,
       break;
 
     default:
-      cerr << "Unkwnown record type." << endl;
-      cerr << line << endl;
+      std::cerr << "Unkwnown record type." << std::endl;
+      std::cerr << line << std::endl;
       break;
   };
 }
 
 template< PARAM_TYPENAME >
-void TraceBodyIO_v1< PARAM_LIST >::bufferWrite( fstream& whichStream, bool writeReady, bool lineClear ) const
+void TraceBodyIO_v1< PARAM_LIST >::bufferWrite( std::fstream& whichStream, bool writeReady, bool lineClear ) const
 {
   if ( writeReady )
   {
@@ -169,7 +129,7 @@ void TraceBodyIO_v1< PARAM_LIST >::bufferWrite( fstream& whichStream, bool write
 }
 
 template< PARAM_TYPENAME >
-void TraceBodyIO_v1< PARAM_LIST >::write( fstream& whichStream,
+void TraceBodyIO_v1< PARAM_LIST >::write( std::fstream& whichStream,
                             const ProcessModelT& whichProcessModel,
                             const ResourceModelT& whichResourceModel,
                             RecordT *record ) const
@@ -226,8 +186,8 @@ void TraceBodyIO_v1< PARAM_LIST >::write( fstream& whichStream,
     else
     {
       writeReady = false;
-      cerr << "TraceBodyIO_v1::write()" << endl;
-      cerr << "Unkwnown record type in memory." << endl;
+      std::cerr << "TraceBodyIO_v1::write()" << std::endl;
+      std::cerr << "Unkwnown record type in memory." << std::endl;
     }
 
     bufferWrite( whichStream, writeReady, false );
@@ -246,11 +206,11 @@ inline void TraceBodyIO_v1< PARAM_LIST >::readTraceInfo( const std::string& line
 }
 
 template< PARAM_TYPENAME >
-inline void TraceBodyIO_v1< PARAM_LIST >::readState( const string& line,
+inline void TraceBodyIO_v1< PARAM_LIST >::readState( const std::string& line,
                                        const ProcessModelT& whichProcessModel,
                                        const ResourceModelT& whichResourceModel,
                                        RecordContainerT& records,
-                                       unordered_set<StateT>& states ) const
+                                       std::unordered_set<StateT>& states ) const
 {
   TCPUOrder CPU;
   TApplOrder appl;
@@ -265,15 +225,15 @@ inline void TraceBodyIO_v1< PARAM_LIST >::readState( const string& line,
   // Read the common info
   if ( !readCommon( whichProcessModel, whichResourceModel, it, line.cend(), CPU, appl, task, thread, time ) )
   {
-    cerr << "Error reading state record." << endl;
-    cerr << line << endl;
+    std::cerr << "Error reading state record." << std::endl;
+    std::cerr << line << std::endl;
     return;
   }
 
   if( !prv_atoll_v( it, line.cend(), endtime, state ) )
   {
-    cerr << "Error reading state record." << endl;
-    cerr << line << endl;
+    std::cerr << "Error reading state record." << std::endl;
+    std::cerr << line << std::endl;
     return;
   }
 
@@ -300,11 +260,11 @@ inline void TraceBodyIO_v1< PARAM_LIST >::readState( const string& line,
 }
 
 template< PARAM_TYPENAME >
-inline void TraceBodyIO_v1< PARAM_LIST >::readEvent( const string& line,
+inline void TraceBodyIO_v1< PARAM_LIST >::readEvent( const std::string& line,
                                        const ProcessModelT& whichProcessModel,
                                        const ResourceModelT& whichResourceModel,
                                        RecordContainerT& records,
-                                       unordered_set<EventTypeT>& events ) const
+                                       std::unordered_set<EventTypeT>& events ) const
 {
   TCPUOrder CPU;
   TApplOrder appl;
@@ -319,8 +279,8 @@ inline void TraceBodyIO_v1< PARAM_LIST >::readEvent( const string& line,
   // Read the common info
   if ( !readCommon( whichProcessModel, whichResourceModel, it, line.cend(), CPU, appl, task, thread, time ) )
   {
-    cerr << "Error reading event record." << endl;
-    cerr << line << endl;
+    std::cerr << "Error reading event record." << std::endl;
+    std::cerr << line << std::endl;
     return;
   }
 
@@ -328,8 +288,8 @@ inline void TraceBodyIO_v1< PARAM_LIST >::readEvent( const string& line,
   {
     if( !prv_atoll_v( it, line.cend(), eventtype, eventvalue ) )
     {
-      cerr << "Error reading event record." << endl;
-      cerr << line << endl;
+      std::cerr << "Error reading event record." << std::endl;
+      std::cerr << line << std::endl;
       return;
     }
 
@@ -346,7 +306,7 @@ inline void TraceBodyIO_v1< PARAM_LIST >::readEvent( const string& line,
 }
 
 template< PARAM_TYPENAME >
-inline void TraceBodyIO_v1< PARAM_LIST >::readComm( const string& line,
+inline void TraceBodyIO_v1< PARAM_LIST >::readComm( const std::string& line,
                                       const ProcessModelT& whichProcessModel,
                                       const ResourceModelT& whichResourceModel,
                                       RecordContainerT& records ) const
@@ -371,15 +331,15 @@ inline void TraceBodyIO_v1< PARAM_LIST >::readComm( const string& line,
   // Read the common info
   if ( !readCommon( whichProcessModel, whichResourceModel, it, line.cend(), CPU, appl, task, thread, logSend ) )
   {
-    cerr << "Error reading communication record." << endl;
-    cerr << line << endl;
+    std::cerr << "Error reading communication record." << std::endl;
+    std::cerr << line << std::endl;
     return;
   }
 
   if( !prv_atoll_v( it, line.cend(), phySend, remoteCPU, remoteAppl, remoteTask, remoteThread, logReceive, phyReceive, commSize, commTag ) )
   {
-    cerr << "Error reading communication record." << endl;
-    cerr << line << endl;
+    std::cerr << "Error reading communication record." << std::endl;
+    std::cerr << line << std::endl;
     return;
   }
 
@@ -398,15 +358,15 @@ inline void TraceBodyIO_v1< PARAM_LIST >::readComm( const string& line,
 
 
 template< PARAM_TYPENAME >
-inline void TraceBodyIO_v1< PARAM_LIST >::readGlobalComm( const string& line, RecordContainerT& records ) const
+inline void TraceBodyIO_v1< PARAM_LIST >::readGlobalComm( const std::string& line, RecordContainerT& records ) const
 {}
 
 
 template< PARAM_TYPENAME >
 inline bool TraceBodyIO_v1< PARAM_LIST >::readCommon( const ProcessModelT& whichProcessModel,
                                         const ResourceModelT& whichResourceModel,
-                                        string::const_iterator& it,
-                                        const string::const_iterator& end,
+                                        std::string::const_iterator& it,
+                                        const std::string::const_iterator& end,
                                         TCPUOrder& CPU,
                                         TApplOrder& appl,
                                         TTaskOrder& task,
@@ -432,8 +392,8 @@ bool TraceBodyIO_v1< PARAM_LIST >::writeState( const ProcessModelT& whichProcess
 
   ostr.clear();
   ostr.str( "" );
-  ostr << fixed;
-  ostr << dec;
+  ostr << std::fixed;
+  ostr << std::dec;
   ostr.precision( 0 );
 
   ostr << StateRecord << ':';
@@ -458,8 +418,8 @@ bool TraceBodyIO_v1< PARAM_LIST >::writePendingMultiEvent( const ProcessModelT& 
   {
     ostr.clear();
     ostr.str( "" );
-    ostr << fixed;
-    ostr << dec;
+    ostr << std::fixed;
+    ostr << std::dec;
     ostr.precision( 0 );
 
     ostr << EventRecord << ':';
@@ -492,8 +452,8 @@ void TraceBodyIO_v1< PARAM_LIST >::appendEvent( const RecordT *record ) const
 {
   ostr.clear();
   ostr.str( "" );
-  ostr << fixed;
-  ostr << dec;
+  ostr << std::fixed;
+  ostr << std::dec;
   ostr.precision( 0 );
 
   if ( !multiEventLine.empty() )
@@ -516,8 +476,8 @@ bool TraceBodyIO_v1< PARAM_LIST >::writeComm( const ProcessModelT& whichProcessM
 
   ostr.clear();
   ostr.str( "" );
-  ostr << fixed;
-  ostr << dec;
+  ostr << std::fixed;
+  ostr << std::dec;
   ostr.precision( 0 );
 
   if ( !( record->getType() == ( COMM + LOG + SEND ) ) )
@@ -551,7 +511,7 @@ bool TraceBodyIO_v1< PARAM_LIST >::writeGlobalComm( const ProcessModelT& whichPr
 }
 
 template< PARAM_TYPENAME >
-void TraceBodyIO_v1< PARAM_LIST >::writeCommon( ostringstream& line,
+void TraceBodyIO_v1< PARAM_LIST >::writeCommon( std::ostringstream& line,
                                   const ProcessModelT& whichProcessModel,
                                   const ResourceModelT& whichResourceModel,
                                   const RecordT *record ) const

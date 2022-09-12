@@ -24,14 +24,12 @@
 
 #pragma once
 
-
-#include "ktraceoptions.h"
-#include "zlib.h"
-
-#include "tracecutter.h"
 #include <set>
 
 #include "cubecontainer.h"
+#include "ktraceoptions.h"
+#include "tracecutter.h"
+#include "tracestream.h"
 
 class KTraceCutter : public TraceCutter
 {
@@ -59,14 +57,6 @@ class KTraceCutter : public TraceCutter
                           ProgressController *progress ) override;
 
   private:
-    /* Buffer for reading trace records */
-    char *line;
-
-    /* Trace in and trace out */
-    FILE *infile;
-    FILE *outfile;
-    gzFile gzInfile;
-
     unsigned int min_perc;
     unsigned int max_perc;
     bool by_time;
@@ -104,7 +94,6 @@ class KTraceCutter : public TraceCutter
     // Event types scanned from .pcf file with declared value 0.
     std::set< TEventType > HWCTypesInPCF;
 
-    /* Struct for the case of MAX_TRACE_SIZE */
     class ThreadInfo
     {
       public:
@@ -124,6 +113,24 @@ class KTraceCutter : public TraceCutter
     typedef CubeContainer<TApplOrder, TTaskOrder, TThreadOrder, ThreadInfo> CutterThreadInfo;
     CutterThreadInfo threadsInfo;
 
+    class ApplicationInfo
+    {
+      public:
+        ApplicationInfo( TThreadOrder whichNumberOfThreads ) : numberOfThreads( whichNumberOfThreads ) {}
+        bool addFinishedThread()
+        {
+          return ++finishedThreads == numberOfThreads;
+        }
+      
+      private:
+        const TThreadOrder numberOfThreads;
+        TThreadOrder finishedThreads;
+    };
+
+    std::vector< ApplicationInfo > appsInfo;
+    bool anyApplicationFinished;
+    unsigned long long timeOfFirsApplicationFinished;
+
     struct selected_tasks
     {
       int min_task_id;
@@ -136,18 +143,19 @@ class KTraceCutter : public TraceCutter
     std::string cutterApplicationCaller;
 
     void read_cutter_params();
-    void proces_cutter_header( char *header,
-                               //char *trace_in_name,
-                               //char *trace_out_name,
-                               bool is_zip );
-    void writeOffsetLine( const char *trace_in_name,
-                          const char *trace_out_name,
+    void proces_cutter_header( const std::string &header, TraceStream *whichFile, FILE *outfile );
+    void parseInHeaderAndDumpOut( TraceStream *whichFile, std::fstream& outfile );
+
+    template< typename T >
+    void writeOffsetLine( T& outfile,
+                          const char *trace_in_name,
                           unsigned long long timeOffset,
                           unsigned long long timeCutBegin,
                           unsigned long long timeCutEnd );
 
     template< typename IteratorType >
-    void dumpEventsSet( const IteratorType& begin,
+    void dumpEventsSet( std::fstream &outFile,
+                        const IteratorType& begin,
                         const IteratorType& end,
                         unsigned int cpu,
                         unsigned int appl,
@@ -158,14 +166,14 @@ class KTraceCutter : public TraceCutter
                         bool &needEOL,
                         bool &writtenComment );
 
-    void appendLastZerosToUnclosedEvents( const unsigned long long final_time );
-    void ini_cutter_progress_bar( char *file_name, ProgressController *progress );
-    void show_cutter_progress_bar( ProgressController *progress );
+    void appendLastZerosToUnclosedEvents( const unsigned long long final_time, std::fstream &outFile );
+    void ini_cutter_progress_bar( const std::string& file_name, ProgressController *progress );
+    void show_cutter_progress_bar( ProgressController *progress, TraceStream *whichFile );
     void update_queue( unsigned int appl, unsigned int task, unsigned int thread,
                        unsigned long long type,
                        unsigned long long value );
     void load_counters_of_pcf( char *trace_name );
-    void shiftLeft_TraceTimes_ToStartFromZero( const char *originalTraceName, const char *nameIn, const char *nameOut, bool is_zip, ProgressController *progress );
+    void shiftLeft_TraceTimes_ToStartFromZero( const char *originalTraceName, const char *nameIn, const char *nameOut, ProgressController *progress );
     bool is_selected_task( int task_id );
 
     ThreadInfo& initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu, bool& reset_counters );

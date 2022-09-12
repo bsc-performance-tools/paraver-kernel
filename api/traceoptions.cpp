@@ -162,6 +162,11 @@ void TraceOptionsProxy::set_keep_all_events( bool keepAllEvents )
    myTraceOptions->set_keep_all_events( keepAllEvents );
 }
 
+void TraceOptionsProxy::set_max_cut_time_to_first_finished_appl( bool setOption )
+{
+  myTraceOptions->set_max_cut_time_to_first_finished_appl( setOption );
+}
+
 bool TraceOptionsProxy::get_by_time() const
 {
   return myTraceOptions->get_by_time();
@@ -221,6 +226,12 @@ bool TraceOptionsProxy::get_keep_all_events() const
 {
   return myTraceOptions->get_keep_all_events();
 }
+
+bool TraceOptionsProxy::get_max_cut_time_to_first_finished_appl() const
+{
+  return myTraceOptions->get_max_cut_time_to_first_finished_appl();
+}
+
 
 /* Sets for filtering */
 void TraceOptionsProxy::set_filter_events( bool filterEvents )
@@ -381,11 +392,6 @@ void TraceOptionsProxy::set_sc_remove_states( bool scRemoveStates )
   myTraceOptions->set_sc_remove_states( scRemoveStates );
 }
 
-void TraceOptionsProxy::set_sc_frequency( int scFrequency )
-{
-  myTraceOptions->set_sc_frequency( scFrequency );
-}
-
 void TraceOptionsProxy::set_sc_types( char *whichTypes )
 {
   myTraceOptions->set_sc_types( whichTypes );
@@ -437,12 +443,6 @@ bool TraceOptionsProxy::get_sc_remove_states() const
   return myTraceOptions->get_sc_remove_states();
 }
 
-/*
-void TraceOptionsProxy::set_sc_frequency()
-{
-  myTraceOptions->set_sc_frequency( scFrequency );
-}
-*/
 char *TraceOptionsProxy::get_sc_types() const
 {
   return myTraceOptions->get_sc_types();
@@ -453,38 +453,6 @@ char *TraceOptionsProxy::get_sc_types_kept() const
   return myTraceOptions->get_sc_types_kept();
 }
 
-
-/* Sets for comm_fusion */
-void TraceOptionsProxy::set_reduce_comms( char reduceComms )
-{
-  myTraceOptions->set_reduce_comms( reduceComms );
-}
-
-void TraceOptionsProxy::set_comm_fusion_big_interval( unsigned long long bigInterval )
-{
-  myTraceOptions->set_comm_fusion_big_interval( bigInterval );
-}
-
-void TraceOptionsProxy::set_comm_fusion_small_interval( unsigned long long smallInterval )
-{
-  myTraceOptions->set_comm_fusion_small_interval( smallInterval );
-}
-
-/* Parameters for Stats */
-void TraceOptionsProxy::set_bursts_plot( int burstsPlot )
-{
-  myTraceOptions->set_bursts_plot( burstsPlot );
-}
-
-void TraceOptionsProxy::set_comms_plot( int commsPlot )
-{
-  myTraceOptions->set_comms_plot( commsPlot );
-}
-
-void TraceOptionsProxy::set_events_plot( int eventsPlot )
-{
-  myTraceOptions->set_events_plot( eventsPlot );
-}
 
 vector< string > TraceOptionsProxy::parseDoc( char *docname )
 {

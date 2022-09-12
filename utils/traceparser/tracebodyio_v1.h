@@ -23,7 +23,50 @@
 
 #pragma once
 
+#include <string>
+
 #include "tracebodyio.h"
+
+/******************************************************************************
+******************        prv_atoll_v       ***********************************
+******************************************************************************/
+constexpr bool prv_atoll_v( std::string::const_iterator& it, const std::string::const_iterator& end )
+{
+  return true;
+}
+
+template <typename T, typename... Targs>
+constexpr bool prv_atoll_v( std::string::const_iterator& it, const std::string::const_iterator& end, T& result, Targs&... Fargs )
+{
+  result = 0;
+  int negative = 1;
+
+  if( it == end )
+    return false;
+
+  if( *it == '-' )
+  {
+    if( std::is_unsigned<T>::value )
+      return false;
+    negative = -1;
+    ++it;
+  }
+
+  if( *it >= '0' && *it <= '9' )
+  {
+    result = ( *it++ - '0' );
+    while( *it >= '0' && *it <= '9' )
+      result = ( result * 10 ) + ( *it++ - '0' );
+
+    result *= negative;
+  }
+
+  if( it == end )
+    return sizeof...( Targs ) == 0;
+
+  return prv_atoll_v( ++it, end, Fargs... );
+}
+
 
 template< class    TraceStreamT,
           class    RecordContainerT,
