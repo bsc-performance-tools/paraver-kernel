@@ -63,6 +63,10 @@ KTraceCutter::KTraceCutter( TraceOptions *options,
   exec_options = new KTraceOptions( (KTraceOptions *) options );
   HWCTypesInPCF.insert( whichTypesWithValuesZero.begin(), whichTypesWithValuesZero.end() );
   cutterApplicationCaller = CutterMetadata::ORIGINAL_APPLICATION_ID;
+  
+  // PROFET
+  firstApplicationFinished = false;
+  timeOfFirsApplicationFinished = 0;
 }
 
 
@@ -252,9 +256,11 @@ void KTraceCutter::parseInHeaderAndDumpOut( TraceStream *whichFile, std::fstream
   if ( !originalTime )
     traceEndTime = total_time;
 
+  for ( auto i = 0; i < traceProcessModel.totalApplications(); ++i )
+    appsInfo.emplace_back( traceProcessModel.totalThreads( i ) );
+
   // Dump header in outfile
   dumpTraceHeader( outfile, tmpDate, traceEndTime, traceTimeUnit, traceResourceModel, traceProcessModel, communicators );
-
 }
 
 
@@ -863,8 +869,6 @@ void KTraceCutter::execute( std::string trace_in,
     else
       ++num_iters;
 
-    /* 1: state; 2: event; 3: comm; #: comment in trace */
-    /* DEPRECATED 4: global comm */
     std::ostringstream aux_buffer;
 
     CutterThreadInfo::iterator threadInfoIt;
@@ -874,8 +878,14 @@ void KTraceCutter::execute( std::string trace_in,
       case '1':
         sscanf( line.c_str(), "%d:%d:%d:%d:%d:%lld:%lld:%d\n",
                 &id, &cpu, &appl, &task, &thread, &time_1, &time_2, &state );
+        
+        // PROFET
+        if ( exec_options->get_max_cut_time_to_finish_of_first_appl() &&
+             firstApplicationFinished &&
+             ( time_1 >= timeOfFirsApplicationFinished || 
+               ( time_2 >= timeOfFirsApplicationFinished && !break_states ) ) )
+          break;
 
-        /* If is a not traceable thread, get next record */
         if ( cut_tasks && !is_selected_task( task ) )
           break;
 
@@ -908,6 +918,16 @@ void KTraceCutter::execute( std::string trace_in,
           {
             --useful_tasks;
             threadsInfo( appl - 1, task - 1, thread - 1 ).finished = true;
+
+            // PROFET
+            if ( exec_options->get_max_cut_time_to_finish_of_first_appl() )
+            {
+              if ( appl == 1 && appsInfo[ appl - 1 ].addFinishedThread() )
+              {
+                firstApplicationFinished = true;
+                timeOfFirsApplicationFinished = threadsInfo( appl - 1, task - 1, thread - 1 ).lastStateEndTime;
+              }
+            }
           }
 
           break;
@@ -925,7 +945,19 @@ void KTraceCutter::execute( std::string trace_in,
 
           threadsInfo( appl - 1, task - 1, thread - 1 ).lastStateEndTime = time_2;
           if( time_1 < time_max && time_2 > time_max && !remLastStates && !break_states && keep_boundary_events )
+          {
             threadsInfo( appl - 1, task - 1, thread - 1 ).finished = true;
+
+            // PROFET
+            if ( exec_options->get_max_cut_time_to_finish_of_first_appl() )
+            {
+              if ( appl == 1 && appsInfo[ appl - 1 ].addFinishedThread() )
+              {
+                firstApplicationFinished = true;
+                timeOfFirsApplicationFinished = threadsInfo( appl - 1, task - 1, thread - 1 ).lastStateEndTime;
+              }
+            }
+          }
 
           if ( !originalTime && break_states )
           {
@@ -988,7 +1020,11 @@ void KTraceCutter::execute( std::string trace_in,
         sscanf( line.c_str(), "%d:%d:%d:%d:%d:%lld:%s\n", &id, &cpu, &appl, &task, &thread, &time_1, buffer );
         line = buffer;
 
-        /* If isn't a traceable thread, get next record */
+        // PROFET
+        if ( exec_options->get_max_cut_time_to_finish_of_first_appl() &&
+             firstApplicationFinished && time_1 >= timeOfFirsApplicationFinished )
+          break;
+
         if( cut_tasks && !is_selected_task( task ) )
           break;
 
@@ -1074,7 +1110,15 @@ void KTraceCutter::execute( std::string trace_in,
                 &cpu,   &appl,   &task,   &thread,   &time_1, &time_2,
                 &cpu_2, &appl_2, &task_2, &thread_2, &time_3, &time_4, &size, &tag );
 
-        /* If isn't a traceable thread, get next record */
+        // PROFET
+        if ( exec_options->get_max_cut_time_to_finish_of_first_appl() &&
+             firstApplicationFinished &&
+             ( time_1 >= timeOfFirsApplicationFinished ||
+               time_2 >= timeOfFirsApplicationFinished ||
+               time_3 >= timeOfFirsApplicationFinished ||
+               time_4 >= timeOfFirsApplicationFinished ) )
+          break;
+
         if ( cut_tasks && !is_selected_task( task ) && !is_selected_task( task_2 ) )
           break;
 

@@ -91,6 +91,7 @@ class ProcessModel
     TaskOrderT getLastTask( ApplOrderT inAppl ) const;
 
     ThreadOrderT totalThreads() const;
+    ThreadOrderT totalThreads( ApplOrderT whichAppl ) const;
     ThreadOrderT getGlobalThread( const ApplOrderT& inAppl,
                                   const TaskOrderT& inTask,
                                   const ThreadOrderT& inThread ) const;

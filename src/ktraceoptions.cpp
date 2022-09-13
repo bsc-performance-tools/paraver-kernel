@@ -76,7 +76,9 @@ KTraceOptions::KTraceOptions( const KTraceOptions *whichTraceOptions )
   set_remLastStates( whichTraceOptions->get_remLastStates() );
   set_keep_boundary_events( whichTraceOptions->get_keep_boundary_events() );
   set_keep_all_events( whichTraceOptions->get_keep_all_events() );
-  set_max_cut_time_to_first_finished_appl( whichTraceOptions->get_max_cut_time_to_first_finished_appl() );
+
+  // PROFET
+  set_max_cut_time_to_finish_of_first_appl( whichTraceOptions->get_max_cut_time_to_finish_of_first_appl() );
 
   // Filter Default Options: states
   set_filter_states( whichTraceOptions->get_filter_states() );
@@ -165,7 +167,7 @@ void KTraceOptions::init()
   set_remLastStates( ParaverConfig::getInstance()->getCutterRemoveLastStates() );
   set_keep_boundary_events( ParaverConfig::getInstance()->getCutterKeepEvents() );
   set_keep_all_events( false );
-  set_max_cut_time_to_first_finished_appl( false );
+  set_max_cut_time_to_finish_of_first_appl( false );
 
   // Filter Default Options
 // problem --> derived fields?; minimum default info?

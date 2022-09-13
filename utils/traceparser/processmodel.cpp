@@ -26,6 +26,8 @@
 #include <iostream>
 #include <fstream>
 #include <limits>
+#include <numeric>
+
 #include "processmodel.h"
 #ifdef USE_PARAVER_EXCEPTIONS
 #include "traceheaderexception.h"
@@ -137,6 +139,17 @@ ThreadOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::t
   return threads.size();
 }
 
+template< typename ApplOrderT, 
+          typename TaskOrderT, 
+          typename ThreadOrderT, 
+          typename NodeOrderT >
+ThreadOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::totalThreads( ApplOrderT whichAppl ) const
+{
+  return std::accumulate( applications[ whichAppl ].tasks.begin(),
+                          applications[ whichAppl ].tasks.end(),
+                          0,
+                          []( int a, const ProcessModelTask< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT > &b ){ return a + b.threads.size(); } );
+}
 
 template< typename ApplOrderT, 
           typename TaskOrderT, 

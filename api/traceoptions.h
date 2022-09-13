@@ -70,7 +70,7 @@ class TraceOptions
     virtual void set_remLastStates( bool remStates ) = 0;
     virtual void set_keep_boundary_events( bool keepEvents ) = 0;
     virtual void set_keep_all_events( bool keepAllEvents ) = 0;
-    virtual void set_max_cut_time_to_first_finished_appl( bool setOption ) = 0;
+    virtual void set_max_cut_time_to_finish_of_first_appl( bool setOption ) = 0;
 
     virtual bool get_by_time() const = 0;
     virtual unsigned long long get_min_cutting_time() const = 0;
@@ -84,7 +84,9 @@ class TraceOptions
     virtual bool get_remLastStates() const = 0;
     virtual bool get_keep_boundary_events() const = 0;
     virtual bool get_keep_all_events() const = 0;
-    virtual bool get_max_cut_time_to_first_finished_appl() const = 0;
+
+    // PROFET
+    virtual bool get_max_cut_time_to_finish_of_first_appl() const = 0;
 
     /* Sets for filtering */
     virtual void set_filter_events( bool filterEvents ) = 0;
@@ -172,7 +174,7 @@ class TraceOptionsProxy :public TraceOptions
     virtual void set_remLastStates( bool remStates ) override;
     virtual void set_keep_boundary_events( bool keepEvents ) override;
     virtual void set_keep_all_events( bool keepAllEvents ) override;
-    virtual void set_max_cut_time_to_first_finished_appl( bool setOption ) override;
+    virtual void set_max_cut_time_to_finish_of_first_appl( bool setOption ) override;
 
     virtual bool get_by_time() const override;
     virtual unsigned long long get_min_cutting_time() const override;
@@ -186,7 +188,9 @@ class TraceOptionsProxy :public TraceOptions
     virtual bool get_remLastStates() const override;
     virtual bool get_keep_boundary_events() const override;
     virtual bool get_keep_all_events() const override;
-    virtual bool get_max_cut_time_to_first_finished_appl() const override;
+
+    // PROFET
+    virtual bool get_max_cut_time_to_finish_of_first_appl() const override;
 
     /* Sets for filtering */
     virtual void set_filter_events( bool filterEvents ) override;

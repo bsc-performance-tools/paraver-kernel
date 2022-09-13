@@ -98,7 +98,7 @@ class KTraceOptions: public TraceOptions
     bool remLastStates;
     bool keep_boundary_events;
     bool keep_all_events;
-    bool max_cut_time_to_first_finished_appl;
+    bool max_cut_time_to_finish_of_first_appl; // PROFET
     char tasks_list[256];
 
     /* Parameters for software counters */
@@ -211,11 +211,11 @@ class KTraceOptions: public TraceOptions
       keep_all_events = whichKeepAllEvents;
     }
 
-    inline void set_max_cut_time_to_first_finished_appl( bool setOptions ) override
+    // PROFET
+    inline void set_max_cut_time_to_finish_of_first_appl( bool setOptions ) override
     {
-      max_cut_time_to_first_finished_appl = setOptions;
+      max_cut_time_to_finish_of_first_appl = setOptions;
     }
-
 
     inline bool get_by_time() const override
     {
@@ -288,11 +288,11 @@ class KTraceOptions: public TraceOptions
       return keep_all_events;
     }
 
-    inline bool get_max_cut_time_to_first_finished_appl() const override
+    // PROFET
+    inline bool get_max_cut_time_to_finish_of_first_appl() const override
     {
-      return max_cut_time_to_first_finished_appl;
+      return max_cut_time_to_finish_of_first_appl;
     }
-
 
     /* Sets for filtering */
     inline void set_filter_events( bool whichFilterEvents ) override

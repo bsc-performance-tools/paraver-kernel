@@ -113,10 +113,12 @@ class KTraceCutter : public TraceCutter
     typedef CubeContainer<TApplOrder, TTaskOrder, TThreadOrder, ThreadInfo> CutterThreadInfo;
     CutterThreadInfo threadsInfo;
 
+    // PROFET
     class ApplicationInfo
     {
       public:
-        ApplicationInfo( TThreadOrder whichNumberOfThreads ) : numberOfThreads( whichNumberOfThreads ) {}
+        ApplicationInfo( TThreadOrder whichNumberOfThreads ) : numberOfThreads( whichNumberOfThreads ),
+                                                               finishedThreads( 0 ) {}
         bool addFinishedThread()
         {
           return ++finishedThreads == numberOfThreads;
@@ -126,10 +128,10 @@ class KTraceCutter : public TraceCutter
         const TThreadOrder numberOfThreads;
         TThreadOrder finishedThreads;
     };
-
     std::vector< ApplicationInfo > appsInfo;
-    bool anyApplicationFinished;
+    bool firstApplicationFinished;
     unsigned long long timeOfFirsApplicationFinished;
+
 
     struct selected_tasks
     {

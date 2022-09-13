@@ -162,9 +162,9 @@ void TraceOptionsProxy::set_keep_all_events( bool keepAllEvents )
    myTraceOptions->set_keep_all_events( keepAllEvents );
 }
 
-void TraceOptionsProxy::set_max_cut_time_to_first_finished_appl( bool setOption )
+void TraceOptionsProxy::set_max_cut_time_to_finish_of_first_appl( bool setOption )
 {
-  myTraceOptions->set_max_cut_time_to_first_finished_appl( setOption );
+  myTraceOptions->set_max_cut_time_to_finish_of_first_appl( setOption );
 }
 
 bool TraceOptionsProxy::get_by_time() const
@@ -227,9 +227,10 @@ bool TraceOptionsProxy::get_keep_all_events() const
   return myTraceOptions->get_keep_all_events();
 }
 
-bool TraceOptionsProxy::get_max_cut_time_to_first_finished_appl() const
+// PROFET
+bool TraceOptionsProxy::get_max_cut_time_to_finish_of_first_appl() const
 {
-  return myTraceOptions->get_max_cut_time_to_first_finished_appl();
+  return myTraceOptions->get_max_cut_time_to_finish_of_first_appl();
 }
 
 
