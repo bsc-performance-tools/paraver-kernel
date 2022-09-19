@@ -436,7 +436,9 @@ PRV_UINT32 HistogramProxy::getSemanticSortedColumn( PRV_UINT32 col ) const
       return currentSemanticSort[ currentSemanticSort.size() - col - 1 ];
   }
   else if( sortSemanticReverse && !hideColumns )
-    return getNumColumns() - col - 1;
+  {
+    return getNumColumns( getCurrentStat() ) - col - 1;
+  }
 
   return col;
 }
@@ -1003,7 +1005,7 @@ THistogramColumn HistogramProxy::getSemanticRealColumn( THistogramColumn whichCo
   THistogramColumn realCol = whichCol;
 
   if( getHideColumns() && getSemanticSortColumns() && getSemanticSortReverse() )
-    realCol = getNumColumns() - noVoidSemRanges.size() + whichCol;
+    realCol = getNumColumns( getCurrentStat() ) - noVoidSemRanges.size() + whichCol;
   else if( getHideColumns() && !getSemanticSortColumns() && !getSemanticSortReverse() )
     realCol = noVoidSemRanges[ whichCol ];
   else if( getHideColumns() && !getSemanticSortColumns() && getSemanticSortReverse() )
