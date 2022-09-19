@@ -197,8 +197,6 @@ void HistogramProxy::setControlWindow( Timeline *whichWindow )
   controlWindow->setUsedByHistogram( this );
   myHisto->setControlWindow( whichWindow->getConcrete() );
   myTrace = controlWindow->getTrace();
-
-  //doubt: when I change between windows, should paraver keep my selection or use the new ctrl window ?
 }
 
 void HistogramProxy::setDataWindow( Timeline *whichWindow )
@@ -437,8 +435,7 @@ PRV_UINT32 HistogramProxy::getSemanticSortedColumn( PRV_UINT32 col ) const
     else
       return currentSemanticSort[ currentSemanticSort.size() - col - 1 ];
   }
-  else if( ( !sortSemanticColumns && sortSemanticReverse && !zoom ) ||
-           ( !sortSemanticColumns && sortSemanticReverse && !hideColumns ) )
+  else if( sortSemanticReverse && !hideColumns )
     return getNumColumns() - col - 1;
 
   return col;
