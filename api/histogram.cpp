@@ -243,6 +243,13 @@ void HistogramProxy::clearExtraControlWindow()
   myHisto->clearExtraControlWindow();
 }
 
+
+void HistogramProxy::setUseCustomDelta( bool whichValue )
+{
+  myHisto->setUseCustomDelta( whichValue );
+}
+
+
 void HistogramProxy::setControlMin( THistogramLimit whichMin )
 {
   myHisto->setControlMin( whichMin );
@@ -311,6 +318,12 @@ void HistogramProxy::setCommTagMin( TCommTag whichTag )
 void HistogramProxy::setCommTagMax( TCommTag whichTag )
 {
   myHisto->setCommTagMax( whichTag );
+}
+
+
+bool HistogramProxy::getUseCustomDelta() const
+{
+  return myHisto->getUseCustomDelta();
 }
 
 THistogramLimit HistogramProxy::getControlMin() const
@@ -396,6 +409,11 @@ void HistogramProxy::setInclusive( bool newValue )
 bool HistogramProxy::getInclusive() const
 {
   return myHisto->getInclusive();
+}
+
+void HistogramProxy::setNumColumns( THistogramColumn whichNumColumns )
+{
+  myHisto->setNumColumns( whichNumColumns );
 }
 
 THistogramColumn HistogramProxy::getNumPlanes() const

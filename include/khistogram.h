@@ -101,11 +101,14 @@ class ColumnTranslator
     ColumnTranslator( const ColumnTranslator& source );
     ColumnTranslator( THistogramLimit whichMin, THistogramLimit whichMax,
                       THistogramLimit whichDelta );
+    ColumnTranslator( THistogramLimit whichMin, THistogramLimit whichMax,
+                      THistogramColumn whichNumColumns );
     ~ColumnTranslator();
 
     bool getColumn( THistogramLimit whichValue,
                     THistogramColumn& column ) const;
     THistogramColumn totalColumns() const;
+    THistogramLimit getDelta() const;
 
   protected:
 
@@ -155,6 +158,7 @@ class KHistogram : public Histogram
     void clearDataWindow() override;
     void clearExtraControlWindow() override;
 
+    void setUseCustomDelta( bool whichValue ) override;
     void setControlMin( THistogramLimit whichMin ) override;
     void setControlMax( THistogramLimit whichMax ) override;
     void setControlDelta( THistogramLimit whichDelta ) override;
@@ -171,6 +175,7 @@ class KHistogram : public Histogram
     void setCommTagMax( TCommTag whichTag ) override;
 
 
+    bool getUseCustomDelta() const override;
     THistogramLimit getControlMin() const override;
     THistogramLimit getControlMax() const override;
     THistogramLimit getControlDelta() const override;
@@ -189,6 +194,8 @@ class KHistogram : public Histogram
     bool getInclusiveEnabled() const override;
     void setInclusive( bool newValue ) override;
     bool getInclusive() const override;
+
+    void setNumColumns( THistogramColumn whichNumColumns ) override;
 
     THistogramColumn getNumPlanes() const override;
     THistogramColumn getNumColumns() const override;
@@ -274,6 +281,8 @@ class KHistogram : public Histogram
     TObjectOrder numRows;
     THistogramColumn numCols;
     THistogramColumn numPlanes;
+
+    bool useCustomDelta;
 
     THistogramLimit controlMin;
     THistogramLimit controlMax;

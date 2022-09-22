@@ -231,11 +231,12 @@ constexpr char CFG_TAG_STATISTIC_ALIAS_CFG4D[] = "cfg4dstatistic";
 constexpr char CFG_TAG_PARAM_ALIAS_CFG4D[] = "cfg4dparam";
 constexpr char CFG_TAG_CFG4D_ENABLED[] = "CFG4D_ENABLED";
 
-constexpr char CFG_TAG_OBJECTS[] =          "Analyzer2D.Objects:";
+constexpr char CFG_TAG_OBJECTS[] = "Analyzer2D.Objects:";
 constexpr char CFG_TAG_DRAWMODE_OBJECTS[] = "Analyzer2D.DrawModeObjects:";
 constexpr char CFG_TAG_DRAWMODE_COLUMNS[] = "Analyzer2D.DrawModeColumns:";
 constexpr char CFG_TAG_AN2D_COMPUTEYSCALE_ZERO[] = "Analyzer2D.ComputeYScaleZero:";
-
+constexpr char CFG_TAG_AN2D_NUMCOLUMNS[] = "Analyzer2D.NumColumns:";
+constexpr char CFG_TAG_AN2D_USE_CUSTOM_DELTA[] = "Analyzer2D.UseCustomDelta:";
 
 static const std::string LABEL_TIMEUNIT[ DAY + 1 ] =
 {
@@ -524,6 +525,7 @@ enum THistogramProperties
   HISTOGRAM_CONTROLMINIMUM,
   HISTOGRAM_CONTROLMAXIMUM,
   HISTOGRAM_CONTROLDELTA,
+  HISTOGRAM_NUMCOLUMNS,
   HISTOGRAM_TYPE,
   HISTOGRAM_STATISTIC,
   HISTOGRAM_MINIMUMGRADIENT,
@@ -548,6 +550,7 @@ static const std::string HistogramPropertyLabels[ TOTAL_HISTOGRAM_PROPERTIES ] =
   "Control.Minimum",
   "Control.Maximum",
   "Control.Delta",
+  "Num Columns"
   "Type",
   "Statistic",
   "Minimum Gradient",
@@ -557,7 +560,7 @@ static const std::string HistogramPropertyLabels[ TOTAL_HISTOGRAM_PROPERTIES ] =
   "3D.Minimum",
   "3D.Maximum",
   "3D.Delta",
-  "3D.Plane"
+  "3D.Plane",
 };
 
 // DIMEMAS

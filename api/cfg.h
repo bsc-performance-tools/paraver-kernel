@@ -2130,6 +2130,54 @@ class Analyzer2DDelta: public TagFunction
 };
 
 
+class Analyzer2DUseCustomDelta: public TagFunction
+{
+  public:
+    Analyzer2DUseCustomDelta()
+    {}
+
+    virtual ~Analyzer2DUseCustomDelta()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Timeline *>& windows,
+                            std::vector<Histogram *>& histograms ) override;
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
+
+
+class Analyzer2DNumColumns: public TagFunction
+{
+  public:
+    Analyzer2DNumColumns()
+    {}
+
+    virtual ~Analyzer2DNumColumns()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Timeline *>& windows,
+                            std::vector<Histogram *>& histograms ) override;
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
+
+
 class Analyzer2DComputeGradient: public TagFunction
 {
   public:

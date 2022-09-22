@@ -70,6 +70,7 @@ class Histogram
     virtual void clearDataWindow() = 0;
     virtual void clearExtraControlWindow() = 0;
 
+    virtual void setUseCustomDelta( bool whichValue ) = 0;
     virtual void setControlMin( THistogramLimit whichMin ) = 0;
     virtual void setControlMax( THistogramLimit whichMax ) = 0;
     virtual void setControlDelta( THistogramLimit whichDelta ) = 0;
@@ -85,6 +86,7 @@ class Histogram
     virtual void setCommTagMin( TCommTag whichTag ) = 0;
     virtual void setCommTagMax( TCommTag whichTag ) = 0;
 
+    virtual bool getUseCustomDelta() const = 0;
     virtual THistogramLimit getControlMin() const = 0;
     virtual THistogramLimit getControlMax() const = 0;
     virtual THistogramLimit getControlDelta() const = 0;
@@ -103,6 +105,8 @@ class Histogram
     virtual bool getInclusiveEnabled() const = 0;
     virtual void setInclusive( bool newValue ) = 0;
     virtual bool getInclusive() const = 0;
+
+    virtual void setNumColumns( THistogramColumn whichNumColumns ) = 0;
 
     virtual THistogramColumn getNumPlanes() const = 0;
     virtual THistogramColumn getNumColumns() const = 0;
@@ -664,6 +668,8 @@ class HistogramProxy : public Histogram
     virtual void clearControlWindow() override;
     virtual void clearDataWindow() override;
     virtual void clearExtraControlWindow() override;
+
+    virtual void setUseCustomDelta( bool whichValue ) override;
     virtual void setControlMin( THistogramLimit whichMin ) override;
     virtual void setControlMax( THistogramLimit whichMax ) override;
     virtual void setControlDelta( THistogramLimit whichDelta ) override;
@@ -679,6 +685,7 @@ class HistogramProxy : public Histogram
     virtual void setCommTagMin( TCommTag whichTag ) override;
     virtual void setCommTagMax( TCommTag whichTag ) override;
 
+    virtual bool getUseCustomDelta() const override;
     virtual THistogramLimit getControlMin() const override;
     virtual THistogramLimit getControlMax() const override;
     virtual THistogramLimit getControlDelta() const override;
@@ -697,6 +704,8 @@ class HistogramProxy : public Histogram
     virtual bool getInclusiveEnabled() const override;
     virtual void setInclusive( bool newValue ) override;
     virtual bool getInclusive() const override;
+
+    virtual void setNumColumns( THistogramColumn whichNumColumns ) override;
 
     virtual THistogramColumn getNumPlanes() const override;
     virtual THistogramColumn getNumColumns( const std::string& whichStat ) const override;

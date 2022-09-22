@@ -894,6 +894,8 @@ bool CFGLoader::saveCFG( const string& filename,
     Analyzer2DMinimum::printLine( cfgFile, it );
     Analyzer2DMaximum::printLine( cfgFile, it );
     Analyzer2DDelta::printLine( cfgFile, it );
+    Analyzer2DUseCustomDelta::printLine( cfgFile, it );
+    Analyzer2DNumColumns::printLine( cfgFile, it );
     Analyzer2DComputeGradient::printLine( cfgFile, options, it );
     Analyzer2DMinimumGradient::printLine( cfgFile, it );
     Analyzer2DMaximumGradient::printLine( cfgFile, it );
@@ -1070,6 +1072,8 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_AN2D_MINIMUM]              = new Analyzer2DMinimum();
   cfgTagFunctions[OLDCFG_TAG_AN2D_MAXIMUM]              = new Analyzer2DMaximum();
   cfgTagFunctions[OLDCFG_TAG_AN2D_DELTA]                = new Analyzer2DDelta();
+  cfgTagFunctions[CFG_TAG_AN2D_USE_CUSTOM_DELTA]        = new Analyzer2DUseCustomDelta();
+  cfgTagFunctions[CFG_TAG_AN2D_NUMCOLUMNS]              = new Analyzer2DNumColumns();
   cfgTagFunctions[OLDCFG_TAG_AN2D_COMPUTEGRADIENT]      = new Analyzer2DComputeGradient();
   cfgTagFunctions[OLDCFG_TAG_AN2D_MINIMUMGRADIENT]      = new Analyzer2DMinimumGradient();
   cfgTagFunctions[OLDCFG_TAG_AN2D_MAXIMUMGRADIENT]      = new Analyzer2DMaximumGradient();
@@ -4842,6 +4846,8 @@ void Analyzer2DMaximum::printLine( ofstream& cfgFile,
 }
 
 
+
+
 string  Analyzer2DDelta::tagCFG = OLDCFG_TAG_AN2D_DELTA;
 
 bool Analyzer2DDelta::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -4870,6 +4876,76 @@ void Analyzer2DDelta::printLine( ofstream& cfgFile,
                                  const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_DELTA << " " << ( *it )->getControlDelta() << endl;
+}
+
+
+string  Analyzer2DUseCustomDelta::tagCFG = CFG_TAG_AN2D_USE_CUSTOM_DELTA;
+
+bool Analyzer2DUseCustomDelta::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                 Trace *whichTrace,
+                                 vector<Timeline *>& windows,
+                                 vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == nullptr )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == nullptr )
+    return false;
+
+  getline( line, strBool );
+
+  if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+    histograms[ histograms.size() - 1 ]->setUseCustomDelta( false );
+  else if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+    histograms[ histograms.size() - 1 ]->setUseCustomDelta( true );
+  else
+    return false;
+
+  return true;
+}
+
+void Analyzer2DUseCustomDelta::printLine( ofstream& cfgFile,
+                                 const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << CFG_TAG_AN2D_USE_CUSTOM_DELTA << " ";
+  if ( ( *it )->getUseCustomDelta() )
+    cfgFile << OLDCFG_VAL_TRUE2;
+  else
+    cfgFile << OLDCFG_VAL_FALSE2;
+  cfgFile << endl;
+}
+
+
+string  Analyzer2DNumColumns::tagCFG = CFG_TAG_AN2D_NUMCOLUMNS;
+
+bool Analyzer2DNumColumns::parseLine( KernelConnection *whichKernel,
+                                      istringstream& line,
+                                      Trace *whichTrace,
+                                      vector<Timeline *>& windows,
+                                      vector<Histogram *>& histograms )
+{
+  string strColumn;
+  THistogramColumn dataColumn;
+
+  if ( windows[ windows.size() - 1 ] == nullptr )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == nullptr )
+    return false;
+
+  getline( line, strColumn );
+  istringstream tmpValue( strColumn );
+  if ( !( tmpValue >> dataColumn ) )
+    return false;
+  histograms[ histograms.size() - 1 ]->setNumColumns( dataColumn );
+
+  return true;
+}
+
+void Analyzer2DNumColumns::printLine( ofstream& cfgFile,
+                                      const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << CFG_TAG_AN2D_NUMCOLUMNS << " " << ( *it )->getNumColumns() << endl;
 }
 
 

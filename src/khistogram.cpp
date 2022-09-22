@@ -235,6 +235,13 @@ ColumnTranslator::ColumnTranslator( THistogramLimit whichMin,
 }
 
 
+ColumnTranslator::ColumnTranslator( THistogramLimit whichMin, THistogramLimit whichMax,
+                                    THistogramColumn whichNumColumns ):
+  minLimit( whichMin ), maxLimit( whichMax ), numColumns( whichNumColumns )
+{
+  delta = ( maxLimit - minLimit ) / static_cast<THistogramLimit>( numColumns );
+}
+
 ColumnTranslator::~ColumnTranslator()
 {}
 
@@ -259,6 +266,10 @@ inline THistogramColumn ColumnTranslator::totalColumns() const
   return numColumns;
 }
 
+inline THistogramLimit ColumnTranslator::getDelta() const
+{
+  return delta;
+}
 
 KHistogram::KHistogram()
 {
@@ -266,6 +277,7 @@ KHistogram::KHistogram()
   dataWindow = nullptr;
   xtraControlWindow = nullptr;
 
+  useCustomDelta = true;
   controlMin = 0;
   controlMax = 1;
   controlDelta = 1;
@@ -416,6 +428,10 @@ inline void KHistogram::clearExtraControlWindow()
   xtraControlWindow = nullptr;
 }
 
+inline void KHistogram::setUseCustomDelta( bool whichValue )
+{
+  useCustomDelta = whichValue;
+}
 
 inline void KHistogram::setControlMin( THistogramLimit whichMin )
 {
@@ -500,6 +516,11 @@ inline void KHistogram::setCommTagMax( TCommTag whichTag )
   commTagMax = whichTag;
 }
 
+
+inline bool KHistogram::getUseCustomDelta() const
+{
+  return useCustomDelta;
+}
 
 inline THistogramLimit KHistogram::getControlMin() const
 {
@@ -608,6 +629,12 @@ inline void KHistogram::setInclusive( bool newValue )
 inline bool KHistogram::getInclusive() const
 {
   return inclusive;
+}
+
+
+inline void KHistogram::setNumColumns( THistogramColumn whichNumColumns )
+{
+  numCols = whichNumColumns;
 }
 
 
@@ -878,7 +905,11 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
   initTranslators();
 
   numRows = selectedRows.size();
-  numCols = columnTranslator->totalColumns();
+  if( useCustomDelta )
+    numCols = columnTranslator->totalColumns();
+  else
+    controlDelta = columnTranslator->getDelta();
+
   if ( getThreeDimensions() )
     numPlanes = planeTranslator->totalColumns();
   else
@@ -1000,7 +1031,10 @@ void KHistogram::initTranslators()
 
   if ( columnTranslator != nullptr )
     delete columnTranslator;
-  columnTranslator = new ColumnTranslator( controlMin, controlMax, controlDelta );
+  if( useCustomDelta )
+    columnTranslator = new ColumnTranslator( controlMin, controlMax, controlDelta );
+  else
+    columnTranslator = new ColumnTranslator( controlMin, controlMax, numCols );
 
   if ( planeTranslator != nullptr )
   {
@@ -1865,6 +1899,7 @@ KHistogram *KHistogram::clone()
   clonedKHistogram->numCols = numCols;
   clonedKHistogram->numPlanes = numPlanes;
 
+  clonedKHistogram->useCustomDelta = useCustomDelta;
   clonedKHistogram->controlMin = controlMin;
   clonedKHistogram->controlMax = controlMax;
   clonedKHistogram->controlDelta = controlDelta;
