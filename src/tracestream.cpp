@@ -216,6 +216,8 @@ void Compressed::getline( string& strLine )
   tmpLine[ i ] = '\0';
 #endif
   strLine = tmpLine;
+  if ( strLine.back() == '\n' )
+    strLine.pop_back();
 }
 
 bool Compressed::eof()
