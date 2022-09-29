@@ -76,6 +76,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   sortSemanticColumns = Histogram::getSemanticSortColumns();
   sortSemanticReverse = Histogram::getSemanticSortReverse();
   semanticSortCriteria = Histogram::getSemanticSortCriteria();
+  fixedSemanticSort = Histogram::getFixedSemanticSort();
   minGradient = Histogram::getMinGradient();
   maxGradient = Histogram::getMaxGradient();
   computeControlScale = Histogram::getCompute2DScale();
@@ -444,23 +445,6 @@ TObjectOrder HistogramProxy::getNumRows() const
   return myHisto->getNumRows();
 }
 
-PRV_UINT32 HistogramProxy::getSemanticSortedColumn( PRV_UINT32 col ) const
-{
-  if( sortSemanticColumns )
-  {
-    if( sortSemanticReverse )
-      return currentSemanticSort[ col ];
-    else
-      return currentSemanticSort[ currentSemanticSort.size() - col - 1 ];
-  }
-  else if( sortSemanticReverse && !hideColumns )
-  {
-    return getNumColumns( getCurrentStat() ) - col - 1;
-  }
-
-  return col;
-}
-
 TSemanticValue HistogramProxy::getCurrentValue( PRV_UINT32 col,
                                                 PRV_UINT16 idStat,
                                                 PRV_UINT32 plane ) const
@@ -811,6 +795,38 @@ void HistogramProxy::setSemanticSortReverse( bool newValue )
 bool HistogramProxy::getSemanticSortReverse() const
 {
   return sortSemanticReverse;
+}
+
+PRV_UINT32 HistogramProxy::getSemanticSortedColumn( PRV_UINT32 col ) const
+{
+  if( sortSemanticColumns )
+  {
+    if( sortSemanticReverse )
+      return currentSemanticSort[ col ];
+    else
+      return currentSemanticSort[ currentSemanticSort.size() - col - 1 ];
+  }
+  else if( sortSemanticReverse && !hideColumns )
+  {
+    return getNumColumns( getCurrentStat() ) - col - 1;
+  }
+
+  return col;
+}
+
+void HistogramProxy::setFixedSemanticSort( bool newValue )
+{
+  fixedSemanticSort = newValue;
+  if( fixedSemanticSort )
+  {
+    customSemanticSort = currentSemanticSort;
+    setSemanticSortCriteria( THistoSortCriteria::CUSTOM );
+  }
+}
+
+bool HistogramProxy::getFixedSemanticSort() const
+{
+  return fixedSemanticSort;
 }
 
 void HistogramProxy::setMinGradient( double whichMin )
@@ -1373,7 +1389,9 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->thousandSep = thousandSep;
   clonedHistogramProxy->showUnits = showUnits;
   clonedHistogramProxy->sortSemanticColumns = sortSemanticColumns;
+  clonedHistogramProxy->sortSemanticReverse = sortSemanticReverse;
   clonedHistogramProxy->semanticSortCriteria = semanticSortCriteria;
+  clonedHistogramProxy->fixedSemanticSort = fixedSemanticSort;
   clonedHistogramProxy->minGradient = minGradient;
   clonedHistogramProxy->maxGradient = maxGradient;
   clonedHistogramProxy->computeControlScale = computeControlScale;
@@ -1443,12 +1461,8 @@ Histogram *HistogramProxy::clone()
   // CFG4D
   clonedHistogramProxy->isCFG4DEnabled = isCFG4DEnabled;
   clonedHistogramProxy->CFG4DMode = CFG4DMode;
-
   clonedHistogramProxy->propertiesAliasCFG4D = propertiesAliasCFG4D;
   clonedHistogramProxy->statisticsAliasCFG4D = statisticsAliasCFG4D;
-
-  clonedHistogramProxy->semanticSortCriteria = semanticSortCriteria;
-  clonedHistogramProxy->sortSemanticReverse = sortSemanticReverse;
 
   return clonedHistogramProxy;
 }
