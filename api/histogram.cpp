@@ -778,6 +778,7 @@ bool HistogramProxy::getSemanticSortColumns() const
 
 void HistogramProxy::setSemanticSortCriteria( THistoSortCriteria whichCriteria )
 {
+std::cout<<"setSemanticSortCriteria "<<static_cast<int>(whichCriteria)<<std::endl;
   semanticSortCriteria = whichCriteria;
   fillSemanticSort();
 }
@@ -818,10 +819,7 @@ void HistogramProxy::setFixedSemanticSort( bool newValue )
 {
   fixedSemanticSort = newValue;
   if( fixedSemanticSort )
-  {
     customSemanticSort = currentSemanticSort;
-    setSemanticSortCriteria( THistoSortCriteria::CUSTOM );
-  }
 }
 
 bool HistogramProxy::getFixedSemanticSort() const
