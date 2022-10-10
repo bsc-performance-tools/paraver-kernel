@@ -550,7 +550,7 @@ static const std::string HistogramPropertyLabels[ TOTAL_HISTOGRAM_PROPERTIES ] =
   "Control.Minimum",
   "Control.Maximum",
   "Control.Delta",
-  "Num Columns"
+  "Num Columns",
   "Type",
   "Statistic",
   "Minimum Gradient",
