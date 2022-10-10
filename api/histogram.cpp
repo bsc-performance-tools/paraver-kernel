@@ -778,7 +778,6 @@ bool HistogramProxy::getSemanticSortColumns() const
 
 void HistogramProxy::setSemanticSortCriteria( THistoSortCriteria whichCriteria )
 {
-std::cout<<"setSemanticSortCriteria "<<static_cast<int>(whichCriteria)<<std::endl;
   semanticSortCriteria = whichCriteria;
   fillSemanticSort();
 }
