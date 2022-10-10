@@ -1385,10 +1385,14 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->numDecimals = numDecimals;
   clonedHistogramProxy->thousandSep = thousandSep;
   clonedHistogramProxy->showUnits = showUnits;
+
   clonedHistogramProxy->sortSemanticColumns = sortSemanticColumns;
   clonedHistogramProxy->sortSemanticReverse = sortSemanticReverse;
   clonedHistogramProxy->semanticSortCriteria = semanticSortCriteria;
   clonedHistogramProxy->fixedSemanticSort = fixedSemanticSort;
+  clonedHistogramProxy->currentSemanticSort = currentSemanticSort;
+  clonedHistogramProxy->customSemanticSort = customSemanticSort;
+
   clonedHistogramProxy->minGradient = minGradient;
   clonedHistogramProxy->maxGradient = maxGradient;
   clonedHistogramProxy->computeControlScale = computeControlScale;
