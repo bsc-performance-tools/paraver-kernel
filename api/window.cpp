@@ -2420,8 +2420,8 @@ void TimelineProxy::computeSemanticRowParallel( int numRows,
 
   for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
   {
-    TSemanticValue dumbMinMax;
-    int dumbZeros;
+    TSemanticValue dumbMinMax = 0.0;
+    int dumbZeros = 0;
     calcNext( *row, dumbMinMax, dumbMinMax, dumbZeros );
     RecordList *rl = getRecordList( *row );
     if( rl != nullptr && !isFusedLinesColorSet() )
