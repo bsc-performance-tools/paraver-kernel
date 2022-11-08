@@ -71,6 +71,8 @@ noinst_HEADERS = \
                           tracebodyio_csv.h\
                           traceeditblocks.h\
                           traceheaderexception.h\
-                          tracestream.h
+                          tracestream.h\
+                          vectorblocks.h\
+                          vectortrace.h
 
                          

@@ -54,7 +54,9 @@ libparaver_kernel_la_SOURCES = \
     tracebodyio_csv.cpp \
     traceeditblocks.cpp \
     traceheaderexception.cpp\
-    tracestream.cpp
+    tracestream.cpp\
+    vectorblocks.cpp\
+    vectortrace.cpp
           
 noinst_HEADERS = \
     cell.cpp \
