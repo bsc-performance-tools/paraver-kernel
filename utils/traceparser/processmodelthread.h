@@ -51,6 +51,8 @@ class ProcessModelThread
              nodeExecution    == other.nodeExecution;
     }
 
+    NodeOrderT getNodeExecution() const { return nodeExecution; }
+
   protected:
     ThreadOrderT traceGlobalOrder;
     NodeOrderT   nodeExecution;

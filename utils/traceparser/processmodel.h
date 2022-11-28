@@ -77,8 +77,10 @@ class ProcessModel
       ready = newValue;
     }
 
-    void dumpToFile( std::fstream& file, bool existResourceInfo ) const;
-
+    size_t size() const { return applications.size(); }
+    typename std::vector< ProcessModelAppl< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT > >::const_iterator cbegin() const { return applications.cbegin(); }
+    typename std::vector< ProcessModelAppl< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT > >::const_iterator cend() const { return applications.cend(); }
+    
     ApplOrderT totalApplications() const;
 
     TaskOrderT totalTasks() const;
@@ -139,7 +141,7 @@ class ProcessModel
 
     std::vector< ThreadLocation > threads;
     std::vector< TaskLocation > tasks;
-    std::vector< ProcessModelAppl< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT > > applications;
+    typename std::vector< ProcessModelAppl< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT > > applications;
     std::map< NodeOrderT, std::vector< ThreadOrderT > > threadsPerNode;
 
     bool ready;
@@ -147,5 +149,8 @@ class ProcessModel
   private:
 
 };
+
+template< typename ProcessModelT >
+void dumpProcessModelToFile( ProcessModelT processModel, std::fstream& file, bool existResourceInfo );
 
 #include "processmodel.cpp"
