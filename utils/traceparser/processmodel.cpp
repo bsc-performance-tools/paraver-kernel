@@ -317,41 +317,6 @@ template< typename ApplOrderT,
           typename TaskOrderT, 
           typename ThreadOrderT, 
           typename NodeOrderT >
-void ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::dumpToFile( fstream& file, bool existResourceInfo ) const
-{
-  ostringstream ostr;
-  ostr << fixed;
-  ostr << dec;
-  ostr.precision( 0 );
-
-  ostr << applications.size() << ':';
-  for ( ApplOrderT iAppl = 0; iAppl < applications.size(); ++iAppl )
-  {
-    ostr << applications[ iAppl ].tasks.size() << '(';
-    for ( TaskOrderT iTask = 0; iTask < applications[ iAppl ].tasks.size(); ++iTask )
-    {
-      ostr << applications[ iAppl ].tasks[ iTask ].threads.size() << ':';
-      if( existResourceInfo )
-        ostr << applications[ iAppl ].tasks[ iTask ].threads[ 0 ].nodeExecution + 1;
-      else
-        ostr << "0";
-
-      if ( iTask < applications[ iAppl ].tasks.size() - 1 )
-        ostr << ',';
-    }
-    ostr << ')';
-
-    if ( iAppl < applications.size() - 1 )
-      ostr << ':';
-  }
-  file << ostr.str();
-}
-
-
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
 TaskOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::getFirstTask( ApplOrderT inAppl ) const
 {
   return applications[ inAppl ].tasks[ 0 ].traceGlobalOrder;
@@ -559,4 +524,35 @@ ThreadOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::a
   applications[ whichLocation.appl ].tasks[ whichLocation.task ].threads.emplace_back( threads.size() - 1, execNode );
 
   return threads.size() - 1;
+}
+
+template< typename ProcessModelT >
+void dumpProcessModelToFile( ProcessModelT processModel, std::fstream& file, bool existResourceInfo )
+{
+  ostringstream ostr;
+  ostr << fixed;
+  ostr << dec;
+  ostr.precision( 0 );
+
+  ostr << processModel.size() << ':';
+  for ( auto iAppl = processModel.cbegin(); iAppl != processModel.cend(); ++iAppl )
+  {
+    if ( iAppl != processModel.cbegin() )
+      ostr << ':';
+
+    ostr << iAppl->size() << '(';
+    for ( auto iTask = iAppl->cbegin(); iTask != iAppl->cend(); ++iTask )
+    {
+      if ( iTask != iAppl->cbegin() )
+        ostr << ',';
+
+      ostr << iTask->size() << ':';
+      if( existResourceInfo )
+        ostr << iTask->getNodeExecution() + 1;
+      else
+        ostr << "0";
+    }
+    ostr << ')';
+  }
+  file << ostr.str();
 }

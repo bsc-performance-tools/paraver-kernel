@@ -173,9 +173,9 @@ void dumpTraceHeader( TraceStreamT& file,
   if ( traceTimeUnit != US )
     file << "_ns";
   file << ':';
-  traceResourceModel.dumpToFile( file );
+  dumpResourceModelToFile( traceResourceModel, file );
   file << ':';
-  traceProcessModel.dumpToFile( file, traceResourceModel.isReady() );
+  dumpProcessModelToFile( traceProcessModel, file, traceResourceModel.isReady() );
   if ( communicators.begin() != communicators.end() )
   {
     file << ',' << communicators.size() << endl;

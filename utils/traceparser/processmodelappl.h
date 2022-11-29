@@ -50,6 +50,10 @@ class ProcessModelAppl
              tasks            == other.tasks;
     }
 
+    size_t size() const { return tasks.size(); }
+    typename std::vector< ProcessModelTask< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT > >::const_iterator cbegin() const { return tasks.cbegin(); };
+    typename std::vector< ProcessModelTask< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT > >::const_iterator cend() const { return tasks.cend(); };
+ 
   protected:
     ApplOrderT traceGlobalOrder;
     std::vector< ProcessModelTask< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT > > tasks;

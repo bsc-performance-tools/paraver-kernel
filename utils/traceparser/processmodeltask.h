@@ -49,6 +49,10 @@ class ProcessModelTask
              threads          == other.threads;
     }
 
+    size_t size() const { return threads.size(); }
+  
+    NodeOrderT getNodeExecution() const { return threads[ 0 ].getNodeExecution(); }
+
   protected:
     TTaskOrder traceGlobalOrder;
     std::vector< ProcessModelThread< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT > > threads;

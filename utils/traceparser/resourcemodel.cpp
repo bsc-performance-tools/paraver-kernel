@@ -282,27 +282,26 @@ ResourceModel< NodeOrderT, CPUOrderT >::ResourceModel( istringstream& headerInfo
   ready = true;
 }
 
-template< typename NodeOrderT,
-          typename CPUOrderT >
-void ResourceModel< NodeOrderT, CPUOrderT >::dumpToFile( fstream& file ) const
+template< typename ResourceModelT >
+void dumpResourceModelToFile( const ResourceModelT& resourceModel, std::fstream& file )
 {
   ostringstream ostr;
   ostr << fixed;
   ostr << dec;
   ostr.precision( 0 );
 
-  if ( !ready )
+  if ( !resourceModel.isReady() )
   {
     ostr << '0';
   }
   else
   {
-    ostr << nodes.size() << '(';
-    for ( NodeOrderT iNode = 0; iNode < nodes.size(); ++iNode )
+    ostr << resourceModel.size() << '(';
+    for ( auto iNode = resourceModel.cbegin(); iNode != resourceModel.cend(); ++iNode )
     {
-      ostr << nodes[ iNode ].CPUs.size();
-      if ( iNode < nodes.size() - 1 )
+      if ( iNode != resourceModel.cbegin() )
         ostr << ',';
+      ostr << iNode->size();
     }
     ostr << ')';
   }

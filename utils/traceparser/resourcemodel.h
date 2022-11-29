@@ -57,7 +57,9 @@ class ResourceModel
       ready = newValue;
     }
 
-    void dumpToFile( std::fstream& file ) const;
+    size_t size() const { return nodes.size(); }
+    typename std::vector< ResourceModelNode< NodeOrderT, CPUOrderT > >::const_iterator cbegin() const { return nodes.cbegin(); }
+    typename std::vector< ResourceModelNode< NodeOrderT, CPUOrderT > >::const_iterator cend() const { return nodes.cend(); }
 
     NodeOrderT totalNodes() const;
     CPUOrderT totalCPUs() const;
@@ -97,5 +99,9 @@ class ResourceModel
   private:
 
 };
+
+template< typename ResourceModelT >
+void dumpResourceModelToFile( const ResourceModelT& resourceModel, std::fstream& file );
+
 
 #include "resourcemodel.cpp"

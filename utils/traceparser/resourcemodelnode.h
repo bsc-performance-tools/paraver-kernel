@@ -46,6 +46,8 @@ class ResourceModelNode
              CPUs             == other.CPUs;
     }
 
+    size_t size() const { return CPUs.size(); }
+  
   protected:
     NodeOrderT traceGlobalOrder;
     std::vector< ResourceModelCPU< NodeOrderT, CPUOrderT > > CPUs;
