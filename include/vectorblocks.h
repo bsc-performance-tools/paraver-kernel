@@ -28,9 +28,16 @@
 #include "memoryblocks.h"
 #include "plaintypes.h"
 
+#include "utils/traceparser/processmodel.h"
+#include "utils/traceparser/resourcemodel.h"
+#include "utils/traceparser/tracetypes.h"
+
 class VectorBlocks : public MemoryBlocks
 {
   public:
+    VectorBlocks( const ResourceModel<>& resource, const ProcessModel<>& process,
+                  TRecordTime endTime );
+
     virtual TData *getLastRecord( PRV_UINT16 position ) const;
     virtual void newRecord();
     virtual void setType( TRecordType whichType );
@@ -87,4 +94,27 @@ class VectorBlocks : public MemoryBlocks
     std::vector< std::vector<Plain::TRecord> > threadRecords;
     std::vector< std::vector<Plain::TRecord *> > cpuRecords;
 
+    typedef enum
+    {
+      logicalSend = 0,
+      logicalReceive,
+      physicalSend,
+      physicalReceive,
+      remoteLogicalSend,
+      remoteLogicalReceive,
+      remotePhysicalSend,
+      remotePhysicalReceive,
+      commTypeSize
+    } TCommType;
+    static const TRecordType commTypes[ commTypeSize ];
+    std::vector<Plain::TCommInfo> communications;
+    std::array<TRecord, commTypeSize> commRecords;
+    bool commRecordsInserted = false;
+
+    const ResourceModel<>& resourceModel;
+    const ProcessModel<>& processModel;
+
+    Plain::TRecord tmpRecord;
+    bool inserted = false;
+    TThreadOrder insertedOnThread;
 };
