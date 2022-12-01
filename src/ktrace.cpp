@@ -45,6 +45,8 @@
 #include "traceeditblocks.h"
 #include "customalgorithms.h"
 #include "utils/traceparser/traceheader.h"
+#include "vectorblocks.h"
+#include "vectortrace.h"
 
 using namespace std;
 #ifdef _MSC_VER
@@ -656,10 +658,12 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   }
   else
   {
-    blocks = new BPlusTreeBlocks( traceProcessModel );
-    memTrace  = new BPlusTree( this,
-                               traceProcessModel.totalThreads(),
-                               traceResourceModel.totalCPUs() );
+    blocks = new VectorBlocks( traceResourceModel, traceProcessModel, traceEndTime );
+    memTrace = new VectorTrace();
+    // blocks = new BPlusTreeBlocks( traceProcessModel );
+    // memTrace  = new BPlusTree( this,
+    //                            traceProcessModel.totalThreads(),
+    //                            traceResourceModel.totalCPUs() );
   }
 
   unordered_set<TEventType> hashevents;

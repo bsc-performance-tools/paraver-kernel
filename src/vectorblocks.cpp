@@ -74,6 +74,7 @@ void VectorBlocks::newRecord( TThreadOrder whichThread )
 {
   threadRecords[ whichThread ].emplace_back();
   insertedOnThread = whichThread;
+  ++countInserted;
 }
 
 void VectorBlocks::setType( TRecordType whichType )
@@ -160,6 +161,8 @@ void VectorBlocks::newComm( TThreadOrder whichSenderThread, TThreadOrder whichRe
       commRecords[ i ]->type = commTypes[ i ];
       commRecords[ i ]->URecordInfo.commRecord.index = communications.size() - 1;
     }
+
+    countInserted += commTypeSize;
   }
 }
 
@@ -336,8 +339,12 @@ TRecordTime VectorBlocks::getLastRecordTime() const
 
 void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
 {
+  TRecord tmpRecord;
+  tmpRecord.type = EMPTYREC;
+  tmpRecord.time = traceEndTime;
+
   std::for_each( threadRecords.begin(), threadRecords.end(),
-    []( auto& v )
+    [tmpRecord]( auto& v ) mutable
     {
       v.shrink_to_fit();
       std::stable_sort( v.begin(), v.end(), 
@@ -349,5 +356,7 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
             return false;
           return ( getTypeOrdered( &r1 ) < getTypeOrdered( &r2 ) );
         } );
+      tmpRecord.thread = v.back().thread;
+      v.emplace_back( tmpRecord );
     } );
 }

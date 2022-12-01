@@ -237,21 +237,22 @@ inline void TraceBodyIO_v1< PARAM_LIST >::readState( const std::string& line,
     return;
   }
 
-  records.newRecord();
+  thread = whichProcessModel.getGlobalThread( appl - 1, task - 1, thread - 1 );
+  records.newRecord( thread );
   records.setType( STATE + BEGIN );
   records.setTime( time );
   records.setCPU( CPU );
-  records.setThread( appl - 1, task - 1, thread - 1 );
+  records.setThread( thread );
   records.setState( state );
   records.setStateEndTime( endtime );
 
   if ( endtime != -1 )
   {
-    records.newRecord();
+    records.newRecord( thread );
     records.setType( STATE + END );
     records.setTime( endtime );
     records.setCPU( CPU );
-    records.setThread( appl - 1, task - 1, thread - 1 );
+    records.setThread( thread );
     records.setState( state );
     records.setStateEndTime( time );
   }
@@ -293,11 +294,12 @@ inline void TraceBodyIO_v1< PARAM_LIST >::readEvent( const std::string& line,
       return;
     }
 
-    records.newRecord();
+    thread = whichProcessModel.getGlobalThread( appl - 1, task - 1, thread - 1 );
+    records.newRecord( thread );
     records.setType( EVENT );
     records.setTime( time );
     records.setCPU( CPU );
-    records.setThread( appl - 1, task - 1, thread - 1 );
+    records.setThread( thread );
     records.setEventType( eventtype );
     records.setEventValue( eventvalue );
 
@@ -343,11 +345,13 @@ inline void TraceBodyIO_v1< PARAM_LIST >::readComm( const std::string& line,
     return;
   }
 
-  records.newComm();
+  thread = whichProcessModel.getGlobalThread( appl - 1, task - 1, thread - 1 );
+  remoteThread = whichProcessModel.getGlobalThread( remoteAppl - 1, remoteTask - 1, remoteThread - 1 );
+  records.newComm( thread, remoteThread );
   records.setSenderCPU( CPU );
-  records.setSenderThread( appl - 1, task - 1, thread - 1 );
+  records.setSenderThread( thread );
   records.setReceiverCPU( remoteCPU );
-  records.setReceiverThread( remoteAppl - 1, remoteTask - 1, remoteThread - 1 );
+  records.setReceiverThread( remoteThread );
   records.setLogicalSend( logSend );
   records.setPhysicalSend( phySend );
   records.setLogicalReceive( logReceive );
