@@ -36,9 +36,14 @@ class VectorTrace : public MemoryTrace
     class iterator : public MemoryTrace::iterator
     {
       public:
-        iterator( std::vector<Plain::TRecord>::iterator whichRecord, const Trace *whichTrace );
+        iterator( std::vector<Plain::TRecord>::iterator whichRecord, const Trace *whichTrace, VectorBlocks *whichBlocks );
         virtual void operator++() override;
         virtual void operator--() override;
+        virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy ) override;
+
+        virtual bool operator==( const MemoryTrace::iterator &it ) const override;
+        virtual bool operator!=( const MemoryTrace::iterator &it ) const override;
+        virtual bool isNull() const override;
 
         virtual iterator *clone() const override;
 
@@ -60,6 +65,7 @@ class VectorTrace : public MemoryTrace
 
       private:
         std::vector<Plain::TRecord>::iterator it;
+        VectorBlocks *myBlocks;
     };
 
     virtual void insert( MemoryBlocks *blocks ) override;

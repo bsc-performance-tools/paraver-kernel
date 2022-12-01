@@ -29,23 +29,48 @@
 
 using Plain::TRecord;
 
-VectorTrace::iterator::iterator( std::vector<Plain::TRecord>::iterator whichRecord, const Trace *whichTrace )
-  : it( whichRecord ), MemoryTrace::iterator( whichTrace )
+VectorTrace::iterator::iterator( std::vector<Plain::TRecord>::iterator whichRecord, const Trace *whichTrace, VectorBlocks *whichBlocks )
+  : it( whichRecord ), MemoryTrace::iterator( whichTrace ), myBlocks( whichBlocks )
 {}
 
 void VectorTrace::iterator::operator++()
 {
-  ++record;
+  ++it;
 }
 
 void VectorTrace::iterator::operator--()
 {
-  --record;
+  --it;
 }
+
+MemoryTrace::iterator& VectorTrace::iterator::operator=( const MemoryTrace::iterator& copy )
+{
+  it = dynamic_cast<const VectorTrace::iterator&>( copy ).it;
+  myBlocks = dynamic_cast<const VectorTrace::iterator&>( copy ).myBlocks;
+  myTrace = dynamic_cast<const VectorTrace::iterator&>( copy ).myTrace;
+
+  return *this;
+}
+
+bool VectorTrace::iterator::operator==( const MemoryTrace::iterator &whichit ) const
+{
+  return it == dynamic_cast<const VectorTrace::iterator&>( whichit ).it;
+}
+
+bool VectorTrace::iterator::operator!=( const MemoryTrace::iterator &whichit ) const
+{
+  return it != dynamic_cast<const VectorTrace::iterator&>( whichit ).it;
+}
+
+bool VectorTrace::iterator::isNull() const
+{
+  return it == myBlocks->threadRecords[ it->thread ].end();
+}
+
 
 VectorTrace::iterator *VectorTrace::iterator::clone() const
 {
-  return new VectorTrace::iterator( it, myTrace );
+  return new VectorTrace::iterator( it, myTrace, myBlocks );
 }
 
 TRecordType VectorTrace::iterator::getType() const
@@ -152,12 +177,12 @@ MemoryTrace::iterator* VectorTrace::end() const
 
 MemoryTrace::iterator* VectorTrace::threadBegin( TThreadOrder whichThread ) const
 {
-  return new VectorTrace::iterator( myBlocks->threadRecords[ whichThread ].begin(), myTrace );
+  return new VectorTrace::iterator( myBlocks->threadRecords[ whichThread ].begin(), myTrace, myBlocks);
 }
 
 MemoryTrace::iterator* VectorTrace::threadEnd( TThreadOrder whichThread ) const
 {
-  return new VectorTrace::iterator( --myBlocks->threadRecords[ whichThread ].end(), myTrace );
+  return new VectorTrace::iterator( --myBlocks->threadRecords[ whichThread ].end(), myTrace, myBlocks );
 }
 
 MemoryTrace::iterator* VectorTrace::CPUBegin( TCPUOrder whichCPU ) const
@@ -176,7 +201,7 @@ void VectorTrace::getRecordByTimeThread( std::vector<MemoryTrace::iterator *>& l
   {
     auto it = std::find_if( v.begin(), v.end(), [whichTime]( const auto& e ) { return e.time == whichTime; } );
     if( it == v.end() ) --it;
-    VectorTrace::iterator *retIt = new VectorTrace::iterator( it, myTrace );
+    VectorTrace::iterator *retIt = new VectorTrace::iterator( it, myTrace, myBlocks );
     listIter.emplace_back( retIt );
   }
 }
