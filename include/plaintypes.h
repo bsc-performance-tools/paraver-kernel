@@ -84,67 +84,67 @@ namespace Plain
   }
   TRecord;
 
-  static inline TRecordTime getTime( TRecord *record )
+  static inline TRecordTime getTime( const TRecord *record )
   {
     return record->time;
   }
 
-  static inline bool isComm( TRecord *record )
+  static inline bool isComm( const TRecord *record )
   {
     return record->type & COMM;
   }
 
-  static inline bool isEvent( TRecord *record )
+  static inline bool isEvent( const TRecord *record )
   {
     return record->type & EVENT;
   }
 
-  static inline bool isState( TRecord *record )
+  static inline bool isState( const TRecord *record )
   {
     return record->type & STATE;
   }
 
-  static inline bool isSend( TRecord *record )
+  static inline bool isSend( const TRecord *record )
   {
     return record->type & SEND;
   }
 
-  static inline bool isReceive( TRecord *record )
+  static inline bool isReceive( const TRecord *record )
   {
     return record->type & RECV;
   }
 
-  static inline bool isLogical( TRecord *record )
+  static inline bool isLogical( const TRecord *record )
   {
     return record->type & LOG;
   }
 
-  static inline bool isPhysical( TRecord *record )
+  static inline bool isPhysical( const TRecord *record )
   {
     return record->type & PHY;
   }
 
-  static inline bool isRReceive( TRecord *record )
+  static inline bool isRReceive( const TRecord *record )
   {
     return record->type & RRECV;
   }
 
-  static inline bool isRSend( TRecord *record )
+  static inline bool isRSend( const TRecord *record )
   {
     return record->type & RSEND;
   }
 
-  static inline bool isGlobComm( TRecord *record )
+  static inline bool isGlobComm( const TRecord *record )
   {
     return record->type & GLOBCOMM;
   }
 
-  static inline bool isEnd( TRecord *record )
+  static inline bool isEnd( const TRecord *record )
   {
     return record->type & END;
   }
 
-  static inline PRV_UINT16 getTypeOrdered( TRecord *r )
+  static inline PRV_UINT16 getTypeOrdered( const TRecord *r )
   {
     PRV_UINT16 ret;
 

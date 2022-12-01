@@ -68,6 +68,11 @@ void TraceEditBlocks::newRecord()
   ++lastRecord;
 }
 
+void TraceEditBlocks::newRecord( TThreadOrder whichThread )
+{
+  newRecord();
+}
+
 void TraceEditBlocks::setType( TRecordType whichType )
 {
   lastData.records[ lastRecord ].type = whichType;
@@ -156,6 +161,11 @@ void TraceEditBlocks::newComm( bool createRecords )
   logRecv->URecordInfo.commRecord.index = currentComm;
   phySend->URecordInfo.commRecord.index = currentComm;
   phyRecv->URecordInfo.commRecord.index = currentComm;
+}
+
+void TraceEditBlocks::newComm( TThreadOrder whichSenderThread, TThreadOrder whichReceiverThread, bool createRecords )
+{
+  newComm( createRecords );
 }
 
 void TraceEditBlocks::setSenderThread( TThreadOrder whichThread )

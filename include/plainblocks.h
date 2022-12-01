@@ -52,6 +52,7 @@ namespace Plain
       virtual TData *getLastRecord( PRV_UINT16 position ) const override;
       virtual void resetCountInserted() override;
       virtual void newRecord() override;
+      virtual void newRecord( TThreadOrder whichThread ) override {}
       virtual void setType( TRecordType whichType ) override;
       virtual void setTime( TRecordTime whichTime ) override;
       virtual void setThread( TThreadOrder whichThread ) override;
@@ -70,6 +71,7 @@ namespace Plain
       // Then you must call newComm( false )
       // If not, the function creates all necessary records by default.
       virtual void newComm( bool createRecords = true ) override;
+      virtual void newComm( TThreadOrder whichSenderThread, TThreadOrder whichReceiverThread, bool createRecords = true ) override {}
       virtual void setSenderThread( TThreadOrder whichThread ) override;
       virtual void setSenderThread( TApplOrder whichAppl,
                                     TTaskOrder whichTask,

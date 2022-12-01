@@ -199,7 +199,7 @@ void initOptions()
   for ( int i = SHOW_HELP; i <= NO_LOAD; ++i )
   {
     TOptionID id = TOptionID( i );
-    option[ id ]  = definedOption[ id ];
+    option[ id ] = definedOption[ id ];
   }
 }
 

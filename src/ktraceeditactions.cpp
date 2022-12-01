@@ -279,7 +279,8 @@ bool TraceParserAction::execute( std::string whichTrace )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
 
-  KTrace myTrace( whichTrace, nullptr, true );
+  bool noLoad = true;
+  KTrace myTrace( whichTrace, nullptr, noLoad );
   tmpSequence->setCurrentTrace( &myTrace );
 
   bool executionError = false;

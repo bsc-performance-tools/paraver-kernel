@@ -43,6 +43,7 @@ class MemoryBlocks
 
     virtual TData *getLastRecord( PRV_UINT16 position ) const = 0;
     virtual void newRecord() = 0;
+    virtual void newRecord( TThreadOrder whichThread ) = 0;
     virtual void setType( TRecordType whichType ) = 0;
     virtual void setTime( TRecordTime whichTime ) = 0;
     virtual void setThread( TThreadOrder whichThread ) = 0;
@@ -61,6 +62,7 @@ class MemoryBlocks
     // Then you must call newComm( false )
     // If not, the function creates all necessary records by default.
     virtual void newComm( bool createRecords = true ) = 0;
+    virtual void newComm( TThreadOrder whichSenderThread, TThreadOrder whichReceiverThread, bool createRecords = true ) = 0;
     virtual void setSenderThread( TThreadOrder whichThread ) = 0;
     virtual void setSenderThread( TApplOrder whichAppl,
                                   TTaskOrder whichTask,
