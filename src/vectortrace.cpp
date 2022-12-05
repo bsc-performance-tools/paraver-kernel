@@ -152,6 +152,7 @@ void VectorTrace::iterator::setStateEndTime( const TRecordTime whichEndTime )
 void VectorTrace::insert( MemoryBlocks *blocks )
 {
   myBlocks = dynamic_cast<VectorBlocks *>( blocks );
+  blocks->resetCountInserted();
 }
 
 TTime VectorTrace::finish( TTime headerTime, Trace *whichTrace )
