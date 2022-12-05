@@ -66,6 +66,7 @@ class VectorTrace : public MemoryTrace
       private:
         std::vector<Plain::TRecord>::iterator it;
         VectorBlocks *myBlocks;
+        TThreadOrder myThread;
     };
 
     virtual void insert( MemoryBlocks *blocks ) override;

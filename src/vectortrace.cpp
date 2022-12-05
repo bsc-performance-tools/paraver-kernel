@@ -30,17 +30,19 @@
 using Plain::TRecord;
 
 VectorTrace::iterator::iterator( std::vector<Plain::TRecord>::iterator whichRecord, const Trace *whichTrace, VectorBlocks *whichBlocks )
-  : it( whichRecord ), MemoryTrace::iterator( whichTrace ), myBlocks( whichBlocks )
+  : it( whichRecord ), MemoryTrace::iterator( whichTrace ), myBlocks( whichBlocks ), myThread( whichRecord->thread )
 {}
 
 void VectorTrace::iterator::operator++()
 {
-  ++it;
+  if( it != myBlocks->threadRecords[ myThread ].end() )
+    ++it;
 }
 
 void VectorTrace::iterator::operator--()
 {
-  --it;
+  if( it != myBlocks->threadRecords[ myThread ].begin() )
+    --it;
 }
 
 MemoryTrace::iterator& VectorTrace::iterator::operator=( const MemoryTrace::iterator& copy )
@@ -64,7 +66,9 @@ bool VectorTrace::iterator::operator!=( const MemoryTrace::iterator &whichit ) c
 
 bool VectorTrace::iterator::isNull() const
 {
-  return it == myBlocks->threadRecords[ it->thread ].end();
+  return it == myBlocks->threadRecords[ myThread ].end() ||
+         it == myBlocks->threadRecords[ myThread ].begin() ||
+         it->type == EMPTYREC;
 }
 
 
@@ -85,7 +89,7 @@ TRecordTime VectorTrace::iterator::getTime() const
 
 TThreadOrder VectorTrace::iterator::getThread() const
 {
-  return it->thread;
+  return myThread;
 }
 
 TCPUOrder VectorTrace::iterator::getCPU() const
@@ -95,7 +99,7 @@ TCPUOrder VectorTrace::iterator::getCPU() const
 
 TObjectOrder VectorTrace::iterator::getOrder() const
 {
-  return it->thread;
+  return myThread;
 }
 
 TEventType VectorTrace::iterator::getEventType() const
@@ -178,7 +182,7 @@ MemoryTrace::iterator* VectorTrace::end() const
 
 MemoryTrace::iterator* VectorTrace::threadBegin( TThreadOrder whichThread ) const
 {
-  return new VectorTrace::iterator( myBlocks->threadRecords[ whichThread ].begin(), myTrace, myBlocks);
+  return new VectorTrace::iterator( ++myBlocks->threadRecords[ whichThread ].begin(), myTrace, myBlocks);
 }
 
 MemoryTrace::iterator* VectorTrace::threadEnd( TThreadOrder whichThread ) const
