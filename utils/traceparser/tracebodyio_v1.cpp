@@ -285,6 +285,7 @@ inline void TraceBodyIO_v1< PARAM_LIST >::readEvent( const std::string& line,
     return;
   }
 
+  thread = whichProcessModel.getGlobalThread( appl - 1, task - 1, thread - 1 );
   while ( it != line.end() )
   {
     if( !prv_atoll_v( it, line.cend(), eventtype, eventvalue ) )
@@ -294,7 +295,6 @@ inline void TraceBodyIO_v1< PARAM_LIST >::readEvent( const std::string& line,
       return;
     }
 
-    thread = whichProcessModel.getGlobalThread( appl - 1, task - 1, thread - 1 );
     records.newRecord( thread );
     records.setType( EVENT );
     records.setTime( time );
