@@ -339,24 +339,25 @@ TRecordTime VectorBlocks::getLastRecordTime() const
 
 void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
 {
+
   TRecord tmpRecord;
   tmpRecord.type = EMPTYREC;
   tmpRecord.time = traceEndTime;
 
-  std::for_each( threadRecords.begin(), threadRecords.end(),
-    [tmpRecord]( auto& v ) mutable
-    {
-      v.shrink_to_fit();
-      std::stable_sort( v.begin(), v.end(), 
-        []( const TRecord& r1, const TRecord& r2 )
-        {
-          if ( r1.time < r2.time )
-            return true;
-          else if ( r1.time > r2.time )
-            return false;
-          return ( getTypeOrdered( &r1 ) < getTypeOrdered( &r2 ) );
-        } );
-      tmpRecord.thread = v.back().thread;
-      v.emplace_back( tmpRecord );
-    } );
+  #pragma omp parallel for firstprivate( tmpRecord ) shared( threadRecords ) default( none )
+  for( auto& v : threadRecords )
+  {
+    v.shrink_to_fit();
+    std::stable_sort( v.begin(), v.end(), 
+      []( const TRecord& r1, const TRecord& r2 )
+      {
+        if ( r1.time < r2.time )
+          return true;
+        else if ( r1.time > r2.time )
+          return false;
+        return ( getTypeOrdered( &r1 ) < getTypeOrdered( &r2 ) );
+      } );
+    tmpRecord.thread = v.back().thread;
+    v.emplace_back( tmpRecord );
+  }
 }
