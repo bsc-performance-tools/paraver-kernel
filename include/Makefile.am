@@ -73,6 +73,6 @@ noinst_HEADERS = \
                           traceheaderexception.h\
                           tracestream.h\
                           vectorblocks.h\
-                          vectortrace.h
-
+                          vectortrace.h\
+                          vectortracedefines.h
                          

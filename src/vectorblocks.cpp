@@ -22,10 +22,15 @@
 \*****************************************************************************/
 
 #include <algorithm>
+//#include <functional>
+#include <type_traits>
 
 #include "plaintrace.h"
 #include "vectorblocks.h"
 
+// #include "extrae_user_events.h"
+
+#include <iostream>
 using namespace Plain;
 
 const TRecordType VectorBlocks::commTypes[] =
@@ -49,13 +54,13 @@ VectorBlocks::VectorBlocks( const ResourceModel<>& resource, const ProcessModel<
   empty.type = EMPTYREC;
   empty.CPU = 0;
 
-  std::vector<TRecord> tmpThreadVector;
+  TThreadRecordContainer tmpThreadVector;
   tmpThreadVector.emplace_back( empty );
   threadRecords.reserve( processModel.totalThreads() );
   threadRecords.insert( threadRecords.begin(), processModel.totalThreads(), tmpThreadVector );
 
   cpuRecords.reserve( resourceModel.totalCPUs() );
-  cpuRecords.insert( cpuRecords.begin(), resourceModel.totalCPUs(), std::vector<TRecord *>() );
+  cpuRecords.insert( cpuRecords.begin(), resourceModel.totalCPUs(), TCPURecordContainer() );
 
   for( auto& c : commRecords )
     c = nullptr;
@@ -144,17 +149,18 @@ void VectorBlocks::newComm( TThreadOrder whichSenderThread, TThreadOrder whichRe
   communications.emplace_back( TCommInfo() );
   if( createRecords )
   {
-    threadRecords[ whichSenderThread ].insert( threadRecords[ whichSenderThread ].end(), 4, Plain::TRecord() );
-    threadRecords[ whichReceiverThread ].insert( threadRecords[ whichReceiverThread ].end(), 4, Plain::TRecord() );
+    auto itSender   = threadRecords[ whichSenderThread ].insert( threadRecords[ whichSenderThread ].end(), 4, Plain::TRecord() );
+    auto itReceiver = threadRecords[ whichReceiverThread ].insert( threadRecords[ whichReceiverThread ].end(), 4, Plain::TRecord() );
 
-    commRecords[ logicalSend ] = &threadRecords[ whichSenderThread ][ threadRecords[ whichSenderThread ].size() - 4 ];
-    commRecords[ logicalReceive ] = &threadRecords[ whichReceiverThread ][ threadRecords[ whichReceiverThread ].size() - 4 ];
-    commRecords[ physicalSend ] = &threadRecords[ whichSenderThread ][ threadRecords[ whichSenderThread ].size() - 3 ];
-    commRecords[ physicalReceive ] = &threadRecords[ whichReceiverThread ][ threadRecords[ whichReceiverThread ].size() - 3 ];
-    commRecords[ remoteLogicalSend ] = &threadRecords[ whichReceiverThread ][ threadRecords[ whichReceiverThread ].size() - 2 ];
-    commRecords[ remoteLogicalReceive ] = &threadRecords[ whichSenderThread ][ threadRecords[ whichSenderThread ].size() - 2 ];
-    commRecords[ remotePhysicalSend ] = &threadRecords[ whichReceiverThread ][ threadRecords[ whichReceiverThread ].size() - 1 ];
-    commRecords[ remotePhysicalReceive ] = &threadRecords[ whichSenderThread ][ threadRecords[ whichSenderThread ].size() - 1 ];
+    commRecords[ logicalSend ] = &( *itSender );
+    commRecords[ logicalReceive ] = &( *itReceiver );
+    commRecords[ physicalSend ] = &( *++itSender );
+    commRecords[ physicalReceive ] = &( *++itReceiver );
+
+    commRecords[ remoteLogicalSend ] = &( *++itReceiver );
+    commRecords[ remoteLogicalReceive ] = &( *++itSender );
+    commRecords[ remotePhysicalSend ] = &( *++itReceiver );
+    commRecords[ remotePhysicalReceive ] = &( *++itSender );
 
     for( size_t i = 0; i < commTypeSize; ++i )
     {
@@ -337,27 +343,102 @@ TRecordTime VectorBlocks::getLastRecordTime() const
   return lastRecordTime;
 }
 
+
+#include <time.h>
 void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
 {
-
   TRecord tmpRecord;
   tmpRecord.type = EMPTYREC;
   tmpRecord.time = traceEndTime;
+  time_t tini = 0;
 
-  #pragma omp parallel for firstprivate( tmpRecord ) shared( threadRecords ) default( none )
-  for( auto& v : threadRecords )
-  {
-    v.shrink_to_fit();
-    std::stable_sort( v.begin(), v.end(), 
-      []( const TRecord& r1, const TRecord& r2 )
+  std::vector< time_t > tmpTotalTime(threadRecords.size());
+
+  std::cout << time( &tini) << std::endl;
+
+
+  // Extrae_init();
+
+  auto f = []( const TRecord& r1, const TRecord& r2 )
       {
         if ( r1.time < r2.time )
           return true;
         else if ( r1.time > r2.time )
           return false;
         return ( getTypeOrdered( &r1 ) < getTypeOrdered( &r2 ) );
-      } );
-    tmpRecord.thread = v.back().thread;
-    v.emplace_back( tmpRecord );
+      };
+
+  TNodeOrder iNode;
+  // //Extrae_eventandcounters(1,1);
+  //#pragma omp parallel for firstprivate( tmpRecord ) private( iNode ) shared( threadRecords, processModel, resourceModel, f, tmpTotalTime ) default( none ) schedule(dynamic)
+  for( iNode = 0; iNode < resourceModel.size(); ++iNode )
+  {
+    //Extrae_eventandcounters(2,iNode+1);
+
+    bool firstCPURecordInserted = false;
+    std::vector<TThreadOrder> threadsInNode;
+    tmpRecord.CPU = resourceModel.getFirstCPU( iNode );
+    processModel.getThreadsPerNode( iNode + 1, threadsInNode );
+// std::cout<<"threadsInNode "<<iNode<<": "<<threadsInNode.size()<<std::endl;
+    for( auto iThread : threadsInNode )
+    {
+      //Extrae_eventandcounters(3,iThread+1);
+      //std::cout << i << std::endl;
+      //printf("thread: %i\n", i);
+
+      auto &vectorThread = threadRecords[ iThread ];
+// std::cout<<"computing thread "<<iThread<<std::endl;
+      //tmpTotalTime[i] = time(nullptr);
+      std::stable_sort( vectorThread.begin(), vectorThread.end(), f );
+      //tmpTotalTime[i] = time(nullptr) - tmpTotalTime[i];
+
+      tmpRecord.thread = iThread;
+      vectorThread.emplace_back( tmpRecord );
+      vectorThread.shrink_to_fit();
+//std::cout<<"vector shrinked"<<std::endl;
+
+      auto itRecord = vectorThread.begin();
+
+      // Fill all CPUs with empty record only once
+      if( !firstCPURecordInserted && itRecord != vectorThread.end() )
+      {
+        firstCPURecordInserted = true;
+        for( TCPUOrder iCPU = resourceModel.getFirstCPU( iNode ); iCPU <= resourceModel.getLastCPU( iNode ); ++iCPU )
+          cpuRecords[ iCPU - 1 ].emplace_back( &( *itRecord ) );
+  //std::cout << "added first empty" <<std::endl;
+      }
+
+      auto itEmptyRecord = --vectorThread.end();
+      // skip empty record
+      if( itRecord != itEmptyRecord )
+        ++itRecord;
+
+      for( ; itRecord != itEmptyRecord; ++itRecord )
+      {
+// std::cout<<"inserting record in cpu "<<itRecord->CPU<<std::endl;
+        if( itRecord->CPU != 0 )
+          cpuRecords[ itRecord->CPU - 1 ].emplace_back( &( *itRecord ) );
+      }
+//std::cout<<"all cpus filled with records"<<std::endl;
+      //Extrae_eventandcounters(3,0);
+    }
+
+    for( TCPUOrder iCPU = resourceModel.getFirstCPU( iNode ); iCPU <= resourceModel.getLastCPU( iNode ); ++iCPU )
+    {
+//std::cout<<"sorting cpu "<<iCPU<<std::endl;
+      std::stable_sort( cpuRecords[ iCPU - 1 ].begin(), cpuRecords[ iCPU - 1 ].end(),
+                        []( const auto& lhs, const auto& rhs ){ return lhs->time < rhs->time; } );
+//std::cout<<" sorting finished"<<std::endl;
+      cpuRecords[ iCPU - 1 ].emplace_back( &threadRecords[ threadsInNode[ 0 ] ].back() );
+      cpuRecords[ iCPU - 1 ].shrink_to_fit();
+//std::cout<<"cpu shrinked"<<std::endl;
+    }
+
+    // Extrae_eventandcounters(2,0);
   }
+  //Extrae_eventandcounters(1,0);
+  
+  // Extrae_fini();
+
+  std::cout << time(nullptr) - tini << std::endl;
 }

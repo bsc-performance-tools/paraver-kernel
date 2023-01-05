@@ -23,15 +23,14 @@
 
 #pragma once
 
-#include <vector>
-
 #include "memoryblocks.h"
-#include "plaintypes.h"
 #include "vectortrace.h"
+#include "vectortracedefines.h"
 
 #include "utils/traceparser/processmodel.h"
 #include "utils/traceparser/resourcemodel.h"
 #include "utils/traceparser/tracetypes.h"
+
 
 class VectorBlocks : public MemoryBlocks
 {
@@ -96,8 +95,8 @@ class VectorBlocks : public MemoryBlocks
     virtual void setFileLoaded( TRecordTime traceEndTime ) override;
     
   private:
-    std::vector< std::vector<Plain::TRecord> > threadRecords;
-    std::vector< std::vector<Plain::TRecord *> > cpuRecords;
+    std::vector< TThreadRecordContainer > threadRecords;
+    std::vector< TCPURecordContainer > cpuRecords;
 
     typedef enum
     {
