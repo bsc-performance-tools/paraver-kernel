@@ -538,7 +538,7 @@ void dumpProcessModelToFile( ProcessModelT processModel, std::fstream& file, boo
   for ( auto iAppl = processModel.cbegin(); iAppl != processModel.cend(); ++iAppl )
   {
     if ( iAppl != processModel.cbegin() )
-      ostr << ':';
+      ostr << ',';
 
     ostr << iAppl->size() << '(';
     for ( auto iTask = iAppl->cbegin(); iTask != iAppl->cend(); ++iTask )
