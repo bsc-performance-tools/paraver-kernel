@@ -32,6 +32,9 @@
 #include "utils/traceparser/tracetypes.h"
 
 
+constexpr size_t BEGIN_EMPTY_RECORD = 0;
+constexpr size_t END_EMPTY_RECORD = 1;
+
 class VectorBlocks : public MemoryBlocks
 {
   public:
@@ -97,6 +100,8 @@ class VectorBlocks : public MemoryBlocks
   private:
     std::vector< TThreadRecordContainer > threadRecords;
     std::vector< TCPURecordContainer > cpuRecords;
+
+    std::vector< std::array<Plain::TRecord, 2> > cpuEmptyRecords;
 
     typedef enum
     {

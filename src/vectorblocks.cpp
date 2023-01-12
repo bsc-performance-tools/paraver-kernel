@@ -62,6 +62,9 @@ VectorBlocks::VectorBlocks( const ResourceModel<>& resource, const ProcessModel<
   cpuRecords.reserve( resourceModel.totalCPUs() );
   cpuRecords.insert( cpuRecords.begin(), resourceModel.totalCPUs(), TCPURecordContainer() );
 
+  cpuEmptyRecords.reserve( resourceModel.totalCPUs() );
+  cpuEmptyRecords.insert( cpuEmptyRecords.begin(), resourceModel.totalCPUs(), std::array<Plain::TRecord, 2>() );
+
   for( auto& c : commRecords )
     c = nullptr;
 }
@@ -343,19 +346,19 @@ TRecordTime VectorBlocks::getLastRecordTime() const
   return lastRecordTime;
 }
 
-
-#include <time.h>
 void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
 {
-  TRecord tmpRecord;
-  tmpRecord.type = EMPTYREC;
-  tmpRecord.time = traceEndTime;
+  TRecord beginEmptyRecord;
+  beginEmptyRecord.type = EMPTYREC;
+  beginEmptyRecord.time = 0;
+
+  TRecord endEmptyRecord;
+  endEmptyRecord.type = EMPTYREC;
+  endEmptyRecord.time = traceEndTime;
+
   time_t tini = 0;
 
   std::vector< time_t > tmpTotalTime(threadRecords.size());
-
-  std::cout << time( &tini) << std::endl;
-
 
   // Extrae_init();
 
@@ -370,42 +373,39 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
 
   TNodeOrder iNode;
   // //Extrae_eventandcounters(1,1);
-  //#pragma omp parallel for firstprivate( tmpRecord ) private( iNode ) shared( threadRecords, processModel, resourceModel, f, tmpTotalTime ) default( none ) schedule(dynamic)
+  //#pragma omp parallel for firstprivate( endEmptyRecord ) private( iNode ) shared( threadRecords, processModel, resourceModel, f, tmpTotalTime ) default( none ) schedule(dynamic)
   for( iNode = 0; iNode < resourceModel.size(); ++iNode )
   {
     //Extrae_eventandcounters(2,iNode+1);
 
     bool firstCPURecordInserted = false;
     std::vector<TThreadOrder> threadsInNode;
-    tmpRecord.CPU = resourceModel.getFirstCPU( iNode );
+    endEmptyRecord.CPU = resourceModel.getFirstCPU( iNode );
     processModel.getThreadsPerNode( iNode + 1, threadsInNode );
-// std::cout<<"threadsInNode "<<iNode<<": "<<threadsInNode.size()<<std::endl;
+
     for( auto iThread : threadsInNode )
     {
       //Extrae_eventandcounters(3,iThread+1);
-      //std::cout << i << std::endl;
-      //printf("thread: %i\n", i);
 
       auto &vectorThread = threadRecords[ iThread ];
-// std::cout<<"computing thread "<<iThread<<std::endl;
-      //tmpTotalTime[i] = time(nullptr);
       std::stable_sort( vectorThread.begin(), vectorThread.end(), f );
-      //tmpTotalTime[i] = time(nullptr) - tmpTotalTime[i];
 
-      tmpRecord.thread = iThread;
-      vectorThread.emplace_back( tmpRecord );
+      endEmptyRecord.thread = iThread;
+      vectorThread.emplace_back( endEmptyRecord );
       vectorThread.shrink_to_fit();
-//std::cout<<"vector shrinked"<<std::endl;
 
       auto itRecord = vectorThread.begin();
 
       // Fill all CPUs with empty record only once
-      if( !firstCPURecordInserted && itRecord != vectorThread.end() )
+      if( !firstCPURecordInserted )
       {
         firstCPURecordInserted = true;
         for( TCPUOrder iCPU = resourceModel.getFirstCPU( iNode ); iCPU <= resourceModel.getLastCPU( iNode ); ++iCPU )
-          cpuRecords[ iCPU - 1 ].emplace_back( &( *itRecord ) );
-  //std::cout << "added first empty" <<std::endl;
+        {
+          cpuEmptyRecords[ iCPU - 1 ][ BEGIN_EMPTY_RECORD ] = beginEmptyRecord;
+          cpuEmptyRecords[ iCPU - 1 ][ BEGIN_EMPTY_RECORD ].CPU = iCPU;
+          cpuRecords[ iCPU - 1 ].emplace_back( &cpuEmptyRecords[ iCPU - 1 ][ BEGIN_EMPTY_RECORD ] );
+        }
       }
 
       auto itEmptyRecord = --vectorThread.end();
@@ -415,30 +415,26 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
 
       for( ; itRecord != itEmptyRecord; ++itRecord )
       {
-// std::cout<<"inserting record in cpu "<<itRecord->CPU<<std::endl;
         if( itRecord->CPU != 0 )
           cpuRecords[ itRecord->CPU - 1 ].emplace_back( &( *itRecord ) );
       }
-//std::cout<<"all cpus filled with records"<<std::endl;
       //Extrae_eventandcounters(3,0);
     }
 
     for( TCPUOrder iCPU = resourceModel.getFirstCPU( iNode ); iCPU <= resourceModel.getLastCPU( iNode ); ++iCPU )
     {
-//std::cout<<"sorting cpu "<<iCPU<<std::endl;
       std::stable_sort( cpuRecords[ iCPU - 1 ].begin(), cpuRecords[ iCPU - 1 ].end(),
                         []( const auto& lhs, const auto& rhs ){ return lhs->time < rhs->time; } );
-//std::cout<<" sorting finished"<<std::endl;
-      cpuRecords[ iCPU - 1 ].emplace_back( &threadRecords[ threadsInNode[ 0 ] ].back() );
+
+      cpuEmptyRecords[ iCPU - 1 ][ END_EMPTY_RECORD ] = endEmptyRecord;
+      cpuEmptyRecords[ iCPU - 1 ][ END_EMPTY_RECORD ].CPU = iCPU;
+      cpuRecords[ iCPU - 1 ].emplace_back( &cpuEmptyRecords[ iCPU - 1 ][ END_EMPTY_RECORD ] );
+
       cpuRecords[ iCPU - 1 ].shrink_to_fit();
-//std::cout<<"cpu shrinked"<<std::endl;
     }
 
     // Extrae_eventandcounters(2,0);
   }
   //Extrae_eventandcounters(1,0);
-  
   // Extrae_fini();
-
-  std::cout << time(nullptr) - tini << std::endl;
 }

@@ -199,6 +199,7 @@ MemoryTrace::iterator *IntervalCPU::getNextRecord( MemoryTrace::iterator *it,
 {
   TThreadOrder threadOrder = it->getThread();
   ++( *it );
+
   while( !it->isNull() )
   {
     if( window->passFilter( it ) )

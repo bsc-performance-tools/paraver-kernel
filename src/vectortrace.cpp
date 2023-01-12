@@ -330,7 +330,7 @@ MemoryTrace::iterator* VectorTrace::CPUBegin( TCPUOrder whichCPU ) const
 
 MemoryTrace::iterator* VectorTrace::CPUEnd( TCPUOrder whichCPU ) const
 {
-  return new VectorTrace::CPUIterator( --myBlocks->cpuRecords[ whichCPU ].end(), myTrace, myBlocks );;
+  return new VectorTrace::CPUIterator( --myBlocks->cpuRecords[ whichCPU ].end(), myTrace, myBlocks );
 }
 
 void VectorTrace::getRecordByTimeThread( std::vector<MemoryTrace::iterator *>& listIter, TRecordTime whichTime ) const
