@@ -378,10 +378,16 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
   {
     //Extrae_eventandcounters(2,iNode+1);
 
-    bool firstCPURecordInserted = false;
     std::vector<TThreadOrder> threadsInNode;
     endEmptyRecord.CPU = resourceModel.getFirstCPU( iNode );
     processModel.getThreadsPerNode( iNode + 1, threadsInNode );
+
+    for( TCPUOrder iCPU = resourceModel.getFirstCPU( iNode ); iCPU <= resourceModel.getLastCPU( iNode ); ++iCPU )
+    {
+      cpuEmptyRecords[ iCPU - 1 ][ BEGIN_EMPTY_RECORD ] = beginEmptyRecord;
+      cpuEmptyRecords[ iCPU - 1 ][ BEGIN_EMPTY_RECORD ].CPU = iCPU;
+      cpuRecords[ iCPU - 1 ].emplace_back( &cpuEmptyRecords[ iCPU - 1 ][ BEGIN_EMPTY_RECORD ] );
+    }
 
     for( auto iThread : threadsInNode )
     {
@@ -395,18 +401,6 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
       vectorThread.shrink_to_fit();
 
       auto itRecord = vectorThread.begin();
-
-      // Fill all CPUs with empty record only once
-      if( !firstCPURecordInserted )
-      {
-        firstCPURecordInserted = true;
-        for( TCPUOrder iCPU = resourceModel.getFirstCPU( iNode ); iCPU <= resourceModel.getLastCPU( iNode ); ++iCPU )
-        {
-          cpuEmptyRecords[ iCPU - 1 ][ BEGIN_EMPTY_RECORD ] = beginEmptyRecord;
-          cpuEmptyRecords[ iCPU - 1 ][ BEGIN_EMPTY_RECORD ].CPU = iCPU;
-          cpuRecords[ iCPU - 1 ].emplace_back( &cpuEmptyRecords[ iCPU - 1 ][ BEGIN_EMPTY_RECORD ] );
-        }
-      }
 
       auto itEmptyRecord = --vectorThread.end();
       // skip empty record
