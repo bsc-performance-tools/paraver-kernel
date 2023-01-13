@@ -337,7 +337,7 @@ void VectorTrace::getRecordByTimeThread( std::vector<MemoryTrace::iterator *>& l
 {
   for( auto& v : myBlocks->threadRecords )
   {
-    auto it = std::find_if( v.begin(), v.end(), [whichTime]( const auto& e ) { return e.time == whichTime; } );
+    auto it = std::lower_bound( v.begin(), v.end(), whichTime, []( const auto& el, const auto& time ) { return el.time < time; } );
     if( it == v.end() ) --it;
     VectorTrace::iterator *retIt = new VectorTrace::iterator( it, myTrace, myBlocks );
     listIter.emplace_back( retIt );
@@ -348,7 +348,7 @@ void VectorTrace::getRecordByTimeCPU( std::vector<MemoryTrace::iterator *>& list
 {
   for( auto& v : myBlocks->cpuRecords )
   {
-    auto it = std::find_if( v.begin(), v.end(), [whichTime]( const auto& e ) { return e->time == whichTime; } );
+    auto it = std::lower_bound( v.begin(), v.end(), whichTime, []( const auto& el, const auto& time ) { return el->time < time; } );
     if( it == v.end() ) --it;
     VectorTrace::CPUIterator *retIt = new VectorTrace::CPUIterator( it, myTrace, myBlocks );
     listIter.emplace_back( retIt );
