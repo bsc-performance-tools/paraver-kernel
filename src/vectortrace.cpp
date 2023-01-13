@@ -315,7 +315,7 @@ MemoryTrace::iterator* VectorTrace::end() const
 
 MemoryTrace::iterator* VectorTrace::threadBegin( TThreadOrder whichThread ) const
 {
-  return new VectorTrace::iterator( ++myBlocks->threadRecords[ whichThread ].begin(), myTrace, myBlocks );
+  return new VectorTrace::iterator( myBlocks->threadRecords[ whichThread ].begin(), myTrace, myBlocks );
 }
 
 MemoryTrace::iterator* VectorTrace::threadEnd( TThreadOrder whichThread ) const
@@ -325,7 +325,7 @@ MemoryTrace::iterator* VectorTrace::threadEnd( TThreadOrder whichThread ) const
 
 MemoryTrace::iterator* VectorTrace::CPUBegin( TCPUOrder whichCPU ) const
 {
-  return new VectorTrace::CPUIterator( ++myBlocks->cpuRecords[ whichCPU ].begin(), myTrace, myBlocks );
+  return new VectorTrace::CPUIterator( myBlocks->cpuRecords[ whichCPU ].begin(), myTrace, myBlocks );
 }
 
 MemoryTrace::iterator* VectorTrace::CPUEnd( TCPUOrder whichCPU ) const
@@ -335,23 +335,27 @@ MemoryTrace::iterator* VectorTrace::CPUEnd( TCPUOrder whichCPU ) const
 
 void VectorTrace::getRecordByTimeThread( std::vector<MemoryTrace::iterator *>& listIter, TRecordTime whichTime ) const
 {
+  size_t iThread = 0;
   for( auto& v : myBlocks->threadRecords )
   {
     auto it = std::lower_bound( v.begin(), v.end(), whichTime, []( const auto& el, const auto& time ) { return el.time < time; } );
-    if( it == v.end() ) --it;
-    VectorTrace::iterator *retIt = new VectorTrace::iterator( it, myTrace, myBlocks );
-    listIter.emplace_back( retIt );
+    if( it == v.end() || it->time > whichTime ) --it;
+    listIter[ iThread ] = new VectorTrace::iterator( it, myTrace, myBlocks );
+
+    ++iThread;
   }
 }
 
 void VectorTrace::getRecordByTimeCPU( std::vector<MemoryTrace::iterator *>& listIter, TRecordTime whichTime ) const
 {
+  size_t iCPU = 0;
   for( auto& v : myBlocks->cpuRecords )
   {
     auto it = std::lower_bound( v.begin(), v.end(), whichTime, []( const auto& el, const auto& time ) { return el->time < time; } );
-    if( it == v.end() ) --it;
-    VectorTrace::CPUIterator *retIt = new VectorTrace::CPUIterator( it, myTrace, myBlocks );
-    listIter.emplace_back( retIt );
+    if( it == v.end() || (*it)->time > whichTime ) --it;
+    listIter[ iCPU ] = new VectorTrace::CPUIterator( it, myTrace, myBlocks );
+
+    ++iCPU;
   }
 }
 

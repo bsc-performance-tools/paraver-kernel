@@ -62,8 +62,8 @@ VectorBlocks::VectorBlocks( const ResourceModel<>& resource, const ProcessModel<
   cpuRecords.reserve( resourceModel.totalCPUs() );
   cpuRecords.insert( cpuRecords.begin(), resourceModel.totalCPUs(), TCPURecordContainer() );
 
-  cpuEmptyRecords.reserve( resourceModel.totalCPUs() );
-  cpuEmptyRecords.insert( cpuEmptyRecords.begin(), resourceModel.totalCPUs(), std::array<Plain::TRecord, 2>() );
+  cpuEndEmptyRecords.reserve( resourceModel.totalCPUs() );
+  cpuEndEmptyRecords.insert( cpuEndEmptyRecords.begin(), resourceModel.totalCPUs(), Plain::TRecord() );
 
   for( auto& c : commRecords )
     c = nullptr;
@@ -348,10 +348,6 @@ TRecordTime VectorBlocks::getLastRecordTime() const
 
 void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
 {
-  TRecord beginEmptyRecord;
-  beginEmptyRecord.type = EMPTYREC;
-  beginEmptyRecord.time = 0;
-
   TRecord endEmptyRecord;
   endEmptyRecord.type = EMPTYREC;
   endEmptyRecord.time = traceEndTime;
@@ -381,13 +377,6 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
     std::vector<TThreadOrder> threadsInNode;
     endEmptyRecord.CPU = resourceModel.getFirstCPU( iNode );
     processModel.getThreadsPerNode( iNode + 1, threadsInNode );
-
-    for( TCPUOrder iCPU = resourceModel.getFirstCPU( iNode ); iCPU <= resourceModel.getLastCPU( iNode ); ++iCPU )
-    {
-      cpuEmptyRecords[ iCPU - 1 ][ BEGIN_EMPTY_RECORD ] = beginEmptyRecord;
-      cpuEmptyRecords[ iCPU - 1 ][ BEGIN_EMPTY_RECORD ].CPU = iCPU;
-      cpuRecords[ iCPU - 1 ].emplace_back( &cpuEmptyRecords[ iCPU - 1 ][ BEGIN_EMPTY_RECORD ] );
-    }
 
     for( auto iThread : threadsInNode )
     {
@@ -420,9 +409,9 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
       std::stable_sort( cpuRecords[ iCPU - 1 ].begin(), cpuRecords[ iCPU - 1 ].end(),
                         []( const auto& lhs, const auto& rhs ){ return lhs->time < rhs->time; } );
 
-      cpuEmptyRecords[ iCPU - 1 ][ END_EMPTY_RECORD ] = endEmptyRecord;
-      cpuEmptyRecords[ iCPU - 1 ][ END_EMPTY_RECORD ].CPU = iCPU;
-      cpuRecords[ iCPU - 1 ].emplace_back( &cpuEmptyRecords[ iCPU - 1 ][ END_EMPTY_RECORD ] );
+      cpuEndEmptyRecords[ iCPU - 1 ] = endEmptyRecord;
+      cpuEndEmptyRecords[ iCPU - 1 ].CPU = iCPU;
+      cpuRecords[ iCPU - 1 ].emplace_back( &cpuEndEmptyRecords[ iCPU - 1 ] );
 
       cpuRecords[ iCPU - 1 ].shrink_to_fit();
     }
