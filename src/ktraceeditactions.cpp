@@ -95,8 +95,8 @@ bool TraceCutterAction::execute( std::string whichTrace )
   if( tmpWindow != nullptr && options->get_min_cutting_time() == 0 && options->get_max_cutting_time() >= tmpWindow->getTrace()->getEndTime() )
   {
     newName = outputPath + mySequence->getKernelConnection()->getPathSeparator() +
-              whichTrace.substr( whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) );
-    std::string relativeTrace = "../" + whichTrace.substr( whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) );
+              whichTrace.substr( whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) + 1 );
+    std::string relativeTrace = "../" + whichTrace.substr( whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) + 1 );
     if( symlink( relativeTrace.c_str(), newName.c_str() ) != 0 )
     {
       if( errno != EEXIST )
