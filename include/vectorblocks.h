@@ -101,6 +101,7 @@ class VectorBlocks : public MemoryBlocks
     std::vector< TThreadRecordContainer > threadRecords;
     std::vector< TCPURecordContainer > cpuRecords;
 
+    std::vector< Plain::TRecord > cpuBeginEmptyRecords;
     std::vector< Plain::TRecord > cpuEndEmptyRecords;
 
     typedef enum

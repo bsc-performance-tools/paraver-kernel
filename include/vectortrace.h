@@ -36,7 +36,7 @@ class VectorTrace : public MemoryTrace
     class iterator : public MemoryTrace::iterator
     {
       public:
-        iterator( TThreadRecordContainer::iterator whichRecord, const Trace *whichTrace, VectorBlocks *whichBlocks );
+        iterator( TThreadRecordContainer::iterator whichRecord, const Trace *whichTrace, VectorBlocks *whichBlocks, TThreadOrder whichThread );
         virtual void operator++() override;
         virtual void operator--() override;
         virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy ) override;
@@ -72,7 +72,7 @@ class VectorTrace : public MemoryTrace
     class CPUIterator : public MemoryTrace::iterator
     {
       public:
-        CPUIterator( TCPURecordContainer::iterator whichRecord, const Trace *whichTrace, VectorBlocks *whichBlocks );
+        CPUIterator( TCPURecordContainer::iterator whichRecord, const Trace *whichTrace, VectorBlocks *whichBlocks, TCPUOrder whichCPU );
         virtual void operator++() override;
         virtual void operator--() override;
         virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy ) override;
