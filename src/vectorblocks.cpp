@@ -155,8 +155,19 @@ void VectorBlocks::newComm( TThreadOrder whichSenderThread, TThreadOrder whichRe
   communications.emplace_back( TCommInfo() );
   if( createRecords )
   {
-    auto itSender   = threadRecords[ whichSenderThread ].insert( threadRecords[ whichSenderThread ].end(), 4, Plain::TRecord() );
-    auto itReceiver = threadRecords[ whichReceiverThread ].insert( threadRecords[ whichReceiverThread ].end(), 4, Plain::TRecord() );
+    TThreadRecordContainer::iterator itSender;
+    TThreadRecordContainer::iterator itReceiver;
+
+    if( whichSenderThread != whichReceiverThread )
+    {
+      itSender   = threadRecords[ whichSenderThread ].insert( threadRecords[ whichSenderThread ].end(), 4, Plain::TRecord() );
+      itReceiver = threadRecords[ whichReceiverThread ].insert( threadRecords[ whichReceiverThread ].end(), 4, Plain::TRecord() );
+    }
+    else
+    {
+      itSender = threadRecords[ whichSenderThread ].insert( threadRecords[ whichSenderThread ].end(), 8, Plain::TRecord() );
+      itReceiver = itSender + 4;
+    }
 
     commRecords[ logicalSend ] = &( *itSender );
     commRecords[ logicalReceive ] = &( *itReceiver );
@@ -381,7 +392,6 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
     //Extrae_eventandcounters(2,iNode+1);
 
     std::vector<TThreadOrder> threadsInNode;
-    endEmptyRecord.CPU = resourceModel.getFirstCPU( iNode );
     processModel.getThreadsPerNode( iNode + 1, threadsInNode );
 
     for( TCPUOrder iCPU = resourceModel.getFirstCPU( iNode ); iCPU <= resourceModel.getLastCPU( iNode ); ++iCPU )
@@ -399,6 +409,7 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
       std::stable_sort( vectorThread.begin(), vectorThread.end(), f );
 
       endEmptyRecord.thread = iThread;
+      endEmptyRecord.CPU = vectorThread.back().CPU;
       vectorThread.emplace_back( endEmptyRecord );
       vectorThread.shrink_to_fit();
 
@@ -420,12 +431,12 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
 
     for( TCPUOrder iCPU = resourceModel.getFirstCPU( iNode ); iCPU <= resourceModel.getLastCPU( iNode ); ++iCPU )
     {
-      std::stable_sort( cpuRecords[ iCPU - 1 ].begin(), cpuRecords[ iCPU - 1 ].end(),
+      std::stable_sort( ++cpuRecords[ iCPU - 1 ].begin(), cpuRecords[ iCPU - 1 ].end(),
                         []( const auto& lhs, const auto& rhs ){ return lhs->time < rhs->time; } );
-
 
       cpuEndEmptyRecords[ iCPU - 1 ] = endEmptyRecord;
       cpuEndEmptyRecords[ iCPU - 1 ].CPU = iCPU;
+      cpuEndEmptyRecords[ iCPU - 1 ].thread = cpuRecords[ iCPU - 1 ].back()->thread;
       cpuRecords[ iCPU - 1 ].emplace_back( &cpuEndEmptyRecords[ iCPU - 1 ] );
 
       cpuBeginEmptyRecords[ iCPU - 1 ].thread = cpuRecords[ iCPU - 1 ][ 1 ]->thread;
