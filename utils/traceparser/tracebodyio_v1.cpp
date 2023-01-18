@@ -345,6 +345,14 @@ inline void TraceBodyIO_v1< PARAM_LIST >::readComm( const std::string& line,
     return;
   }
 
+  if( !whichProcessModel.isValidThread( remoteAppl - 1, remoteTask - 1, remoteThread - 1 ) || 
+      !whichResourceModel.isValidGlobalCPU( remoteCPU ) )
+  {
+    std::cerr << "Error reading communication record." << std::endl;
+    std::cerr << line << std::endl;
+    return;
+  }
+
   thread = whichProcessModel.getGlobalThread( appl - 1, task - 1, thread - 1 );
   remoteThread = whichProcessModel.getGlobalThread( remoteAppl - 1, remoteTask - 1, remoteThread - 1 );
   records.newComm( thread, remoteThread );
