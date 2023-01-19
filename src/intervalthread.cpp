@@ -66,6 +66,11 @@ KRecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
   return displayList;
 }
 
+MemoryTrace::iterator *IntervalThread::getTraceEnd() const
+{
+  return window->getThreadEndRecord( order );
+}
+
 
 KRecordList *IntervalThread::calcNext( KRecordList *displayList, bool initCalc )
 {

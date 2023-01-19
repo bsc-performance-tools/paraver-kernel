@@ -46,6 +46,11 @@ class IntervalHigh: public Interval
       return level;
     }
 
+    virtual MemoryTrace::iterator *getTraceEnd() const override
+    {
+      return childIntervals[ 0 ]->getTraceEnd();
+    }
+
   protected:
     std::vector<Interval *> childIntervals;
 

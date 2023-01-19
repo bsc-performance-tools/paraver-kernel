@@ -50,6 +50,7 @@ void VectorTrace::iterator::operator--()
 
 MemoryTrace::iterator& VectorTrace::iterator::operator=( const MemoryTrace::iterator& copy )
 {
+  myThread = dynamic_cast<const VectorTrace::iterator&>( copy ).myThread;
   it = dynamic_cast<const VectorTrace::iterator&>( copy ).it;
   myBlocks = dynamic_cast<const VectorTrace::iterator&>( copy ).myBlocks;
   myTrace = dynamic_cast<const VectorTrace::iterator&>( copy ).myTrace;
@@ -177,6 +178,7 @@ void VectorTrace::CPUIterator::operator--()
 
 MemoryTrace::iterator& VectorTrace::CPUIterator::operator=( const MemoryTrace::iterator& copy )
 {
+  myCPU = dynamic_cast<const VectorTrace::CPUIterator&>( copy ).myCPU;
   it = dynamic_cast<const VectorTrace::CPUIterator&>( copy ).it;
   myBlocks = dynamic_cast<const VectorTrace::CPUIterator&>( copy ).myBlocks;
   myTrace = dynamic_cast<const VectorTrace::CPUIterator&>( copy ).myTrace;
@@ -300,17 +302,17 @@ TTime VectorTrace::finish( TTime headerTime, Trace *whichTrace )
 
 MemoryTrace::iterator* VectorTrace::empty() const
 {
-  return nullptr;
+  return threadBegin( 0 );
 }
 
 MemoryTrace::iterator* VectorTrace::begin() const
 {
-  return nullptr;
+  return threadBegin( 0 );
 }
 
 MemoryTrace::iterator* VectorTrace::end() const
 {
-  return nullptr;
+  return threadEnd( 0 );
 }
 
 MemoryTrace::iterator* VectorTrace::threadBegin( TThreadOrder whichThread ) const

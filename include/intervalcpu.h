@@ -74,6 +74,8 @@ class IntervalCPU: public IntervalHigh
       return ( KTimeline * ) window;
     }
 
+    MemoryTrace::iterator *getTraceEnd() const override;
+
   protected:
     KSingleWindow *window;
     SemanticCPU *function;

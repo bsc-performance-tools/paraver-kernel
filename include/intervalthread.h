@@ -77,6 +77,8 @@ class IntervalThread: public Interval
       return THREAD;
     }
 
+    MemoryTrace::iterator *getTraceEnd() const override;
+
   protected:
     KSingleWindow *window;
     SemanticThread *function;

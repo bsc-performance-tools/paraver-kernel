@@ -94,6 +94,10 @@ KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
   return displayList;
 }
 
+MemoryTrace::iterator *IntervalCPU::getTraceEnd() const
+{
+  return window->getCPUEndRecord( order - 1 );
+}
 
 KRecordList *IntervalCPU::calcNext( KRecordList *displayList, bool initCalc )
 {

@@ -81,6 +81,8 @@ class Interval
       return end;
     }
 
+    virtual MemoryTrace::iterator *getTraceEnd() const = 0;
+
     virtual TWindowLevel getLevel() const = 0;
 
     TObjectOrder getOrder()

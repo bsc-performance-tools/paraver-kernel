@@ -180,7 +180,7 @@ KRecordList *IntervalDerived::calcNext( KRecordList *displayList, bool initCalc 
       info.values.push_back( childIntervals[ i ]->getValue() * window->getFactor( i ) );
   }
   if( end == nullptr )
-    end = ( (KTrace *)window->getTrace() )->end();
+    end = childIntervals[ 0 ]->getTraceEnd();
 
   info.dataBeginTime = childIntervals[ 0 ]->getBegin()->getTime();
   currentValue = function->execute( &info );
