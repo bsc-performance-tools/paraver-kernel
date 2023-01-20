@@ -313,7 +313,7 @@ void IntervalDerived::setChildren()
   }
   else if ( window1->getLevel() == TTraceLevel::CPU )
   {
-    window1->getTrace()->getCPULocation( order, tmpNode, tmpCPU );
+    window1->getTrace()->getCPULocation( order + 1, tmpNode, tmpCPU );
   }
 
   if( window->getShift( 0 ) != 0 )
@@ -396,13 +396,13 @@ void IntervalDerived::setChildren()
     if( window->getShift( 1 ) != 0 )
     {
       shift2.setChildInterval( window2->getLevelInterval( TOPCOMPOSE1,
-                                                          window2->getTrace()->getGlobalCPU( tmpNode, tmpCPU ),
+                                                          window2->getTrace()->getGlobalCPU( tmpNode, tmpCPU + 1 ),
                                                           true ) );
       childIntervals.push_back( &shift2 );
     }
     else
       childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1,
-                                                           window2->getTrace()->getGlobalCPU( tmpNode, tmpCPU ),
+                                                           window2->getTrace()->getGlobalCPU( tmpNode, tmpCPU + 1 ),
                                                            true ) );
   }
 }
