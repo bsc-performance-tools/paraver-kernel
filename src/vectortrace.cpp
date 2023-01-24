@@ -297,7 +297,7 @@ void VectorTrace::insert( MemoryBlocks *blocks )
 TTime VectorTrace::finish( TTime headerTime, Trace *whichTrace )
 {
   myTrace = whichTrace;
-  return headerTime;
+  return ( headerTime > myBlocks->getLastRecordTime() ? headerTime : myBlocks->getLastRecordTime() );
 }
 
 MemoryTrace::iterator* VectorTrace::empty() const
