@@ -398,6 +398,10 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
     {
       cpuBeginEmptyRecords[ iCPU - 1 ] = beginEmptyRecord;
       cpuBeginEmptyRecords[ iCPU - 1 ].CPU = iCPU;
+      if ( !threadsInNode.empty() )
+        cpuBeginEmptyRecords[ iCPU - 1 ].thread = threadsInNode[ 0 ];
+      else
+        cpuBeginEmptyRecords[ iCPU - 1 ].thread = 0;
       cpuRecords[ iCPU - 1 ].emplace_back( &cpuBeginEmptyRecords[ iCPU - 1 ] );
     }
 
