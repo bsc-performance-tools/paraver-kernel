@@ -372,7 +372,7 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
 
   // Extrae_init();
 
-  auto f = []( const TRecord& r1, const TRecord& r2 )
+  auto compareRecords = []( const TRecord& r1, const TRecord& r2 )
       {
         if ( r1.time < r2.time )
           return true;
@@ -381,74 +381,95 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
         return ( getTypeOrdered( &r1 ) < getTypeOrdered( &r2 ) );
       };
 
-  size_t iNode;
-  //Extrae_eventandcounters(1,1);
-  #pragma omp parallel for firstprivate( beginEmptyRecord, endEmptyRecord ) \
-                           private( iNode ) \
-                           shared( threadRecords, processModel, resourceModel, f, cpuRecords, cpuBeginEmptyRecords, cpuEndEmptyRecords ) \
-                           default( none )
-  for( iNode = 0; iNode < resourceModel.size(); ++iNode )
-  {
-    //Extrae_eventandcounters(2,iNode+1);
-
-    std::vector<TThreadOrder> threadsInNode;
-    processModel.getThreadsPerNode( iNode + 1, threadsInNode );
-
-    for( TCPUOrder iCPU = resourceModel.getFirstCPU( iNode ); iCPU <= resourceModel.getLastCPU( iNode ); ++iCPU )
-    {
-      cpuBeginEmptyRecords[ iCPU - 1 ] = beginEmptyRecord;
-      cpuBeginEmptyRecords[ iCPU - 1 ].CPU = iCPU;
-      if ( !threadsInNode.empty() )
-        cpuBeginEmptyRecords[ iCPU - 1 ].thread = threadsInNode[ 0 ];
-      else
-        cpuBeginEmptyRecords[ iCPU - 1 ].thread = 0;
-      cpuRecords[ iCPU - 1 ].emplace_back( &cpuBeginEmptyRecords[ iCPU - 1 ] );
-    }
-
-    for( auto iThread : threadsInNode )
-    {
-      //Extrae_eventandcounters(3,iThread+1);
-
-      auto &vectorThread = threadRecords[ iThread ];
-      std::stable_sort( vectorThread.begin(), vectorThread.end(), f );
-
-      endEmptyRecord.thread = iThread;
-      endEmptyRecord.CPU = vectorThread.back().CPU;
-      vectorThread.emplace_back( endEmptyRecord );
-      vectorThread.shrink_to_fit();
-
-      auto itRecord = vectorThread.begin();
-
-      auto itEmptyRecord = --vectorThread.end();
-
-      // skip empty record
-      if( itRecord != itEmptyRecord )
-        ++itRecord;
-
-      for( ; itRecord != itEmptyRecord; ++itRecord )
+  auto sortThread = [this, compareRecords]( size_t iThread, TRecord endEmptyRecord )
       {
-        if( itRecord->CPU != 0 )
-          cpuRecords[ itRecord->CPU - 1 ].emplace_back( &( *itRecord ) );
-      }
-      //Extrae_eventandcounters(3,0);
-    }
+        auto &vectorThread = threadRecords[ iThread ];
+        std::stable_sort( vectorThread.begin(), vectorThread.end(), compareRecords );
 
-    for( TCPUOrder iCPU = resourceModel.getFirstCPU( iNode ); iCPU <= resourceModel.getLastCPU( iNode ); ++iCPU )
+        endEmptyRecord.thread = iThread;
+        endEmptyRecord.CPU = vectorThread.back().CPU;
+        vectorThread.emplace_back( endEmptyRecord );
+        vectorThread.shrink_to_fit();
+      };
+
+  //Extrae_eventandcounters(1,1);
+
+  if( !resourceModel.isReady() )
+  {
+    size_t iThread;
+    #pragma omp parallel for firstprivate( endEmptyRecord ) \
+                             private( iThread ) \
+                             shared( processModel, sortThread ) \
+                             default( none )
+    for( iThread = 0; iThread < processModel.totalThreads(); ++iThread )
     {
-      std::stable_sort( ++cpuRecords[ iCPU - 1 ].begin(), cpuRecords[ iCPU - 1 ].end(),
-                        []( const auto& lhs, const auto& rhs ){ return lhs->time < rhs->time; } );
-
-      cpuEndEmptyRecords[ iCPU - 1 ] = endEmptyRecord;
-      cpuEndEmptyRecords[ iCPU - 1 ].CPU = iCPU;
-      cpuEndEmptyRecords[ iCPU - 1 ].thread = cpuRecords[ iCPU - 1 ].back()->thread;
-      cpuRecords[ iCPU - 1 ].emplace_back( &cpuEndEmptyRecords[ iCPU - 1 ] );
-
-      cpuBeginEmptyRecords[ iCPU - 1 ].thread = cpuRecords[ iCPU - 1 ][ 1 ]->thread;
-
-      cpuRecords[ iCPU - 1 ].shrink_to_fit();
+      sortThread( iThread, endEmptyRecord );
     }
+  }
+  else
+  {
+    size_t iNode;
+    #pragma omp parallel for firstprivate( beginEmptyRecord, endEmptyRecord ) \
+                             private( iNode ) \
+                             shared( threadRecords, processModel, resourceModel, sortThread, cpuRecords, cpuBeginEmptyRecords, cpuEndEmptyRecords ) \
+                             default( none )
+    for( iNode = 0; iNode < resourceModel.size(); ++iNode )
+    {
+      //Extrae_eventandcounters(2,iNode+1);
 
-    // Extrae_eventandcounters(2,0);
+      std::vector<TThreadOrder> threadsInNode;
+      processModel.getThreadsPerNode( iNode + 1, threadsInNode );
+
+      for( TCPUOrder iCPU = resourceModel.getFirstCPU( iNode ); iCPU <= resourceModel.getLastCPU( iNode ); ++iCPU )
+      {
+        cpuBeginEmptyRecords[ iCPU - 1 ] = beginEmptyRecord;
+        cpuBeginEmptyRecords[ iCPU - 1 ].CPU = iCPU;
+        if ( !threadsInNode.empty() )
+          cpuBeginEmptyRecords[ iCPU - 1 ].thread = threadsInNode[ 0 ];
+        else
+          cpuBeginEmptyRecords[ iCPU - 1 ].thread = 0;
+        cpuRecords[ iCPU - 1 ].emplace_back( &cpuBeginEmptyRecords[ iCPU - 1 ] );
+      }
+
+      for( auto iThread : threadsInNode )
+      {
+        //Extrae_eventandcounters(3,iThread+1);
+        sortThread( iThread, endEmptyRecord );
+
+        auto &vectorThread = threadRecords[ iThread ];
+        auto itRecord = vectorThread.begin();
+
+        auto itEmptyRecord = --vectorThread.end();
+
+        // skip empty record
+        if( itRecord != itEmptyRecord )
+          ++itRecord;
+
+        for( ; itRecord != itEmptyRecord; ++itRecord )
+        {
+          if( itRecord->CPU != 0 )
+            cpuRecords[ itRecord->CPU - 1 ].emplace_back( &( *itRecord ) );
+        }
+        //Extrae_eventandcounters(3,0);
+      }
+
+      for( TCPUOrder iCPU = resourceModel.getFirstCPU( iNode ); iCPU <= resourceModel.getLastCPU( iNode ); ++iCPU )
+      {
+        std::stable_sort( ++cpuRecords[ iCPU - 1 ].begin(), cpuRecords[ iCPU - 1 ].end(),
+                          []( const auto& lhs, const auto& rhs ){ return lhs->time < rhs->time; } );
+
+        cpuEndEmptyRecords[ iCPU - 1 ] = endEmptyRecord;
+        cpuEndEmptyRecords[ iCPU - 1 ].CPU = iCPU;
+        cpuEndEmptyRecords[ iCPU - 1 ].thread = cpuRecords[ iCPU - 1 ].back()->thread;
+        cpuRecords[ iCPU - 1 ].emplace_back( &cpuEndEmptyRecords[ iCPU - 1 ] );
+
+        cpuBeginEmptyRecords[ iCPU - 1 ].thread = cpuRecords[ iCPU - 1 ][ 1 ]->thread;
+
+        cpuRecords[ iCPU - 1 ].shrink_to_fit();
+      }
+
+      // Extrae_eventandcounters(2,0);
+    }
   }
   //Extrae_eventandcounters(1,0);
   // Extrae_fini();
