@@ -205,7 +205,7 @@ inline bool TraceBodyIO_v1< PARAM_LIST >::validRecordLocation( const ProcessMode
   if( !whichResourceModel.isValidGlobalCPU( whichCPU ) )
     return false;
 
-  if( !whichResourceModel.isReady() )
+  if( !whichResourceModel.isReady() || whichCPU == 0 )
     return whichProcessModel.isValidThread( whichAppl - 1, whichTask - 1, whichThread - 1 );
 
   TNodeOrder tmpNode;
