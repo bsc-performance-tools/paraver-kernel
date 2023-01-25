@@ -22,15 +22,11 @@
 \*****************************************************************************/
 
 #include <algorithm>
-//#include <functional>
-#include <type_traits>
 
+#include "kprogresscontroller.h"
 #include "plaintrace.h"
 #include "vectorblocks.h"
 
-// #include "extrae_user_events.h"
-
-#include <iostream>
 using namespace Plain;
 
 const TRecordType VectorBlocks::commTypes[] =
@@ -45,9 +41,11 @@ const TRecordType VectorBlocks::commTypes[] =
   RRECV + PHY
 };
 
-VectorBlocks::VectorBlocks( const ResourceModel<>& resource, const ProcessModel<>& process,
-                            TRecordTime endTime )
-    : resourceModel( resource ), processModel( process )
+VectorBlocks::VectorBlocks( const ResourceModel<>& resource,
+                            const ProcessModel<>& process,
+                            TRecordTime endTime,
+                            ProgressController *whichProgress )
+    : resourceModel( resource ), processModel( process ), progress( whichProgress )
 {
   TRecord empty;
   empty.time = 0;
@@ -370,8 +368,6 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
   endEmptyRecord.type = EMPTYREC;
   endEmptyRecord.time = traceEndTime;
 
-  // Extrae_init();
-
   auto compareRecords = []( const TRecord& r1, const TRecord& r2 )
       {
         if ( r1.time < r2.time )
@@ -392,31 +388,38 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
         vectorThread.shrink_to_fit();
       };
 
-  //Extrae_eventandcounters(1,1);
-
+  progress->setMessage( "Sorting trace..." );
+  progress->setCurrentProgress( 0 );
+  size_t progressCounter = 0;
   if( !resourceModel.isReady() )
   {
+    progress->setEndLimit( processModel.totalThreads() );
+
     size_t iThread;
     #pragma omp parallel for firstprivate( endEmptyRecord ) \
                              private( iThread ) \
-                             shared( processModel, sortThread ) \
+                             shared( processModel, sortThread, progressCounter ) \
                              default( none )
     for( iThread = 0; iThread < processModel.totalThreads(); ++iThread )
     {
       sortThread( iThread, endEmptyRecord );
+      #pragma omp atomic
+      ++progressCounter;
+      #pragma omp critical
+      progress->setCurrentProgress( progressCounter );
     }
   }
   else
   {
+    progress->setEndLimit( resourceModel.totalCPUs() );
+
     size_t iNode;
     #pragma omp parallel for firstprivate( beginEmptyRecord, endEmptyRecord ) \
                              private( iNode ) \
-                             shared( threadRecords, processModel, resourceModel, sortThread, cpuRecords, cpuBeginEmptyRecords, cpuEndEmptyRecords ) \
+                             shared( threadRecords, processModel, resourceModel, sortThread, cpuRecords, cpuBeginEmptyRecords, cpuEndEmptyRecords, progressCounter ) \
                              default( none )
     for( iNode = 0; iNode < resourceModel.size(); ++iNode )
     {
-      //Extrae_eventandcounters(2,iNode+1);
-
       std::vector<TThreadOrder> threadsInNode;
       processModel.getThreadsPerNode( iNode + 1, threadsInNode );
 
@@ -433,7 +436,6 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
 
       for( auto iThread : threadsInNode )
       {
-        //Extrae_eventandcounters(3,iThread+1);
         sortThread( iThread, endEmptyRecord );
 
         auto &vectorThread = threadRecords[ iThread ];
@@ -450,7 +452,6 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
           if( itRecord->CPU != 0 )
             cpuRecords[ itRecord->CPU - 1 ].emplace_back( &( *itRecord ) );
         }
-        //Extrae_eventandcounters(3,0);
       }
 
       for( TCPUOrder iCPU = resourceModel.getFirstCPU( iNode ); iCPU <= resourceModel.getLastCPU( iNode ); ++iCPU )
@@ -466,11 +467,12 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
         cpuBeginEmptyRecords[ iCPU - 1 ].thread = cpuRecords[ iCPU - 1 ][ 1 ]->thread;
 
         cpuRecords[ iCPU - 1 ].shrink_to_fit();
-      }
 
-      // Extrae_eventandcounters(2,0);
+        #pragma omp atomic
+        ++progressCounter;
+        #pragma omp critical
+        progress->setCurrentProgress( progressCounter );
+      }
     }
   }
-  //Extrae_eventandcounters(1,0);
-  // Extrae_fini();
 }

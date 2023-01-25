@@ -658,7 +658,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   }
   else
   {
-    blocks = new VectorBlocks( traceResourceModel, traceProcessModel, traceEndTime );
+    blocks = new VectorBlocks( traceResourceModel, traceProcessModel, traceEndTime, progress );
     memTrace = new VectorTrace();
     // blocks = new BPlusTreeBlocks( traceProcessModel );
     // memTrace  = new BPlusTree( this,

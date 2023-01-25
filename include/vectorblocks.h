@@ -38,8 +38,10 @@ constexpr size_t END_EMPTY_RECORD = 1;
 class VectorBlocks : public MemoryBlocks
 {
   public:
-    VectorBlocks( const ResourceModel<>& resource, const ProcessModel<>& process,
-                  TRecordTime endTime );
+    VectorBlocks( const ResourceModel<>& resource,
+                  const ProcessModel<>& process,
+                  TRecordTime endTime,
+                  ProgressController *whichProgress );
 
     virtual TData *getLastRecord( PRV_UINT16 position ) const override;
     virtual void newRecord() override;
@@ -125,6 +127,8 @@ class VectorBlocks : public MemoryBlocks
 
     TThreadOrder insertedOnThread;
     TRecordTime lastRecordTime = 0;
+
+    ProgressController *progress;
 
     friend class VectorTrace;
     friend class VectorTrace::iterator;
