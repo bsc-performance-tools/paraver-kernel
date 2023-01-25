@@ -132,6 +132,13 @@ class TraceBodyIO_v1 : public TraceBodyIO<TraceStreamT,
     static std::string line;
     static std::ostringstream ostr;
 
+    bool validRecordLocation( const ProcessModelT& whichProcessModel,
+                              const ResourceModelT& whichResourceModel,
+                              TCPUOrder whichCPU,
+                              TApplOrder whichAppl,
+                              TTaskOrder whichTask,
+                              TThreadOrder whichThread ) const;
+
     void readTraceInfo( const std::string& line, MetadataManagerT& traceInfo ) const;
 
     void readState( const std::string& line,

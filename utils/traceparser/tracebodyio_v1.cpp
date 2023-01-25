@@ -194,6 +194,23 @@ void TraceBodyIO_v1< PARAM_LIST >::write( std::fstream& whichStream,
   }
 }
 
+template< PARAM_TYPENAME >
+inline bool TraceBodyIO_v1< PARAM_LIST >::validRecordLocation( const ProcessModelT& whichProcessModel,
+                                                               const ResourceModelT& whichResourceModel,
+                                                               TCPUOrder whichCPU,
+                                                               TApplOrder whichAppl,
+                                                               TTaskOrder whichTask,
+                                                               TThreadOrder whichThread ) const
+{
+  if( !whichResourceModel.isValidGlobalCPU( whichCPU ) )
+    return false;
+  
+  TNodeOrder tmpNode;
+  TCPUOrder tmpCPU;
+  whichResourceModel.getCPULocation( whichCPU, tmpNode, tmpCPU );
+  
+  return whichProcessModel.isValidThread( whichAppl - 1, whichTask - 1, whichThread - 1, tmpNode );
+}
 
 /**********************
   Read line functions
@@ -345,8 +362,7 @@ inline void TraceBodyIO_v1< PARAM_LIST >::readComm( const std::string& line,
     return;
   }
 
-  if( !whichProcessModel.isValidThread( remoteAppl - 1, remoteTask - 1, remoteThread - 1 ) || 
-      !whichResourceModel.isValidGlobalCPU( remoteCPU ) )
+  if( !validRecordLocation( whichProcessModel, whichResourceModel, remoteCPU, remoteAppl, remoteTask, remoteThread ) )
   {
     std::cerr << "Error reading communication record." << std::endl;
     std::cerr << line << std::endl;
@@ -386,8 +402,7 @@ inline bool TraceBodyIO_v1< PARAM_LIST >::readCommon( const ProcessModelT& which
                                         RecordTimeT& time ) const
 {
   return prv_atoll_v( it, end, CPU, appl, task, thread, time ) &&
-         whichResourceModel.isValidGlobalCPU( CPU ) &&
-         whichProcessModel.isValidThread( appl - 1, task - 1, thread - 1 );
+         validRecordLocation( whichProcessModel, whichResourceModel, CPU, appl, task, thread );
 }
 
 

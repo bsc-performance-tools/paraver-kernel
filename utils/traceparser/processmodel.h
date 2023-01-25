@@ -110,6 +110,10 @@ class ProcessModel
     bool isValidThread( ApplOrderT whichAppl,
                         TaskOrderT whichTask,
                         ThreadOrderT whichThread ) const;
+    bool isValidThread( ApplOrderT whichAppl,
+                        TaskOrderT whichTask,
+                        ThreadOrderT whichThread,
+                        NodeOrderT whichNode ) const;
     bool isValidTask( TaskOrderT whichTask ) const;
     bool isValidTask( ApplOrderT whichAppl,
                         TaskOrderT whichTask ) const;
