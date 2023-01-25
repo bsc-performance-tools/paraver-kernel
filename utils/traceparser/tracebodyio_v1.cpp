@@ -358,7 +358,8 @@ inline void TraceBodyIO_v1< PARAM_LIST >::readComm( const std::string& line,
     return;
   }
 
-  if( !prv_atoll_v( it, line.cend(), phySend, remoteCPU, remoteAppl, remoteTask, remoteThread, logReceive, phyReceive, commSize, commTag ) )
+  if( !prv_atoll_v( it, line.cend(), phySend, remoteCPU, remoteAppl, remoteTask, remoteThread, logReceive, phyReceive, commSize, commTag ) ||
+      phySend < 0.0 || logReceive < 0.0 || phyReceive < 0.0 )
   {
     std::cerr << "Error reading communication record." << std::endl;
     std::cerr << line << std::endl;
@@ -405,6 +406,7 @@ inline bool TraceBodyIO_v1< PARAM_LIST >::readCommon( const ProcessModelT& which
                                         RecordTimeT& time ) const
 {
   return prv_atoll_v( it, end, CPU, appl, task, thread, time ) &&
+         time >= 0.0 &&
          validRecordLocation( whichProcessModel, whichResourceModel, CPU, appl, task, thread );
 }
 
