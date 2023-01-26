@@ -388,12 +388,16 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
         vectorThread.shrink_to_fit();
       };
 
+  size_t progressCounter = 0;
+#ifndef _WIN32
   progress->setMessage( "Sorting trace..." );
   progress->setCurrentProgress( 0 );
-  size_t progressCounter = 0;
+#endif
   if( !resourceModel.isReady() )
   {
+#ifndef _WIN32
     progress->setEndLimit( processModel.totalThreads() );
+#endif
 
     size_t iThread;
     #pragma omp parallel for firstprivate( endEmptyRecord ) \
@@ -403,15 +407,19 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
     for( iThread = 0; iThread < processModel.totalThreads(); ++iThread )
     {
       sortThread( iThread, endEmptyRecord );
+#ifndef _WIN32
       #pragma omp atomic
       ++progressCounter;
       #pragma omp critical
       progress->setCurrentProgress( progressCounter );
+#endif
     }
   }
   else
   {
+#ifndef _WIN32
     progress->setEndLimit( resourceModel.totalCPUs() );
+#endif
 
     size_t iNode;
     #pragma omp parallel for firstprivate( beginEmptyRecord, endEmptyRecord ) \
@@ -468,10 +476,12 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
 
         cpuRecords[ iCPU - 1 ].shrink_to_fit();
 
+#ifndef _WIN32
         #pragma omp atomic
         ++progressCounter;
         #pragma omp critical
         progress->setCurrentProgress( progressCounter );
+#endif
       }
     }
   }
