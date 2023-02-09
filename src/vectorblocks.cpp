@@ -380,7 +380,7 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
   auto sortThread = [this, compareRecords]( size_t iThread, TRecord endEmptyRecord )
       {
         auto &vectorThread = threadRecords[ iThread ];
-        std::stable_sort( vectorThread.begin(), vectorThread.end(), compareRecords );
+        std::stable_sort( ++vectorThread.begin(), vectorThread.end(), compareRecords );
 
         endEmptyRecord.thread = iThread;
         endEmptyRecord.CPU = vectorThread.back().CPU;
