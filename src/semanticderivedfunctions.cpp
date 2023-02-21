@@ -129,6 +129,12 @@ TSemanticValue ControlDerivedClearBy::execute( const SemanticInfo *info )
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
   TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
 
+  if ( lastControlValue.find( tmpOrder ) == lastControlValue.end() )
+  {
+    lastControlValue[ tmpOrder ] = 0;
+    lastDataBeginTime[ tmpOrder ] = 0;
+  }
+
   if( myInfo->values[ controlWindow ] < lastControlValue[ tmpOrder ] )
   {
     result = 0;
@@ -147,23 +153,8 @@ TSemanticValue ControlDerivedClearBy::execute( const SemanticInfo *info )
 
 void ControlDerivedClearBy::init( KTimeline *whichWindow )
 {
-  TObjectOrder size = 0;
-
   lastControlValue.clear();
   lastDataBeginTime.clear();
-
-  if( whichWindow->getLevel() >= TTraceLevel::SYSTEM )
-    size = whichWindow->getTrace()->totalCPUs();
-  else
-    size = whichWindow->getTrace()->totalThreads();
-
-  lastControlValue.reserve( size );
-  lastDataBeginTime.reserve( size );
-  for( TObjectOrder i = 0; i < size; i++ )
-  {
-    lastControlValue.push_back( 0 );
-    lastDataBeginTime.push_back( 0.0 );
-  }
 }
 
 
@@ -199,6 +190,13 @@ TSemanticValue ControlDerivedEnumerate::execute( const SemanticInfo *info )
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
   TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
 
+  if ( prevControlValue.find( tmpOrder ) == prevControlValue.end() )
+  {
+    myEnumerate[ tmpOrder ] = 0;
+    prevControlValue[ tmpOrder ] = 0;
+    prevDataTime[ tmpOrder ] = 0;
+  }
+
   if( myInfo->values[ 1 ] < prevControlValue[ tmpOrder ] )
     myEnumerate[ tmpOrder ] = 0;
   else if( prevDataTime[ tmpOrder ] == 0 || myInfo->dataBeginTime != prevDataTime[ tmpOrder ] && myInfo->values[ 0 ] != 0.0 )
@@ -213,27 +211,9 @@ TSemanticValue ControlDerivedEnumerate::execute( const SemanticInfo *info )
 
 void ControlDerivedEnumerate::init( KTimeline *whichWindow )
 {
-  TObjectOrder size = 0;
-
   myEnumerate.clear();
   prevControlValue.clear();
   prevDataTime.clear();
-
-  if( whichWindow->getLevel() >= TTraceLevel::SYSTEM )
-    size = whichWindow->getTrace()->totalCPUs();
-  else
-    size = whichWindow->getTrace()->totalThreads();
-
-  myEnumerate.reserve( size );
-  prevControlValue.reserve( size );
-  prevDataTime.reserve( size );
-
-  for( TObjectOrder i = 0; i < size; i++ )
-  {
-    myEnumerate.push_back( 0 );
-    prevControlValue.push_back( 0 );
-    prevDataTime.push_back( 0 );
-  }
 }
 
 
@@ -243,7 +223,7 @@ TSemanticValue ControlDerivedAverage::execute( const SemanticInfo *info )
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
   TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
 
-  if( myInfo->newControlBurst )
+  if ( totalValue.find( tmpOrder ) == totalValue.end() || myInfo->newControlBurst )
   {
     totalValue[ tmpOrder ] = 0.0;
     totalTime[ tmpOrder ] = 0.0;
@@ -261,22 +241,6 @@ TSemanticValue ControlDerivedAverage::execute( const SemanticInfo *info )
 
 void ControlDerivedAverage::init( KTimeline *whichWindow )
 {
-  TObjectOrder size = 0;
-
   totalValue.clear();
   totalTime.clear();
-
-  if( whichWindow->getLevel() >= TTraceLevel::SYSTEM )
-    size = whichWindow->getTrace()->totalCPUs();
-  else
-    size = whichWindow->getTrace()->totalThreads();
-
-  totalValue.reserve( size );
-  totalTime.reserve( size );
-
-  for( TObjectOrder i = 0; i < size; ++i )
-  {
-    totalValue.push_back( 0.0 );
-    totalTime.push_back( 0.0 );
-  }
 }
