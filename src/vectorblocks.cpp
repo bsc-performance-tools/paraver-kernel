@@ -393,7 +393,7 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
   if ( progress != nullptr )
   {
     progress->setMessage( "Sorting trace..." );
-    progress->setCurrentProgress( 0 );
+    progress->setCurrentProgress( progressCounter );
   }
 #endif
   if( !resourceModel.isReady() )
@@ -417,7 +417,11 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
         #pragma omp atomic
         ++progressCounter;
         #pragma omp critical
-        progress->setCurrentProgress( progressCounter );
+        {
+          if( processModel.totalThreads() < 128 ||
+              progressCounter % 16 == 0 )
+            progress->setCurrentProgress( progressCounter );
+        }
       }
 #endif
     }
@@ -490,7 +494,11 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
           #pragma omp atomic
           ++progressCounter;
           #pragma omp critical
-          progress->setCurrentProgress( progressCounter );
+          {
+            if( resourceModel.totalCPUs() < 128 ||
+                progressCounter % 16 == 0 )
+              progress->setCurrentProgress( progressCounter );
+          }
         }
 #endif
       }
