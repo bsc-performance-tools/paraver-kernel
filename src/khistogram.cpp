@@ -1603,28 +1603,30 @@ void KHistogram::calculate( TObjectOrder iRow,
     if ( inclusive )
     {
       THistogramColumn column;
-      vector<vector<TSemanticValue> > *tmp =
-        controlWindow->getFirstSemUsefulFunction()->getStack();
-      vector<TSemanticValue>::iterator it = ( *tmp )[ data->controlRow ].begin();
-      while ( it != ( *tmp )[ data->controlRow ].end() )
+      auto *tmp = controlWindow->getFirstSemUsefulFunction()->getStack();
+      if( tmp->find( data->controlRow ) != tmp->end() )
       {
-        if ( columnTranslator->getColumn( *it, column ) )
+        vector<TSemanticValue>::iterator it = ( *tmp )[ data->controlRow ].begin();
+        while ( it != ( *tmp )[ data->controlRow ].end() )
         {
-          statistics.executeAll( data, semanticValues, isNotZeroValue );
-
-          if ( statistics.filterAll( data ) )
+          if ( columnTranslator->getColumn( *it, column ) )
           {
+            statistics.executeAll( data, semanticValues, isNotZeroValue );
+
+            if ( statistics.filterAll( data ) )
+            {
 #ifdef PARALLEL_ENABLED
-            semanticBuffer->addValue( data->plane, data->row, column, semanticValues, isNotZeroValue );
+              semanticBuffer->addValue( data->plane, data->row, column, semanticValues, isNotZeroValue );
 #else
-            if ( getThreeDimensions() )
-              cube->addValue( data->plane, column, semanticValues );
-            else
-              matrix->addValue( column, semanticValues );
+              if ( getThreeDimensions() )
+                cube->addValue( data->plane, column, semanticValues );
+              else
+                matrix->addValue( column, semanticValues );
 #endif
+            }
           }
+          ++it;
         }
-        ++it;
       }
     }
     else

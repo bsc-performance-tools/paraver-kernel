@@ -25,8 +25,10 @@
 #pragma once
 
 
-#include <vector>
 #include <stack>
+#include <unordered_map>
+#include <vector>
+
 #include "memorytrace.h"
 #include "semanticexception.h"
 #include "semanticinfo.h"
@@ -85,7 +87,7 @@ class SemanticFunction
 
     virtual SemanticFunction *clone() = 0;
 
-    virtual std::vector<std::vector<TSemanticValue> > *getStack()
+    virtual std::unordered_map<TObjectOrder, std::vector<TSemanticValue> > *getStack()
     {
       return nullptr;
     }
