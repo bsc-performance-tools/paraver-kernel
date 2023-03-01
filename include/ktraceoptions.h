@@ -52,7 +52,7 @@ constexpr size_t MAX_APPL =     32;
 
 constexpr size_t MAX_THREAD = 16;
 constexpr size_t MAX_SELECTED_TASKS = 30;
-constexpr size_t MAX_LINE_SIZE = 16384;
+constexpr size_t MAX_LINE_SIZE = MAX_HEADER_SIZE;
 
 /* sofware counters */
 constexpr size_t MAX_VALUES = 100;
