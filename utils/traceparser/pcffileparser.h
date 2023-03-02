@@ -100,6 +100,7 @@ class PCFFileParser
     void setEventLabel( TEventType eventType, const std::string& label );
     void setEventValues( TEventType eventType, const std::map< TEventValue, std::string >& values );
     void setEventValueLabel( TEventType eventType, TEventValue eventValue, const std::string& label );
+    bool expandColors = true;
 
   private:
     struct EventTypeData

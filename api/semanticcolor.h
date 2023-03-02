@@ -98,6 +98,7 @@ class CodeColor: public SemanticColor
 
     PRV_UINT32 getNumColors() const;
     void setColor( PRV_UINT32 pos, rgb color );
+    void cutAfter( PRV_UINT32 pos );
     void setCustomColor( TSemanticValue whichValue, rgb color );
     bool existCustomColors() const;
     const std::map<TSemanticValue, rgb>& getCustomPalette() const;

@@ -286,6 +286,7 @@ constexpr char PCF_LABEL_SPEED[]               = "SPEED";
 constexpr char PCF_LABEL_FLAG_ICONS[]          = "FLAG_ICONS";
 constexpr char PCF_LABEL_NUM_OF_STATE_COLORS[] = "NUM_OF_STATE_COLORS";
 constexpr char PCF_LABEL_YMAX_SCALE[]          = "YMAX_SCALE";
+constexpr char PCF_LABEL_DONT_EXPAND_COLORS[]  = "DONT_EXPAND_COLORS";
 
 template< typename dummyParser = std::nullptr_t >
 class DefaultOptionsParser : public PCFFileParser<>::SectionParser<>
@@ -293,12 +294,13 @@ class DefaultOptionsParser : public PCFFileParser<>::SectionParser<>
   public:
     DefaultOptionsParser( PCFFileParser<> *whichMainParser ) : PCFFileParser<>::SectionParser<>( whichMainParser ) 
     {
-      parameterSetter[ PCF_LABEL_LEVEL ]      = [this]( std::string line ) { mainParser->level = line; };
-      parameterSetter[ PCF_LABEL_UNITS ]      = [this]( std::string line ) { mainParser->units = line; };
-      parameterSetter[ PCF_LABEL_LOOK_BACK ]  = [this]( std::string line ) { mainParser->lookBack = line; };
-      parameterSetter[ PCF_LABEL_SPEED ]      = [this]( std::string line ) { mainParser->speed = line; };
-      parameterSetter[ PCF_LABEL_FLAG_ICONS ] = [this]( std::string line ) { mainParser->flagIcons = line; };
-      parameterSetter[ PCF_LABEL_YMAX_SCALE ] = [this]( std::string line ) { mainParser->ymaxScale = line; };
+      parameterSetter[ PCF_LABEL_LEVEL ]              = [this]( std::string line ) { mainParser->level = line; };
+      parameterSetter[ PCF_LABEL_UNITS ]              = [this]( std::string line ) { mainParser->units = line; };
+      parameterSetter[ PCF_LABEL_LOOK_BACK ]          = [this]( std::string line ) { mainParser->lookBack = line; };
+      parameterSetter[ PCF_LABEL_SPEED ]              = [this]( std::string line ) { mainParser->speed = line; };
+      parameterSetter[ PCF_LABEL_FLAG_ICONS ]         = [this]( std::string line ) { mainParser->flagIcons = line; };
+      parameterSetter[ PCF_LABEL_YMAX_SCALE ]         = [this]( std::string line ) { mainParser->ymaxScale = line; };
+      parameterSetter[ PCF_LABEL_DONT_EXPAND_COLORS ] = [this]( std::string line ) { mainParser->expandColors = false; };
     }
 
     virtual ~DefaultOptionsParser() = default;

@@ -232,8 +232,9 @@ rgb CodeColor::getColor( PRV_UINT32 pos ) const
 {
   if( pos == 0 && ParaverConfig::getInstance()->getColorsTimelineUseZero() )
     return ParaverConfig::getInstance()->getColorsTimelineColorZero();
-  pos = pos % colors.size();
-  return colors[ pos ];
+  // Skip the black at 0
+  pos = pos % (colors.size() - 1);
+  return colors[ pos + 1 ];
 }
 
 void CodeColor::setColor( PRV_UINT32 whichPos, rgb whichColor )
@@ -248,6 +249,12 @@ void CodeColor::setColor( PRV_UINT32 whichPos, rgb whichColor )
     }
   }
   colors[ whichPos ] = whichColor;
+}
+
+void CodeColor::cutAfter( PRV_UINT32 pos )
+{
+  if ( pos < colors.size() )
+    colors.erase( colors.begin() + pos, colors.end() );
 }
 
 void CodeColor::setCustomColor( TSemanticValue whichValue, rgb color ) 

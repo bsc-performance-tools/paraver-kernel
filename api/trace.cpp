@@ -461,11 +461,20 @@ void TraceProxy::parsePCF( const string& whichFile )
 
   rgb tmpColor;
   const std::map< uint32_t, PCFFileParser<>::rgb >& semanticColors = pcfParser.getSemanticColors();
+  uint32_t maxValue = 0;
+
   for ( auto it : semanticColors )
   {
     std::tie( tmpColor.red, tmpColor.green, tmpColor.blue ) = it.second;
     myCodeColor.setColor( it.first, tmpColor );
+    if (it.first > maxValue)
+      maxValue = it.first;
   }
+
+  // Cut the palette after the highest defined value, so there are no
+  // extra expanded values
+  if ( !pcfParser.expandColors )
+    myCodeColor.cutAfter(maxValue);
 
   myEventLabels = EventLabels( pcfParser );
   myStateLabels = StateLabels( pcfParser );
