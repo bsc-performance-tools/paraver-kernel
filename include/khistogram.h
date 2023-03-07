@@ -56,7 +56,6 @@ class WindowCloneManager
     std::unordered_map< Timeline *, std::vector< Timeline * > > clonedWindows;
 
     void clone( Timeline *whichWindow );
-    bool isClonable( Timeline *whichWindow );
 #endif
 };
 
