@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <unordered_map>
 
 #include "semanticderived.h"
 
@@ -560,8 +561,8 @@ class ControlDerivedClearBy: public SemanticDerived
     static const bool controlDerived = false;
     static std::string name;
 
-    std::vector<TSemanticValue> lastControlValue;
-    std::vector<TRecordTime> lastDataBeginTime;
+    std::unordered_map<TObjectOrder, TSemanticValue> lastControlValue;
+    std::unordered_map<TObjectOrder, TRecordTime> lastDataBeginTime;
 
 };
 
@@ -767,9 +768,9 @@ class ControlDerivedEnumerate: public SemanticDerived
     static const bool controlDerived = false;
     static std::string name;
 
-    std::vector<TSemanticValue> prevControlValue;
-    std::vector<TRecordTime> prevDataTime;
-    std::vector<TSemanticValue> myEnumerate;
+    std::unordered_map<TObjectOrder, TSemanticValue> prevControlValue;
+    std::unordered_map<TObjectOrder, TRecordTime> prevDataTime;
+    std::unordered_map<TObjectOrder, TSemanticValue> myEnumerate;
 
 };
 
@@ -841,8 +842,8 @@ class ControlDerivedAverage: public SemanticDerived
     static const bool controlDerived = true;
     static std::string name;
 
-    std::vector<TSemanticValue> totalValue;
-    std::vector<TRecordTime> totalTime;
+    std::unordered_map<TObjectOrder, TSemanticValue> totalValue;
+    std::unordered_map<TObjectOrder, TRecordTime> totalTime;
 
 };
 

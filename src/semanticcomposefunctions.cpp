@@ -359,20 +359,6 @@ TSemanticValue ComposeAbs::execute( const SemanticInfo *info )
 void ComposeStackedValue::init( KTimeline *whichWindow )
 {
   myStack.clear();
-
-  if ( whichWindow->getTrace()->totalThreads() >
-       whichWindow->getTrace()->totalCPUs() )
-  {
-    myStack.reserve( whichWindow->getTrace()->totalThreads() );
-    for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalThreads(); ++i )
-      myStack.push_back( vector<TSemanticValue>() );
-  }
-  else
-  {
-    myStack.reserve( whichWindow->getTrace()->totalCPUs() );
-    for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalCPUs(); ++i )
-      myStack.push_back( vector<TSemanticValue>() );
-  }
 }
 
 
@@ -382,6 +368,9 @@ TSemanticValue ComposeStackedValue::execute( const SemanticInfo *info )
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
 
   TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
+
+  if( myStack.find( tmpOrder ) == myStack.end() )
+    myStack[ tmpOrder ] = std::vector<TSemanticValue>{};
 
   if ( myInfo->values[ 0 ] != 0 )
     myStack[ tmpOrder ].push_back( myInfo->values[ 0 ] );
@@ -401,20 +390,6 @@ TSemanticValue ComposeStackedValue::execute( const SemanticInfo *info )
 void ComposeInStackedValue::init( KTimeline *whichWindow )
 {
   myStack.clear();
-
-  if ( whichWindow->getTrace()->totalThreads() >
-       whichWindow->getTrace()->totalCPUs() )
-  {
-    myStack.reserve( whichWindow->getTrace()->totalThreads() );
-    for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalThreads(); ++i )
-      myStack.push_back( vector<TSemanticValue>() );
-  }
-  else
-  {
-    myStack.reserve( whichWindow->getTrace()->totalCPUs() );
-    for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalCPUs(); ++i )
-      myStack.push_back( vector<TSemanticValue>() );
-  }
 }
 
 
@@ -424,6 +399,9 @@ TSemanticValue ComposeInStackedValue::execute( const SemanticInfo *info )
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
 
   TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
+
+  if( myStack.find( tmpOrder ) == myStack.end() )
+    myStack[ tmpOrder ] = std::vector<TSemanticValue>{};
 
   if ( myInfo->values[ 0 ] != 0 )
     myStack[ tmpOrder ].push_back( myInfo->values[ 0 ] );
@@ -444,20 +422,6 @@ TSemanticValue ComposeInStackedValue::execute( const SemanticInfo *info )
 void ComposeNestingLevel::init( KTimeline *whichWindow )
 {
   myStack.clear();
-
-  if ( whichWindow->getTrace()->totalThreads() >
-       whichWindow->getTrace()->totalCPUs() )
-  {
-    myStack.reserve( whichWindow->getTrace()->totalThreads() );
-    for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalThreads(); ++i )
-      myStack.push_back( 0 );
-  }
-  else
-  {
-    myStack.reserve( whichWindow->getTrace()->totalCPUs() );
-    for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalCPUs(); ++i )
-      myStack.push_back( 0 );
-  }
 }
 
 
@@ -467,6 +431,9 @@ TSemanticValue ComposeNestingLevel::execute( const SemanticInfo *info )
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
 
   TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
+
+  if ( myStack.find( tmpOrder ) == myStack.end() )
+    myStack[ tmpOrder ] = 0;
 
   if ( myInfo->values[ 0 ] != 0 )
     ++myStack[ tmpOrder ];
@@ -480,20 +447,6 @@ TSemanticValue ComposeNestingLevel::execute( const SemanticInfo *info )
 void ComposeLRUDepth::init( KTimeline *whichWindow )
 {
   LRUStack.clear();
-
-  if ( whichWindow->getTrace()->totalThreads() >
-       whichWindow->getTrace()->totalCPUs() )
-  {
-    LRUStack.reserve( whichWindow->getTrace()->totalThreads() );
-    for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalThreads(); ++i )
-      LRUStack.push_back( list< TSemanticValue >() );
-  }
-  else
-  {
-    LRUStack.reserve( whichWindow->getTrace()->totalCPUs() );
-    for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalCPUs(); ++i )
-      LRUStack.push_back( list< TSemanticValue >() );
-  }
 }
 
 
@@ -507,6 +460,9 @@ TSemanticValue ComposeLRUDepth::execute( const SemanticInfo *info )
 
   TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
   size_t stackSize = parameters[ STACK_SIZE ][ 0 ];
+
+  if( LRUStack.find( tmpOrder ) == LRUStack.end() )
+    LRUStack[ tmpOrder ] = std::list<TSemanticValue>{};
 
   unsigned int depth = 1;
   list<TSemanticValue>::iterator it;
@@ -573,24 +529,6 @@ TSemanticValue ComposeAccumulate::execute( const SemanticInfo *info )
 void ComposeDelta::init( KTimeline *whichWindow )
 {
   semPrevValue.clear();
-
-  if ( whichWindow->getTrace()->totalThreads() >
-       whichWindow->getTrace()->totalCPUs() )
-  {
-    semPrevValue.reserve( whichWindow->getTrace()->totalThreads() );
-    for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalThreads(); ++i )
-    {
-      semPrevValue.push_back( 0 );
-    }
-  }
-  else
-  {
-    semPrevValue.reserve( whichWindow->getTrace()->totalCPUs() );
-    for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalCPUs(); ++i )
-    {
-      semPrevValue.push_back( 0 );
-    }
-  }
 }
 
 
@@ -601,6 +539,9 @@ TSemanticValue ComposeDelta::execute( const SemanticInfo *info )
 
   TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
   TSemanticValue result = 0.0;
+
+  if( semPrevValue.find( tmpOrder ) == semPrevValue.end() )
+    semPrevValue[ tmpOrder ] = 0;
 
   if ( myInfo->values[ 0 ] != semPrevValue[ tmpOrder ] )
     result = myInfo->values[ 0 ] - semPrevValue[ tmpOrder ];

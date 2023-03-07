@@ -25,9 +25,11 @@
 #pragma once
 
 
-#include <stack>
-#include <list>
 #include <cmath>
+#include <list>
+#include <stack>
+#include <unordered_map>
+
 #include "semanticcompose.h"
 
 class ComposeAsIs: public SemanticCompose
@@ -1514,7 +1516,7 @@ class ComposeStackedValue: public SemanticCompose
       return "";
     }
 
-    virtual std::vector<std::vector<TSemanticValue> > *getStack() override
+    virtual std::unordered_map<TObjectOrder, std::vector<TSemanticValue> > *getStack() override
     {
       return &myStack;
     }
@@ -1523,7 +1525,7 @@ class ComposeStackedValue: public SemanticCompose
     static const bool initFromBegin = true;
     static std::string name;
 
-    std::vector<std::vector<TSemanticValue> > myStack;
+    std::unordered_map<TObjectOrder, std::vector<TSemanticValue> > myStack;
 };
 
 
@@ -1587,7 +1589,7 @@ class ComposeInStackedValue: public SemanticCompose
       return "Value";
     }
 
-    virtual std::vector<std::vector<TSemanticValue> > *getStack() override
+    virtual std::unordered_map<TObjectOrder, std::vector<TSemanticValue> > *getStack() override
     {
       return &myStack;
     }
@@ -1596,7 +1598,7 @@ class ComposeInStackedValue: public SemanticCompose
     static const bool initFromBegin = true;
     static std::string name;
 
-    std::vector<std::vector<TSemanticValue> > myStack;
+    std::unordered_map<TObjectOrder, std::vector<TSemanticValue> > myStack;
 };
 
 
@@ -1661,7 +1663,7 @@ class ComposeNestingLevel: public SemanticCompose
     static const bool initFromBegin = true;
     static std::string name;
 
-    std::vector<TSemanticValue> myStack;
+    std::unordered_map<TObjectOrder, TSemanticValue> myStack;
 };
 
 class ComposeLRUDepth: public SemanticCompose
@@ -1730,7 +1732,7 @@ class ComposeLRUDepth: public SemanticCompose
     static const bool initFromBegin = true;
     static std::string name;
 
-    std::vector< std::list< TSemanticValue > > LRUStack;
+    std::unordered_map<TObjectOrder, std::list< TSemanticValue > > LRUStack;
 };
 
 
@@ -1921,7 +1923,7 @@ class ComposeDelta: public SemanticCompose
     static const bool initFromBegin = true;
     static std::string name;
 
-    std::vector<TSemanticValue> semPrevValue;
+    std::unordered_map<TObjectOrder, TSemanticValue> semPrevValue;
 };
 
 

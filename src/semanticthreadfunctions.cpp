@@ -1164,18 +1164,7 @@ TSemanticValue SendMessagesInTransit::execute( const SemanticInfo *info )
 
 void SendBandWidth::init( KTimeline *whichWindow )
 {
-  TObjectOrder size;
-
   bandwidth.clear();
-
-  if ( whichWindow->getLevel() >= TTraceLevel::SYSTEM )
-    size = whichWindow->getTrace()->totalCPUs();
-  else
-    size = whichWindow->getTrace()->totalThreads();
-
-  bandwidth.reserve( size );
-  for ( TObjectOrder i = 0; i < size; i++ )
-    bandwidth.push_back( 0 );
 }
 
 
@@ -1195,6 +1184,9 @@ TSemanticValue SendBandWidth::execute( const SemanticInfo *info )
   KTrace *trace = ( KTrace* )window->getTrace();
   TCommID id = myInfo->it->getCommIndex();
   PRV_INT64 tmp;
+
+  if( bandwidth.find( myInfo->callingInterval->getOrder() ) == bandwidth.end() )
+    bandwidth[ myInfo->callingInterval->getOrder() ] = 0;
 
   tmp = bandwidth[ myInfo->callingInterval->getOrder() ];
 
@@ -1259,7 +1251,6 @@ TSemanticValue SendBandWidth::execute( const SemanticInfo *info )
   }
 
   return bandwidth[ myInfo->callingInterval->getOrder() ] * 1E-12;
-
 }
 
 
@@ -1371,21 +1362,8 @@ TSemanticValue RecvMessagesInTransit::execute( const SemanticInfo *info )
 
 void RecvBandWidth::init( KTimeline *whichWindow )
 {
-  TObjectOrder size;
-
   bandwidth.clear();
-
-  if ( whichWindow->getLevel() >= TTraceLevel::SYSTEM )
-    size = whichWindow->getTrace()->totalCPUs();
-  else
-    size = whichWindow->getTrace()->totalThreads();
-
-  bandwidth.reserve( size );
-  for ( TObjectOrder i = 0; i < size; i++ )
-    bandwidth.push_back( 0 );
 }
-
-
 
 string RecvBandWidth::name = "Recv BandWidth";
 TSemanticValue RecvBandWidth::execute( const SemanticInfo *info )
@@ -1403,6 +1381,9 @@ TSemanticValue RecvBandWidth::execute( const SemanticInfo *info )
   KTrace *trace = ( KTrace* )window->getTrace();
   TCommID id = myInfo->it->getCommIndex();
   PRV_INT64 tmp;
+
+  if( bandwidth.find( myInfo->callingInterval->getOrder() ) == bandwidth.end() )
+    bandwidth[ myInfo->callingInterval->getOrder() ] = 0;
 
   tmp = bandwidth[ myInfo->callingInterval->getOrder() ];
 

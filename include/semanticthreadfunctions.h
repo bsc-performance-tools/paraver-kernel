@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <unordered_map>
 
 #include "semanticthread.h"
 #include "paraverconfig.h"
@@ -2130,7 +2131,7 @@ class SendBandWidth: public SemanticThread
     static std::string name;
 
 
-    std::vector<PRV_INT64> bandwidth;
+    std::unordered_map<TObjectOrder, PRV_INT64> bandwidth;
 };
 
 
@@ -2328,7 +2329,7 @@ class RecvBandWidth: public SemanticThread
     static std::string name;
 
 
-    std::vector<PRV_INT64> bandwidth;
+    std::unordered_map<TObjectOrder, PRV_INT64> bandwidth;
 };
 
 

@@ -76,31 +76,16 @@ Timeline *WindowCloneManager::operator()( Timeline *originalWindow ) const
 #ifdef PARALLEL_ENABLED
 void WindowCloneManager::update( const KHistogram *whichHistogram )
 {
-  Timeline *tmpWindow = whichHistogram->getControlWindow();
-  if ( isClonable( tmpWindow ) )
-  {
-    clone( tmpWindow );
-  }
+  clone( whichHistogram->getControlWindow() );
 
-  if ( tmpWindow != whichHistogram->getDataWindow() )
-  {
-    tmpWindow = whichHistogram->getDataWindow();
-    if ( isClonable( tmpWindow ) )
-    {
-      clone( tmpWindow );
-    }
-  }
-
+  if ( whichHistogram->getDataWindow() != whichHistogram->getControlWindow() )
+    clone( whichHistogram->getDataWindow() );
+  
   if ( whichHistogram->getExtraControlWindow() != nullptr &&
        whichHistogram->getExtraControlWindow() != whichHistogram->getControlWindow() &&
-       whichHistogram->getExtraControlWindow() != tmpWindow )
-  {
-    tmpWindow = whichHistogram->getExtraControlWindow();
-    if ( isClonable( tmpWindow ) )
-    {
-      clone( tmpWindow );
-    }
-  }
+       whichHistogram->getExtraControlWindow() != whichHistogram->getDataWindow() )
+    clone( whichHistogram->getExtraControlWindow() );
+
 }
 
 
@@ -113,14 +98,6 @@ void WindowCloneManager::clear()
   }
 
   clonedWindows.clear();
-}
-
-
-bool WindowCloneManager::isClonable( Timeline *whichWindow )
-{
-  return whichWindow->isDerivedWindow() &&
-         whichWindow->getTrace()->getLevelObjects( whichWindow->getParent( 0 )->getLevel() ) !=
-         whichWindow->getTrace()->getLevelObjects( whichWindow->getParent( 1 )->getLevel() );
 }
 
 
@@ -1603,28 +1580,30 @@ void KHistogram::calculate( TObjectOrder iRow,
     if ( inclusive )
     {
       THistogramColumn column;
-      vector<vector<TSemanticValue> > *tmp =
-        controlWindow->getFirstSemUsefulFunction()->getStack();
-      vector<TSemanticValue>::iterator it = ( *tmp )[ data->controlRow ].begin();
-      while ( it != ( *tmp )[ data->controlRow ].end() )
+      auto *tmp = controlWindow->getFirstSemUsefulFunction()->getStack();
+      if( tmp->find( data->controlRow ) != tmp->end() )
       {
-        if ( columnTranslator->getColumn( *it, column ) )
+        vector<TSemanticValue>::iterator it = ( *tmp )[ data->controlRow ].begin();
+        while ( it != ( *tmp )[ data->controlRow ].end() )
         {
-          statistics.executeAll( data, semanticValues, isNotZeroValue );
-
-          if ( statistics.filterAll( data ) )
+          if ( columnTranslator->getColumn( *it, column ) )
           {
+            statistics.executeAll( data, semanticValues, isNotZeroValue );
+
+            if ( statistics.filterAll( data ) )
+            {
 #ifdef PARALLEL_ENABLED
-            semanticBuffer->addValue( data->plane, data->row, column, semanticValues, isNotZeroValue );
+              semanticBuffer->addValue( data->plane, data->row, column, semanticValues, isNotZeroValue );
 #else
-            if ( getThreeDimensions() )
-              cube->addValue( data->plane, column, semanticValues );
-            else
-              matrix->addValue( column, semanticValues );
+              if ( getThreeDimensions() )
+                cube->addValue( data->plane, column, semanticValues );
+              else
+                matrix->addValue( column, semanticValues );
 #endif
+            }
           }
+          ++it;
         }
-        ++it;
       }
     }
     else

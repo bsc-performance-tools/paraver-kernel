@@ -271,7 +271,7 @@ void KTraceCutter::proces_cutter_header( const std::string& header, TraceStream 
   char *word;
   string auxLine;
 
-  char *tmpHeader = (char *)malloc( MAX_LINE_SIZE );
+  char *tmpHeader = (char *)malloc( header.length() + 1 );
   strcpy( tmpHeader, header.c_str() );
 
   // PARSE variable header
@@ -598,38 +598,16 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
   int cpu, appl, task, thread, state, cpu_2, appl_2, task_2, thread_2;
   std::string trace_header;
   char *line = (char *) malloc( sizeof( char ) * MAX_TRACE_HEADER );
+  char *outBuffer = (char *) malloc( sizeof( char ) * MAX_TRACE_HEADER );
   TraceStream *infile = TraceStream::openFile( nameIn );
-  FILE *outfile;
 
-#if defined(__FreeBSD__) || defined(__APPLE__)
-  if ( ( outfile = fopen( nameOut, "w" ) ) == nullptr )
-  {
-    perror( "ERROR" );
-    printf( "KCutter: Error Opening File %s\n", nameOut );
-    exit( 1 );
-  }
-#elif defined(_WIN32)
-  if ( fopen_s( &outfile, nameOut, "w" ) != 0 )
-  {
-    printf( "KCutter: Error Opening File %s\n", nameOut );
-    exit( 1 );
-  }
-#else
-  if ( ( outfile = fopen64( nameOut, "w" ) ) == nullptr )
-  {
-    perror( "ERROR" );
-    printf( "KCutter: Error Opening File %s\n", nameOut );
-    exit( 1 );
-  }
-#endif
+  fstream outfile( nameOut, ios_base::out );
 
   /* Process header */
   total_time = last_record_time - first_record_time;
 
-  infile->getline( trace_header );
-
   // Consume header
-  proces_cutter_header( trace_header, infile, outfile );
+  parseInHeaderAndDumpOut( infile, outfile );
 
   bool end_read = false;
 
@@ -662,7 +640,9 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
         time_1 = time_1 - timeOffset;
         time_2 = time_2 - timeOffset;
 
-        fprintf( outfile, "1:%d:%d:%d:%d:%lld:%lld:%d\n", cpu, appl, task, thread, time_1, time_2, state );
+        sprintf( outBuffer, "1:%d:%d:%d:%d:%lld:%lld:%d\n", cpu, appl, task, thread, time_1, time_2, state );
+        outfile << outBuffer;
+
         ++current_tmp_lines;
         break;
 
@@ -672,7 +652,9 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
 
         time_1 = time_1 - timeOffset;
 
-        fprintf( outfile, "2:%d:%d:%d:%d:%lld:%s\n", cpu, appl, task, thread, time_1, line );
+        sprintf( outBuffer, "2:%d:%d:%d:%d:%lld:%s\n", cpu, appl, task, thread, time_1, line );
+        outfile << outBuffer;
+
         ++current_tmp_lines;
         break;
 
@@ -686,19 +668,17 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
         time_3 = time_3 - timeOffset;
         time_4 = time_4 - timeOffset;
 
-        fprintf( outfile, "3:%d:%d:%d:%d:%lld:%lld:%d:%d:%d:%d:%lld:%lld:%s\n",
+        sprintf( outBuffer, "3:%d:%d:%d:%d:%lld:%lld:%d:%d:%d:%d:%lld:%lld:%s\n",
                  cpu,   appl,   task,   thread,   time_1, time_2,
                  cpu_2, appl_2, task_2, thread_2, time_3, time_4, line );
+        outfile << outBuffer;
+
         ++current_tmp_lines;
         break;
 
       case '#':
-        sscanf( trace_header.c_str(), "%s\n", line );
-        if ( string( line ).compare( string( " Appending events with value 0" ) ) == 0 )
-        {
-          fprintf( outfile, "%s\n", line );
-          ++current_tmp_lines;
-        }
+        outfile << trace_header << "\n";
+        ++current_tmp_lines;
         break;
 
       default:
@@ -713,9 +693,10 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
   }
 
   free( line );
+  free( outBuffer );
 
   infile->close();
-  fclose( outfile );
+  outfile.close();
   unlink( nameIn );
 }
 

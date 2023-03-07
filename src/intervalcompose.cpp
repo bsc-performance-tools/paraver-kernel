@@ -267,7 +267,7 @@ void IntervalCompose::initTimer( KRecordList *displayList )
 {
   currentValue = childIntervals[ 0 ]->getValue();
 
-  accumulatedDeltas == 0.0;
+  accumulatedDeltas = 0.0;
   if( currentValue != 0 )
   {
     timerBeginTime = begin->getTime();
