@@ -1,9 +1,4 @@
 noinst_HEADERS = \
-                          bplustreeblocks.h\
-                          bplustreeexception.h\
-                          bplustree.h\
-                          bplustreerecordleaf.h\
-                          bplustreetypes.h\
                           cell.h\
                           column.h\
                           cube.h\

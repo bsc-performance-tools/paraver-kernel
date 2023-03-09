@@ -1,10 +1,6 @@
 
 pkglib_LTLIBRARIES = libparaver-kernel.la
 libparaver_kernel_la_SOURCES = \
-    bplustreeblocks.cpp \
-    bplustree.cpp \
-    bplustreeexception.cpp \
-    bplustreerecordleaf.cpp \
     filtermanagement.cpp \
     histogramexception.cpp \
     histogramstatistic.cpp \

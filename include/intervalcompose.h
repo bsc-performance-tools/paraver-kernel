@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "bplustreetypes.h"
+#include "plaintypes.h"
 #include "intervalhigh.h"
 #include "semanticcompose.h"
 
@@ -116,7 +116,7 @@ class IntervalCompose: public IntervalHigh
 
     TRecordTime accumulatedDeltas;
     TRecordTime timerBeginTime;
-    bplustree::TRecord virtualRecord;
+    Plain::TRecord virtualRecord;
 
     TBehaviour behaviour;
     MemoryTrace::iterator *endRecord;

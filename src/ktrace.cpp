@@ -36,8 +36,6 @@
 #include "tracebodyio_v2.h"
 #include "tracestream.h"
 #include "kprogresscontroller.h"
-#include "bplustree.h"
-#include "bplustreeblocks.h"
 #include "plaintrace.h"
 #include "plainblocks.h"
 #include "noloadtrace.h"
@@ -54,7 +52,6 @@ using namespace stdext;
 #endif
 using boost::posix_time::time_input_facet;
 
-using namespace bplustree;
 using namespace Plain;
 using namespace NoLoad;
 
@@ -660,10 +657,6 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   {
     blocks = new VectorBlocks( traceResourceModel, traceProcessModel, traceEndTime, progress );
     memTrace = new VectorTrace();
-    // blocks = new BPlusTreeBlocks( traceProcessModel );
-    // memTrace  = new BPlusTree( this,
-    //                            traceProcessModel.totalThreads(),
-    //                            traceResourceModel.totalCPUs() );
   }
 
   unordered_set<TEventType> hashevents;
