@@ -68,6 +68,14 @@ class SemanticColor
     static rgb getAboveOutlierColor();
     static rgb getBelowOutlierColor();
 
+    template<typename C>
+    static int getLuminance( C red, C green, C blue )
+    {
+      return ( red   * 30 ) / 100 +
+             ( green * 59 ) / 100 +
+             ( blue  * 11 ) / 100;
+    }
+
     virtual ~SemanticColor()
     {};
 
@@ -113,6 +121,8 @@ class CodeColor: public SemanticColor
 
     inline rgb getColor( PRV_UINT32 pos ) const;
     void expandColors();
+
+    bool isColorSimilarToBackground( rgb whichColor ) const;
 
     static const int MAX_COLORS;
 };

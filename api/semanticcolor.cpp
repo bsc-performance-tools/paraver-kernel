@@ -22,25 +22,15 @@
 \*****************************************************************************/
 
 
+#include <cmath>
 #include <math.h>
 #include <iostream>
-#ifdef _MSC_VER
-#include <hash_set>
-#else
 #include  <unordered_set>
-#endif
 #include "semanticcolor.h"
 #include "window.h"
 #include "paraverconfig.h"
 
-#ifdef _MSC_VER
-#define lround floor
-#endif
-
 using namespace std;
-#ifdef _MSC_VER
-using namespace stdext;
-#endif
 
 PRV_INT16 Normalizer::numSteps = 10;
 
@@ -270,28 +260,6 @@ void CodeColor::setCustomPalette( const std::map<TSemanticValue, rgb>& whichPale
   customPalette = whichPalette;
 }
 
-#ifdef _MSC_VER
-namespace stdext
-{
-  template<> class hash_compare<rgb>
-  {
-    public :
-      static const size_t bucket_size = 4;
-      static const size_t min_buckets = 8;
-      hash_compare() { }
-
-      size_t operator()(const rgb &color) const
-      {
-        return color.red + ( color.blue * 256 ) + (color.green * 65536 );
-      }
-
-      bool operator()(const rgb &color1, const rgb &color2) const
-      {
-        return color1 < color2;
-      }
-  };
-}
-#else
 struct eqrgb
 {
   bool operator()( rgb color1, rgb color2 ) const
@@ -307,74 +275,57 @@ struct hashrgb
     return color.red + ( color.blue * 256 ) + (color.green * 65536 );
   }
 };
-#endif
 
 
 void CodeColor::expandColors()
 {
   unsigned int iterations = MAX_COLORS / colors.size() / 3;
   unsigned int numBaseColors = colors.size();
-#ifdef _MSC_VER
-  unordered_set<rgb> insertedColors;
-#else
   unordered_set<rgb, hashrgb, eqrgb> insertedColors;
-#endif
+
   insertedColors.insert( colors.begin(), colors.end() );
-  insertedColors.insert( ParaverConfig::getInstance()->getColorsTimelineBackground() );
 
   unsigned int baseColor = 1;
   for( unsigned int i = 0; i < iterations; ++i )
   {
-    while( baseColor > colors.size() - 1 )
-      --baseColor;
+    if ( baseColor > colors.size() - 1 )
+      baseColor = colors.size() - 1;
 
-    for( unsigned int redBaseColor = baseColor; redBaseColor < numBaseColors + baseColor; ++redBaseColor )
+    auto expandComponent = [&]( auto incrementComponent )
     {
-      if( redBaseColor > colors.size() - 1 )
-        break;
-      rgb tmp = colors[ redBaseColor ];
-      ++tmp.red;
-#ifdef _MSC_VER
-      pair<unordered_set<rgb>::iterator, bool > result = insertedColors.insert( tmp );
-#else
-      pair<unordered_set<rgb, hashrgb, eqrgb>::iterator, bool > result = insertedColors.insert( tmp );
-#endif
-      if( result.second )
-        colors.push_back( tmp );
-    }
+      for( unsigned int iBaseColor = baseColor; iBaseColor < baseColor + numBaseColors; ++iBaseColor )
+      {
+        if( iBaseColor > colors.size() - 1 )
+          break;
+        rgb tmpColor = colors[ iBaseColor ];
+        incrementComponent( tmpColor );
 
-    for( unsigned int greenBaseColor = baseColor; greenBaseColor < numBaseColors + baseColor; ++greenBaseColor )
-    {
-      if( greenBaseColor > colors.size() - 1)
-        break;
-      rgb tmp = colors[ greenBaseColor ];
-      ++tmp.green;
-#ifdef _MSC_VER
-      pair<unordered_set<rgb>::iterator, bool > result = insertedColors.insert( tmp );
-#else
-      pair<unordered_set<rgb, hashrgb, eqrgb>::iterator, bool > result = insertedColors.insert( tmp );
-#endif
-      if( result.second )
-        colors.push_back( tmp );
-    }
+        if( !isColorSimilarToBackground( tmpColor ) )
+        {
+          pair<unordered_set<rgb, hashrgb, eqrgb>::iterator, bool > result = insertedColors.insert( tmpColor );
 
-    for( unsigned int blueBaseColor = baseColor; blueBaseColor < numBaseColors + baseColor; ++blueBaseColor )
-    {
-      if( blueBaseColor > colors.size() - 1 )
-        break;
-      rgb tmp = colors[ blueBaseColor ];
-      ++tmp.blue;
-#ifdef _MSC_VER
-      pair<unordered_set<rgb>::iterator, bool > result = insertedColors.insert( tmp );
-#else
-      pair<unordered_set<rgb, hashrgb, eqrgb>::iterator, bool > result = insertedColors.insert( tmp );
-#endif
-      if( result.second )
-        colors.push_back( tmp );
-    }
+          if( result.second )
+            colors.push_back( tmpColor );
+        }
+      }
+    };
+
+    expandComponent( []( rgb& c ){ ++c.red; } );
+    expandComponent( []( rgb& c ){ ++c.green; } );
+    expandComponent( []( rgb& c ){ ++c.blue; } );
 
     baseColor += numBaseColors;
   }
+}
+
+bool CodeColor::isColorSimilarToBackground( rgb whichColor ) const
+{
+  rgb background = ParaverConfig::getInstance()->getColorsTimelineBackground();
+
+  int luminanceBackground = SemanticColor::getLuminance( background.red, background.green, background.blue );
+  int luminanceColor      = SemanticColor::getLuminance( whichColor.red, whichColor.green, whichColor.blue );
+
+  return std::abs( luminanceBackground - luminanceColor ) < 42;
 }
 
 rgb CodeColor::calcColor( TSemanticValue whichValue,
