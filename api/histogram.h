@@ -270,6 +270,11 @@ class Histogram
     {
       return 0;
     }
+    virtual void setFixedSemanticSort( bool newValue ) {}
+    virtual bool getFixedSemanticSort() const
+    {
+      return false;
+    }
     virtual void setMinGradient( double whichMin ) {}
     virtual double getMinGradient() const
     {
@@ -776,6 +781,8 @@ class HistogramProxy : public Histogram
     virtual void setSemanticSortReverse( bool newValue ) override;
     virtual bool getSemanticSortReverse() const override;
     virtual PRV_UINT32 getSemanticSortedColumn( PRV_UINT32 col ) const override;
+    virtual void setFixedSemanticSort( bool newValue ) override;
+    virtual bool getFixedSemanticSort() const override;
     virtual void setMinGradient( double whichMin ) override;
     virtual double getMinGradient() const override;
     virtual void setMaxGradient( double whichMax ) override;
@@ -974,6 +981,8 @@ class HistogramProxy : public Histogram
     bool sortSemanticReverse;
     std::vector<int> currentSemanticSort;
     std::vector<int> customSemanticSort;
+    bool fixedSemanticSort;
+    THistoSortCriteria lastSortCriteria = THistoSortCriteria::TOTAL;
 
     double minGradient;
     double maxGradient;
