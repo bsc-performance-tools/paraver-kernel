@@ -818,7 +818,12 @@ void HistogramProxy::setFixedSemanticSort( bool newValue )
 {
   fixedSemanticSort = newValue;
   if( fixedSemanticSort )
+  {
     customSemanticSort = currentSemanticSort;
+    lastSortCriteria = getSemanticSortCriteria();
+  }
+  else
+    setSemanticSortCriteria( lastSortCriteria );
 }
 
 bool HistogramProxy::getFixedSemanticSort() const

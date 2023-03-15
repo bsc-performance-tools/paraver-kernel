@@ -982,6 +982,7 @@ class HistogramProxy : public Histogram
     std::vector<int> currentSemanticSort;
     std::vector<int> customSemanticSort;
     bool fixedSemanticSort;
+    THistoSortCriteria lastSortCriteria = THistoSortCriteria::TOTAL;
 
     double minGradient;
     double maxGradient;
