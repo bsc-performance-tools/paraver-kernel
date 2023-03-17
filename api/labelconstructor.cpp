@@ -59,8 +59,17 @@ struct numpunct_nogroup : std::numpunct<char> {
 
 void LabelConstructor::init()
 {
-  myLocaleWithoutThousands = locale( locale( "" ), new numpunct_nogroup );
-  myLocaleWithThousands    = locale( locale( "" ), new numpunct_group );
+  try
+  {
+    myLocaleWithoutThousands = locale( locale( "" ), new numpunct_nogroup );
+    myLocaleWithThousands    = locale( locale( "" ), new numpunct_group );
+  }
+  catch(...)
+  {
+    myLocaleWithoutThousands = locale( std::locale::classic(), new numpunct_nogroup );
+    myLocaleWithThousands    = locale( std::locale::classic(), new numpunct_group );
+  }
+
   point = use_facet<numpunct<char> >(myLocaleWithThousands).decimal_point();
   label.imbue( myLocaleWithThousands );
   columnLabel.imbue( myLocaleWithThousands );
@@ -303,7 +312,15 @@ string LabelConstructor::timeLabel( ptime value, PRV_UINT32 precision )
   sstrTimeLabel.str( "" );
 
   time_input_facet *tmpFacet = new time_input_facet( "%d/%m/%Y at %H:%M:%S%F" );
-  sstrTimeLabel.imbue( std::locale( locale( "" ), tmpFacet ) );
+  try
+  {
+    sstrTimeLabel.imbue( std::locale( locale( "" ), tmpFacet ) );
+  }
+  catch(...)
+  {
+
+    sstrTimeLabel.imbue( std::locale( std::locale::classic(), tmpFacet ) );
+  }
   sstrTimeLabel << value;
 
   return sstrTimeLabel.str();
