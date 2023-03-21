@@ -406,8 +406,7 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
     size_t iThread;
     #pragma omp parallel for firstprivate( endEmptyRecord ) \
                              private( iThread ) \
-                             shared( processModel, sortThread, progressCounter ) \
-                             default( none )
+                             default( shared )
     for( iThread = 0; iThread < processModel.totalThreads(); ++iThread )
     {
       sortThread( iThread, endEmptyRecord );
@@ -436,8 +435,7 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
     size_t iNode;
     #pragma omp parallel for firstprivate( beginEmptyRecord, endEmptyRecord ) \
                              private( iNode ) \
-                             shared( threadRecords, processModel, resourceModel, sortThread, cpuRecords, cpuBeginEmptyRecords, cpuEndEmptyRecords, progressCounter ) \
-                             default( none )
+                             default( shared )
     for( iNode = 0; iNode < resourceModel.size(); ++iNode )
     {
       std::vector<TThreadOrder> threadsInNode;
