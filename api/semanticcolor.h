@@ -140,6 +140,7 @@ class GradientColor: public SemanticColor
 {
   public:
     GradientColor();
+    GradientColor(  const std::vector< rgb >& whichStopColors );
     ~GradientColor();
 
     void setBeginGradientColor( rgb color );
@@ -180,10 +181,8 @@ class GradientColor: public SemanticColor
     bool drawOutlier;
     bool drawOutOfScale;
 
-    rgb beginGradientColor;
-    rgb endGradientColor;
-    rgb negativeBeginGradientColor;
-    rgb negativeEndGradientColor;
+    std::vector< rgb > stopColors;
+    std::vector< rgb > negativeStopColors;
     rgb aboveOutlierColor;
     rgb belowOutlierColor;
 
@@ -197,6 +196,7 @@ class GradientColor: public SemanticColor
 
     TGradientFunction function;
 
+    void initCommon();
     void recalcSteps();
 };
 

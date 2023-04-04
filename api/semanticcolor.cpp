@@ -350,70 +350,69 @@ rgb CodeColor::calcColor( TSemanticValue whichValue,
 
 
 // GRADIENTCOLOR METHODS
-GradientColor::GradientColor( )
+GradientColor::GradientColor()
 {
-  bool blackNotNull = ParaverConfig::getInstance()->getTimelineColor() != TColorFunction::NOT_NULL_GRADIENT;
+  stopColors.push_back( SemanticColor::getBeginGradientColor() );
+  stopColors.push_back( SemanticColor::getEndGradientColor() );
+  negativeStopColors.push_back( SemanticColor::getNegativeBeginGradientColor() ); 
+  negativeStopColors.push_back( SemanticColor::getNegativeEndGradientColor() ); 
 
-  drawOutlier = true;
-  drawOutOfScale = blackNotNull;
-
-  beginGradientColor         = SemanticColor::getBeginGradientColor();
-  endGradientColor           = SemanticColor::getEndGradientColor();
-  negativeBeginGradientColor = SemanticColor::getNegativeBeginGradientColor();
-  negativeEndGradientColor   = SemanticColor::getNegativeEndGradientColor();
-  aboveOutlierColor          = SemanticColor::getAboveOutlierColor();
-  belowOutlierColor          = SemanticColor::getBelowOutlierColor();
-
-  function = TGradientFunction::STEPS;
-
-  recalcSteps();
+  initCommon();
 }
+
+GradientColor::GradientColor( const std::vector< rgb >& whichStopColors ): stopColors( whichStopColors )
+{
+  if ( whichStopColors.size() < 2 )
+    throw std::logic_error( "GradientColor: Too few stop colors." );
+  initCommon();
+}
+
 
 GradientColor::~GradientColor()
 {}
 
 void GradientColor::setBeginGradientColor( rgb color )
 {
-  beginGradientColor = color;
+  stopColors[ 0 ] = color;
   recalcSteps();
 }
 
 rgb GradientColor::getBeginGradientColor() const
 {
-  return beginGradientColor;
+  return stopColors.front();
 }
 
 void GradientColor::setEndGradientColor( rgb color )
 {
-  endGradientColor = color;
+  stopColors[ 1 ] = color;
   recalcSteps();
 }
 
 rgb GradientColor::getEndGradientColor() const
 {
-  return endGradientColor;
+  return stopColors.back();
 }
 
 void GradientColor::setNegativeBeginGradientColor( rgb color )
 {
-  negativeBeginGradientColor = color;
+  negativeStopColors[ 0 ] = color;
   recalcSteps();
 }
 
 rgb GradientColor::getNegativeBeginGradientColor() const
 {
-  return negativeBeginGradientColor;
+  return negativeStopColors[ 0 ];
 }
 
 void GradientColor::setNegativeEndGradientColor( rgb color )
 {
-  negativeEndGradientColor = color;
+  negativeStopColors[ 1 ] = color;
   recalcSteps();
 }
 
 inline rgb GradientColor::getNegativeEndGradientColor() const
 {
-  return negativeEndGradientColor;
+  return negativeStopColors[ 1 ];
 }
 
 void GradientColor::setAboveOutlierColor( rgb color )
@@ -484,7 +483,7 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
     if ( drawOutlier )
       return belowOutlierColor;
     if ( drawOutOfScale )
-      return beginGradientColor;
+      return stopColors[ 0 ];
     return ParaverConfig::getInstance()->getColorsTimelineBackground();
   }
 
@@ -493,12 +492,12 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
     if ( drawOutlier )
       return aboveOutlierColor;
     if ( drawOutOfScale )
-      return endGradientColor;
+      return stopColors[ 1 ];
     return ParaverConfig::getInstance()->getColorsTimelineBackground();
   }
 
   if( maximum == minimum )
-    return beginGradientColor;
+    return stopColors[ 0 ];
 
   rgb returnColor;
 
@@ -507,14 +506,14 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
   double tmpBlueStep = blueStep;
 
   if( whichValue >= 0.0 )
-    returnColor = beginGradientColor;
+    returnColor = stopColors[ 0 ];
   else
   {
     tmpRedStep = negativeRedStep;
     tmpGreenStep = negativeGreenStep;
     tmpBlueStep = negativeBlueStep;
 
-    returnColor = negativeBeginGradientColor;
+    returnColor = negativeStopColors[ 0 ];
   }
 
   whichValue = Normalizer::calculate( whichValue, minimum, maximum, function, false );
@@ -533,15 +532,31 @@ bool GradientColor::isColorOutlier( rgb whichColor ) const
 }
 
 
+void GradientColor::initCommon()
+{
+  bool blackNotNull = ParaverConfig::getInstance()->getTimelineColor() != TColorFunction::NOT_NULL_GRADIENT;
+
+  drawOutlier = true;
+  drawOutOfScale = blackNotNull;
+
+  aboveOutlierColor = SemanticColor::getAboveOutlierColor();
+  belowOutlierColor = SemanticColor::getBelowOutlierColor();
+
+  function = TGradientFunction::STEPS;
+
+  recalcSteps();
+}
+
+
 void GradientColor::recalcSteps()
 {
-  redStep = ( (double)endGradientColor.red - (double)beginGradientColor.red );
-  greenStep = ( (double)endGradientColor.green - (double)beginGradientColor.green );
-  blueStep = ( (double)endGradientColor.blue - (double)beginGradientColor.blue );
+  redStep = ( (double)stopColors[ 1 ].red - (double)stopColors[ 0 ].red );
+  greenStep = ( (double)stopColors[ 1 ].green - (double)stopColors[ 0 ].green );
+  blueStep = ( (double)stopColors[ 1 ].blue - (double)stopColors[ 0 ].blue );
 
-  negativeRedStep = ( (double)negativeEndGradientColor.red - (double)negativeBeginGradientColor.red );
-  negativeGreenStep = ( (double)negativeEndGradientColor.green - (double)negativeBeginGradientColor.green );
-  negativeBlueStep = ( (double)negativeEndGradientColor.blue - (double)negativeBeginGradientColor.blue );
+  negativeRedStep = ( (double)negativeStopColors[ 1 ].red - (double)negativeStopColors[ 0 ].red );
+  negativeGreenStep = ( (double)negativeStopColors[ 1 ].green - (double)negativeStopColors[ 0 ].green );
+  negativeBlueStep = ( (double)negativeStopColors[ 1 ].blue - (double)negativeStopColors[ 0 ].blue );
 }
 
 void GradientColor::copy( GradientColor &destiny )
@@ -549,10 +564,8 @@ void GradientColor::copy( GradientColor &destiny )
   destiny.drawOutlier = drawOutlier;
   destiny.drawOutOfScale = drawOutOfScale;
 
-  destiny.beginGradientColor = beginGradientColor;
-  destiny.endGradientColor   = endGradientColor;
-  destiny.negativeBeginGradientColor = negativeBeginGradientColor;
-  destiny.negativeEndGradientColor   = negativeEndGradientColor;
+  destiny.stopColors = stopColors;
+  destiny.negativeStopColors = negativeStopColors;
   destiny.aboveOutlierColor = aboveOutlierColor;
   destiny.belowOutlierColor = belowOutlierColor;
 
@@ -563,6 +576,4 @@ void GradientColor::copy( GradientColor &destiny )
   destiny.negativeGreenStep = negativeGreenStep;
   destiny.negativeBlueStep   = negativeBlueStep;
 }
-
-
 
