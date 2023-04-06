@@ -499,28 +499,14 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
   if( maximum == minimum )
     return stopColors[ 0 ];
 
-  rgb returnColor;
-
-  double tmpRedStep = redStep;
-  double tmpGreenStep = greenStep;
-  double tmpBlueStep = blueStep;
-
-  if( whichValue >= 0.0 )
-    returnColor = stopColors[ 0 ];
-  else
-  {
-    tmpRedStep = negativeRedStep;
-    tmpGreenStep = negativeGreenStep;
-    tmpBlueStep = negativeBlueStep;
-
-    returnColor = negativeStopColors[ 0 ];
-  }
+  std::reference_wrapper<const TRangeFunctions> tmpRangeFunctions = rangeFunctions;
+  if( whichValue < 0.0 )
+    tmpRangeFunctions = negativeRangeFunctions;
 
   whichValue = Normalizer::calculate( whichValue, minimum, maximum, function, false );
 
-  returnColor.red += floor( tmpRedStep * whichValue );
-  returnColor.green += floor( tmpGreenStep * whichValue );
-  returnColor.blue += floor( tmpBlueStep * whichValue );
+  const auto tmpFunction = ( --tmpRangeFunctions.get().upper_bound( whichValue ) )->second;
+  rgb returnColor = tmpFunction( whichValue );
 
   return returnColor;
 }
@@ -548,15 +534,38 @@ void GradientColor::initCommon()
 }
 
 
+void fillRangeFunctions( GradientColor::TRangeFunctions& whichRangeFunctions, const std::vector< rgb >& whichColors )
+{
+  whichRangeFunctions.clear();
+  double index = 0.0;
+  const double indexStep = (double)( 1.0 / whichColors.size() );
+  for( auto itColor = whichColors.begin(); itColor != whichColors.end() - 1; ++itColor )
+  {
+    double tmpRedStep = ( (double)( itColor + 1 )->red - (double)itColor->red );
+    double tmpGreenStep = ( (double)( itColor + 1 )->green - (double)itColor->green );
+    double tmpBlueStep = ( (double)( itColor + 1 )->blue - (double)itColor->blue );
+    double nextIndex = index + indexStep;
+    whichRangeFunctions[ index ] =
+      [ red = tmpRedStep, green = tmpGreenStep, blue = tmpBlueStep, beginColor = *itColor, index, rangeWidth = indexStep ]( TSemanticValue whichValue )
+      {
+        rgb returnColor{ beginColor };
+        const double normValue = ( ( whichValue - index ) / rangeWidth );
+
+        returnColor.red += floor( red * normValue );
+        returnColor.green += floor( green * normValue );
+        returnColor.blue += floor( blue * normValue );
+
+        return returnColor;
+      };
+
+    index = nextIndex;
+  }
+}
+
 void GradientColor::recalcSteps()
 {
-  redStep = ( (double)stopColors[ 1 ].red - (double)stopColors[ 0 ].red );
-  greenStep = ( (double)stopColors[ 1 ].green - (double)stopColors[ 0 ].green );
-  blueStep = ( (double)stopColors[ 1 ].blue - (double)stopColors[ 0 ].blue );
-
-  negativeRedStep = ( (double)negativeStopColors[ 1 ].red - (double)negativeStopColors[ 0 ].red );
-  negativeGreenStep = ( (double)negativeStopColors[ 1 ].green - (double)negativeStopColors[ 0 ].green );
-  negativeBlueStep = ( (double)negativeStopColors[ 1 ].blue - (double)negativeStopColors[ 0 ].blue );
+  fillRangeFunctions( rangeFunctions, stopColors );
+  fillRangeFunctions( negativeRangeFunctions, negativeStopColors );
 }
 
 void GradientColor::copy( GradientColor &destiny )

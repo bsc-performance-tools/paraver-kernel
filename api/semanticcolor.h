@@ -24,7 +24,7 @@
 
 #pragma once
 
-
+#include <functional>
 #include <map>
 #include "paravertypes.h"
 #include "paraverkerneltypes.h"
@@ -139,6 +139,8 @@ enum class TGradientFunction
 class GradientColor: public SemanticColor
 {
   public:
+    using TRangeFunctions = std::map< double, std::function< rgb( TSemanticValue )> >;
+
     GradientColor();
     GradientColor(  const std::vector< rgb >& whichStopColors );
     ~GradientColor();
@@ -180,7 +182,9 @@ class GradientColor: public SemanticColor
   private:
     bool drawOutlier;
     bool drawOutOfScale;
-
+    
+    TRangeFunctions rangeFunctions;
+    TRangeFunctions negativeRangeFunctions;
     std::vector< rgb > stopColors;
     std::vector< rgb > negativeStopColors;
     rgb aboveOutlierColor;
