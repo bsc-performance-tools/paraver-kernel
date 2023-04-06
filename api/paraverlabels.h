@@ -171,11 +171,12 @@ constexpr char OLDCFG_VAL_DRAW_MODE_AVERAGE[] =     "5";
 constexpr char OLDCFG_VAL_DRAW_MODE_AVERAGENOT0[] = "6";
 constexpr char OLDCFG_VAL_DRAW_MODE_MODE[] =        "7";
 
-constexpr char OLDCFG_VAL_COLOR_MODE_CODE[] =           "window_in_code_mode";
-constexpr char OLDCFG_VAL_COLOR_MODE_GRADIENT[] =       "window_in_gradient_mode";
-constexpr char OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT[] =  "window_in_null_gradient_mode";
-constexpr char CFG_VAL_COLOR_MODE_PUNCTUAL[] =          "window_in_punctual_mode";
-constexpr char CFG_VAL_COLOR_MODE_FUSED_LINES[] =       "window_in_fused_lines_mode";
+constexpr char OLDCFG_VAL_COLOR_MODE_CODE[] =              "window_in_code_mode";
+constexpr char OLDCFG_VAL_COLOR_MODE_GRADIENT[] =          "window_in_gradient_mode";
+constexpr char OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT[] =     "window_in_null_gradient_mode";
+constexpr char CFG_VAL_COLOR_MODE_ALTERNATIVE_GRADIENT[] = "window_in_alternative_gradient_mode";
+constexpr char CFG_VAL_COLOR_MODE_PUNCTUAL[] =             "window_in_punctual_mode";
+constexpr char CFG_VAL_COLOR_MODE_FUSED_LINES[] =          "window_in_fused_lines_mode";
 
 constexpr char OLDCFG_VAL_TIMEUNIT_NS[] = "Nanoseconds";
 constexpr char OLDCFG_VAL_TIMEUNIT_US[] = "Microseconds";

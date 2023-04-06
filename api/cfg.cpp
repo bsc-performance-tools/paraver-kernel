@@ -1534,6 +1534,8 @@ bool WindowColorMode::parseLine( KernelConnection *whichKernel, istringstream& l
     windows[ windows.size() - 1 ]->setGradientColorMode();
   else if ( strMode.compare( OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT ) == 0 )
     windows[ windows.size() - 1 ]->setNotNullGradientColorMode();
+  else if ( strMode.compare( CFG_VAL_COLOR_MODE_ALTERNATIVE_GRADIENT ) == 0 )
+    windows[ windows.size() - 1 ]->setAlternativeGradientColorMode();
   else if( strMode.compare( CFG_VAL_COLOR_MODE_PUNCTUAL ) == 0 )
     windows[ windows.size() - 1 ]->setPunctualColorMode();
   else if( strMode.compare( CFG_VAL_COLOR_MODE_FUSED_LINES ) == 0 )
@@ -1545,16 +1547,16 @@ bool WindowColorMode::parseLine( KernelConnection *whichKernel, istringstream& l
 void WindowColorMode::printLine( ofstream& cfgFile,
                                  const vector<Timeline *>::const_iterator it )
 {
-  if ( ( *it )->isGradientColorSet() || ( *it )->isNotNullGradientColorSet() )
-  {
-    cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " <<
-    ( ( *it )->isGradientColorSet() ?
-      OLDCFG_VAL_COLOR_MODE_GRADIENT : OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT ) << endl;
-  }
+  if ( ( *it )->isGradientColorSet() )
+    cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << OLDCFG_VAL_COLOR_MODE_GRADIENT << endl;
+  else if ( ( *it )->isNotNullGradientColorSet() )
+    cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT << endl;
+  else if ( ( *it )->isAlternativeGradientColorSet() )
+    cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_ALTERNATIVE_GRADIENT << endl;
   else if ( ( *it )->isPunctualColorSet() )
-    cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_PUNCTUAL <<endl;
+    cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_PUNCTUAL << endl;
   else if ( ( *it )->isFusedLinesColorSet() )
-    cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_FUSED_LINES <<endl;
+    cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_FUSED_LINES << endl;
 }
 
 string WindowCustomColorEnabled::tagCFG = OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED;

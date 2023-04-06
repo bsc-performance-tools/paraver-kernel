@@ -421,6 +421,8 @@ class Timeline
     {}
     virtual void setNotNullGradientColorMode()
     {}
+    virtual void setAlternativeGradientColorMode()
+    {}
     virtual void setFunctionLineColorMode()
     {}
     virtual void setFusedLinesColorMode()
@@ -439,6 +441,10 @@ class Timeline
       return false;
     }
     virtual bool isNotNullGradientColorSet() const
+    {
+      return false;
+    }
+    virtual bool isAlternativeGradientColorSet() const
     {
       return false;
     }
@@ -988,6 +994,7 @@ class TimelineProxy: public Timeline
     virtual void setRaiseWindow( bool newValue ) override;
     virtual void setCodeColorMode() override;
     virtual void setGradientColorMode() override;
+    virtual void setAlternativeGradientColorMode() override;
     virtual void setNotNullGradientColorMode() override;
     virtual void setFunctionLineColorMode() override;
     virtual void setFusedLinesColorMode() override;
@@ -995,6 +1002,7 @@ class TimelineProxy: public Timeline
     virtual bool isCodeColorSet() const override;
     virtual bool isGradientColorSet() const override;
     virtual bool isNotNullGradientColorSet() const override;
+    virtual bool isAlternativeGradientColorSet() const override;
     virtual bool isFunctionLineColorSet() const override;
     virtual bool isFusedLinesColorSet() const override;
     virtual bool isPunctualColorSet() const override;

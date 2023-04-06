@@ -38,7 +38,8 @@ enum class TColorFunction
   NOT_NULL_GRADIENT,
   FUNCTION_LINE,
   PUNCTUAL,
-  FUSED_LINES
+  FUSED_LINES,
+  ALTERNATIVE_GRADIENT
 };
 
 class SemanticColor

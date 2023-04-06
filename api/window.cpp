@@ -1198,6 +1198,12 @@ void TimelineProxy::setNotNullGradientColorMode()
   myGradientColor.allowOutOfScale( false );
 }
 
+void TimelineProxy::setAlternativeGradientColorMode()
+{
+  colorMode = TColorFunction::ALTERNATIVE_GRADIENT;
+  myAltGradientColor.allowOutOfScale( false );
+}
+
 void TimelineProxy::setFunctionLineColorMode()
 {
   colorMode = TColorFunction::FUNCTION_LINE;
@@ -1226,6 +1232,11 @@ bool TimelineProxy::isGradientColorSet() const
 bool TimelineProxy::isNotNullGradientColorSet() const
 {
   return colorMode == TColorFunction::NOT_NULL_GRADIENT;
+}
+
+bool TimelineProxy::isAlternativeGradientColorSet() const
+{
+  return colorMode == TColorFunction::ALTERNATIVE_GRADIENT;
 }
 
 bool TimelineProxy::isFunctionLineColorSet() const
@@ -1282,6 +1293,8 @@ rgb TimelineProxy::calcColor( TSemanticValue whichValue, Timeline& whichWindow )
 {
   if ( colorMode == TColorFunction::COLOR )
     return myCodeColor.calcColor( whichValue, minimumY, maximumY, useCustomPalette );
+  else if ( colorMode == TColorFunction::ALTERNATIVE_GRADIENT )
+    return myAltGradientColor.calcColor( whichValue, minimumY, maximumY );
 
   return myGradientColor.calcColor( whichValue, minimumY, maximumY );
 }
