@@ -1227,7 +1227,7 @@ class TimelineProxy: public Timeline
     std::string name;
     CodeColor myCodeColor;
     GradientColor myGradientColor;
-    GradientColor myAltGradientColor;
+    GradientColor myAltGradientColor{ std::vector<rgb>{ {0,255,0}, {255,255,0}, {255,0,0} } };
     bool useCustomPalette;
     DrawModeMethod drawModeObject;
     DrawModeMethod drawModeTime;

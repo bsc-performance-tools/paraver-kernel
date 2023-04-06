@@ -538,13 +538,12 @@ void fillRangeFunctions( GradientColor::TRangeFunctions& whichRangeFunctions, co
 {
   whichRangeFunctions.clear();
   double index = 0.0;
-  const double indexStep = (double)( 1.0 / whichColors.size() );
+  const double indexStep = 1.0 / (double)( whichColors.size() - 1 );
   for( auto itColor = whichColors.begin(); itColor != whichColors.end() - 1; ++itColor )
   {
     double tmpRedStep = ( (double)( itColor + 1 )->red - (double)itColor->red );
     double tmpGreenStep = ( (double)( itColor + 1 )->green - (double)itColor->green );
     double tmpBlueStep = ( (double)( itColor + 1 )->blue - (double)itColor->blue );
-    double nextIndex = index + indexStep;
     whichRangeFunctions[ index ] =
       [ red = tmpRedStep, green = tmpGreenStep, blue = tmpBlueStep, beginColor = *itColor, index, rangeWidth = indexStep ]( TSemanticValue whichValue )
       {
@@ -558,7 +557,7 @@ void fillRangeFunctions( GradientColor::TRangeFunctions& whichRangeFunctions, co
         return returnColor;
       };
 
-    index = nextIndex;
+    index += indexStep;
   }
 }
 
