@@ -565,7 +565,8 @@ void fillRangeFunctions( GradientColor::TRangeFunctions& whichRangeFunctions, co
 void GradientColor::recalcSteps()
 {
   fillRangeFunctions( rangeFunctions, stopColors );
-  fillRangeFunctions( negativeRangeFunctions, negativeStopColors );
+  if( !negativeStopColors.empty() )
+    fillRangeFunctions( negativeRangeFunctions, negativeStopColors );
 }
 
 void GradientColor::copy( GradientColor &destiny )
