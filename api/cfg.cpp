@@ -4982,8 +4982,7 @@ void Analyzer2DComputeGradient::printLine( ofstream& cfgFile,
     const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_COMPUTEGRADIENT << " ";
-  if ( options.histoComputeGradient ||
-       ( *it )->getComputeGradient() )
+  if ( options.histoComputeGradient || ( *it )->getComputeGradient() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
@@ -5288,6 +5287,8 @@ bool Analyzer2DColorMode::parseLine( KernelConnection *whichKernel, istringstrea
     histograms[ histograms.size() - 1 ]->setColorMode( TColorFunction::GRADIENT );
   else if ( strBool.compare( OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT ) == 0 )
     histograms[ histograms.size() - 1 ]->setColorMode( TColorFunction::NOT_NULL_GRADIENT );
+  else if ( strBool.compare( CFG_VAL_COLOR_MODE_ALTERNATIVE_GRADIENT ) == 0 )
+    histograms[ histograms.size() - 1 ]->setColorMode( TColorFunction::ALTERNATIVE_GRADIENT );
   else
     return false;
 
@@ -5304,8 +5305,10 @@ void Analyzer2DColorMode::printLine( ofstream& cfgFile,
     cfgFile << OLDCFG_VAL_COLOR_MODE_GRADIENT;
   else if( ( *it )->getColorMode() == TColorFunction::NOT_NULL_GRADIENT )
     cfgFile << OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT;
-  cfgFile << endl;
+  else if( ( *it )->getColorMode() == TColorFunction::ALTERNATIVE_GRADIENT )
+    cfgFile << CFG_VAL_COLOR_MODE_ALTERNATIVE_GRADIENT;
 
+  cfgFile << endl;
 }
 
 

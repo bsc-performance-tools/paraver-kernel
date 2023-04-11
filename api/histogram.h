@@ -1031,6 +1031,7 @@ class HistogramProxy : public Histogram
     std::vector<std::string> commCalcStat;
 
     GradientColor myGradientColor;
+    GradientColor myAltGradientColor{ std::vector<rgb>{ {0,255,0}, {255,255,0}, {255,0,0} } };
 
     Histogram *myHisto;
 

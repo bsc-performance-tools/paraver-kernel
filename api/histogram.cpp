@@ -93,6 +93,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   drawModeObjects = Histogram::getDrawModeObjects();
   drawModeColumns = Histogram::getDrawModeColumns();
   myGradientColor.setGradientFunction( ParaverConfig::getInstance()->getHistogramGradientFunction() );
+  myAltGradientColor.setGradientFunction( ParaverConfig::getInstance()->getHistogramGradientFunction() );
   if( ParaverConfig::getInstance()->getHistogramPixelSize() >= 0 &&
       ParaverConfig::getInstance()->getHistogramPixelSize() <= 3 )
     pixelSize = (PRV_UINT16)pow( float(2), (int)ParaverConfig::getInstance()->getHistogramPixelSize() );
@@ -914,11 +915,17 @@ bool HistogramProxy::getShowColor() const
 
 rgb HistogramProxy::calcGradientColor( TSemanticValue whichValue ) const
 {
+  if ( getColorMode() == TColorFunction::ALTERNATIVE_GRADIENT )
+    return myAltGradientColor.calcColor( whichValue, minGradient, maxGradient );
+
   return myGradientColor.calcColor( whichValue, minGradient, maxGradient );
 }
 
 GradientColor& HistogramProxy::getGradientColor()
 {
+  if ( getColorMode() == TColorFunction::ALTERNATIVE_GRADIENT )
+    return myAltGradientColor;
+    
   return myGradientColor;
 }
 
@@ -1453,6 +1460,7 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->commCalcStat = vector<string>( commCalcStat );
 
   myGradientColor.copy( clonedHistogramProxy->myGradientColor );
+  myAltGradientColor.copy( clonedHistogramProxy->myAltGradientColor );
 
   if ( ParaverConfig::getInstance()->getHistogramKeepSyncGroupClone() )
   {
@@ -1666,8 +1674,7 @@ TColorFunction HistogramProxy::getColorMode() const
 
 void HistogramProxy::setColorMode( TColorFunction whichMode )
 {
-  if( colorMode <= TColorFunction::NOT_NULL_GRADIENT )
-    colorMode = whichMode;
+  colorMode = whichMode;
 }
 
 PRV_UINT16 HistogramProxy::getPixelSize() const
