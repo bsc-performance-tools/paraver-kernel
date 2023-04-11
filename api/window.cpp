@@ -143,6 +143,7 @@ void TimelineProxy::init()
   else if( colorMode == TColorFunction::NOT_NULL_GRADIENT )
     myGradientColor.allowOutOfScale( false );
   myGradientColor.setGradientFunction( ParaverConfig::getInstance()->getTimelineGradientFunction() );
+  myAltGradientColor.setGradientFunction( ParaverConfig::getInstance()->getTimelineGradientFunction() );
   drawModeObject = ParaverConfig::getInstance()->getTimelineDrawmodeObjects();
   drawModeTime = ParaverConfig::getInstance()->getTimelineDrawmodeTime();
   if( ParaverConfig::getInstance()->getTimelinePixelSize() <= 3 )
@@ -1141,6 +1142,9 @@ CodeColor& TimelineProxy::getCodeColor()
 
 GradientColor& TimelineProxy::getGradientColor()
 {
+  if ( isAlternativeGradientColorSet() )
+    return myAltGradientColor;
+    
   return myGradientColor;
 }
 
