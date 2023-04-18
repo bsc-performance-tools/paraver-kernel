@@ -39,56 +39,75 @@ VectorTrace::iterator::iterator( TThreadRecordContainer::iterator whichRecord, c
 void VectorTrace::iterator::operator++()
 {
   if( it != myBlocks->threadRecords[ myThread ].end() )
+  {
+    record = nullptr;
     ++it;
+  }
 }
 
 void VectorTrace::iterator::operator--()
 {
   if( it != myBlocks->threadRecords[ myThread ].begin() )
+  {
+    record = nullptr;
     --it;
+  }
 }
 
 MemoryTrace::iterator& VectorTrace::iterator::operator=( const MemoryTrace::iterator& copy )
 {
-  myThread = dynamic_cast<const VectorTrace::iterator&>( copy ).myThread;
-  it = dynamic_cast<const VectorTrace::iterator&>( copy ).it;
-  myBlocks = dynamic_cast<const VectorTrace::iterator&>( copy ).myBlocks;
-  myTrace = dynamic_cast<const VectorTrace::iterator&>( copy ).myTrace;
+  const auto &tmpCopy = dynamic_cast<const VectorTrace::iterator&>( copy );
+  
+  myThread = tmpCopy.myThread;
+  it = tmpCopy.it;
+  myBlocks = tmpCopy.myBlocks;
+  myTrace = tmpCopy.myTrace;
+  record = tmpCopy.record;
 
   return *this;
 }
 
 bool VectorTrace::iterator::operator==( const MemoryTrace::iterator &whichit ) const
 {
+  if ( record != nullptr )
+    return record == dynamic_cast<const VectorTrace::iterator&>( whichit ).record;
+
   return it == dynamic_cast<const VectorTrace::iterator&>( whichit ).it;
 }
 
 bool VectorTrace::iterator::operator!=( const MemoryTrace::iterator &whichit ) const
 {
+  if ( record != nullptr )
+    return record != dynamic_cast<const VectorTrace::iterator&>( whichit ).record;
+
   return it != dynamic_cast<const VectorTrace::iterator&>( whichit ).it;
 }
 
 bool VectorTrace::iterator::isNull() const
 {
-  return it == myBlocks->threadRecords[ myThread ].end() ||
-         it == myBlocks->threadRecords[ myThread ].begin() ||
-         it->type == EMPTYREC;
+  return record == nullptr &&
+         ( it == myBlocks->threadRecords[ myThread ].end() ||
+           it == myBlocks->threadRecords[ myThread ].begin() ||
+           it->type == EMPTYREC );
 }
 
 
 VectorTrace::iterator *VectorTrace::iterator::clone() const
 {
-  return new VectorTrace::iterator( it, myTrace, myBlocks, myThread );
+  auto tmpIt = new VectorTrace::iterator( it, myTrace, myBlocks, myThread );
+  tmpIt->record = record;
+
+  return tmpIt;
 }
 
 TRecordType VectorTrace::iterator::getType() const
 {
-  return it->type;
+  return record == nullptr ? it->type : static_cast<const Plain::TRecord *>( record )->type;
 }
 
 TRecordTime VectorTrace::iterator::getTime() const
 {
-  return it->time;
+  return record == nullptr ? it->time : static_cast<const Plain::TRecord *>( record )->time;
 }
 
 TThreadOrder VectorTrace::iterator::getThread() const
@@ -98,7 +117,7 @@ TThreadOrder VectorTrace::iterator::getThread() const
 
 TCPUOrder VectorTrace::iterator::getCPU() const
 {
-  return it->CPU;
+  return record == nullptr ? it->CPU : static_cast<const Plain::TRecord *>( record )->CPU;
 }
 
 TObjectOrder VectorTrace::iterator::getOrder() const
@@ -108,52 +127,60 @@ TObjectOrder VectorTrace::iterator::getOrder() const
 
 TEventType VectorTrace::iterator::getEventType() const
 {
-  return it->URecordInfo.eventRecord.type;
+  return record == nullptr ? it->URecordInfo.eventRecord.type : static_cast<const Plain::TRecord *>( record )->URecordInfo.eventRecord.type;
 }
 
 TSemanticValue VectorTrace::iterator::getEventValue() const
 {
-  double tmpPrecision = myTrace->getEventTypePrecision( it->URecordInfo.eventRecord.type );
+  double tmpPrecision = myTrace->getEventTypePrecision( getType() );
   if( tmpPrecision != 0.0 )
-    return it->URecordInfo.eventRecord.value * tmpPrecision;
-  return it->URecordInfo.eventRecord.value;
+    return getEventValueAsIs() * tmpPrecision;
 
-  return it->URecordInfo.eventRecord.value;
+  return getEventValueAsIs();
 }
 
 TEventValue VectorTrace::iterator::getEventValueAsIs() const
 {
-  return it->URecordInfo.eventRecord.value;
+  return record == nullptr ? it->URecordInfo.eventRecord.value : static_cast<const Plain::TRecord *>( record )->URecordInfo.eventRecord.value;
 }
 
 TState VectorTrace::iterator::getState() const
 {
-  return it->URecordInfo.stateRecord.state;
+  return record == nullptr ? it->URecordInfo.stateRecord.state : static_cast<const Plain::TRecord *>( record )->URecordInfo.stateRecord.state;
 }
 
 TRecordTime VectorTrace::iterator::getStateEndTime() const
 {
-  return it->URecordInfo.stateRecord.endTime;
+  return record == nullptr ? it->URecordInfo.stateRecord.endTime : static_cast<const Plain::TRecord *>( record )->URecordInfo.stateRecord.endTime;
 }
 
 TCommID VectorTrace::iterator::getCommIndex() const
 {
-  return it->URecordInfo.commRecord.index;
+  return record == nullptr ? it->URecordInfo.commRecord.index : static_cast<const Plain::TRecord *>( record )->URecordInfo.commRecord.index;
 }
 
 void VectorTrace::iterator::setTime( const TRecordTime whichTime )
 {
-  it->time = whichTime;
+  if ( record != nullptr )
+    static_cast<Plain::TRecord *>( record )->time = whichTime;
+  else
+    it->time = whichTime;
 }
 
 void VectorTrace::iterator::setType( const TRecordType whichType )
 {
-  it->type = whichType;
+  if ( record != nullptr )
+    static_cast<Plain::TRecord *>( record )->type = whichType;
+  else
+    it->type = whichType;
 }
 
 void VectorTrace::iterator::setStateEndTime( const TRecordTime whichEndTime )
 {
-  it->URecordInfo.stateRecord.endTime = whichEndTime;
+  if ( record != nullptr )
+    static_cast<Plain::TRecord *>( record )->URecordInfo.stateRecord.endTime = whichEndTime;
+  else
+    it->URecordInfo.stateRecord.endTime = whichEndTime;
 }
 
 
@@ -167,61 +194,80 @@ VectorTrace::CPUIterator::CPUIterator( TCPURecordContainer::iterator whichRecord
 void VectorTrace::CPUIterator::operator++()
 {
   if( it != myBlocks->cpuRecords[ myCPU ].end() )
+  {
+    record = nullptr;
     ++it;
+  }
 }
 
 void VectorTrace::CPUIterator::operator--()
 {
   if( it != myBlocks->cpuRecords[ myCPU ].begin() )
+  {
+    record = nullptr;
     --it;
+  }
 }
 
 MemoryTrace::iterator& VectorTrace::CPUIterator::operator=( const MemoryTrace::iterator& copy )
 {
-  myCPU = dynamic_cast<const VectorTrace::CPUIterator&>( copy ).myCPU;
-  it = dynamic_cast<const VectorTrace::CPUIterator&>( copy ).it;
-  myBlocks = dynamic_cast<const VectorTrace::CPUIterator&>( copy ).myBlocks;
-  myTrace = dynamic_cast<const VectorTrace::CPUIterator&>( copy ).myTrace;
+  const auto &tmpCopy = dynamic_cast<const VectorTrace::CPUIterator&>( copy );
+  
+  myCPU = tmpCopy.myCPU;
+  it = tmpCopy.it;
+  myBlocks = tmpCopy.myBlocks;
+  myTrace = tmpCopy.myTrace;
+  record = tmpCopy.record;
 
   return *this;
 }
 
 bool VectorTrace::CPUIterator::operator==( const MemoryTrace::iterator &whichit ) const
 {
+  if ( record != nullptr )
+    return record == dynamic_cast<const VectorTrace::CPUIterator&>( whichit ).record;
+
   return it == dynamic_cast<const VectorTrace::CPUIterator&>( whichit ).it;
 }
 
 bool VectorTrace::CPUIterator::operator!=( const MemoryTrace::iterator &whichit ) const
 {
+  if ( record != nullptr )
+    return record != dynamic_cast<const VectorTrace::CPUIterator&>( whichit ).record;
+
   return it != dynamic_cast<const VectorTrace::CPUIterator&>( whichit ).it;
 }
 
 bool VectorTrace::CPUIterator::isNull() const
 {
-  return it == myBlocks->cpuRecords[ myCPU ].end() ||
-         it == myBlocks->cpuRecords[ myCPU ].begin() ||
-         (*it)->type == EMPTYREC;
+  return record == nullptr &&
+         ( it == myBlocks->cpuRecords[ myCPU ].end() ||
+           it == myBlocks->cpuRecords[ myCPU ].begin() ||
+           (*it)->type == EMPTYREC );
 }
 
 
 VectorTrace::CPUIterator *VectorTrace::CPUIterator::clone() const
 {
-  return new VectorTrace::CPUIterator( it, myTrace, myBlocks, myCPU );
+  auto tmpIt = new VectorTrace::CPUIterator( it, myTrace, myBlocks, myCPU );
+  tmpIt->record = record;
+
+  return tmpIt;
 }
 
 TRecordType VectorTrace::CPUIterator::getType() const
 {
-  return (*it)->type;
+  return record == nullptr ? (*it)->type : static_cast<const Plain::TRecord *>( record )->type;
 }
 
 TRecordTime VectorTrace::CPUIterator::getTime() const
 {
-  return (*it)->time;
+  return record == nullptr ? (*it)->time : static_cast<const Plain::TRecord *>( record )->time;
 }
 
 TThreadOrder VectorTrace::CPUIterator::getThread() const
 {
-  return (*it)->thread;
+  return record == nullptr ? (*it)->thread : static_cast<const Plain::TRecord *>( record )->thread;
 }
 
 TCPUOrder VectorTrace::CPUIterator::getCPU() const
@@ -236,52 +282,60 @@ TObjectOrder VectorTrace::CPUIterator::getOrder() const
 
 TEventType VectorTrace::CPUIterator::getEventType() const
 {
-  return (*it)->URecordInfo.eventRecord.type;
+  return record == nullptr ? (*it)->URecordInfo.eventRecord.type : static_cast<const Plain::TRecord *>( record )->URecordInfo.eventRecord.type;
 }
 
 TSemanticValue VectorTrace::CPUIterator::getEventValue() const
 {
-  double tmpPrecision = myTrace->getEventTypePrecision( (*it)->URecordInfo.eventRecord.type );
+  double tmpPrecision = myTrace->getEventTypePrecision( getType() );
   if( tmpPrecision != 0.0 )
-    return (*it)->URecordInfo.eventRecord.value * tmpPrecision;
-  return (*it)->URecordInfo.eventRecord.value;
+    return getEventValueAsIs() * tmpPrecision;
 
-  return (*it)->URecordInfo.eventRecord.value;
+  return getEventValueAsIs();
 }
 
 TEventValue VectorTrace::CPUIterator::getEventValueAsIs() const
 {
-  return (*it)->URecordInfo.eventRecord.value;
+  return record == nullptr ? (*it)->URecordInfo.eventRecord.value : static_cast<const Plain::TRecord *>( record )->URecordInfo.eventRecord.value;
 }
 
 TState VectorTrace::CPUIterator::getState() const
 {
-  return (*it)->URecordInfo.stateRecord.state;
+  return record == nullptr ? (*it)->URecordInfo.stateRecord.state : static_cast<const Plain::TRecord *>( record )->URecordInfo.stateRecord.state;
 }
 
 TRecordTime VectorTrace::CPUIterator::getStateEndTime() const
 {
-  return (*it)->URecordInfo.stateRecord.endTime;
+  return record == nullptr ? (*it)->URecordInfo.stateRecord.endTime : static_cast<const Plain::TRecord *>( record )->URecordInfo.stateRecord.endTime;
 }
 
 TCommID VectorTrace::CPUIterator::getCommIndex() const
 {
-  return (*it)->URecordInfo.commRecord.index;
+  return record == nullptr ? (*it)->URecordInfo.commRecord.index : static_cast<const Plain::TRecord *>( record )->URecordInfo.commRecord.index;
 }
 
 void VectorTrace::CPUIterator::setTime( const TRecordTime whichTime )
 {
-  (*it)->time = whichTime;
+  if ( record != nullptr )
+    static_cast<Plain::TRecord *>( record )->time = whichTime;
+  else
+    (*it)->time = whichTime;
 }
 
 void VectorTrace::CPUIterator::setType( const TRecordType whichType )
 {
-  (*it)->type = whichType;
+  if ( record != nullptr )
+    static_cast<Plain::TRecord *>( record )->type = whichType;
+  else
+    (*it)->type = whichType;
 }
 
 void VectorTrace::CPUIterator::setStateEndTime( const TRecordTime whichEndTime )
 {
-  (*it)->URecordInfo.stateRecord.endTime = whichEndTime;
+  if ( record != nullptr )
+    static_cast<Plain::TRecord *>( record )->URecordInfo.stateRecord.endTime = whichEndTime;
+  else
+    (*it)->URecordInfo.stateRecord.endTime = whichEndTime;
 }
 
 
