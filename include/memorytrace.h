@@ -89,7 +89,7 @@ class MemoryTrace
         }
 
       protected :
-        TData *record;
+        TData *record = nullptr;
         const Trace *myTrace;
     };
 
