@@ -49,8 +49,7 @@ class IntervalCPU: public IntervalHigh
       functionComposeThread = nullptr;
     }
 
-    IntervalCPU( KSingleWindow *whichWindow, TWindowLevel whichLevel,
-                 TObjectOrder whichOrder );
+    IntervalCPU( KSingleWindow *whichWindow, TWindowLevel whichLevel, TObjectOrder whichOrder );
 
     virtual ~IntervalCPU()
     {
@@ -64,8 +63,9 @@ class IntervalCPU: public IntervalHigh
         delete functionComposeThread;
     }
 
-    virtual KRecordList *init( TRecordTime initialTime, TCreateList create,
-                              KRecordList *displayList = nullptr ) override;
+    virtual KRecordList *init( TRecordTime initialTime,
+                               TCreateList create,
+                               KRecordList *displayList = nullptr ) override;
     virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false ) override;
     virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false ) override;
 
@@ -85,6 +85,7 @@ class IntervalCPU: public IntervalHigh
     std::unordered_map<TThreadOrder, IntervalCompose *> intervalCompose;
     std::unordered_map<TThreadOrder, IntervalThread *> intervalThread;
     TRecordTime currentInitialTime;
+    Plain::TRecord virtualRecord;
 
   private:
     virtual MemoryTrace::iterator *getPrevRecord( MemoryTrace::iterator *it,

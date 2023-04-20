@@ -26,9 +26,10 @@
 #include "intervalcpu.h"
 
 
-IntervalCPU::IntervalCPU( KSingleWindow *whichWindow, TWindowLevel whichLevel,
-                          TObjectOrder whichOrder ):
-  IntervalHigh( whichLevel, whichOrder ), window( whichWindow )
+IntervalCPU::IntervalCPU( KSingleWindow *whichWindow,
+                          TWindowLevel whichLevel,
+                          TObjectOrder whichOrder )
+  : IntervalHigh( whichLevel, whichOrder ), window( whichWindow )
 {
   begin = nullptr;
   end = nullptr;
@@ -38,7 +39,8 @@ IntervalCPU::IntervalCPU( KSingleWindow *whichWindow, TWindowLevel whichLevel,
 }
 
 
-KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
+KRecordList *IntervalCPU::init( TRecordTime initialTime,
+                                TCreateList create,
                                 KRecordList *displayList )
 {
   createList = create;
@@ -111,9 +113,6 @@ KRecordList *IntervalCPU::calcNext( KRecordList *displayList, bool initCalc )
     *begin = *end;
   }
 
-/*  if( intervalCompose.empty() )
-    return displayList;*/
-
   if( intervalCompose.find( begin->getThread() ) == intervalCompose.end() )
   {
     intervalThread[ begin->getThread() ] = new IntervalThread( window, THREAD, begin->getThread() );
@@ -131,20 +130,26 @@ KRecordList *IntervalCPU::calcNext( KRecordList *displayList, bool initCalc )
   Interval *currentThread = intervalCompose[ begin->getThread() ];
   highInfo.callingInterval = this;
 
-  if( begin->getType() == STATE + END )
+  while( currentThread->getEndTime() <= begin->getTime() &&
+          currentThread->getBeginTime() < window->getTrace()->getEndTime() )
+    currentThread->calcNext( nullptr );
+  if( currentThread->getBegin()->getCPU() != order )
     highInfo.values.push_back( 0.0 );
   else
-  {
-    while( currentThread->getEndTime() <= begin->getTime() &&
-           currentThread->getBeginTime() < window->getTrace()->getEndTime() )
-      currentThread->calcNext( nullptr );
-    if( currentThread->getBegin()->getCPU() != order )
-      highInfo.values.push_back( 0.0 );
-    else
-      highInfo.values.push_back( currentThread->getValue() );
-  }
+    highInfo.values.push_back( currentThread->getValue() );
+  
   currentValue = function->execute( &highInfo );
-  end = getNextRecord( end, displayList );
+
+  if( currentThread->getEnd()->getRecord() != nullptr )
+  {
+    // Virtual Record copied in case of use in Compose functions like Timer
+    // This works because VectorTrace::iterator's have their own internal iterator pointing to trace
+    // and don't use the MemoryTrace::iterator::record directly
+    virtualRecord = *static_cast<Plain::TRecord *>( currentThread->getEnd()->getRecord() );
+    end->setRecord( &virtualRecord );
+  }
+  else
+    end = getNextRecord( end, displayList );
 
   return displayList;
 }
@@ -161,9 +166,6 @@ KRecordList *IntervalCPU::calcPrev( KRecordList *displayList, bool initCalc )
   {
     *end = *begin;
   }
-
-/*  if( intervalCompose.empty() )
-    return displayList;*/
 
   begin = getPrevRecord( begin, displayList );
   highInfo.callingInterval = this;
@@ -199,7 +201,7 @@ KRecordList *IntervalCPU::calcPrev( KRecordList *displayList, bool initCalc )
 
 
 MemoryTrace::iterator *IntervalCPU::getNextRecord( MemoryTrace::iterator *it,
-    KRecordList *displayList )
+                                                   KRecordList *displayList )
 {
   TThreadOrder threadOrder = it->getThread();
   ++( *it );
@@ -233,7 +235,7 @@ MemoryTrace::iterator *IntervalCPU::getNextRecord( MemoryTrace::iterator *it,
 
 
 MemoryTrace::iterator *IntervalCPU::getPrevRecord( MemoryTrace::iterator *it,
-    KRecordList *displayList )
+                                                   KRecordList *displayList )
 {
   TThreadOrder threadOrder = it->getThread();
   --( *it );
@@ -270,8 +272,7 @@ TTraceLevel IntervalCPU::getWindowLevel() const
 }
 
 
-Interval *IntervalCPU::getWindowInterval( TWindowLevel whichLevel,
-    TObjectOrder whichOrder )
+Interval *IntervalCPU::getWindowInterval( TWindowLevel whichLevel, TObjectOrder whichOrder )
 {
   return window->getLevelInterval( whichLevel, whichOrder );
 }
@@ -293,4 +294,3 @@ KTrace *IntervalCPU::getWindowTrace() const
 {
   return ( KTrace* )window->getTrace();
 }
-
