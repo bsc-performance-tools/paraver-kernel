@@ -115,16 +115,16 @@ rgb SemanticColor::codeColor[ ] =
   {   0, 109, 255 }, // 20 - Not used
   { 200,  61,  68 }, // 21 - Not used
   { 200,  66,   0 }, // 22 - Not used
-  {   0,  41,   0 }, // 23 - Not used
+  {  10,  66,  40 }, // 23 - Not used
   { 139, 121, 177 }, // 24 - Not used
   { 116, 116, 116 }, // 25 - Not used
   { 200,  50,  89 }, // 26 - Not used
   { 255, 171,  98 }, // 27 - Not used
   {   0,  68, 189 }, // 28 - Not used
-  {  52,  43,   0 }, // 29 - Not used
+  {  66,  66,   0 }, // 29 - Not used
   { 255,  46,   0 }, // 30 - Not used
   { 100, 216,  32 }, // 31 - Not used
-  {   0,   0, 112 }, // 32 - Not used
+  {   0,  50, 120 }, // 32 - Not used
   { 105, 105,   0 }, // 33 - Not used
   { 132,  75, 255 }, // 34 - Not used
   { 184, 232,   0 }, // 35 - Not used
@@ -133,12 +133,12 @@ rgb SemanticColor::codeColor[ ] =
   { 132,  75,  75 }, // 38 - Not used
   { 255,  75,  75 }, // 39 - Not used
   { 255,  20,   0 }, // 40 - Not used
-  {  80,   0,   0 }, // 41 - Not used
-  {   0,  66,   0 }, // 42 - Not used
+  { 130,  30,  30 }, // 41 - Not used
+  {  10,  66,  10 }, // 42 - Not used
   { 184, 132,   0 }, // 43 - Not used
   { 100,  16,  32 }, // 44 - Not used
   { 146, 255, 255 }, // 45 - Not used
-  {   0,  23,  37 }, // 46 - Not used
+  {  50,  50, 100 }, // 46 - Not used
   { 146,   0, 255 }, // 47 - Not used
   {   0, 138, 119 }  // 48 - Not used
 };
