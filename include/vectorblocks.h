@@ -23,6 +23,8 @@
 
 #pragma once
 
+#include <array>
+
 #include "memoryblocks.h"
 #include "vectortrace.h"
 #include "vectortracedefines.h"
