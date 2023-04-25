@@ -358,6 +358,7 @@ GradientColor::GradientColor()
   negativeStopColors.push_back( SemanticColor::getNegativeEndGradientColor() ); 
 
   initCommon();
+  drawOutlier = true;
 }
 
 GradientColor::GradientColor( const std::vector< rgb >& whichStopColors ): stopColors( whichStopColors )
@@ -365,6 +366,7 @@ GradientColor::GradientColor( const std::vector< rgb >& whichStopColors ): stopC
   if ( whichStopColors.size() < 2 )
     throw std::logic_error( "GradientColor: Too few stop colors." );
   initCommon();
+  drawOutlier = false;
 }
 
 
@@ -500,10 +502,14 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
     return stopColors[ 0 ];
 
   std::reference_wrapper<const TRangeFunctions> tmpRangeFunctions = rangeFunctions;
-  if( whichValue < 0.0 )
+  bool minimumAsBase = true;
+  if( whichValue < 0.0 && !negativeRangeFunctions.empty() )
+  {
     tmpRangeFunctions = negativeRangeFunctions;
+    minimumAsBase = false;
+  }
 
-  whichValue = Normalizer::calculate( whichValue, minimum, maximum, function, false );
+  whichValue = Normalizer::calculate( whichValue, minimum, maximum, function, minimumAsBase );
 
   const auto tmpFunction = ( --tmpRangeFunctions.get().upper_bound( whichValue ) )->second;
   rgb returnColor = tmpFunction( whichValue );
@@ -522,7 +528,6 @@ void GradientColor::initCommon()
 {
   bool blackNotNull = ParaverConfig::getInstance()->getTimelineColor() != TColorFunction::NOT_NULL_GRADIENT;
 
-  drawOutlier = true;
   drawOutOfScale = blackNotNull;
 
   aboveOutlierColor = SemanticColor::getAboveOutlierColor();
