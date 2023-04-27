@@ -47,4 +47,4 @@ class CubeBuffer
     std::vector< std::vector< std::unordered_map< THistogramColumn, bool > > > bufferNotZeroValue;
 };
 
-#include "src/cubebuffer.cpp"
+#include "cubebuffer_impl.h"

@@ -54,6 +54,6 @@ class Cell
     bool isNotZeroValue;
 };
 
-#include "src/cell.cpp"
+#include "cell_impl.h"
 
 

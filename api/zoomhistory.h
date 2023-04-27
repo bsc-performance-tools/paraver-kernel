@@ -69,6 +69,6 @@ class ZoomHistory
     bool sameZoomAsCurrent( Dimension2 begin, Dimension2 end ) const;
 };
 
-#include "zoomhistory.cpp"
+#include "zoomhistory_impl.h"
 
 

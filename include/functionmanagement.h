@@ -64,6 +64,4 @@ class FunctionManagement
     void getAll( std::vector<std::string>&, PRV_UINT32 ) const;
 };
 
-#include "src/functionmanagement.cpp"
-
-
+#include "functionmanagement_impl.h"

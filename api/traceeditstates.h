@@ -166,7 +166,7 @@ class DerivedTraceEditStateTEventType : public BaseTraceEditState< SeqT >
     TEventType myData;
 };
 
-#include "traceeditstates.cpp"
+#include "traceeditstates_impl.h"
 
 typedef BaseTraceEditState< TraceEditSequence * > TraceEditState;
 

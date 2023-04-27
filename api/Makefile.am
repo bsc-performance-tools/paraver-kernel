@@ -46,6 +46,7 @@ include_HEADERS = \
                   ../config_traits.h \
                   ../config_types.h \
                   cubecontainer.h \
+                  cubecontainer_impl.h \
                   customalgorithms.h \
                   drawmode.h \
                   eventdrivencutter.h \
@@ -71,6 +72,7 @@ include_HEADERS = \
                   prvtypes.h \
                   recordlist.h \
                   selectionmanagement.h \
+                  selectionmanagement_impl.h \
                   selectionrowsutils.h \
                   semanticcolor.h \
                   statelabels.h \
@@ -82,6 +84,7 @@ include_HEADERS = \
                   traceeditactions.h \
                   traceeditsequence.h \
                   traceeditstates.h \
+                  traceeditstates_impl.h \
                   tracefilter.h \
                   traceoptions.h \
                   traceshifter.h \
@@ -90,10 +93,7 @@ include_HEADERS = \
                   workspace.h \
                   workspacemanager.h \
                   zoomhistory.h \
-                  cubecontainer.cpp \
-                  selectionmanagement.cpp \
-                  traceeditstates.cpp \
-                  zoomhistory.cpp
+                  zoomhistory_impl.h
 
 
 mrproper: distclean

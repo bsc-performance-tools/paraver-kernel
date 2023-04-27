@@ -67,4 +67,4 @@ class SelectionManagement
     std::vector< std::vector< SelType > > selectedSet;
 };
 
-#include "selectionmanagement.cpp"
+#include "selectionmanagement_impl.h"

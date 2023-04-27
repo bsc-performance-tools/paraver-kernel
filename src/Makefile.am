@@ -53,15 +53,7 @@ libparaver_kernel_la_SOURCES = \
     tracestream.cpp\
     vectorblocks.cpp\
     vectortrace.cpp
-          
-noinst_HEADERS = \
-    cell.cpp \
-    column.cpp \
-    cube.cpp \
-    cubebuffer.cpp \
-    functionmanagement.cpp \
-    index.cpp \
-    matrix.cpp
+
 
 mrproper: distclean
 	rm -fr Makefile.in

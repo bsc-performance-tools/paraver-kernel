@@ -68,6 +68,6 @@ class Cube
     PRV_UINT32 crow;
 };
 
-#include "src/cube.cpp"
+#include "cube_impl.h"
 
 

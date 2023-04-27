@@ -65,6 +65,4 @@ class Column
     bool *finished;
 };
 
-#include "src/column.cpp"
-
-
+#include "column_impl.h"

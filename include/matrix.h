@@ -63,6 +63,4 @@ class Matrix
     bool finished;
 };
 
-#include "src/matrix.cpp"
-
-
+#include "matrix_impl.h"

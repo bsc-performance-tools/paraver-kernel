@@ -49,6 +49,6 @@ class Index
     PRV_UINT32 counter;
 };
 
-#include "src/index.cpp"
+#include "index_impl.h"
 
 

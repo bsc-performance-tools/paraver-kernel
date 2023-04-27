@@ -1,13 +1,19 @@
 noinst_HEADERS = \
                           cell.h\
+                          cell_impl.h \
                           column.h\
+                          column_impl.h \
                           cube.h\
+                          cube_impl.h \
                           cubebuffer.h\
+                          cubebuffer_impl.h \
                           filtermanagement.h\
                           functionmanagement.h\
+                          functionmanagement_impl.h \
                           histogramexception.h\
                           histogramstatistic.h\
                           index.h\
+                          index_impl.h \
                           intervalcompose.h\
                           intervalcontrolderived.h\
                           intervalcpu.h\
@@ -36,6 +42,7 @@ noinst_HEADERS = \
                           kwindowexception.h\
                           kwindow.h\
                           matrix.h\
+                          matrix_impl.h\
                           memoryblocks.h\
                           memorytrace.h\
                           noloadblocks.h\
@@ -70,4 +77,3 @@ noinst_HEADERS = \
                           vectorblocks.h\
                           vectortrace.h\
                           vectortracedefines.h
-                         
