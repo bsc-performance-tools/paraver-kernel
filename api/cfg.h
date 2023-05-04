@@ -2154,6 +2154,30 @@ class Analyzer2DUseCustomDelta: public TagFunction
 };
 
 
+class Analyzer2DUseFixedDelta: public TagFunction
+{
+  public:
+    Analyzer2DUseFixedDelta()
+    {}
+
+    virtual ~Analyzer2DUseFixedDelta()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Timeline *>& windows,
+                            std::vector<Histogram *>& histograms ) override;
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
+
+
 class Analyzer2DNumColumns: public TagFunction
 {
   public:

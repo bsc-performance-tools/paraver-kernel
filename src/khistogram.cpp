@@ -212,7 +212,8 @@ ColumnTranslator::ColumnTranslator( THistogramLimit whichMin,
 }
 
 
-ColumnTranslator::ColumnTranslator( THistogramLimit whichMin, THistogramLimit whichMax,
+ColumnTranslator::ColumnTranslator( THistogramLimit whichMin,
+                                    THistogramLimit whichMax,
                                     THistogramColumn whichNumColumns ):
   minLimit( whichMin ), maxLimit( whichMax ), numColumns( whichNumColumns )
 {
@@ -254,7 +255,7 @@ KHistogram::KHistogram()
   dataWindow = nullptr;
   xtraControlWindow = nullptr;
 
-  useCustomDelta = true;
+  useFixedDelta = false;
   controlMin = 0;
   controlMax = 1;
   controlDelta = 1;
@@ -405,9 +406,10 @@ inline void KHistogram::clearExtraControlWindow()
   xtraControlWindow = nullptr;
 }
 
-inline void KHistogram::setUseCustomDelta( bool whichValue )
+
+inline void KHistogram::setUseFixedDelta( bool whichValue )
 {
-  useCustomDelta = whichValue;
+  useFixedDelta = whichValue;
 }
 
 inline void KHistogram::setControlMin( THistogramLimit whichMin )
@@ -494,9 +496,9 @@ inline void KHistogram::setCommTagMax( TCommTag whichTag )
 }
 
 
-inline bool KHistogram::getUseCustomDelta() const
+inline bool KHistogram::getUseFixedDelta() const
 {
-  return useCustomDelta;
+  return useFixedDelta;
 }
 
 inline THistogramLimit KHistogram::getControlMin() const
@@ -882,7 +884,7 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
   initTranslators();
 
   numRows = selectedRows.size();
-  if( useCustomDelta )
+  if( useFixedDelta )
     numCols = columnTranslator->totalColumns();
   else
     controlDelta = columnTranslator->getDelta();
@@ -1008,7 +1010,7 @@ void KHistogram::initTranslators()
 
   if ( columnTranslator != nullptr )
     delete columnTranslator;
-  if( useCustomDelta )
+  if( useFixedDelta )
     columnTranslator = new ColumnTranslator( controlMin, controlMax, controlDelta );
   else
     columnTranslator = new ColumnTranslator( controlMin, controlMax, numCols );
@@ -1019,8 +1021,7 @@ void KHistogram::initTranslators()
     planeTranslator = nullptr;
   }
   if ( getThreeDimensions() )
-    planeTranslator = new ColumnTranslator( xtraControlMin, xtraControlMax,
-                                            xtraControlDelta );
+    planeTranslator = new ColumnTranslator( xtraControlMin, xtraControlMax, xtraControlDelta );
 }
 
 
@@ -1878,7 +1879,7 @@ KHistogram *KHistogram::clone()
   clonedKHistogram->numCols = numCols;
   clonedKHistogram->numPlanes = numPlanes;
 
-  clonedKHistogram->useCustomDelta = useCustomDelta;
+  clonedKHistogram->useFixedDelta = useFixedDelta;
   clonedKHistogram->controlMin = controlMin;
   clonedKHistogram->controlMax = controlMax;
   clonedKHistogram->controlDelta = controlDelta;

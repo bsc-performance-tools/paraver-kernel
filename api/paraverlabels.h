@@ -238,6 +238,7 @@ constexpr char CFG_TAG_DRAWMODE_COLUMNS[] = "Analyzer2D.DrawModeColumns:";
 constexpr char CFG_TAG_AN2D_COMPUTEYSCALE_ZERO[] = "Analyzer2D.ComputeYScaleZero:";
 constexpr char CFG_TAG_AN2D_NUMCOLUMNS[] = "Analyzer2D.NumColumns:";
 constexpr char CFG_TAG_AN2D_USE_CUSTOM_DELTA[] = "Analyzer2D.UseCustomDelta:";
+constexpr char CFG_TAG_AN2D_USE_FIXED_DELTA[] = "Analyzer2D.UseFixedDelta:";
 
 static const std::string LABEL_TIMEUNIT[ DAY + 1 ] =
 {

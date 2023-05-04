@@ -70,7 +70,7 @@ class Histogram
     virtual void clearDataWindow() = 0;
     virtual void clearExtraControlWindow() = 0;
 
-    virtual void setUseCustomDelta( bool whichValue ) = 0;
+    virtual void setUseFixedDelta( bool whichValue ) = 0;
     virtual void setControlMin( THistogramLimit whichMin ) = 0;
     virtual void setControlMax( THistogramLimit whichMax ) = 0;
     virtual void setControlDelta( THistogramLimit whichDelta ) = 0;
@@ -86,7 +86,7 @@ class Histogram
     virtual void setCommTagMin( TCommTag whichTag ) = 0;
     virtual void setCommTagMax( TCommTag whichTag ) = 0;
 
-    virtual bool getUseCustomDelta() const = 0;
+    virtual bool getUseFixedDelta() const = 0;
     virtual THistogramLimit getControlMin() const = 0;
     virtual THistogramLimit getControlMax() const = 0;
     virtual THistogramLimit getControlDelta() const = 0;
@@ -512,6 +512,11 @@ class Histogram
     {
       return false;
     }
+    virtual bool getNumColumnsInitialized() const
+    {
+      return false;
+    }
+
     // DEPRECATED
     virtual void setCodeColor( bool newValue )
     {}
@@ -674,7 +679,7 @@ class HistogramProxy : public Histogram
     virtual void clearDataWindow() override;
     virtual void clearExtraControlWindow() override;
 
-    virtual void setUseCustomDelta( bool whichValue ) override;
+    virtual void setUseFixedDelta( bool whichValue ) override;
     virtual void setControlMin( THistogramLimit whichMin ) override;
     virtual void setControlMax( THistogramLimit whichMax ) override;
     virtual void setControlDelta( THistogramLimit whichDelta ) override;
@@ -690,7 +695,7 @@ class HistogramProxy : public Histogram
     virtual void setCommTagMin( TCommTag whichTag ) override;
     virtual void setCommTagMax( TCommTag whichTag ) override;
 
-    virtual bool getUseCustomDelta() const override;
+    virtual bool getUseFixedDelta() const override;
     virtual THistogramLimit getControlMin() const override;
     virtual THistogramLimit getControlMax() const override;
     virtual THistogramLimit getControlDelta() const override;
@@ -902,6 +907,7 @@ class HistogramProxy : public Histogram
     virtual void setRecalc( bool newValue ) override;
     virtual bool getForceRecalc() const override;
     virtual void setForceRecalc( bool newValue ) override;
+    virtual bool getNumColumnsInitialized() const override;
     // DEPRECATED
     virtual bool getCodeColor() const override;
     // DEPRECATED
@@ -1004,6 +1010,7 @@ class HistogramProxy : public Histogram
     bool redraw;
     bool recalc;
     bool forceRecalc;
+    bool numColumnsInitialized = false;
     TColorFunction colorMode;
     PRV_UINT16 pixelSize;
     bool onlyTotals;

@@ -246,9 +246,9 @@ void HistogramProxy::clearExtraControlWindow()
 }
 
 
-void HistogramProxy::setUseCustomDelta( bool whichValue )
+void HistogramProxy::setUseFixedDelta( bool whichValue )
 {
-  myHisto->setUseCustomDelta( whichValue );
+  myHisto->setUseFixedDelta( whichValue );
 }
 
 
@@ -323,9 +323,9 @@ void HistogramProxy::setCommTagMax( TCommTag whichTag )
 }
 
 
-bool HistogramProxy::getUseCustomDelta() const
+bool HistogramProxy::getUseFixedDelta() const
 {
-  return myHisto->getUseCustomDelta();
+  return myHisto->getUseFixedDelta();
 }
 
 THistogramLimit HistogramProxy::getControlMin() const
@@ -415,6 +415,7 @@ bool HistogramProxy::getInclusive() const
 
 void HistogramProxy::setNumColumns( THistogramColumn whichNumColumns )
 {
+  numColumnsInitialized = true;
   myHisto->setNumColumns( whichNumColumns );
 }
 
@@ -1078,19 +1079,21 @@ void HistogramProxy::compute2DScale( ProgressController *progress )
   setControlMin( minY );
   setControlMax( maxY + ( ( maxY - minY ) * 0.05 ) );
 
-  if ( ( maxY - minY ) == 0 )
-  {
+  if ( getUseFixedDelta() )
+    return;
+  else if ( ( maxY - minY ) == 0 )
     setControlDelta( 1.0 );
-  }
   else if ( controlWindow->isCodeColorSet() && ( maxY - minY ) <= 10000 )
   {
     setControlMax( floor( maxY + ( ( maxY - minY ) * 0.05 ) ) );
     setControlDelta( 1.0 );
+    setUseFixedDelta( true );
   }
   else
   {
     setControlDelta( ( maxY + ( ( maxY - minY ) * 0.05 ) - minY ) /
                      ParaverConfig::getInstance()->getHistogramNumColumns() );
+    setNumColumns( ParaverConfig::getInstance()->getHistogramNumColumns() );
   }
 }
 
@@ -1425,6 +1428,7 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->changed = changed;
   clonedHistogramProxy->redraw = redraw;
   clonedHistogramProxy->recalc = recalc;
+  clonedHistogramProxy->numColumnsInitialized = numColumnsInitialized;
   clonedHistogramProxy->drawModeColumns = drawModeColumns;
   clonedHistogramProxy->drawModeObjects = drawModeObjects;
 
@@ -1651,6 +1655,12 @@ void HistogramProxy::setForceRecalc( bool newValue )
 {
   forceRecalc = newValue;
 }
+
+bool HistogramProxy::getNumColumnsInitialized() const
+{
+  return numColumnsInitialized;
+}
+
 
 // DEPRECATED
 bool HistogramProxy::getCodeColor() const

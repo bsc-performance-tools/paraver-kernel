@@ -631,13 +631,16 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
     }
   }
 
-  for( vector<Histogram *>::iterator it = histograms.begin(); it != histograms.end(); ++it )
+  for( auto currentHisto : histograms )
   {
-    if( (*it)->getCFG4DEnabled() )
+    if( !currentHisto->getCompute2DScale() && !currentHisto->getNumColumnsInitialized() )
+      currentHisto->setUseFixedDelta( true );
+
+    if( currentHisto->getCFG4DEnabled() )
     {
-      map<string, string> tmpAlias( (*it)->getCFG4DStatisticsAliasList() );
-      if( tmpAlias.find( (*it)->getCurrentStat() ) == tmpAlias.end() )
-        (*it)->setCurrentStat( tmpAlias.begin()->first );
+      map<string, string> tmpAlias( currentHisto->getCFG4DStatisticsAliasList() );
+      if( tmpAlias.find( currentHisto->getCurrentStat() ) == tmpAlias.end() )
+        currentHisto->setCurrentStat( tmpAlias.begin()->first );
     }
   }
 
@@ -894,7 +897,7 @@ bool CFGLoader::saveCFG( const string& filename,
     Analyzer2DMinimum::printLine( cfgFile, it );
     Analyzer2DMaximum::printLine( cfgFile, it );
     Analyzer2DDelta::printLine( cfgFile, it );
-    Analyzer2DUseCustomDelta::printLine( cfgFile, it );
+    Analyzer2DUseFixedDelta::printLine( cfgFile, it );
     Analyzer2DNumColumns::printLine( cfgFile, it );
     Analyzer2DComputeGradient::printLine( cfgFile, options, it );
     Analyzer2DMinimumGradient::printLine( cfgFile, it );
@@ -1073,6 +1076,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_AN2D_MAXIMUM]              = new Analyzer2DMaximum();
   cfgTagFunctions[OLDCFG_TAG_AN2D_DELTA]                = new Analyzer2DDelta();
   cfgTagFunctions[CFG_TAG_AN2D_USE_CUSTOM_DELTA]        = new Analyzer2DUseCustomDelta();
+  cfgTagFunctions[CFG_TAG_AN2D_USE_FIXED_DELTA]         = new Analyzer2DUseFixedDelta();
   cfgTagFunctions[CFG_TAG_AN2D_NUMCOLUMNS]              = new Analyzer2DNumColumns();
   cfgTagFunctions[OLDCFG_TAG_AN2D_COMPUTEGRADIENT]      = new Analyzer2DComputeGradient();
   cfgTagFunctions[OLDCFG_TAG_AN2D_MINIMUMGRADIENT]      = new Analyzer2DMinimumGradient();
@@ -4881,9 +4885,35 @@ void Analyzer2DDelta::printLine( ofstream& cfgFile,
 }
 
 
+// Analyzer2DUseCustomDelta deprecated. Only parsed for compatibility purposes.
 string  Analyzer2DUseCustomDelta::tagCFG = CFG_TAG_AN2D_USE_CUSTOM_DELTA;
 
 bool Analyzer2DUseCustomDelta::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                          Trace *whichTrace,
+                                          vector<Timeline *>& windows,
+                                          vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == nullptr )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == nullptr )
+    return false;
+
+  getline( line, strBool );
+
+  return true;
+}
+
+void Analyzer2DUseCustomDelta::printLine( ofstream& cfgFile,
+                                          const vector<Histogram *>::const_iterator it )
+{
+}
+
+
+string  Analyzer2DUseFixedDelta::tagCFG = CFG_TAG_AN2D_USE_FIXED_DELTA;
+
+bool Analyzer2DUseFixedDelta::parseLine( KernelConnection *whichKernel, istringstream& line,
                                  Trace *whichTrace,
                                  vector<Timeline *>& windows,
                                  vector<Histogram *>& histograms )
@@ -4898,20 +4928,20 @@ bool Analyzer2DUseCustomDelta::parseLine( KernelConnection *whichKernel, istring
   getline( line, strBool );
 
   if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
-    histograms[ histograms.size() - 1 ]->setUseCustomDelta( false );
+    histograms[ histograms.size() - 1 ]->setUseFixedDelta( false );
   else if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
-    histograms[ histograms.size() - 1 ]->setUseCustomDelta( true );
+    histograms[ histograms.size() - 1 ]->setUseFixedDelta( true );
   else
     return false;
 
   return true;
 }
 
-void Analyzer2DUseCustomDelta::printLine( ofstream& cfgFile,
+void Analyzer2DUseFixedDelta::printLine( ofstream& cfgFile,
                                  const vector<Histogram *>::const_iterator it )
 {
-  cfgFile << CFG_TAG_AN2D_USE_CUSTOM_DELTA << " ";
-  if ( ( *it )->getUseCustomDelta() )
+  cfgFile << CFG_TAG_AN2D_USE_FIXED_DELTA << " ";
+  if ( ( *it )->getUseFixedDelta() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;

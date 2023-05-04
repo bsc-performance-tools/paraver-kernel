@@ -157,7 +157,7 @@ class KHistogram : public Histogram
     void clearDataWindow() override;
     void clearExtraControlWindow() override;
 
-    void setUseCustomDelta( bool whichValue ) override;
+    void setUseFixedDelta( bool whichValue ) override;
     void setControlMin( THistogramLimit whichMin ) override;
     void setControlMax( THistogramLimit whichMax ) override;
     void setControlDelta( THistogramLimit whichDelta ) override;
@@ -174,7 +174,7 @@ class KHistogram : public Histogram
     void setCommTagMax( TCommTag whichTag ) override;
 
 
-    bool getUseCustomDelta() const override;
+    bool getUseFixedDelta() const override;
     THistogramLimit getControlMin() const override;
     THistogramLimit getControlMax() const override;
     THistogramLimit getControlDelta() const override;
@@ -281,7 +281,7 @@ class KHistogram : public Histogram
     THistogramColumn numCols;
     THistogramColumn numPlanes;
 
-    bool useCustomDelta;
+    bool useFixedDelta;
 
     THistogramLimit controlMin;
     THistogramLimit controlMax;
