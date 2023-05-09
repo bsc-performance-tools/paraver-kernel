@@ -92,7 +92,7 @@ void PlainBlocks::newRecord()
   inserted = false;
 }
 
-void PlainBlocks::setType( TRecordType whichType )
+void PlainBlocks::setRecordType( TRecordType whichType )
 {
   if ( inserted )
     currentBlock[ insertedOnThread ][ currentRecord[ insertedOnThread ] ].type = whichType;

@@ -67,55 +67,55 @@ void KRecordList::insert( KTimeline *window, MemoryTrace::iterator *it )
   //static RLRecord tmp;
   RLRecord tmp;
   TCommID id = it->getCommIndex();
-  tmp.setType( it->getType() );
+  tmp.setRecordType( it->getRecordType() );
   tmp.setTime( it->getTime() );
   if ( window->getLevel() >= TTraceLevel::WORKLOAD && window->getLevel() <= TTraceLevel::THREAD )
     tmp.setOrder( it->getOrder() );
   else if ( window->getLevel() >= TTraceLevel::SYSTEM && window->getLevel() <= TTraceLevel::CPU )
     tmp.setOrder( it->getOrder() );
 
-  if ( tmp.getType() & EVENT )
+  if ( tmp.getRecordType() & EVENT )
   {
     tmp.setEventType( it->getEventType() );
     tmp.setEventValue( it->getEventValue() );
   }
-  else if ( tmp.getType() & COMM )
+  else if ( tmp.getRecordType() & COMM )
   {
     KTrace *trace = ( KTrace * ) window->getTrace();
     TTraceLevel level = window->getLevel();
     tmp.setCommSize( trace->getCommSize( id ) );
     tmp.setCommTag( trace->getCommTag( id ) );
     tmp.setCommId( id );
-    if ( it->getType() & SEND )
+    if ( it->getRecordType() & SEND )
     {
       if ( level >= TTraceLevel::WORKLOAD && level <= TTraceLevel::THREAD )
         tmp.setCommPartnerObject( trace->getReceiverThread( id ) );
       else if ( level >= TTraceLevel::SYSTEM && level <= TTraceLevel::CPU )
         tmp.setCommPartnerObject( trace->getReceiverCPU( id ) );
 
-      if ( it->getType() & LOG )
+      if ( it->getRecordType() & LOG )
       {
         TRecordTime tmpTime = trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id )
                               ? trace->getLogicalReceive( id ) : trace->getPhysicalReceive( id );
         tmp.setCommPartnerTime( tmpTime );
       }
-      else if ( it->getType() & PHY )
+      else if ( it->getRecordType() & PHY )
         tmp.setCommPartnerTime( trace->getPhysicalReceive( id ) );
     }
-    else if ( it->getType() & RECV )
+    else if ( it->getRecordType() & RECV )
     {
       if ( level >= TTraceLevel::WORKLOAD && level <= TTraceLevel::THREAD )
         tmp.setCommPartnerObject( trace->getSenderThread( id ) );
       else if ( level >= TTraceLevel::SYSTEM && level <= TTraceLevel::CPU )
         tmp.setCommPartnerObject( trace->getSenderCPU( id ) );
 
-      if ( it->getType() & LOG )
+      if ( it->getRecordType() & LOG )
       {
         if ( trace->getLogicalReceive( id ) <= trace->getPhysicalReceive( id ) )
           return;
         tmp.setCommPartnerTime( trace->getLogicalSend( id ) );
       }
-      else if ( it->getType() & PHY )
+      else if ( it->getRecordType() & PHY )
       {
         tmp.setCommPartnerTime( trace->getPhysicalSend( id ) );
         if ( trace->getLogicalReceive( id ) <= trace->getPhysicalReceive( id ) )
@@ -129,7 +129,7 @@ void KRecordList::insert( KTimeline *window, MemoryTrace::iterator *it )
           if( window->getFilter()->getLogical() )
           {
             // Prepares the logical comm for insert later
-            tmp.setType( tmp.getType() - PHY + LOG );
+            tmp.setRecordType( tmp.getRecordType() - PHY + LOG );
             tmp.setCommPartnerTime( trace->getLogicalSend( id ) );
           }
         }

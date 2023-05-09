@@ -48,7 +48,7 @@ class VectorBlocks : public MemoryBlocks
     virtual TData *getLastRecord( PRV_UINT16 position ) const override;
     virtual void newRecord() override;
     virtual void newRecord( TThreadOrder whichThread ) override;
-    virtual void setType( TRecordType whichType ) override;
+    virtual void setRecordType( TRecordType whichType ) override;
     virtual void setTime( TRecordTime whichTime ) override;
     virtual void setThread( TThreadOrder whichThread ) override;
     virtual void setThread( TApplOrder whichAppl,

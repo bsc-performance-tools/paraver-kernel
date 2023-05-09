@@ -2493,7 +2493,7 @@ void TimelineProxy::computeEventsCommsParallel( RecordList *records,
     ++it;
   while( it != records->end() && it->getTime() <= to )
   {
-    TRecordType recType = it->getType();
+    TRecordType recType = it->getRecordType();
 
     if( recType & EVENT )
       existEvents = true;

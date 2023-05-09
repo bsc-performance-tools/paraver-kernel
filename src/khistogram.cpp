@@ -1537,7 +1537,7 @@ void KHistogram::calculate( TObjectOrder iRow,
             itComm->getTime() >= getBeginTime() &&
             itComm->getTime() <= getEndTime()*/ )
     {
-      if ( !( itComm->getType() & COMM ) ||
+      if ( !( itComm->getRecordType() & COMM ) ||
            !( itComm->getTime() >= getBeginTime() && itComm->getTime() <= getEndTime() )
          )
       {

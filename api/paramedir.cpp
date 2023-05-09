@@ -842,9 +842,9 @@ void testReadWritePerformance( KernelConnection *myKernel )
   MemoryTrace::iterator *it = myTrace.begin();
   while( !it->isNull() )
   {
-    if ( ( it->getType() == STATE + BEGIN ) ||
-         ( it->getType() == EVENT ) ||
-         ( it->getType() == COMM + LOG + SEND )
+    if ( ( it->getRecordType() == STATE + BEGIN ) ||
+         ( it->getRecordType() == EVENT ) ||
+         ( it->getRecordType() == COMM + LOG + SEND )
        )
     {
       body.write( outputTrace,
@@ -880,9 +880,9 @@ void testNewIteratorCloneMethod( KernelConnection *myKernel )
   //MemoryTrace::iterator *it = myTrace.threadBegin( 0 );
   while( !it->isNull() )
   {
-    if ( ( it->getType() == STATE + BEGIN ) ||
-         ( it->getType() == EVENT ) ||
-         ( it->getType() == COMM + LOG + SEND )
+    if ( ( it->getRecordType() == STATE + BEGIN ) ||
+         ( it->getRecordType() == EVENT ) ||
+         ( it->getRecordType() == COMM + LOG + SEND )
        )
     {
       //MemoryTrace::iterator *itClone = myTrace.copyIterator( it );

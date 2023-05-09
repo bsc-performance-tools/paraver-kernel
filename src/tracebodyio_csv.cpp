@@ -190,7 +190,7 @@ inline void TraceBodyIO_csv::readEvents( const ResourceModel<>& whichResourceMod
 
   //Event
   records.newRecord();
-  records.setType( EVENT );
+  records.setRecordType( EVENT );
   records.setTime( begintime );
   records.setCPU( CPU );
   records.setThread( appl - 1, task - 1, thread - 1 );

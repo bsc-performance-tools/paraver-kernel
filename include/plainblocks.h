@@ -53,7 +53,7 @@ namespace Plain
       virtual void resetCountInserted() override;
       virtual void newRecord() override;
       virtual void newRecord( TThreadOrder whichThread ) override {}
-      virtual void setType( TRecordType whichType ) override;
+      virtual void setRecordType( TRecordType whichType ) override;
       virtual void setTime( TRecordTime whichTime ) override;
       virtual void setThread( TThreadOrder whichThread ) override;
       virtual void setThread( TApplOrder whichAppl,

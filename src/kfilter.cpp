@@ -30,11 +30,11 @@ using namespace std;
 
 bool KFilter::passFilter( MemoryTrace::iterator *it )
 {
-  if ( it->getType() & EVENT )
+  if ( it->getRecordType() & EVENT )
     return filterEvents( it );
-  else if ( it->getType() & COMM ||
-            it->getType() & RSEND ||
-            it->getType() & RRECV )
+  else if ( it->getRecordType() & COMM ||
+            it->getRecordType() & RSEND ||
+            it->getRecordType() & RRECV )
     return filterComms( it );
   return true;
 }
@@ -48,16 +48,16 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
   {
     if ( !logical && !physical )
       return false;
-    if ( it->getType() & LOG )
+    if ( it->getRecordType() & LOG )
     {
       if ( !logical )
         return false;
     }
-    else if ( it->getType() & PHY )
+    else if ( it->getRecordType() & PHY )
     {
       if ( !physical )
       {
-        if ( !( logical && ( ( it->getType() & RECV || it->getType() & RRECV ) &&
+        if ( !( logical && ( ( it->getRecordType() & RECV || it->getRecordType() & RRECV ) &&
                              ( window->getTrace()->getLogicalReceive( it->getCommIndex() ) <=
                                window->getTrace()->getPhysicalReceive( it->getCommIndex() ) ) ) )
            )

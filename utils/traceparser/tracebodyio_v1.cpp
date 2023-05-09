@@ -135,7 +135,7 @@ void TraceBodyIO_v1< PARAM_LIST >::write( std::fstream& whichStream,
                             RecordT *record ) const
 {
   bool writeReady = false;
-  TRecordType type = record->getType();
+  TRecordType type = record->getRecordType();
   line.clear();
 
   if ( type == EMPTYREC )
@@ -259,7 +259,7 @@ inline void TraceBodyIO_v1< PARAM_LIST >::readState( const std::string& line,
 
   thread = whichProcessModel.getGlobalThread( appl - 1, task - 1, thread - 1 );
   records.newRecord( thread );
-  records.setType( STATE + BEGIN );
+  records.setRecordType( STATE + BEGIN );
   records.setTime( time );
   records.setCPU( CPU );
   records.setThread( thread );
@@ -269,7 +269,7 @@ inline void TraceBodyIO_v1< PARAM_LIST >::readState( const std::string& line,
   if ( endtime != -1 )
   {
     records.newRecord( thread );
-    records.setType( STATE + END );
+    records.setRecordType( STATE + END );
     records.setTime( endtime );
     records.setCPU( CPU );
     records.setThread( thread );
@@ -316,7 +316,7 @@ inline void TraceBodyIO_v1< PARAM_LIST >::readEvent( const std::string& line,
     }
 
     records.newRecord( thread );
-    records.setType( EVENT );
+    records.setRecordType( EVENT );
     records.setTime( time );
     records.setCPU( CPU );
     records.setThread( thread );
@@ -419,7 +419,7 @@ bool TraceBodyIO_v1< PARAM_LIST >::writeState( const ProcessModelT& whichProcess
                                  const ResourceModelT& whichResourceModel,
                                  const RecordT *record ) const
 {
-  if ( record->getType() & END )
+  if ( record->getRecordType() & END )
     return false;
 
   ostr.clear();
@@ -512,7 +512,7 @@ bool TraceBodyIO_v1< PARAM_LIST >::writeComm( const ProcessModelT& whichProcessM
   ostr << std::dec;
   ostr.precision( 0 );
 
-  if ( !( record->getType() == ( COMM + LOG + SEND ) ) )
+  if ( !( record->getRecordType() == ( COMM + LOG + SEND ) ) )
     return false;
 
   ostr << CommRecord << ':';

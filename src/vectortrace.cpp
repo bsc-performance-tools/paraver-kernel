@@ -100,7 +100,7 @@ VectorTrace::iterator *VectorTrace::iterator::clone() const
   return tmpIt;
 }
 
-TRecordType VectorTrace::iterator::getType() const
+TRecordType VectorTrace::iterator::getRecordType() const
 {
   return record == nullptr ? it->type : static_cast<const Plain::TRecord *>( record )->type;
 }
@@ -132,7 +132,7 @@ TEventType VectorTrace::iterator::getEventType() const
 
 TSemanticValue VectorTrace::iterator::getEventValue() const
 {
-  double tmpPrecision = myTrace->getEventTypePrecision( getType() );
+  double tmpPrecision = myTrace->getEventTypePrecision( getEventType() );
   if( tmpPrecision != 0.0 )
     return getEventValueAsIs() * tmpPrecision;
 
@@ -167,7 +167,7 @@ void VectorTrace::iterator::setTime( const TRecordTime whichTime )
     it->time = whichTime;
 }
 
-void VectorTrace::iterator::setType( const TRecordType whichType )
+void VectorTrace::iterator::setRecordType( const TRecordType whichType )
 {
   if ( record != nullptr )
     static_cast<Plain::TRecord *>( record )->type = whichType;
@@ -255,7 +255,7 @@ VectorTrace::CPUIterator *VectorTrace::CPUIterator::clone() const
   return tmpIt;
 }
 
-TRecordType VectorTrace::CPUIterator::getType() const
+TRecordType VectorTrace::CPUIterator::getRecordType() const
 {
   return record == nullptr ? (*it)->type : static_cast<const Plain::TRecord *>( record )->type;
 }
@@ -287,7 +287,7 @@ TEventType VectorTrace::CPUIterator::getEventType() const
 
 TSemanticValue VectorTrace::CPUIterator::getEventValue() const
 {
-  double tmpPrecision = myTrace->getEventTypePrecision( getType() );
+  double tmpPrecision = myTrace->getEventTypePrecision( getEventType() );
   if( tmpPrecision != 0.0 )
     return getEventValueAsIs() * tmpPrecision;
 
@@ -322,7 +322,7 @@ void VectorTrace::CPUIterator::setTime( const TRecordTime whichTime )
     (*it)->time = whichTime;
 }
 
-void VectorTrace::CPUIterator::setType( const TRecordType whichType )
+void VectorTrace::CPUIterator::setRecordType( const TRecordType whichType )
 {
   if ( record != nullptr )
     static_cast<Plain::TRecord *>( record )->type = whichType;

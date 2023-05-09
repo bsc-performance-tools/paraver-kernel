@@ -65,7 +65,7 @@ MemoryTrace::iterator* NoLoadTrace::empty() const
 
   TThreadOrder dummyThread = 0;
   MemoryTrace::iterator *it = new NoLoadTrace::iterator( myTrace, blocks, dummyThread, tmpRec, tmpOffset, tmpPos );
-  //it->setType( EMPTYREC );
+  //it->setRecordType( EMPTYREC );
 
   return it;
 }
@@ -326,7 +326,7 @@ inline NoLoadTrace::iterator *NoLoadTrace::iterator::clone() const
   return new NoLoadTrace::iterator( *this );
 }
 
-inline TRecordType NoLoadTrace::iterator::getType() const
+inline TRecordType NoLoadTrace::iterator::getRecordType() const
 {
   return ( ( TRecord * )record )->type;
 }
@@ -408,7 +408,7 @@ inline void NoLoadTrace::iterator::setTime( const TRecordTime whichTime )
   ( ( TRecord * )record )->time = whichTime;
 }
 
-inline void NoLoadTrace::iterator::setType( const TRecordType whichType )
+inline void NoLoadTrace::iterator::setRecordType( const TRecordType whichType )
 {
   ( ( TRecord * )record )->type = whichType;
 }

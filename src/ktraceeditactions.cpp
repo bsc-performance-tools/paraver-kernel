@@ -332,9 +332,9 @@ bool RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
 
   bool eofParsed = ( (EOFParsedState *)tmpSequence->getState( TSequenceStates::eofParsedState ) )->getData();
 
-  if ( ( whichRecord->getType() == STATE + BEGIN ) ||
-       ( whichRecord->getType() == EVENT ) ||
-       ( whichRecord->getType() == COMM + LOG + SEND ) ||
+  if ( ( whichRecord->getRecordType() == STATE + BEGIN ) ||
+       ( whichRecord->getRecordType() == EVENT ) ||
+       ( whichRecord->getRecordType() == COMM + LOG + SEND ) ||
        ( eofParsed ) )
   {
     TTime delta = (TTime)0;
@@ -423,11 +423,11 @@ bool RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
       // Common for events time, states begin time, communications logical send time
       whichRecord->setTime( whichRecord->getTime() + delta );
 
-      if ( whichRecord->getType() == STATE + BEGIN )
+      if ( whichRecord->getRecordType() == STATE + BEGIN )
       {
         whichRecord->setStateEndTime( whichRecord->getStateEndTime() + delta );
       }
-      else if ( whichRecord->getType() == COMM + LOG + SEND )
+      else if ( whichRecord->getRecordType() == COMM + LOG + SEND )
       {
         TCommID commID = whichRecord->getCommIndex();
         tmpSequence->getCurrentTrace()->setLogicalSend( commID,
@@ -481,9 +481,9 @@ bool TraceWriterAction::execute( MemoryTrace::iterator *it  )
 
   bool eofParsed = ( (EOFParsedState *)tmpSequence->getState( TSequenceStates::eofParsedState ) )->getData();
 
-  if ( ( it->getType() == STATE + BEGIN ) ||
-       ( it->getType() == EVENT ) ||
-       ( it->getType() == COMM + LOG + SEND ) ||
+  if ( ( it->getRecordType() == STATE + BEGIN ) ||
+       ( it->getRecordType() == EVENT ) ||
+       ( it->getRecordType() == COMM + LOG + SEND ) ||
        ( eofParsed )
      )
   {
@@ -528,7 +528,7 @@ bool EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
     countThreadsPerFile[ 0 ] = tmpSequence->getCurrentTrace()->totalThreads();
   }
 
-  if( ( it->getType() == EVENT ) &&
+  if( ( it->getRecordType() == EVENT ) &&
       ( it->getEventType() == ( (OnEventCutter *)tmpSequence->getState( TSequenceStates::onEventCutterState ) )->getData() ) )
   {
     TThreadOrder firstThread, lastThread;
@@ -565,7 +565,7 @@ bool EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
     }
   }
 
-  if( it->getType() == EMPTYREC )
+  if( it->getRecordType() == EMPTYREC )
     currentFile = outputTraces.size() - 1;
   else
     currentFile = currentThreadFile[ it->getThread() ];
@@ -594,9 +594,9 @@ bool EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
 
   bool eofParsed = ( (EOFParsedState *)tmpSequence->getState( TSequenceStates::eofParsedState ) )->getData();
 
-  if ( ( it->getType() == STATE + BEGIN ) ||
-       ( it->getType() == EVENT ) ||
-       ( it->getType() == COMM + LOG + SEND ) ||
+  if ( ( it->getRecordType() == STATE + BEGIN ) ||
+       ( it->getRecordType() == EVENT ) ||
+       ( it->getRecordType() == COMM + LOG + SEND ) ||
        ( eofParsed )
      )
   {

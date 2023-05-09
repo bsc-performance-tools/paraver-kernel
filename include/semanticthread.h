@@ -37,7 +37,7 @@ class SemanticThread : public SemanticFunction
 
     virtual bool validRecord( MemoryTrace::iterator *record )
     {
-      TRecordType type = record->getType();
+      TRecordType type = record->getRecordType();
       TRecordType mask = getValidateMask();
 
       if ( type == EMPTYREC )

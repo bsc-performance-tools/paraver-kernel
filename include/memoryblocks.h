@@ -44,7 +44,7 @@ class MemoryBlocks
     virtual TData *getLastRecord( PRV_UINT16 position ) const = 0;
     virtual void newRecord() = 0;
     virtual void newRecord( TThreadOrder whichThread ) = 0;
-    virtual void setType( TRecordType whichType ) = 0;
+    virtual void setRecordType( TRecordType whichType ) = 0;
     virtual void setTime( TRecordTime whichTime ) = 0;
     virtual void setThread( TThreadOrder whichThread ) = 0;
     virtual void setThread( TApplOrder whichAppl,

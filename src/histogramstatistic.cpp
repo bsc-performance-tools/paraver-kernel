@@ -330,7 +330,7 @@ bool StatNumSends::filter( CalculateData *data ) const
 
 TSemanticValue StatNumSends::execute( CalculateData *data )
 {
-  if ( data->comm->getType() & SEND )
+  if ( data->comm->getRecordType() & SEND )
     return 1;
 
   return 0;
@@ -388,7 +388,7 @@ bool StatNumReceives::filter( CalculateData *data ) const
 
 TSemanticValue StatNumReceives::execute( CalculateData *data )
 {
-  if ( data->comm->getType() & RECV )
+  if ( data->comm->getRecordType() & RECV )
     return 1;
   return 0;
 }
@@ -445,7 +445,7 @@ bool StatBytesSent::filter( CalculateData *data ) const
 
 TSemanticValue StatBytesSent::execute( CalculateData *data )
 {
-  if ( data->comm->getType() & SEND )
+  if ( data->comm->getRecordType() & SEND )
     return data->comm->getCommSize();
   return 0;
 }
@@ -502,7 +502,7 @@ bool StatBytesReceived::filter( CalculateData *data ) const
 
 TSemanticValue StatBytesReceived::execute( CalculateData *data )
 {
-  if ( data->comm->getType() & RECV )
+  if ( data->comm->getRecordType() & RECV )
     return data->comm->getCommSize();
   return 0;
 }
@@ -570,7 +570,7 @@ bool StatAvgBytesSent::filter( CalculateData *data ) const
 
 TSemanticValue StatAvgBytesSent::execute( CalculateData *data )
 {
-  if ( data->comm->getType() & SEND )
+  if ( data->comm->getRecordType() & SEND )
   {
 #ifndef PARALLEL_ENABLED
 //    ++( ( numComms[ data->plane ] )[ getPartner( data ) ] );
@@ -656,7 +656,7 @@ bool StatAvgBytesReceived::filter( CalculateData *data ) const
 
 TSemanticValue StatAvgBytesReceived::execute( CalculateData *data )
 {
-  if ( data->comm->getType() & RECV )
+  if ( data->comm->getRecordType() & RECV )
   {
 #ifndef PARALLEL_ENABLED
     //++( ( numComms[ data->plane ] )[ getPartner( data ) ] );
@@ -742,7 +742,7 @@ bool StatMinBytesSent::filter( CalculateData *data ) const
 
 TSemanticValue StatMinBytesSent::execute( CalculateData *data )
 {
-  if ( data->comm->getType() & SEND )
+  if ( data->comm->getRecordType() & SEND )
   {
 #ifndef PARALLEL_ENABLED
     if ( ( ( min[ data->plane ] )[ getPartner( data ) ] ) == 0.0 )
@@ -844,7 +844,7 @@ bool StatMinBytesReceived::filter( CalculateData *data ) const
 
 TSemanticValue StatMinBytesReceived::execute( CalculateData *data )
 {
-  if ( data->comm->getType() & RECV )
+  if ( data->comm->getRecordType() & RECV )
   {
 #ifndef PARALLEL_ENABLED
     if ( ( ( min[ data->plane ] )[ getPartner( data ) ] ) == 0.0 )
@@ -946,7 +946,7 @@ bool StatMaxBytesSent::filter( CalculateData *data ) const
 
 TSemanticValue StatMaxBytesSent::execute( CalculateData *data )
 {
-  if ( data->comm->getType() & SEND )
+  if ( data->comm->getRecordType() & SEND )
   {
 #ifndef PARALLEL_ENABLED
     if ( data->comm->getCommSize() >
@@ -1044,7 +1044,7 @@ bool StatMaxBytesReceived::filter( CalculateData *data ) const
 
 TSemanticValue StatMaxBytesReceived::execute( CalculateData *data )
 {
-  if ( data->comm->getType() & RECV )
+  if ( data->comm->getRecordType() & RECV )
   {
 #ifndef PARALLEL_ENABLED
     if ( data->comm->getCommSize() >

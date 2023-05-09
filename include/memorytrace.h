@@ -52,7 +52,7 @@ class MemoryTrace
 
         virtual iterator *clone() const = 0;
 
-        virtual TRecordType    getType() const = 0;
+        virtual TRecordType    getRecordType() const = 0;
         virtual TRecordTime    getTime() const = 0;
         virtual TThreadOrder   getThread() const = 0;
         virtual TCPUOrder      getCPU() const = 0;
@@ -76,7 +76,7 @@ class MemoryTrace
         virtual TRecordTime  getPhysicalReceive() const;
 
         virtual void         setTime( const TRecordTime time ) = 0;
-        virtual void         setType( const TRecordType whichType ) = 0;
+        virtual void         setRecordType( const TRecordType whichType ) = 0;
         virtual void         setStateEndTime( const TRecordTime whichEndTime ) = 0;
 
         virtual TData *getRecord() const

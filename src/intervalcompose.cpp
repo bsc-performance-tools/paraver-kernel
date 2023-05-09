@@ -459,7 +459,7 @@ KTrace *IntervalCompose::getWindowTrace() const
 
 void IntervalCompose::copyRecordContent( MemoryTrace::iterator *whichRecord )
 {
-  virtualRecord.type   = whichRecord->getType();
+  virtualRecord.type   = whichRecord->getRecordType();
   virtualRecord.time   = whichRecord->getTime();
   virtualRecord.thread = whichRecord->getThread();
   virtualRecord.CPU    = whichRecord->getCPU();

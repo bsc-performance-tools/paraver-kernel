@@ -95,7 +95,7 @@ void NoLoadBlocks::newRecord()
   }
 }
 
-void NoLoadBlocks::setType( TRecordType whichType )
+void NoLoadBlocks::setRecordType( TRecordType whichType )
 {
   if ( fileLoaded )
     lastData->records[ lastRecord ].type = whichType;
@@ -205,16 +205,16 @@ void NoLoadBlocks::newComm( bool createRecords )
   if ( createRecords )
   {
     newRecord();
-    setType( COMM + LOG + SEND );
+    setRecordType( COMM + LOG + SEND );
 
     newRecord();
-    setType( COMM + LOG + RECV );
+    setRecordType( COMM + LOG + RECV );
 
     newRecord();
-    setType( COMM + PHY + SEND );
+    setRecordType( COMM + PHY + SEND );
 
     newRecord();
-    setType( COMM + PHY + RECV );
+    setRecordType( COMM + PHY + RECV );
 
     logSend = &lastData->records[ lastRecord - 3 ];
     logRecv = &lastData->records[ lastRecord - 2 ];

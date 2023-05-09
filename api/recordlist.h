@@ -48,7 +48,7 @@ struct RLComm
 struct RLRecord
 {
 public:
-  TRecordType getType() const
+  TRecordType getRecordType() const
   {
     return type;
   }
@@ -88,7 +88,7 @@ public:
   {
     return UInfo.comm.id;
   }
-  void setType( TRecordType whichType )
+  void setRecordType( TRecordType whichType )
   {
     type = whichType;
   }
@@ -152,14 +152,14 @@ struct ltrecord
         return true;
       else if ( r1.getOrder() == r2.getOrder() )
       {
-        if ( ( r1.getType() & COMM ) && ( r2.getType() & EVENT ) )
+        if ( ( r1.getRecordType() & COMM ) && ( r2.getRecordType() & EVENT ) )
           return true;
-        else if ( r1.getType() == r2.getType() && ( r1.getType() & COMM ) )
+        else if ( r1.getRecordType() == r2.getRecordType() && ( r1.getRecordType() & COMM ) )
         {
           if ( r1.getCommId() != r2.getCommId() )
             return true;
         }
-        else if ( r1.getType() == r2.getType() && ( r1.getType() & EVENT ) )
+        else if ( r1.getRecordType() == r2.getRecordType() && ( r1.getRecordType() & EVENT ) )
         {
           if ( r1.getEventType() != r2.getEventType() )
             return true;

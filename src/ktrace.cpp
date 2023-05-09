@@ -789,7 +789,7 @@ bool KTrace::findLastEventValue( TThreadOrder whichThread,
     for ( vector<TEventType>::const_iterator itEvt = whichEvent.begin();
           itEvt != whichEvent.end(); ++itEvt )
     {
-      if ( ( it->getType() & EVENT ) && ( it->getEventType() == *itEvt )
+      if ( ( it->getRecordType() & EVENT ) && ( it->getEventType() == *itEvt )
            && ( it->getEventValue() != 0 ) )
       {
         returnType = it->getEventType();
@@ -825,7 +825,7 @@ bool KTrace::findNextEvent( TThreadOrder whichThread,
 
   while ( !it->isNull() && !found )
   {
-    if ( ( it->getType() & EVENT ) && ( it->getEventType() == whichEvent ) && ( it->getTime() != whichTime ) )
+    if ( ( it->getRecordType() & EVENT ) && ( it->getEventType() == whichEvent ) && ( it->getTime() != whichTime ) )
     {
       foundTime = it->getTime();
       found = true;

@@ -74,7 +74,7 @@ MemoryTrace::iterator* PlainTrace::empty() const
 {
   PlainBlocks *dummyBlocks = new PlainBlocks( *myBlocks ); // TODO CHANGE THIS
   dummyBlocks->newRecord();
-  dummyBlocks->setType( EMPTYREC );
+  dummyBlocks->setRecordType( EMPTYREC );
 
   return new PlainTrace::iterator( dummyBlocks, myTrace );
 }
@@ -246,7 +246,7 @@ inline PlainTrace::iterator *PlainTrace::iterator::clone() const
   return new PlainTrace::iterator( *this );
 }
 
-inline TRecordType  PlainTrace::iterator::getType() const
+inline TRecordType  PlainTrace::iterator::getRecordType() const
 {
   return ( ( TRecord * )record )->type;
 }
@@ -311,7 +311,7 @@ inline void PlainTrace::iterator::setTime( const TRecordTime whichTime )
   ( ( TRecord * )record )->time = whichTime;
 }
 
-inline void PlainTrace::iterator::setType( const TRecordType whichType )
+inline void PlainTrace::iterator::setRecordType( const TRecordType whichType )
 {
   ( ( TRecord * )record )->type = whichType;
 }

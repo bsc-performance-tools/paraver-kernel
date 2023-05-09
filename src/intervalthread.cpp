@@ -127,9 +127,9 @@ MemoryTrace::iterator *IntervalThread::getNextRecord( MemoryTrace::iterator *it,
   {
     if ( window->passFilter( it ) )
     {
-      if ( ( ( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
+      if ( ( ( createList & CREATEEVENTS ) && ( it->getRecordType() & EVENT ) )
            ||
-           ( ( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
+           ( ( createList & CREATECOMMS ) && ( it->getRecordType() & COMM ) ) )
         displayList->insert( window, it );
 
       if ( function->validRecord( it ) )
@@ -156,9 +156,9 @@ MemoryTrace::iterator *IntervalThread::getPrevRecord( MemoryTrace::iterator *it,
   {
     if ( window->passFilter( it ) )
     {
-      if ( ( ( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
+      if ( ( ( createList & CREATEEVENTS ) && ( it->getRecordType() & EVENT ) )
            ||
-           ( ( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
+           ( ( createList & CREATECOMMS ) && ( it->getRecordType() & COMM ) ) )
         displayList->insert( window, it );
 
       if ( function->validRecord( it ) )

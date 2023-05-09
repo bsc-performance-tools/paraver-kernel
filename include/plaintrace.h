@@ -67,7 +67,7 @@ namespace Plain
 
           virtual iterator *clone() const override;
 
-          virtual TRecordType    getType() const override;
+          virtual TRecordType    getRecordType() const override;
           virtual TRecordTime    getTime() const override;
           virtual TThreadOrder   getThread() const override;
           virtual TCPUOrder      getCPU() const override;
@@ -80,7 +80,7 @@ namespace Plain
           virtual TCommID        getCommIndex() const override;
 
           virtual void           setTime( const TRecordTime whichTime ) override;
-          virtual void           setType( const TRecordType whichType ) override;
+          virtual void           setRecordType( const TRecordType whichType ) override;
           virtual void           setStateEndTime( const TRecordTime whichEndTime ) override;
 
         protected:

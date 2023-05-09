@@ -86,7 +86,7 @@ void VectorBlocks::newRecord( TThreadOrder whichThread )
   ++countInserted;
 }
 
-void VectorBlocks::setType( TRecordType whichType )
+void VectorBlocks::setRecordType( TRecordType whichType )
 {
   threadRecords[ insertedOnThread ].back().type = whichType;
 }

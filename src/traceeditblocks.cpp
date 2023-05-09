@@ -73,7 +73,7 @@ void TraceEditBlocks::newRecord( TThreadOrder whichThread )
   newRecord();
 }
 
-void TraceEditBlocks::setType( TRecordType whichType )
+void TraceEditBlocks::setRecordType( TRecordType whichType )
 {
   lastData.records[ lastRecord ].type = whichType;
 }
@@ -136,16 +136,16 @@ void TraceEditBlocks::newComm( bool createRecords )
   if ( createRecords )
   {
     newRecord();
-    setType( COMM + LOG + SEND );
+    setRecordType( COMM + LOG + SEND );
 
     newRecord();
-    setType( COMM + LOG + RECV );
+    setRecordType( COMM + LOG + RECV );
 
     newRecord();
-    setType( COMM + PHY + SEND );
+    setRecordType( COMM + PHY + SEND );
 
     newRecord();
-    setType( COMM + PHY + RECV );
+    setRecordType( COMM + PHY + RECV );
 
     logSend = &lastData.records[ lastRecord - 3 ];
     logRecv = &lastData.records[ lastRecord - 2 ];

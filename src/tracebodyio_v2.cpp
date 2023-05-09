@@ -88,7 +88,7 @@ void TraceBodyIO_v2::write( std::fstream& whichStream,
 {
   string line;
   bool writeReady;
-  TRecordType type = record->getType();
+  TRecordType type = record->getRecordType();
 
   if ( type == EMPTYREC )
     return;
@@ -234,9 +234,9 @@ void TraceBodyIO_v2::readState( const string& line,
 
   records.newRecord();
   if ( line[0] == StateBeginRecord )
-    records.setType( STATE + BEGIN );
+    records.setRecordType( STATE + BEGIN );
   else
-    records.setType( STATE + END );
+    records.setRecordType( STATE + END );
   records.setTime( time );
   records.setCPU( CPU - 1 );
   records.setThread( thread - 1 );
@@ -297,7 +297,7 @@ void TraceBodyIO_v2::readEvent( const string& line,
     }
 
     records.newRecord();
-    records.setType( EVENT );
+    records.setRecordType( EVENT );
     records.setTime( time );
     records.setCPU( CPU - 1 );
     records.setThread( thread - 1 );
@@ -419,25 +419,25 @@ void TraceBodyIO_v2::readComm( const string& line,
     switch ( line[0] )
     {
       case LogicalSendRecord:
-        records.setType( COMM + LOG + SEND );
+        records.setRecordType( COMM + LOG + SEND );
         records.setTime( records.getLogicalSend( commid ) );
         records.setCPU( records.getSenderCPU( commid ) );
         records.setThread( records.getSenderThread( commid ) );
         break;
       case LogicalRecvRecord:
-        records.setType( COMM + LOG + RECV );
+        records.setRecordType( COMM + LOG + RECV );
         records.setTime( records.getLogicalReceive( commid ) );
         records.setCPU( records.getReceiverCPU( commid ) );
         records.setThread( records.getReceiverThread( commid ) );
         break;
       case PhysicalSendRecord:
-        records.setType( COMM + PHY + SEND );
+        records.setRecordType( COMM + PHY + SEND );
         records.setTime( records.getPhysicalSend( commid ) );
         records.setCPU( records.getSenderCPU( commid ) );
         records.setThread( records.getSenderThread( commid ) );
         break;
       case PhysicalRecvRecord:
-        records.setType( COMM + PHY + RECV );
+        records.setRecordType( COMM + PHY + RECV );
         records.setTime( records.getPhysicalReceive( commid ) );
         records.setCPU( records.getReceiverCPU( commid ) );
         records.setThread( records.getReceiverThread( commid ) );
@@ -506,9 +506,9 @@ bool TraceBodyIO_v2::writeState( string& line,
   ostr << dec;
   ostr.precision( 0 );
 
-  if ( record->getType() == ( STATE + BEGIN ) )
+  if ( record->getRecordType() == ( STATE + BEGIN ) )
     ostr << StateBeginRecord << ':';
-  else if ( record->getType() == ( STATE + END ) )
+  else if ( record->getRecordType() == ( STATE + END ) )
     ostr << StateEndRecord << ':';
   writeCommon( ostr, whichProcessModel, whichResourceModel, record );
   ostr << record->getStateEndTime();
@@ -539,11 +539,11 @@ bool TraceBodyIO_v2::writeEvent( string& line,
     writeCommon( ostr, whichProcessModel, whichResourceModel, record );
   }
   ostr << record->getEventType() << ':' << record->getEventValueAsIs();
-  firstType = record->getType();
+  firstType = record->getRecordType();
   firstTime = record->getTime();
   firstThread = record->getThread();
   ++( *record );
-  while ( !record->isNull() && record->getType() == firstType &&
+  while ( !record->isNull() && record->getRecordType() == firstType &&
           record->getTime() == firstTime && record->getThread() == firstThread )
   {
     ostr << ':' << record->getEventType() << ':' << record->getEventValueAsIs();
@@ -566,7 +566,7 @@ bool TraceBodyIO_v2::writeCommRecord( string& line,
   ostr << dec;
   ostr.precision( 0 );
 
-  type = record->getType();
+  type = record->getRecordType();
 
   if ( type == ( COMM + LOG + SEND ) )
     ostr << LogicalSendRecord << ':';

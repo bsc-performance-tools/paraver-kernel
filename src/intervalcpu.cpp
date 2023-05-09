@@ -210,15 +210,15 @@ MemoryTrace::iterator *IntervalCPU::getNextRecord( MemoryTrace::iterator *it,
   {
     if( window->passFilter( it ) )
     {
-      if((( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
+      if((( createList & CREATEEVENTS ) && ( it->getRecordType() & EVENT ) )
           ||
-          (( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
+          (( createList & CREATECOMMS ) && ( it->getRecordType() & COMM ) ) )
         displayList->insert( window, it );
 
       if( functionThread->validRecord( it ) )
         break;
     }
-    if( !( it->getType() & RSEND || it->getType() & RRECV || it->getType() & COMM )
+    if( !( it->getRecordType() & RSEND || it->getRecordType() & RRECV || it->getRecordType() & COMM )
         && it->getThread() != threadOrder )
       break;
     ++( *it );
@@ -243,15 +243,15 @@ MemoryTrace::iterator *IntervalCPU::getPrevRecord( MemoryTrace::iterator *it,
   {
     if( window->passFilter( it ) )
     {
-      if((( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
+      if((( createList & CREATEEVENTS ) && ( it->getRecordType() & EVENT ) )
           ||
-          (( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
+          (( createList & CREATECOMMS ) && ( it->getRecordType() & COMM ) ) )
         displayList->insert( window, it );
 
       if( functionThread->validRecord( it ) )
         break;
     }
-    if( !( it->getType() & RSEND || it->getType() & RRECV || it->getType() & COMM )
+    if( !( it->getRecordType() & RSEND || it->getRecordType() & RRECV || it->getRecordType() & COMM )
         && it->getThread() != threadOrder )
       break;
     --( *it );
