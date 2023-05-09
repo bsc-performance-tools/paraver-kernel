@@ -1082,7 +1082,10 @@ void HistogramProxy::compute2DScale( ProgressController *progress )
   if ( getUseFixedDelta() )
     return;
   else if ( ( maxY - minY ) == 0 )
+  {
     setControlDelta( 1.0 );
+    setUseFixedDelta( true );
+  }
   else if ( controlWindow->isCodeColorSet() && ( maxY - minY ) <= 10000 )
   {
     setControlMax( floor( maxY + ( ( maxY - minY ) * 0.05 ) ) );
