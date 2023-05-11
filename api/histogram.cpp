@@ -1646,6 +1646,8 @@ bool HistogramProxy::getRecalc() const
 
 void HistogramProxy::setRecalc( bool newValue )
 {
+  if( newValue )
+    setFixedSemanticSort( false );
   recalc = newValue;
 }
 
