@@ -575,10 +575,11 @@ void TimelineProxy::computeYScale( ProgressController *progress )
                 calcNext( obj, tmpComputedMaxY[ tmpComputedMaxYSize - 1 ], tmpComputedMinY[ tmpComputedMinYSize - 1 ], tmpComputedZeros[ tmpComputedZerosSize - 1 ] );
 
               #pragma omp atomic
-              {
                 ++progressSteps;
+
+              #pragma omp atomic
                 ++currentObject;
-              }
+
               if( progress != nullptr )
               {
                 if( selected.size() <= 200 ||
