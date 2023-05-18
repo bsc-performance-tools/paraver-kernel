@@ -581,7 +581,9 @@ void TimelineProxy::computeYScale( ProgressController *progress )
               }
               if( progress != nullptr )
               {
-                if( selected.size() <= 200 || progressSteps == 10 )
+                if( selected.size() <= 200 ||
+                    ( selected.size() <= 1000 && progressSteps == 10 ) ||
+                    ( selected.size() > 1000 && progressSteps == 100 ) )
                 {
                   #pragma omp critical
                   {
