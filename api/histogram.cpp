@@ -1060,8 +1060,15 @@ THistogramColumn HistogramProxy::getSemanticRealColumn( THistogramColumn whichCo
 
 void HistogramProxy::compute2DScale( ProgressController *progress )
 {
-  TSemanticValue tmpMinY = controlWindow->getMinimumY();
-  TSemanticValue tmpMaxY = controlWindow->getMaximumY();
+  bool restoreYScale = false;
+  TSemanticValue tmpMinY = 0.0;
+  TSemanticValue tmpMaxY = 0.0;
+  if( controlWindow->getYScaleComputed() )
+  {
+    restoreYScale = true;
+    tmpMinY = controlWindow->getMinimumY();
+    tmpMaxY = controlWindow->getMaximumY();
+  }
   TRecordTime tmpBeginTime = controlWindow->getWindowBeginTime();
   TRecordTime tmpEndTime = controlWindow->getWindowEndTime();
   controlWindow->setWindowBeginTime( getBeginTime(), true );
@@ -1073,8 +1080,11 @@ void HistogramProxy::compute2DScale( ProgressController *progress )
   if( getCompute2DScaleZero() && controlWindow->getExistSemanticZero() && minY > 0.0 )
     minY = 0.0;
   TSemanticValue maxY = controlWindow->getMaximumY();
-  controlWindow->setMinimumY( tmpMinY );
-  controlWindow->setMaximumY( tmpMaxY );
+  if( restoreYScale )
+  {
+    controlWindow->setMinimumY( tmpMinY );
+    controlWindow->setMaximumY( tmpMaxY );
+  }
 
   setControlMin( minY );
   setControlMax( maxY + ( ( maxY - minY ) * 0.05 ) );

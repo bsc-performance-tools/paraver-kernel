@@ -518,14 +518,13 @@ void TimelineProxy::computeYScale( ProgressController *progress )
     vector< TObjectOrder > selected;
     getSelectedRows( getLevel(), selected,
                      getZoomSecondDimension().first, getZoomSecondDimension().second, true );
-    int progressDelta;
-    if( progress != nullptr )
-      progressDelta = (int)floor( selected.size() * 0.005 );
 
+    setComputeYMaxOnInit( false );
     init( winBeginTime, NOCREATE );
 
     std::string previousMessage;
-    int currentObject = 0;
+    double currentObject = 0.0;
+    int progressSteps = 0;
     if( progress != nullptr )
     {
       previousMessage = progress->getMessage();
@@ -564,7 +563,7 @@ void TimelineProxy::computeYScale( ProgressController *progress )
           int tmpComputedMinYSize = tmpComputedMinY.size();
           int tmpComputedZerosSize = tmpComputedZeros.size();
 
-          #pragma omp task shared ( currentObject, progress, tmpComputedMaxY, tmpComputedMinY, tmpComputedZeros ) \
+          #pragma omp task shared ( currentObject, progressSteps, progress, tmpComputedMaxY, tmpComputedMinY, tmpComputedZeros ) \
                            firstprivate( tmpComputedMaxYSize, tmpComputedMinYSize, tmpComputedZerosSize )
           {
             TObjectOrder obj = selected[ i ];
@@ -576,13 +575,19 @@ void TimelineProxy::computeYScale( ProgressController *progress )
                 calcNext( obj, tmpComputedMaxY[ tmpComputedMaxYSize - 1 ], tmpComputedMinY[ tmpComputedMinYSize - 1 ], tmpComputedZeros[ tmpComputedZerosSize - 1 ] );
 
               #pragma omp atomic
-              ++currentObject;
+              {
+                ++progressSteps;
+                ++currentObject;
+              }
               if( progress != nullptr )
               {
-                if( selected.size() <= 200 || currentObject % progressDelta == 0 )
+                if( selected.size() <= 200 || progressSteps == 10 )
                 {
                   #pragma omp critical
-                  progress->setCurrentProgress( currentObject );
+                  {
+                    progressSteps = 0;
+                    progress->setCurrentProgress( currentObject );
+                  }
                 }
               }
             }
