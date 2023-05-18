@@ -1421,7 +1421,7 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
         if( numRows > 1 )
         {
           ++progressSteps;
-          if( progressSteps == 1000 )
+          if( progressSteps == 100000 )
           {
             progressSteps = 0;
             #pragma omp critical
