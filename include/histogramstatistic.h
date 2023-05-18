@@ -41,6 +41,14 @@ struct CalculateData;
 constexpr size_t NUM_SEMANTIC_STATS = 17;
 constexpr size_t NUM_COMM_STATS = 10;
 
+struct TCalculatedTimes
+{  // TODO: union?? array? no hace alta tener las dos
+  TRecordTime controlBeginTime;
+  TRecordTime controlEndTime;
+  TRecordTime dataBeginTime;
+  TRecordTime dataEndTime;
+};
+
 class HistogramStatistic
 {
   public:
@@ -53,7 +61,7 @@ class HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) = 0;
     virtual void reset() = 0;
     virtual bool filter( CalculateData *data ) const = 0;
-    virtual TSemanticValue execute( CalculateData *data ) = 0;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) = 0;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -91,7 +99,7 @@ class StatNumSends: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -123,7 +131,7 @@ class StatNumReceives: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -155,7 +163,7 @@ class StatBytesSent: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -187,7 +195,7 @@ class StatBytesReceived: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -219,7 +227,7 @@ class StatAvgBytesSent: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -256,7 +264,7 @@ class StatAvgBytesReceived: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -293,7 +301,7 @@ class StatMinBytesSent: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -330,7 +338,7 @@ class StatMinBytesReceived: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -367,7 +375,7 @@ class StatMaxBytesSent: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -404,7 +412,7 @@ class StatMaxBytesReceived: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -447,7 +455,7 @@ class StatTime: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -482,7 +490,7 @@ class StatPercTime: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -522,7 +530,7 @@ class StatPercTimeNotZero: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -562,7 +570,7 @@ class StatPercTimeWindow: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -597,7 +605,7 @@ class StatNumBursts: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -632,7 +640,7 @@ class StatPercNumBursts: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -672,7 +680,7 @@ class StatIntegral: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -707,7 +715,7 @@ class StatAvgValue: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -747,7 +755,7 @@ class StatMaximum: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -786,7 +794,7 @@ class StatMinimum: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -826,7 +834,7 @@ class StatAvgBurstTime: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -867,7 +875,7 @@ class StatStdevBurstTime: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -909,7 +917,7 @@ class StatAvgPerBurst: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -949,7 +957,7 @@ class StatAvgValueNotZero: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -994,7 +1002,7 @@ class StatAvgPerBurstNotZero: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -1040,7 +1048,7 @@ class StatNumBurstsNotZero: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -1080,7 +1088,7 @@ class StatSumBursts: public HistogramStatistic
     virtual void init( KHistogram *whichHistogram ) override;
     virtual void reset() override;
     virtual bool filter( CalculateData *data ) const override;
-    virtual TSemanticValue execute( CalculateData *data ) override;
+    virtual TSemanticValue execute( CalculateData *data, TCalculatedTimes& calcTimes ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
@@ -1108,7 +1116,7 @@ class Statistics
     static std::vector<std::map<TObjectOrder, TSemanticValue> > zeroCommMatrix;
 #endif
 
-    void initAllComm( KHistogram *whichHistogram );
+    void initAllComm();
     void resetAllComm();
     bool filterAllComm( CalculateData *data );
     void executeAllComm( CalculateData *data, std::array<TSemanticValue, NUM_COMM_STATS>& onValues );
@@ -1117,7 +1125,7 @@ class Statistics
                                                                  TObjectOrder row,
                                                                  THistogramColumn plane = 0 );
 
-    void initAll( KHistogram *whichHistogram );
+    void initAll();
     void resetAll();
     bool filterAll( CalculateData *data );
     void executeAll( CalculateData *data, std::array<TSemanticValue, NUM_SEMANTIC_STATS>& onValues, bool& isNotZeroValue );
@@ -1127,6 +1135,8 @@ class Statistics
                                                                  THistogramColumn plane = 0 );
 
   private:
+    const KHistogram &myHistogram;
+
     StatNumSends statNumSends;
     StatNumReceives statNumReceives;
     StatBytesSent statBytesSent;
@@ -1155,6 +1165,8 @@ class Statistics
     StatAvgPerBurstNotZero statAvgPerBurstNotZero;
     StatNumBurstsNotZero statNumBurstsNotZero;
     StatSumBursts statSumBursts;
+
+    TCalculatedTimes computeTimes( CalculateData *data ) const;
 };
 
 
