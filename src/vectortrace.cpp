@@ -56,7 +56,7 @@ void VectorTrace::iterator::operator--()
 
 MemoryTrace::iterator& VectorTrace::iterator::operator=( const MemoryTrace::iterator& copy )
 {
-  const auto &tmpCopy = dynamic_cast<const VectorTrace::iterator&>( copy );
+  const auto &tmpCopy = static_cast<const VectorTrace::iterator&>( copy );
   
   myThread = tmpCopy.myThread;
   it = tmpCopy.it;
@@ -70,17 +70,17 @@ MemoryTrace::iterator& VectorTrace::iterator::operator=( const MemoryTrace::iter
 bool VectorTrace::iterator::operator==( const MemoryTrace::iterator &whichit ) const
 {
   if ( record != nullptr )
-    return record == dynamic_cast<const VectorTrace::iterator&>( whichit ).record;
+    return record == static_cast<const VectorTrace::iterator&>( whichit ).record;
 
-  return it == dynamic_cast<const VectorTrace::iterator&>( whichit ).it;
+  return it == static_cast<const VectorTrace::iterator&>( whichit ).it;
 }
 
 bool VectorTrace::iterator::operator!=( const MemoryTrace::iterator &whichit ) const
 {
   if ( record != nullptr )
-    return record != dynamic_cast<const VectorTrace::iterator&>( whichit ).record;
+    return record != static_cast<const VectorTrace::iterator&>( whichit ).record;
 
-  return it != dynamic_cast<const VectorTrace::iterator&>( whichit ).it;
+  return it != static_cast<const VectorTrace::iterator&>( whichit ).it;
 }
 
 bool VectorTrace::iterator::isNull() const
@@ -211,7 +211,7 @@ void VectorTrace::CPUIterator::operator--()
 
 MemoryTrace::iterator& VectorTrace::CPUIterator::operator=( const MemoryTrace::iterator& copy )
 {
-  const auto &tmpCopy = dynamic_cast<const VectorTrace::CPUIterator&>( copy );
+  const auto &tmpCopy = static_cast<const VectorTrace::CPUIterator&>( copy );
   
   myCPU = tmpCopy.myCPU;
   it = tmpCopy.it;
@@ -225,17 +225,17 @@ MemoryTrace::iterator& VectorTrace::CPUIterator::operator=( const MemoryTrace::i
 bool VectorTrace::CPUIterator::operator==( const MemoryTrace::iterator &whichit ) const
 {
   if ( record != nullptr )
-    return record == dynamic_cast<const VectorTrace::CPUIterator&>( whichit ).record;
+    return record == static_cast<const VectorTrace::CPUIterator&>( whichit ).record;
 
-  return it == dynamic_cast<const VectorTrace::CPUIterator&>( whichit ).it;
+  return it == static_cast<const VectorTrace::CPUIterator&>( whichit ).it;
 }
 
 bool VectorTrace::CPUIterator::operator!=( const MemoryTrace::iterator &whichit ) const
 {
   if ( record != nullptr )
-    return record != dynamic_cast<const VectorTrace::CPUIterator&>( whichit ).record;
+    return record != static_cast<const VectorTrace::CPUIterator&>( whichit ).record;
 
-  return it != dynamic_cast<const VectorTrace::CPUIterator&>( whichit ).it;
+  return it != static_cast<const VectorTrace::CPUIterator&>( whichit ).it;
 }
 
 bool VectorTrace::CPUIterator::isNull() const
@@ -344,7 +344,7 @@ void VectorTrace::CPUIterator::setStateEndTime( const TRecordTime whichEndTime )
 /********************************************************/
 void VectorTrace::insert( MemoryBlocks *blocks )
 {
-  myBlocks = dynamic_cast<VectorBlocks *>( blocks );
+  myBlocks = static_cast<VectorBlocks *>( blocks );
   blocks->resetCountInserted();
 }
 
