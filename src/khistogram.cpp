@@ -1432,14 +1432,14 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
         }
         else
         {
-          if( windowCloneManager( currentWindow )->getEndTime( iRow ) - tmpLastTime >
-              ( toTime - fromTime ) / 50 )
+          auto tmpEndTime = windowCloneManager( currentWindow )->getEndTime( iRow );
+          if( tmpEndTime - tmpLastTime > ( toTime - fromTime ) / 50 )
           {
             #pragma omp critical
             {
-              progress->setCurrentProgress( windowCloneManager( currentWindow )->getEndTime( iRow ) - beginTime );
+              progress->setCurrentProgress( tmpEndTime - beginTime );
             }
-            tmpLastTime = windowCloneManager( currentWindow )->getEndTime( iRow );
+            tmpLastTime = tmpEndTime;
           }
         }
       }
