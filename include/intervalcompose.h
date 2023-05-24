@@ -114,6 +114,8 @@ class IntervalCompose: public IntervalHigh
       TIMER
     };
 
+    SemanticHighInfo semanticInfo;
+    
     TRecordTime accumulatedDeltas;
     TRecordTime timerBeginTime;
     Plain::TRecord virtualRecord;

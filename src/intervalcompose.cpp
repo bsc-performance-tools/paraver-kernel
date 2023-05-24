@@ -31,9 +31,10 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
                                     KRecordList *displayList )
 {
   TRecordTime myInitTime;
-  SemanticHighInfo info;
-  info.callingInterval = this;
 
+  semanticInfo.callingInterval = this;
+  semanticInfo.values.clear();
+  semanticInfo.values.push_back( 0.0 );
   createList = create;
   currentValue = 0.0;
 
@@ -89,8 +90,8 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
   switch( behaviour )
   {
     case TBehaviour::REGULAR:
-      info.values.push_back( childIntervals[ 0 ]->getValue() );
-      currentValue = function->execute( &info );
+      semanticInfo.values[ 0 ] = childIntervals[ 0 ]->getValue();
+      currentValue = function->execute( &semanticInfo );
       break;
 
     case TBehaviour::JOIN_BURSTS:
@@ -117,9 +118,6 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
 
 KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc )
 {
-  SemanticHighInfo info;
-  info.callingInterval = this;
-
   if ( displayList == nullptr )
     displayList = &myDisplayList;
 
@@ -130,8 +128,8 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
       *begin = *childIntervals[ 0 ]->getBegin();
       *end = *childIntervals[ 0 ]->getEnd();
 
-      info.values.push_back( childIntervals[ 0 ]->getValue() );
-      currentValue = function->execute( &info );
+      semanticInfo.values[ 0 ] = childIntervals[ 0 ]->getValue();
+      currentValue = function->execute( &semanticInfo );
       break;
       
     case TBehaviour::JOIN_BURSTS:
@@ -152,9 +150,6 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
 
 KRecordList *IntervalCompose::calcPrev( KRecordList *displayList, bool initCalc )
 {
-  SemanticHighInfo info;
-  info.callingInterval = this;
-
   if ( displayList == nullptr )
     displayList = &myDisplayList;
 
@@ -165,8 +160,8 @@ KRecordList *IntervalCompose::calcPrev( KRecordList *displayList, bool initCalc 
       *begin = *childIntervals[ 0 ]->getBegin();
       *end = *childIntervals[ 0 ]->getEnd();
 
-      info.values.push_back( childIntervals[ 0 ]->getValue() );
-      currentValue = function->execute( &info );
+      semanticInfo.values[ 0 ] = childIntervals[ 0 ]->getValue();
+      currentValue = function->execute( &semanticInfo );
       break;
       
     case TBehaviour::JOIN_BURSTS:
