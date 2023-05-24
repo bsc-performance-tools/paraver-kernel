@@ -35,14 +35,14 @@ using namespace std;
 //-------------------------------------------------------------------------
 // Statistics filtering functions
 //-------------------------------------------------------------------------
-inline bool filterCommunication( RecordList::iterator& comm, KHistogram *histogram )
+inline bool filterCommunication( RecordList::iterator& comm, const KHistogram& histogram )
 {
   TCommSize size = comm->getCommSize();
   TCommTag tag = comm->getCommTag();
-  return size >= histogram->getCommSizeMin() &&
-         size <= histogram->getCommSizeMax() &&
-         tag >= histogram->getCommTagMin() &&
-         tag <= histogram->getCommTagMax();
+  return size >= histogram.getCommSizeMin() &&
+         size <= histogram.getCommSizeMax() &&
+         tag >= histogram.getCommTagMin() &&
+         tag <= histogram.getCommTagMax();
 
 }
 
@@ -64,24 +64,28 @@ vector<vector<TSemanticValue> > Statistics::zeroMatrix;
 vector<map<TObjectOrder, TSemanticValue> > Statistics::zeroCommMatrix;
 #endif
 
-void Statistics::initAllComm( KHistogram *whichHistogram )
+Statistics::Statistics( const KHistogram& whichHistogram )
+  : myHistogram( whichHistogram )
+{}
+
+void Statistics::initAllComm()
 {
 #ifndef PARALLEL_ENABLED
   zeroCommMatrix.clear();
-  for ( THistogramColumn iPlane = 0; iPlane < whichHistogram->getNumPlanes(); ++iPlane )
+  for ( THistogramColumn iPlane = 0; iPlane < myHistogram.getNumPlanes(); ++iPlane )
     zeroCommMatrix.push_back( map<TObjectOrder, TSemanticValue>() );
 #endif
 
-  statNumSends.init( whichHistogram );
-  statNumReceives.init( whichHistogram );
-  statBytesSent.init( whichHistogram );
-  statBytesReceived.init( whichHistogram );
-  statAvgBytesSent.init( whichHistogram );
-  statAvgBytesReceived.init( whichHistogram );
-  statMinBytesSent.init( whichHistogram );
-  statMinBytesReceived.init( whichHistogram );
-  statMaxBytesSent.init( whichHistogram );
-  statMaxBytesReceived.init( whichHistogram );
+  statNumSends.init( myHistogram );
+  statNumReceives.init( myHistogram );
+  statBytesSent.init( myHistogram );
+  statBytesReceived.init( myHistogram );
+  statAvgBytesSent.init( myHistogram );
+  statAvgBytesReceived.init( myHistogram );
+  statMinBytesSent.init( myHistogram );
+  statMinBytesReceived.init( myHistogram );
+  statMaxBytesSent.init( myHistogram );
+  statMaxBytesReceived.init( myHistogram );
 }
 
 void Statistics::resetAllComm()
@@ -100,23 +104,12 @@ void Statistics::resetAllComm()
 
 bool Statistics::filterAllComm( CalculateData *data )
 {
-  if ( statNumSends.filter( data ) )         return true;
-  if ( statNumReceives.filter( data ) )      return true;
-  if ( statBytesSent.filter( data ) )        return true;
-  if ( statBytesReceived.filter( data ) )    return true;
-  if ( statAvgBytesSent.filter( data ) )     return true;
-  if ( statAvgBytesReceived.filter( data ) ) return true;
-  if ( statMinBytesSent.filter( data ) )     return true;
-  if ( statMinBytesReceived.filter( data ) ) return true;
-  if ( statMaxBytesSent.filter( data ) )     return true;
-  if ( statMaxBytesReceived.filter( data ) ) return true;
-
-  return false;
+  return filterCommunication( data->comm, myHistogram );
 }
 
 void Statistics::executeAllComm( CalculateData *data, array<TSemanticValue, NUM_COMM_STATS>& onValues )
 {
-  TCalculatedTimes tmpTimes = computeTimes( data );
+  TTimelinesData tmpTimes = fillTimelinesData( data );
 
   onValues = { statNumSends.execute( data, tmpTimes ) ,
                statNumReceives.execute( data, tmpTimes ),
@@ -166,30 +159,30 @@ void Statistics::initAll()
 #ifndef PARALLEL_ENABLED
   zeroMatrix.clear();
   zeroVector.clear();
-  for ( THistogramColumn iPlane = 0; iPlane < whichHistogram->getNumPlanes(); ++iPlane )
+  for ( THistogramColumn iPlane = 0; iPlane < myHistogram.getNumPlanes(); ++iPlane )
   {
-    zeroMatrix.push_back( vector<TSemanticValue>( whichHistogram->getNumColumns(), 0.0 ) );
+    zeroMatrix.push_back( vector<TSemanticValue>( myHistogram.getNumColumns(), 0.0 ) );
     zeroVector.push_back( 0.0 );
   }
 #endif
 
-  statTime.init( whichHistogram );
-  statPercTime.init( whichHistogram );
-  statPercTimeNotZero.init( whichHistogram );
-  statPercTimeWindow.init( whichHistogram );
-  statNumBursts.init( whichHistogram );
-  statPercNumBursts.init( whichHistogram );
-  statIntegral.init( whichHistogram );
-  statAvgValue.init( whichHistogram );
-  statMaximum.init( whichHistogram );
-  statMinimum.init ( whichHistogram );
-  statAvgBurstTime.init( whichHistogram );
-  statStdevBurstTime.init( whichHistogram );
-  statAvgPerBurst.init( whichHistogram );
-  statAvgValueNotZero.init( whichHistogram );
-  statAvgPerBurstNotZero.init( whichHistogram );
-  statNumBurstsNotZero.init( whichHistogram );
-  statSumBursts.init( whichHistogram );
+  statTime.init( myHistogram );
+  statPercTime.init( myHistogram );
+  statPercTimeNotZero.init( myHistogram );
+  statPercTimeWindow.init( myHistogram );
+  statNumBursts.init( myHistogram );
+  statPercNumBursts.init( myHistogram );
+  statIntegral.init( myHistogram );
+  statAvgValue.init( myHistogram );
+  statMaximum.init( myHistogram );
+  statMinimum.init ( myHistogram );
+  statAvgBurstTime.init( myHistogram );
+  statStdevBurstTime.init( myHistogram );
+  statAvgPerBurst.init( myHistogram );
+  statAvgValueNotZero.init( myHistogram );
+  statAvgPerBurstNotZero.init( myHistogram );
+  statNumBurstsNotZero.init( myHistogram );
+  statSumBursts.init( myHistogram );
 }
 
 void Statistics::resetAll()
@@ -215,30 +208,12 @@ void Statistics::resetAll()
 
 bool Statistics::filterAll( CalculateData *data )
 {
-  if ( statTime.filter( data ) )               return true;
-  if ( statPercTime.filter( data ) )           return true;
-  if ( statPercTimeNotZero.filter( data ) )    return true;
-  if ( statPercTimeWindow.filter( data ) )     return true;
-  if ( statNumBursts.filter( data ) )          return true;
-  if ( statPercNumBursts.filter( data ) )      return true;
-  if ( statIntegral.filter( data ) )           return true;
-  if ( statAvgValue.filter( data ) )           return true;
-  if ( statMaximum.filter( data ) )            return true;
-  if ( statMinimum.filter( data ) )            return true;
-  if ( statAvgBurstTime.filter( data ) )       return true;
-  if ( statStdevBurstTime.filter( data ) )     return true;
-  if ( statAvgPerBurst.filter( data ) )        return true;
-  if ( statAvgValueNotZero.filter( data ) )    return true;
-  if ( statAvgPerBurstNotZero.filter( data ) ) return true;
-  if ( statNumBurstsNotZero.filter( data ) )   return true;
-  if ( statSumBursts.filter( data ) )          return true;
-
-  return false;
+  return true;
 }
 
 void Statistics::executeAll( CalculateData *data, array<TSemanticValue, NUM_SEMANTIC_STATS>& onValues, bool& isNotZeroValue )
 {
-  TCalculatedTimes tmpTimes = computeTimes( data );
+  TTimelinesData tmpTimes = fillTimelinesData( data );
 
   TSemanticValue tmpVal = statAvgValueNotZero.execute( data, tmpTimes );
   isNotZeroValue = tmpVal != 0.0;
@@ -307,11 +282,12 @@ array<TSemanticValue, NUM_SEMANTIC_STATS> Statistics::finishRowAll( const array<
   return values;
 }
 
-TCalculatedTimes Statistics::computeTimes( CalculateData *data ) const
+TTimelinesData Statistics::fillTimelinesData( CalculateData *data ) const
 {
-  TCalculatedTimes tmpTimes;
+  TTimelinesData tmpTimes;
 
   Timeline *controlWin = myHistogram.getControlWindow();
+  tmpTimes.controlValue = controlWin->getValue( data->controlRow );
   tmpTimes.controlBeginTime = data->beginTime > myHistogram.getClonedWindow( controlWin )->getBeginTime( data->controlRow ) ?
                               data->beginTime : myHistogram.getClonedWindow( controlWin )->getBeginTime( data->controlRow );
 
@@ -319,6 +295,7 @@ TCalculatedTimes Statistics::computeTimes( CalculateData *data ) const
                             data->endTime : myHistogram.getClonedWindow( controlWin )->getEndTime( data->controlRow );
 
   Timeline *dataWin = myHistogram.getDataWindow();
+  tmpTimes.dataValue = dataWin->getValue( data->dataRow );
   tmpTimes.dataBeginTime = data->beginTime > myHistogram.getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
                            data->beginTime : myHistogram.getClonedWindow( dataWin )->getBeginTime( data->dataRow );
 
@@ -341,21 +318,15 @@ TObjectOrder StatNumSends::getPartner( CalculateData *data )
   return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() - 1 );
 }
 
-void StatNumSends::init( KHistogram *whichHistogram )
+void StatNumSends::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  controlWin = myHistogram->getControlWindow();
+  controlWin = whichHistogram.getControlWindow();
 }
 
 void StatNumSends::reset()
 {}
 
-bool StatNumSends::filter( CalculateData *data ) const
-{
-  return filterCommunication( data->comm, myHistogram );
-}
-
-TSemanticValue StatNumSends::execute( CalculateData *data, TCalculatedTimes& calcTimes )
+TSemanticValue StatNumSends::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
   if ( data->comm->getRecordType() & SEND )
     return 1;
@@ -399,21 +370,15 @@ TObjectOrder StatNumReceives::getPartner( CalculateData *data )
   return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() - 1 );
 }
 
-void StatNumReceives::init( KHistogram *whichHistogram )
+void StatNumReceives::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  controlWin = myHistogram->getControlWindow();
+  controlWin = whichHistogram.getControlWindow();
 }
 
 void StatNumReceives::reset()
 {}
 
-bool StatNumReceives::filter( CalculateData *data ) const
-{
-  return filterCommunication( data->comm, myHistogram );
-}
-
-TSemanticValue StatNumReceives::execute( CalculateData *data, TCalculatedTimes& calcTimes )
+TSemanticValue StatNumReceives::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
   if ( data->comm->getRecordType() & RECV )
     return 1;
@@ -456,21 +421,15 @@ TObjectOrder StatBytesSent::getPartner( CalculateData *data )
   return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() - 1 );
 }
 
-void StatBytesSent::init( KHistogram *whichHistogram )
+void StatBytesSent::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  controlWin = myHistogram->getControlWindow();
+  controlWin = whichHistogram.getControlWindow();
 }
 
 void StatBytesSent::reset()
 {}
 
-bool StatBytesSent::filter( CalculateData *data ) const
-{
-  return filterCommunication( data->comm, myHistogram );
-}
-
-TSemanticValue StatBytesSent::execute( CalculateData *data, TCalculatedTimes& calcTimes )
+TSemanticValue StatBytesSent::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
   if ( data->comm->getRecordType() & SEND )
     return data->comm->getCommSize();
@@ -513,21 +472,15 @@ TObjectOrder StatBytesReceived::getPartner( CalculateData *data )
   return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() - 1 );
 }
 
-void StatBytesReceived::init( KHistogram *whichHistogram )
+void StatBytesReceived::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  controlWin = myHistogram->getControlWindow();
+  controlWin = whichHistogram.getControlWindow();
 }
 
 void StatBytesReceived::reset()
 {}
 
-bool StatBytesReceived::filter( CalculateData *data ) const
-{
-  return filterCommunication( data->comm, myHistogram );
-}
-
-TSemanticValue StatBytesReceived::execute( CalculateData *data, TCalculatedTimes& calcTimes )
+TSemanticValue StatBytesReceived::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
   if ( data->comm->getRecordType() & RECV )
     return data->comm->getCommSize();
@@ -570,10 +523,9 @@ TObjectOrder StatAvgBytesSent::getPartner( CalculateData *data )
   return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() - 1 );
 }
 
-void StatAvgBytesSent::init( KHistogram *whichHistogram )
+void StatAvgBytesSent::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  controlWin = myHistogram->getControlWindow();
+  controlWin = whichHistogram.getControlWindow();
 #ifndef PARALLEL_ENABLED
   numComms = Statistics::zeroCommMatrix;
 #else
@@ -590,12 +542,7 @@ void StatAvgBytesSent::reset()
 #endif
 }
 
-bool StatAvgBytesSent::filter( CalculateData *data ) const
-{
-  return filterCommunication( data->comm, myHistogram );
-}
-
-TSemanticValue StatAvgBytesSent::execute( CalculateData *data, TCalculatedTimes& calcTimes )
+TSemanticValue StatAvgBytesSent::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
   if ( data->comm->getRecordType() & SEND )
   {
@@ -656,10 +603,9 @@ TObjectOrder StatAvgBytesReceived::getPartner( CalculateData *data )
   return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() - 1 );
 }
 
-void StatAvgBytesReceived::init( KHistogram *whichHistogram )
+void StatAvgBytesReceived::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  controlWin = myHistogram->getControlWindow();
+  controlWin = whichHistogram.getControlWindow();
 #ifndef PARALLEL_ENABLED
   numComms = Statistics::zeroCommMatrix;
 #else
@@ -676,12 +622,7 @@ void StatAvgBytesReceived::reset()
 #endif
 }
 
-bool StatAvgBytesReceived::filter( CalculateData *data ) const
-{
-  return filterCommunication( data->comm, myHistogram );
-}
-
-TSemanticValue StatAvgBytesReceived::execute( CalculateData *data, TCalculatedTimes& calcTimes )
+TSemanticValue StatAvgBytesReceived::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
   if ( data->comm->getRecordType() & RECV )
   {
@@ -742,10 +683,9 @@ TObjectOrder StatMinBytesSent::getPartner( CalculateData *data )
   return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() - 1 );
 }
 
-void StatMinBytesSent::init( KHistogram *whichHistogram )
+void StatMinBytesSent::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  controlWin = myHistogram->getControlWindow();
+  controlWin = whichHistogram.getControlWindow();
 #ifndef PARALLEL_ENABLED
   min = Statistics::zeroCommMatrix;
 #else
@@ -762,12 +702,7 @@ void StatMinBytesSent::reset()
 #endif
 }
 
-bool StatMinBytesSent::filter( CalculateData *data ) const
-{
-  return filterCommunication( data->comm, myHistogram );
-}
-
-TSemanticValue StatMinBytesSent::execute( CalculateData *data, TCalculatedTimes& calcTimes )
+TSemanticValue StatMinBytesSent::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
   if ( data->comm->getRecordType() & SEND )
   {
@@ -844,10 +779,9 @@ TObjectOrder StatMinBytesReceived::getPartner( CalculateData *data )
   return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() - 1 );
 }
 
-void StatMinBytesReceived::init( KHistogram *whichHistogram )
+void StatMinBytesReceived::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  controlWin = myHistogram->getControlWindow();
+  controlWin = whichHistogram.getControlWindow();
 #ifndef PARALLEL_ENABLED
   min = Statistics::zeroCommMatrix;
 #else
@@ -864,12 +798,7 @@ void StatMinBytesReceived::reset()
 #endif
 }
 
-bool StatMinBytesReceived::filter( CalculateData *data ) const
-{
-  return filterCommunication( data->comm, myHistogram );
-}
-
-TSemanticValue StatMinBytesReceived::execute( CalculateData *data, TCalculatedTimes& calcTimes )
+TSemanticValue StatMinBytesReceived::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
   if ( data->comm->getRecordType() & RECV )
   {
@@ -946,10 +875,9 @@ TObjectOrder StatMaxBytesSent::getPartner( CalculateData *data )
   return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() - 1 );
 }
 
-void StatMaxBytesSent::init( KHistogram *whichHistogram )
+void StatMaxBytesSent::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  controlWin = myHistogram->getControlWindow();
+  controlWin = whichHistogram.getControlWindow();
 #ifndef PARALLEL_ENABLED
   max = Statistics::zeroCommMatrix;
 #else
@@ -966,12 +894,7 @@ void StatMaxBytesSent::reset()
 #endif
 }
 
-bool StatMaxBytesSent::filter( CalculateData *data ) const
-{
-  return filterCommunication( data->comm, myHistogram );
-}
-
-TSemanticValue StatMaxBytesSent::execute( CalculateData *data, TCalculatedTimes& calcTimes )
+TSemanticValue StatMaxBytesSent::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
   if ( data->comm->getRecordType() & SEND )
   {
@@ -1044,10 +967,9 @@ TObjectOrder StatMaxBytesReceived::getPartner( CalculateData *data )
   return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() - 1 );
 }
 
-void StatMaxBytesReceived::init( KHistogram *whichHistogram )
+void StatMaxBytesReceived::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  controlWin = myHistogram->getControlWindow();
+  controlWin = whichHistogram.getControlWindow();
 #ifndef PARALLEL_ENABLED
   max = Statistics::zeroCommMatrix;
 #else
@@ -1064,12 +986,7 @@ void StatMaxBytesReceived::reset()
 #endif
 }
 
-bool StatMaxBytesReceived::filter( CalculateData *data ) const
-{
-  return filterCommunication( data->comm, myHistogram );
-}
-
-TSemanticValue StatMaxBytesReceived::execute( CalculateData *data, TCalculatedTimes& calcTimes )
+TSemanticValue StatMaxBytesReceived::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
   if ( data->comm->getRecordType() & RECV )
   {
@@ -1134,36 +1051,16 @@ HistogramStatistic *StatMaxBytesReceived::clone()
 //-------------------------------------------------------------------------
 string StatTime::name = "Time";
 
-void StatTime::init( KHistogram *whichHistogram )
+void StatTime::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  controlWin = myHistogram->getControlWindow();
+  controlWin = whichHistogram.getControlWindow();
 }
 
 void StatTime::reset()
 {}
 
-bool StatTime::filter( CalculateData *data ) const
+TSemanticValue StatTime::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
-  return filterSemanticValue( controlWin->getValue( data->controlRow ),
-                              myHistogram );
-}
-
-TSemanticValue StatTime::execute( CalculateData *data, TCalculatedTimes& calcTimes )
-{
-  /* ya estaba comentado */
-  /*  TRecordTime begin;
-    TRecordTime end;
-
-    begin = data->beginTime > controlWin->getBeginTime( data->controlRow ) ?
-            data->beginTime : controlWin->getBeginTime( data->controlRow );
-
-    end = data->endTime < controlWin->getEndTime( data->controlRow ) ?
-          data->endTime : controlWin->getEndTime( data->controlRow );
-
-    return end - begin;
-  */
-
   return data->endTime - data->beginTime;
 }
 
@@ -1198,10 +1095,8 @@ HistogramStatistic *StatTime::clone()
 //-------------------------------------------------------------------------
 string StatPercTime::name = "% Time";
 
-void StatPercTime::init( KHistogram *whichHistogram )
+void StatPercTime::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  controlWin = myHistogram->getControlWindow();
 #ifndef PARALLEL_ENABLED
   rowTotal = Statistics::zeroVector;
 #else
@@ -1218,28 +1113,13 @@ void StatPercTime::reset()
 #endif
 }
 
-bool StatPercTime::filter( CalculateData *data ) const
+TSemanticValue StatPercTime::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
-  return filterSemanticValue( myHistogram->getClonedWindow( controlWin )->getValue( data->controlRow ),
-                              myHistogram );
-}
+  TRecordTime begin = timelinesData.controlBeginTime;
+  TRecordTime end = timelinesData.controlEndTime;
 
-TSemanticValue StatPercTime::execute( CalculateData *data, TCalculatedTimes& calcTimes )
-{
-  TRecordTime begin = calcTimes.controlBeginTime;
-  TRecordTime end = calcTimes.controlEndTime;
-/*
-  begin = data->beginTime > myHistogram->getClonedWindow( controlWin )->getBeginTime( data->controlRow ) ?
-          data->beginTime : myHistogram->getClonedWindow( controlWin )->getBeginTime( data->controlRow );
-
-  end = data->endTime < myHistogram->getClonedWindow( controlWin )->getEndTime( data->controlRow ) ?
-        data->endTime : myHistogram->getClonedWindow( controlWin )->getEndTime( data->controlRow );
-*/
 #ifndef PARALLEL_ENABLED
-  if ( myHistogram->getThreeDimensions() )
-    rowTotal[ data->plane ] += end - begin;
-  else
-    rowTotal[ 0 ] += end - begin;
+  rowTotal[ data->plane ] += end - begin;
 #else
   rowTotal->addValue( data->plane, data->row, 0, array< TSemanticValue, 1 >{ end - begin } );
 #endif
@@ -1284,10 +1164,8 @@ HistogramStatistic *StatPercTime::clone()
 //-------------------------------------------------------------------------
 string StatPercTimeNotZero::name = "% Time Not Zero";
 
-void StatPercTimeNotZero::init( KHistogram *whichHistogram )
+void StatPercTimeNotZero::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  controlWin = myHistogram->getControlWindow();
 #ifndef PARALLEL_ENABLED
   rowTotal = Statistics::zeroVector;
 #else
@@ -1304,33 +1182,15 @@ void StatPercTimeNotZero::reset()
 #endif
 }
 
-bool StatPercTimeNotZero::filter( CalculateData *data ) const
+TSemanticValue StatPercTimeNotZero::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
-  return filterSemanticValue( myHistogram->getClonedWindow( controlWin )->getValue( data->controlRow ),
-                              myHistogram );
-}
-
-TSemanticValue StatPercTimeNotZero::execute( CalculateData *data, TCalculatedTimes& calcTimes )
-{
-  if ( myHistogram->getClonedWindow( controlWin )->getValue( data->controlRow ) != 0.0 )
+  if ( timelinesData.controlValue != 0.0 )
   {
-    TRecordTime begin = calcTimes.controlBeginTime;
-    TRecordTime end = calcTimes.controlEndTime;
-  /*
-    TRecordTime begin;
-    TRecordTime end;
+    TRecordTime begin = timelinesData.controlBeginTime;
+    TRecordTime end = timelinesData.controlEndTime;
 
-    begin = data->beginTime > myHistogram->getClonedWindow( controlWin )->getBeginTime( data->controlRow ) ?
-            data->beginTime : myHistogram->getClonedWindow( controlWin )->getBeginTime( data->controlRow );
-
-    end = data->endTime < myHistogram->getClonedWindow( controlWin )->getEndTime( data->controlRow ) ?
-          data->endTime : myHistogram->getClonedWindow( controlWin )->getEndTime( data->controlRow );
-*/
 #ifndef PARALLEL_ENABLED
-    if ( myHistogram->getThreeDimensions() )
-      rowTotal[ data->plane ] += end - begin;
-    else
-      rowTotal[ 0 ] += end - begin;
+    rowTotal[ data->plane ] += end - begin;
 #else
     rowTotal->addValue( data->plane, data->row, 0, array< TSemanticValue, 1 >{ end - begin } );
 #endif
@@ -1378,36 +1238,20 @@ HistogramStatistic *StatPercTimeNotZero::clone()
 //-------------------------------------------------------------------------
 string StatPercTimeWindow::name = "% Window Time";
 
-void StatPercTimeWindow::init( KHistogram *whichHistogram )
+void StatPercTimeWindow::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  controlWin = myHistogram->getControlWindow();
+  histogramTotalDuration = whichHistogram.getEndTime() - whichHistogram.getBeginTime();
 }
 
 void StatPercTimeWindow::reset()
 {
 }
 
-bool StatPercTimeWindow::filter( CalculateData *data ) const
+TSemanticValue StatPercTimeWindow::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
-  return filterSemanticValue( myHistogram->getClonedWindow( controlWin )->getValue( data->controlRow ),
-                              myHistogram );
-}
+  TRecordTime begin = timelinesData.controlBeginTime;
+  TRecordTime end = timelinesData.controlEndTime;
 
-TSemanticValue StatPercTimeWindow::execute( CalculateData *data, TCalculatedTimes& calcTimes )
-{
-  TRecordTime begin = calcTimes.controlBeginTime;
-  TRecordTime end = calcTimes.controlEndTime;
-/*
-TRecordTime begin;
-  TRecordTime end;
-
-  begin = data->beginTime > myHistogram->getClonedWindow( controlWin )->getBeginTime( data->controlRow ) ?
-          data->beginTime : myHistogram->getClonedWindow( controlWin )->getBeginTime( data->controlRow );
-
-  end = data->endTime < myHistogram->getClonedWindow( controlWin )->getEndTime( data->controlRow ) ?
-        data->endTime : myHistogram->getClonedWindow( controlWin )->getEndTime( data->controlRow );
-*/
   return end - begin;
 }
 
@@ -1416,8 +1260,7 @@ TSemanticValue StatPercTimeWindow::finishRow( TSemanticValue cellValue,
     TObjectOrder row,
     THistogramColumn plane )
 {
-  return ( cellValue * 100.0 ) /
-         ( myHistogram->getEndTime() - myHistogram->getBeginTime() );
+  return ( cellValue * 100.0 ) / histogramTotalDuration;
 }
 
 string StatPercTimeWindow::getName() const
@@ -1441,34 +1284,15 @@ HistogramStatistic *StatPercTimeWindow::clone()
 //-------------------------------------------------------------------------
 string StatNumBursts::name = "# Bursts";
 
-void StatNumBursts::init( KHistogram *whichHistogram )
+void StatNumBursts::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  dataWin = myHistogram->getDataWindow();
 }
 
 void StatNumBursts::reset()
 {
 }
 
-bool StatNumBursts::filter( CalculateData *data ) const
-{
-  TRecordTime begin;
-  TRecordTime end;
-
-  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
-          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
-
-  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
-        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
-
-  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
-                              myHistogram )
-         &&
-         filterBurstTime( end - begin, myHistogram );
-}
-
-TSemanticValue StatNumBursts::execute( CalculateData *data, TCalculatedTimes& calcTimes )
+TSemanticValue StatNumBursts::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
   return 1.0;
 }
@@ -1502,11 +1326,8 @@ HistogramStatistic *StatNumBursts::clone()
 //-------------------------------------------------------------------------
 string StatPercNumBursts::name = "% # Bursts";
 
-void StatPercNumBursts::init( KHistogram *whichHistogram )
+void StatPercNumBursts::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  dataWin = myHistogram->getDataWindow();
-
 #ifndef PARALLEL_ENABLED
   rowTotal = Statistics::zeroVector;
 #else
@@ -1523,30 +1344,10 @@ void StatPercNumBursts::reset()
 #endif
 }
 
-bool StatPercNumBursts::filter( CalculateData *data ) const
-{
-  TRecordTime begin;
-  TRecordTime end;
-
-  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
-          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
-
-  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
-        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
-
-  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
-                              myHistogram )
-         &&
-         filterBurstTime( end - begin, myHistogram );
-}
-
-TSemanticValue StatPercNumBursts::execute( CalculateData *data, TCalculatedTimes& calcTimes )
+TSemanticValue StatPercNumBursts::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
 #ifndef PARALLEL_ENABLED
-  if ( myHistogram->getThreeDimensions() )
-    rowTotal[ data->plane ] += 1.0;
-  else
-    rowTotal[ 0 ] += 1.0;
+  rowTotal[ data->plane ] += 1.0;
 #else
   rowTotal->addValue( data->plane, data->row, 0, array< TSemanticValue, 1 >{ 1.0 } );
 #endif
@@ -1591,39 +1392,20 @@ HistogramStatistic *StatPercNumBursts::clone()
 //-------------------------------------------------------------------------
 string StatIntegral::name = "Integral";
 
-void StatIntegral::init( KHistogram *whichHistogram )
+void StatIntegral::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  dataWin = myHistogram->getDataWindow();
+  dataWin = whichHistogram.getDataWindow();
 }
 
 void StatIntegral::reset()
 {
 }
 
-bool StatIntegral::filter( CalculateData *data ) const
+TSemanticValue StatIntegral::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
-  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
-                              myHistogram );
-}
-
-TSemanticValue StatIntegral::execute( CalculateData *data, TCalculatedTimes& calcTimes )
-{
-  TRecordTime begin = calcTimes.dataBeginTime;
-  TRecordTime end = calcTimes.dataEndTime;
-/*
-  TRecordTime begin;
-  TRecordTime end;
-
-  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
-          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
-
-  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
-        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
-
-*/
-  TSemanticValue value;
-  value = myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow );
+  TRecordTime begin = timelinesData.dataBeginTime;
+  TRecordTime end = timelinesData.dataEndTime;
+  TSemanticValue value = timelinesData.dataValue;
   value = value >= (TSemanticValue)0.0 ? value : -value;
 
   return dataWin->traceUnitsToWindowUnits( end - begin ) * value;
@@ -1658,10 +1440,8 @@ HistogramStatistic *StatIntegral::clone()
 //-------------------------------------------------------------------------
 string StatAvgValue::name = "Average value";
 
-void StatAvgValue::init( KHistogram *whichHistogram )
+void StatAvgValue::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  dataWin = myHistogram->getDataWindow();
 #ifndef PARALLEL_ENABLED
   numValues = Statistics::zeroMatrix;
 #else
@@ -1678,34 +1458,18 @@ void StatAvgValue::reset()
 #endif
 }
 
-bool StatAvgValue::filter( CalculateData *data ) const
+TSemanticValue StatAvgValue::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
-  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
-                              myHistogram );
-}
+  TRecordTime begin = timelinesData.dataBeginTime;
+  TRecordTime end = timelinesData.dataEndTime;
 
-
-TSemanticValue StatAvgValue::execute( CalculateData *data, TCalculatedTimes& calcTimes )
-{
-  TRecordTime begin = calcTimes.dataBeginTime;
-  TRecordTime end = calcTimes.dataEndTime;
-/*
-  TRecordTime begin;
-  TRecordTime end;
-
-  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
-          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
-
-  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
-        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
-*/
 #ifndef PARALLEL_ENABLED
   ( numValues[ data->plane ] )[ data->column ] += ( end - begin );
 #else
   numValues->addValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ end - begin } );
 #endif
 
-  return myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) * ( end -begin );
+  return timelinesData.dataValue * ( end -begin );
 }
 
 
@@ -1747,10 +1511,8 @@ HistogramStatistic *StatAvgValue::clone()
 //-------------------------------------------------------------------------
 string StatMaximum::name = "Maximum";
 
-void StatMaximum::init( KHistogram *whichHistogram )
+void StatMaximum::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  dataWin = myHistogram->getDataWindow();
 #ifndef PARALLEL_ENABLED
   max = Statistics::zeroMatrix;
 #else
@@ -1767,28 +1529,22 @@ void StatMaximum::reset()
 #endif
 }
 
-bool StatMaximum::filter( CalculateData *data ) const
-{
-  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
-                              myHistogram );
-}
-
-TSemanticValue StatMaximum::execute( CalculateData *data, TCalculatedTimes& calcTimes )
+TSemanticValue StatMaximum::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
 #ifndef PARALLEL_ENABLED
-  if ( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) >
+  if ( timelinesData.dataValue >
        ( ( max[ data->plane ] )[ data->column ] ) )
-    ( ( max[ data->plane ] )[ data->column ] ) = myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow );
+    ( ( max[ data->plane ] )[ data->column ] ) = timelinesData.dataValue;
 #else
   array< TSemanticValue, 1 > tmp;
   bool res = max->getCellValue( tmp, data->plane, data->row, data->column );
   if( !res )
   {
-    max->setValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) } );
+    max->setValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ timelinesData.dataValue } );
   }
-  else if ( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) > tmp[ 0 ] )
+  else if ( timelinesData.dataValue > tmp[ 0 ] )
   {
-    max->setValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) } );
+    max->setValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ timelinesData.dataValue } );
   }
 #endif
   return 1;
@@ -1830,10 +1586,8 @@ HistogramStatistic *StatMaximum::clone()
 //-------------------------------------------------------------------------
 string StatMinimum::name = "Minimum";
 
-void StatMinimum::init( KHistogram *whichHistogram )
+void StatMinimum::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  dataWin = myHistogram->getDataWindow();
 #ifndef PARALLEL_ENABLED
   min = Statistics::zeroMatrix;
 #else
@@ -1850,35 +1604,29 @@ void StatMinimum::reset()
 #endif
 }
 
-bool StatMinimum::filter( CalculateData *data ) const
-{
-  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
-                              myHistogram );
-}
-
-TSemanticValue StatMinimum::execute( CalculateData *data, TCalculatedTimes& calcTimes )
+TSemanticValue StatMinimum::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
 #ifndef PARALLEL_ENABLED
   if ( ( ( min[ data->plane ] )[ data->column ] ) == 0.0 )
   {
-    ( ( min[ data->plane ] )[ data->column ] ) = myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow );
+    ( ( min[ data->plane ] )[ data->column ] ) = timelinesData.dataValue;
   }
-  else if ( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) != 0.0 &&
-            myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) <
+  else if ( timelinesData.dataValue != 0.0 &&
+            timelinesData.dataValue <
             ( ( min[ data->plane ] )[ data->column ] ) )
   {
-     ( ( min[ data->plane ] )[ data->column ] ) = myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow );
+     ( ( min[ data->plane ] )[ data->column ] ) = timelinesData.dataValue;
   }
 #else
   array< TSemanticValue, 1 > tmp;
   bool res = min->getCellValue( tmp, data->plane, data->row, data->column );
   if( !res )
   {
-    min->setValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) } );
+    min->setValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ timelinesData.dataValue } );
   }
-  else if ( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) < tmp[ 0 ] )
+  else if ( timelinesData.dataValue < tmp[ 0 ] )
   {
-    min->setValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) } );
+    min->setValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ timelinesData.dataValue } );
   }
 #endif
   return 1;
@@ -1920,11 +1668,9 @@ HistogramStatistic *StatMinimum::clone()
 //-------------------------------------------------------------------------
 string StatAvgBurstTime::name = "Average Burst Time";
 
-void StatAvgBurstTime::init( KHistogram *whichHistogram )
+void StatAvgBurstTime::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  controlWin = myHistogram->getControlWindow();
-  dataWin = myHistogram->getDataWindow();
+  controlWin = whichHistogram.getControlWindow();
 #ifndef PARALLEL_ENABLED
   numValues = Statistics::zeroMatrix;
 #else
@@ -1941,37 +1687,11 @@ void StatAvgBurstTime::reset()
 #endif
 }
 
-bool StatAvgBurstTime::filter( CalculateData *data ) const
+TSemanticValue StatAvgBurstTime::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
-  TRecordTime begin;
-  TRecordTime end;
+  TRecordTime begin = timelinesData.dataBeginTime;
+  TRecordTime end = timelinesData.dataEndTime;
 
-  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
-          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
-
-  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
-        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
-
-  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
-                              myHistogram )
-         &&
-         filterBurstTime( end - begin, myHistogram );
-}
-
-TSemanticValue StatAvgBurstTime::execute( CalculateData *data, TCalculatedTimes& calcTimes )
-{
-  TRecordTime begin = calcTimes.dataBeginTime;
-  TRecordTime end = calcTimes.dataEndTime;
-/*
-  TRecordTime begin;
-  TRecordTime end;
-
-  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
-          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
-
-  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
-        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
-*/
 #ifndef PARALLEL_ENABLED
   ++( ( numValues[ data->plane ] )[ data->column ] );
 #else
@@ -2020,10 +1740,9 @@ HistogramStatistic *StatAvgBurstTime::clone()
 //-------------------------------------------------------------------------
 string StatStdevBurstTime::name = "Stdev Burst Time";
 
-void StatStdevBurstTime::init( KHistogram *whichHistogram )
+void StatStdevBurstTime::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  dataWin = myHistogram->getDataWindow();
+  controlWin = whichHistogram.getControlWindow();
 #ifndef PARALLEL_ENABLED
   numValues = Statistics::zeroMatrix;
   qValues = Statistics::zeroMatrix;
@@ -2044,39 +1763,13 @@ void StatStdevBurstTime::reset()
 #endif
 }
 
-bool StatStdevBurstTime::filter( CalculateData *data ) const
+TSemanticValue StatStdevBurstTime::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
-  TRecordTime begin;
-  TRecordTime end;
-
-  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
-          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
-
-  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
-        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
-
-  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
-                              myHistogram )
-         &&
-         filterBurstTime( end - begin, myHistogram );
-}
-
-TSemanticValue StatStdevBurstTime::execute( CalculateData *data, TCalculatedTimes& calcTimes )
-{
-  TRecordTime begin = calcTimes.dataBeginTime;
-  TRecordTime end = calcTimes.dataEndTime;
-/*
-  TRecordTime begin;
-  TRecordTime end;
-
-  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
-          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
-
-  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
-        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
-*/
+  TRecordTime begin = timelinesData.dataBeginTime;
+  TRecordTime end = timelinesData.dataEndTime;
   TRecordTime tmpDuration = end - begin;
-  tmpDuration = myHistogram->getControlWindow()->traceUnitsToWindowUnits( tmpDuration );
+
+  tmpDuration = controlWin->traceUnitsToWindowUnits( tmpDuration );
 
 #ifndef PARALLEL_ENABLED
   ++( ( numValues[ data->plane ] )[ data->column ] );
@@ -2143,10 +1836,8 @@ HistogramStatistic *StatStdevBurstTime::clone()
 //-------------------------------------------------------------------------
 string StatAvgPerBurst::name = "Average per Burst";
 
-void StatAvgPerBurst::init( KHistogram *whichHistogram )
+void StatAvgPerBurst::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  dataWin = myHistogram->getDataWindow();
 #ifndef PARALLEL_ENABLED
   numValues = Statistics::zeroMatrix;
 #else
@@ -2163,24 +1854,7 @@ void StatAvgPerBurst::reset()
 #endif
 }
 
-bool StatAvgPerBurst::filter( CalculateData *data ) const
-{
-  TRecordTime begin;
-  TRecordTime end;
-
-  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
-          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
-
-  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
-        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
-
-  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
-                              myHistogram )
-         &&
-         filterBurstTime( end - begin, myHistogram );
-}
-
-TSemanticValue StatAvgPerBurst::execute( CalculateData *data, TCalculatedTimes& calcTimes )
+TSemanticValue StatAvgPerBurst::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
 #ifndef PARALLEL_ENABLED
   ++( ( numValues[ data->plane ] )[ data->column ] );
@@ -2188,7 +1862,7 @@ TSemanticValue StatAvgPerBurst::execute( CalculateData *data, TCalculatedTimes& 
   numValues->addValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ 1.0 } );
 #endif
 
-  return myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow );
+  return timelinesData.dataValue;
 }
 
 TSemanticValue StatAvgPerBurst::finishRow( TSemanticValue cellValue,
@@ -2228,10 +1902,8 @@ HistogramStatistic *StatAvgPerBurst::clone()
 //-------------------------------------------------------------------------
 string StatAvgPerBurstNotZero::name = "Average per Burst != 0";
 
-void StatAvgPerBurstNotZero::init( KHistogram *whichHistogram )
+void StatAvgPerBurstNotZero::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  dataWin = myHistogram->getDataWindow();
 #ifndef PARALLEL_ENABLED
   numValues = Statistics::zeroMatrix;
 #else
@@ -2248,33 +1920,16 @@ void StatAvgPerBurstNotZero::reset()
 #endif
 }
 
-bool StatAvgPerBurstNotZero::filter( CalculateData *data ) const
+TSemanticValue StatAvgPerBurstNotZero::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
-  TRecordTime begin;
-  TRecordTime end;
-
-  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
-          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
-
-  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
-        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
-
-  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
-                              myHistogram )
-         &&
-         filterBurstTime( end - begin, myHistogram );
-}
-
-TSemanticValue StatAvgPerBurstNotZero::execute( CalculateData *data, TCalculatedTimes& calcTimes )
-{
-  if ( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) != 0.0 )
+  if ( timelinesData.dataValue != 0.0 )
 #ifndef PARALLEL_ENABLED
     ++( ( numValues[ data->plane ] )[ data->column ] );
 #else
     numValues->addValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ 1.0 } );
 #endif
 
-  return myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow );
+  return timelinesData.dataValue;
 }
 
 TSemanticValue StatAvgPerBurstNotZero::finishRow( TSemanticValue cellValue,
@@ -2314,10 +1969,8 @@ HistogramStatistic *StatAvgPerBurstNotZero::clone()
 //-------------------------------------------------------------------------
 string StatAvgValueNotZero::name = "Average value != 0";
 
-void StatAvgValueNotZero::init( KHistogram *whichHistogram )
+void StatAvgValueNotZero::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  dataWin = myHistogram->getDataWindow();
 #ifndef PARALLEL_ENABLED
   numValues = Statistics::zeroMatrix;
 #else
@@ -2334,34 +1987,19 @@ void StatAvgValueNotZero::reset()
 #endif
 }
 
-bool StatAvgValueNotZero::filter( CalculateData *data ) const
+TSemanticValue StatAvgValueNotZero::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
-  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
-                              myHistogram );
-}
+  TRecordTime begin = timelinesData.dataBeginTime;
+  TRecordTime end = timelinesData.dataEndTime;
 
-TSemanticValue StatAvgValueNotZero::execute( CalculateData *data, TCalculatedTimes& calcTimes )
-{
-  TRecordTime begin = calcTimes.dataBeginTime;
-  TRecordTime end = calcTimes.dataEndTime;
-/*
-  TRecordTime begin;
-  TRecordTime end;
-
-  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
-          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
-
-  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
-        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
-*/
-  if ( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) != 0.0 )
+  if ( timelinesData.dataValue != 0.0 )
 #ifndef PARALLEL_ENABLED
     ( numValues[ data->plane ] )[ data->column ] += ( end - begin );
 #else
     numValues->addValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ static_cast<TSemanticValue>( end - begin ) } );
 #endif
 
-  return myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) * ( end -begin );
+  return timelinesData.dataValue * ( end -begin );
 }
 
 TSemanticValue StatAvgValueNotZero::finishRow( TSemanticValue cellValue,
@@ -2403,36 +2041,17 @@ HistogramStatistic *StatAvgValueNotZero::clone()
 //-------------------------------------------------------------------------
 string StatNumBurstsNotZero::name = "# Bursts != 0";
 
-void StatNumBurstsNotZero::init( KHistogram *whichHistogram )
+void StatNumBurstsNotZero::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  dataWin = myHistogram->getDataWindow();
 }
 
 void StatNumBurstsNotZero::reset()
 {
 }
 
-bool StatNumBurstsNotZero::filter( CalculateData *data ) const
+TSemanticValue StatNumBurstsNotZero::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
-  TRecordTime begin;
-  TRecordTime end;
-
-  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
-          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
-
-  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
-        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
-
-  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
-                              myHistogram )
-         &&
-         filterBurstTime( end - begin, myHistogram );
-}
-
-TSemanticValue StatNumBurstsNotZero::execute( CalculateData *data, TCalculatedTimes& calcTimes )
-{
-  if ( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) != 0.0 )
+  if ( timelinesData.dataValue != 0.0 )
     return 1.0;
   return 0.0;
 }
@@ -2466,25 +2085,17 @@ HistogramStatistic *StatNumBurstsNotZero::clone()
 //-------------------------------------------------------------------------
 string StatSumBursts::name = "Sum bursts";
 
-void StatSumBursts::init( KHistogram *whichHistogram )
+void StatSumBursts::init( const KHistogram& whichHistogram )
 {
-  myHistogram = whichHistogram;
-  dataWin = myHistogram->getDataWindow();
 }
 
 void StatSumBursts::reset()
 {
 }
 
-bool StatSumBursts::filter( CalculateData *data ) const
+TSemanticValue StatSumBursts::execute( CalculateData *data, TTimelinesData& timelinesData )
 {
-  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
-                              myHistogram );
-}
-
-TSemanticValue StatSumBursts::execute( CalculateData *data, TCalculatedTimes& calcTimes )
-{
-  return myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow );
+  return timelinesData.dataValue;
 }
 
 TSemanticValue StatSumBursts::finishRow( TSemanticValue cellValue,

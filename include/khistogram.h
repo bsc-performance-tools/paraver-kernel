@@ -122,7 +122,7 @@ class ColumnTranslator
 struct CalculateData
 {
   TObjectOrder row;
-  THistogramColumn plane;
+  THistogramColumn plane = 0;
   THistogramColumn column;
 
   TObjectOrder controlRow;
@@ -305,8 +305,6 @@ class KHistogram : public Histogram
 
     bool inclusive;
 
-    /*std::vector<HistogramStatistic *> statisticFunctions;
-    std::vector<HistogramStatistic *> commStatisticFunctions;*/
     Statistics statistics;
 
     std::vector<KTimeline *> orderedWindows;

@@ -249,7 +249,7 @@ inline THistogramLimit ColumnTranslator::getDelta() const
   return delta;
 }
 
-KHistogram::KHistogram()
+KHistogram::KHistogram() : statistics( *this )
 {
   controlWindow = nullptr;
   dataWindow = nullptr;
@@ -1121,8 +1121,8 @@ void KHistogram::initSemantic( TRecordTime beginTime )
 
 void KHistogram::initStatistics()
 {
-  statistics.initAll( this );
-  statistics.initAllComm( this );
+  statistics.initAll();
+  statistics.initAllComm();
 }
 
 void KHistogram::initTmpBuffers( THistogramColumn planes, TObjectOrder rows )
