@@ -529,7 +529,7 @@ void StatAvgBytesSent::init( const KHistogram& whichHistogram )
 #ifndef PARALLEL_ENABLED
   numComms = Statistics::zeroCommMatrix;
 #else
-  numComms = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  numComms = new CubeBuffer<1>( whichHistogram.getNumPlanes(), whichHistogram.getNumRows() );
 #endif
 }
 
@@ -609,7 +609,7 @@ void StatAvgBytesReceived::init( const KHistogram& whichHistogram )
 #ifndef PARALLEL_ENABLED
   numComms = Statistics::zeroCommMatrix;
 #else
-  numComms = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  numComms = new CubeBuffer<1>( whichHistogram.getNumPlanes(), whichHistogram.getNumRows() );
 #endif
 }
 
@@ -689,7 +689,7 @@ void StatMinBytesSent::init( const KHistogram& whichHistogram )
 #ifndef PARALLEL_ENABLED
   min = Statistics::zeroCommMatrix;
 #else
-  min = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  min = new CubeBuffer<1>( whichHistogram.getNumPlanes(), whichHistogram.getNumRows() );
 #endif
 }
 
@@ -785,7 +785,7 @@ void StatMinBytesReceived::init( const KHistogram& whichHistogram )
 #ifndef PARALLEL_ENABLED
   min = Statistics::zeroCommMatrix;
 #else
-  min = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  min = new CubeBuffer<1>( whichHistogram.getNumPlanes(), whichHistogram.getNumRows() );
 #endif
 }
 
@@ -881,7 +881,7 @@ void StatMaxBytesSent::init( const KHistogram& whichHistogram )
 #ifndef PARALLEL_ENABLED
   max = Statistics::zeroCommMatrix;
 #else
-  max = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  max = new CubeBuffer<1>( whichHistogram.getNumPlanes(), whichHistogram.getNumRows() );
 #endif
 }
 
@@ -973,7 +973,7 @@ void StatMaxBytesReceived::init( const KHistogram& whichHistogram )
 #ifndef PARALLEL_ENABLED
   max = Statistics::zeroCommMatrix;
 #else
-  max = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  max = new CubeBuffer<1>( whichHistogram.getNumPlanes(), whichHistogram.getNumRows() );
 #endif
 }
 
@@ -1100,7 +1100,7 @@ void StatPercTime::init( const KHistogram& whichHistogram )
 #ifndef PARALLEL_ENABLED
   rowTotal = Statistics::zeroVector;
 #else
-  rowTotal = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  rowTotal = new CubeBuffer<1>( whichHistogram.getNumPlanes(), whichHistogram.getNumRows() );
 #endif
 }
 
@@ -1169,7 +1169,7 @@ void StatPercTimeNotZero::init( const KHistogram& whichHistogram )
 #ifndef PARALLEL_ENABLED
   rowTotal = Statistics::zeroVector;
 #else
-  rowTotal = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  rowTotal = new CubeBuffer<1>( whichHistogram.getNumPlanes(), whichHistogram.getNumRows() );
 #endif
 }
 
@@ -1331,7 +1331,7 @@ void StatPercNumBursts::init( const KHistogram& whichHistogram )
 #ifndef PARALLEL_ENABLED
   rowTotal = Statistics::zeroVector;
 #else
-  rowTotal = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  rowTotal = new CubeBuffer<1>( whichHistogram.getNumPlanes(), whichHistogram.getNumRows() );
 #endif
 }
 
@@ -1445,7 +1445,7 @@ void StatAvgValue::init( const KHistogram& whichHistogram )
 #ifndef PARALLEL_ENABLED
   numValues = Statistics::zeroMatrix;
 #else
-  numValues = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  numValues = new CubeBuffer<1>( whichHistogram.getNumPlanes(), whichHistogram.getNumRows() );
 #endif
 }
 
@@ -1516,7 +1516,7 @@ void StatMaximum::init( const KHistogram& whichHistogram )
 #ifndef PARALLEL_ENABLED
   max = Statistics::zeroMatrix;
 #else
-  max = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  max = new CubeBuffer<1>( whichHistogram.getNumPlanes(), whichHistogram.getNumRows() );
 #endif
 }
 
@@ -1591,7 +1591,7 @@ void StatMinimum::init( const KHistogram& whichHistogram )
 #ifndef PARALLEL_ENABLED
   min = Statistics::zeroMatrix;
 #else
-  min = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  min = new CubeBuffer<1>( whichHistogram.getNumPlanes(), whichHistogram.getNumRows() );
 #endif
 }
 
@@ -1674,7 +1674,7 @@ void StatAvgBurstTime::init( const KHistogram& whichHistogram )
 #ifndef PARALLEL_ENABLED
   numValues = Statistics::zeroMatrix;
 #else
-  numValues = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  numValues = new CubeBuffer<1>( whichHistogram.getNumPlanes(), whichHistogram.getNumRows() );
 #endif
 }
 
@@ -1747,8 +1747,8 @@ void StatStdevBurstTime::init( const KHistogram& whichHistogram )
   numValues = Statistics::zeroMatrix;
   qValues = Statistics::zeroMatrix;
 #else
-  numValues = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
-  qValues= new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  numValues = new CubeBuffer<1>( whichHistogram.getNumPlanes(), whichHistogram.getNumRows() );
+  qValues= new CubeBuffer<1>( whichHistogram.getNumPlanes(), whichHistogram.getNumRows() );
 #endif
 }
 
@@ -1841,7 +1841,7 @@ void StatAvgPerBurst::init( const KHistogram& whichHistogram )
 #ifndef PARALLEL_ENABLED
   numValues = Statistics::zeroMatrix;
 #else
-  numValues = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  numValues = new CubeBuffer<1>( whichHistogram.getNumPlanes(), whichHistogram.getNumRows() );
 #endif
 }
 
@@ -1907,7 +1907,7 @@ void StatAvgPerBurstNotZero::init( const KHistogram& whichHistogram )
 #ifndef PARALLEL_ENABLED
   numValues = Statistics::zeroMatrix;
 #else
-  numValues = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  numValues = new CubeBuffer<1>( whichHistogram.getNumPlanes(), whichHistogram.getNumRows() );
 #endif
 }
 
@@ -1974,7 +1974,7 @@ void StatAvgValueNotZero::init( const KHistogram& whichHistogram )
 #ifndef PARALLEL_ENABLED
   numValues = Statistics::zeroMatrix;
 #else
-  numValues = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  numValues = new CubeBuffer<1>( whichHistogram.getNumPlanes(), whichHistogram.getNumRows() );
 #endif
 }
 
