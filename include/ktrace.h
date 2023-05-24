@@ -24,28 +24,19 @@
 #pragma once
 
 
-#include <string>
-#include <vector>
 #include <set>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+#include "memorytrace.h"
 #include "paraverkerneltypes.h"
 #include "trace.h"
-#include "memorytrace.h"
+#include "tracebodyiofactory.h"
 #include "utils/traceparser/processmodel.h"
 #include "utils/traceparser/resourcemodel.h"
-#include "tracebodyiofactory.h"
 
 #include "ParaverMetadataManager.h"
-
-/*
-class TraceInfo
-{
-  public:
-    PRV_UINT64 cutterOffset;
-    PRV_UINT64 cutterBeginTime;
-    PRV_UINT64 cutterEndTime;
-
-};
-*/
 
 class KTrace: public Trace
 {
@@ -233,7 +224,7 @@ class KTrace: public Trace
     std::vector<std::string> communicators;
     std::set<TEventType> events;
     std::set<TState> states;
-    std::map<TEventType, double> eventsPrecision;
+    std::unordered_map<TEventType, double> eventsPrecision;
     bool fillStateGaps;
     MetadataManager myTraceInfo;
 
