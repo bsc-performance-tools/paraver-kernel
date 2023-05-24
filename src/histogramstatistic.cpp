@@ -286,21 +286,21 @@ TTimelinesData Statistics::fillTimelinesData( CalculateData *data ) const
 {
   TTimelinesData tmpTimes;
 
-  Timeline *controlWin = myHistogram.getControlWindow();
+  Timeline *controlWin = myHistogram.getClonedWindow( myHistogram.getControlWindow() );
   tmpTimes.controlValue = controlWin->getValue( data->controlRow );
-  tmpTimes.controlBeginTime = data->beginTime > myHistogram.getClonedWindow( controlWin )->getBeginTime( data->controlRow ) ?
-                              data->beginTime : myHistogram.getClonedWindow( controlWin )->getBeginTime( data->controlRow );
+  tmpTimes.controlBeginTime = data->beginTime > controlWin->getBeginTime( data->controlRow ) ?
+                              data->beginTime : controlWin->getBeginTime( data->controlRow );
 
-  tmpTimes.controlEndTime = data->endTime < myHistogram.getClonedWindow( controlWin )->getEndTime( data->controlRow ) ?
-                            data->endTime : myHistogram.getClonedWindow( controlWin )->getEndTime( data->controlRow );
+  tmpTimes.controlEndTime = data->endTime < controlWin->getEndTime( data->controlRow ) ?
+                            data->endTime : controlWin->getEndTime( data->controlRow );
 
-  Timeline *dataWin = myHistogram.getDataWindow();
+  Timeline *dataWin = myHistogram.getClonedWindow( myHistogram.getDataWindow() );
   tmpTimes.dataValue = dataWin->getValue( data->dataRow );
-  tmpTimes.dataBeginTime = data->beginTime > myHistogram.getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
-                           data->beginTime : myHistogram.getClonedWindow( dataWin )->getBeginTime( data->dataRow );
+  tmpTimes.dataBeginTime = data->beginTime > dataWin->getBeginTime( data->dataRow ) ?
+                           data->beginTime : dataWin->getBeginTime( data->dataRow );
 
-  tmpTimes.dataEndTime = data->endTime < myHistogram.getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
-                          data->endTime : myHistogram.getClonedWindow( dataWin )->getEndTime( data->dataRow );
+  tmpTimes.dataEndTime = data->endTime < dataWin->getEndTime( data->dataRow ) ?
+                         data->endTime : dataWin->getEndTime( data->dataRow );
 
   return tmpTimes;
 }
