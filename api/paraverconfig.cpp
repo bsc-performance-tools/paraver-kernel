@@ -163,7 +163,12 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlGlobal.prevSessionLoad = true;
   xmlGlobal.helpContentsUsesBrowser = false;
   xmlGlobal.helpContentsQuestionAnswered = false;
+#ifdef __WXMAC__
+  xmlGlobal.disableTimelineZoomMouseWheel = true;
+#else
   xmlGlobal.disableTimelineZoomMouseWheel = false;
+#endif
+
   xmlGlobal.appsChecked = false;
 
   xmlTimeline.defaultName = "New window # %N";
