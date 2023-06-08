@@ -1929,3 +1929,445 @@ KHistogram *KHistogram::clone()
 
   return clonedKHistogram;
 }
+
+
+/***************************************************************
+***                     KDerivedHistogram                    ***
+****************************************************************/
+
+KDerivedHistogram::KDerivedHistogram()
+{}
+
+KDerivedHistogram::~KDerivedHistogram()
+{}
+
+bool KDerivedHistogram::getThreeDimensions() const
+{
+  return {};
+}
+
+TRecordTime KDerivedHistogram::getBeginTime() const
+{
+  return {};
+}
+
+TRecordTime KDerivedHistogram::getEndTime() const
+{
+  return {};
+}
+
+Timeline *KDerivedHistogram::getControlWindow() const
+{
+  return {};
+}
+
+Timeline *KDerivedHistogram::getDataWindow() const
+{
+  return {};
+}
+
+Timeline *KDerivedHistogram::getExtraControlWindow() const
+{
+  return {};
+}
+
+void KDerivedHistogram::setControlWindow( Timeline *whichWindow )
+{
+
+}
+
+void KDerivedHistogram::setDataWindow( Timeline *whichWindow )
+{
+
+}
+
+void KDerivedHistogram::setExtraControlWindow( Timeline *whichWindow )
+{
+
+}
+
+void KDerivedHistogram::clearControlWindow()
+{
+
+}
+
+void KDerivedHistogram::clearDataWindow()
+{
+
+}
+
+void KDerivedHistogram::clearExtraControlWindow()
+{
+
+}
+
+void KDerivedHistogram::setUseFixedDelta( bool whichValue )
+{
+
+}
+
+void KDerivedHistogram::setControlMin( THistogramLimit whichMin )
+{
+
+}
+
+void KDerivedHistogram::setControlMax( THistogramLimit whichMax )
+{
+
+}
+
+void KDerivedHistogram::setControlDelta( THistogramLimit whichDelta )
+{
+
+}
+
+void KDerivedHistogram::setExtraControlMin( THistogramLimit whichMin )
+{
+
+}
+
+void KDerivedHistogram::setExtraControlMax( THistogramLimit whichMax )
+{
+
+}
+
+void KDerivedHistogram::setExtraControlDelta( THistogramLimit whichDelta )
+{
+
+}
+
+void KDerivedHistogram::setDataMin( TSemanticValue whichMin )
+{
+
+}
+
+void KDerivedHistogram::setDataMax( TSemanticValue whichMax )
+{
+
+}
+
+void KDerivedHistogram::setBurstMin( TRecordTime whichTime )
+{
+
+}
+
+void KDerivedHistogram::setBurstMax( TRecordTime whichTime )
+{
+
+}
+
+void KDerivedHistogram::setCommSizeMin( TCommSize whichSize )
+{
+
+}
+
+void KDerivedHistogram::setCommSizeMax( TCommSize whichSize )
+{
+
+}
+
+void KDerivedHistogram::setCommTagMin( TCommTag whichTag )
+{
+
+}
+
+void KDerivedHistogram::setCommTagMax( TCommTag whichTag )
+{
+
+}
+
+bool KDerivedHistogram::getUseFixedDelta() const
+{
+  return {};
+}
+
+THistogramLimit KDerivedHistogram::getControlMin() const
+{
+  return {};
+}
+
+THistogramLimit KDerivedHistogram::getControlMax() const
+{
+  return {};
+}
+
+THistogramLimit KDerivedHistogram::getControlDelta() const
+{
+  return {};
+}
+
+THistogramLimit KDerivedHistogram::getExtraControlMin() const
+{
+  return {};
+}
+
+THistogramLimit KDerivedHistogram::getExtraControlMax() const
+{
+  return {};
+}
+
+THistogramLimit KDerivedHistogram::getExtraControlDelta() const
+{
+  return {};
+}
+
+TSemanticValue KDerivedHistogram::getDataMin() const
+{
+  return {};
+}
+
+TSemanticValue KDerivedHistogram::getDataMax() const
+{
+  return {};
+}
+
+TRecordTime KDerivedHistogram::getBurstMin() const
+{
+  return {};
+}
+
+TRecordTime KDerivedHistogram::getBurstMax() const
+{
+  return {};
+}
+
+TCommSize KDerivedHistogram::getCommSizeMin() const
+{
+  return {};
+}
+
+TCommSize KDerivedHistogram::getCommSizeMax() const
+{
+  return {};
+}
+
+TCommTag KDerivedHistogram::getCommTagMin() const
+{
+  return {};
+}
+
+TCommTag KDerivedHistogram::getCommTagMax() const
+{
+  return {};
+}
+
+bool KDerivedHistogram::getInclusiveEnabled() const
+{
+  return {};
+}
+
+void KDerivedHistogram::setInclusive( bool newValue )
+{
+}
+
+bool KDerivedHistogram::getInclusive() const
+{
+  return {};
+}
+
+void KDerivedHistogram::setNumColumns( THistogramColumn whichNumColumns )
+{
+}
+
+THistogramColumn KDerivedHistogram::getNumPlanes() const
+{
+  return {};
+}
+
+THistogramColumn KDerivedHistogram::getNumColumns() const
+{
+  return {};
+}
+
+THistogramColumn KDerivedHistogram::getCommNumColumns() const
+{
+  return {};
+}
+
+TObjectOrder KDerivedHistogram::getNumRows() const
+{
+  return {};
+}
+
+TSemanticValue KDerivedHistogram::getCurrentValue( PRV_UINT32 col,
+                                                   PRV_UINT16 idStat,
+                                                   PRV_UINT32 plane ) const
+{
+  return {};
+}
+
+PRV_UINT32 KDerivedHistogram::getCurrentRow( PRV_UINT32 col, PRV_UINT32 plane ) const
+{
+  return {};
+}
+
+void KDerivedHistogram::setNextCell( PRV_UINT32 col, PRV_UINT32 plane )
+{
+  
+}
+
+void KDerivedHistogram::setFirstCell( PRV_UINT32 col, PRV_UINT32 plane )
+{
+  
+}
+
+bool KDerivedHistogram::endCell( PRV_UINT32 col, PRV_UINT32 plane )
+{
+  return {}; 
+}
+
+bool KDerivedHistogram::planeWithValues( PRV_UINT32 plane ) const
+{
+  return {}; 
+}
+
+bool KDerivedHistogram::getCellValue( TSemanticValue& semVal,
+                                      PRV_UINT32 whichRow,
+                                      PRV_UINT32 whichCol,
+                                      PRV_UINT16 idStat,
+                                      PRV_UINT32 whichPlane ) const
+{
+  return {}; 
+}
+
+bool KDerivedHistogram::getNotZeroValue( PRV_UINT32 whichRow,
+                                         PRV_UINT32 whichCol,
+                                         PRV_UINT16 idStat,
+                                         PRV_UINT32 whichPlane ) const
+{
+  return {};
+}
+
+TSemanticValue KDerivedHistogram::getCommCurrentValue( PRV_UINT32 col,
+                                                       PRV_UINT16 idStat,
+                                                       PRV_UINT32 plane ) const
+{
+  return {};
+}
+
+PRV_UINT32 KDerivedHistogram::getCommCurrentRow( PRV_UINT32 col, PRV_UINT32 plane ) const
+{
+  return {};
+}
+
+void KDerivedHistogram::setCommNextCell( PRV_UINT32 col, PRV_UINT32 plane )
+{
+
+}
+
+void KDerivedHistogram::setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane )
+{
+
+}
+
+bool KDerivedHistogram::endCommCell( PRV_UINT32 col, PRV_UINT32 plane )
+{
+  return {};
+}
+
+bool KDerivedHistogram::planeCommWithValues( PRV_UINT32 plane ) const
+{
+  return {};
+}
+
+bool KDerivedHistogram::getCommCellValue( TSemanticValue& semVal,
+                                          PRV_UINT32 whichRow,
+                                          PRV_UINT32 whichCol,
+                                          PRV_UINT16 idStat,
+                                          PRV_UINT32 whichPlane ) const
+{
+  return {}; 
+}
+
+HistogramTotals *KDerivedHistogram::getColumnTotals() const
+{
+  return {};
+}
+
+HistogramTotals *KDerivedHistogram::getCommColumnTotals() const
+{
+  return {};
+}
+
+HistogramTotals *KDerivedHistogram::getRowTotals() const
+{
+  return {};
+}
+
+HistogramTotals *KDerivedHistogram::getCommRowTotals() const
+{
+  return {};
+}
+
+void KDerivedHistogram::clearStatistics()
+{
+
+}
+
+void KDerivedHistogram::pushbackStatistic( const std::string& whichStatistic )
+{
+
+}
+
+bool KDerivedHistogram::isCommunicationStat( const std::string& whichStat ) const
+{
+  return {};
+}
+
+bool KDerivedHistogram::isNotZeroStat( const std::string& whichStat ) const
+{
+  return {};
+}
+
+std::string KDerivedHistogram::getUnitsLabel( const std::string& whichStat ) const
+{
+  return {};
+}
+
+void KDerivedHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
+                                 std::vector<TObjectOrder>& selectedRows, ProgressController *progress )
+{
+
+}
+
+void KDerivedHistogram::getGroupsLabels( std::vector<std::string>& onVector ) const
+{
+
+}
+
+void KDerivedHistogram::getStatisticsLabels( std::vector<std::string>& onVector,
+                                             PRV_UINT32 whichGroup,
+                                             bool dummy ) const
+{
+
+}
+
+std::string KDerivedHistogram::getFirstStatistic() const
+{
+  return {};
+}
+
+std::string KDerivedHistogram::getFirstCommStatistic() const
+{
+  return {};
+}
+
+bool KDerivedHistogram::getControlOutOfLimits() const
+{
+  return {};
+}
+
+bool KDerivedHistogram::getExtraOutOfLimits() const
+{
+  return {};
+}
+
+TTimeUnit KDerivedHistogram::getTimeUnit() const
+{
+  return {};
+}
+
+KHistogram *KDerivedHistogram::clone()
+{
+  return {};
+}

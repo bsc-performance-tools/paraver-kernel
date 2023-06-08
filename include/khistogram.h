@@ -136,6 +136,9 @@ struct CalculateData
 };
 
 
+/***************************************************************
+***                     KHistogram                           ***
+****************************************************************/
 class KHistogram : public Histogram
 {
   public:
@@ -375,5 +378,158 @@ class KHistogram : public Histogram
     void finishRow( CalculateData *data );
 };
 
+
+/***************************************************************
+***                     KDerivedHistogram                    ***
+****************************************************************/
+class KDerivedHistogram : public Histogram
+{
+  public:
+    KDerivedHistogram();
+    ~KDerivedHistogram();
+
+    bool getThreeDimensions() const override;
+
+    TRecordTime getBeginTime() const override;
+    TRecordTime getEndTime() const override;
+
+    Timeline *getControlWindow() const override;
+    Timeline *getDataWindow() const override;
+    Timeline *getExtraControlWindow() const override;
+    void setControlWindow( Timeline *whichWindow ) override;
+    void setDataWindow( Timeline *whichWindow ) override;
+    void setExtraControlWindow( Timeline *whichWindow ) override;
+    void clearControlWindow() override;
+    void clearDataWindow() override;
+    void clearExtraControlWindow() override;
+
+    void setUseFixedDelta( bool whichValue ) override;
+    void setControlMin( THistogramLimit whichMin ) override;
+    void setControlMax( THistogramLimit whichMax ) override;
+    void setControlDelta( THistogramLimit whichDelta ) override;
+    void setExtraControlMin( THistogramLimit whichMin ) override;
+    void setExtraControlMax( THistogramLimit whichMax ) override;
+    void setExtraControlDelta( THistogramLimit whichDelta ) override;
+    void setDataMin( TSemanticValue whichMin ) override;
+    void setDataMax( TSemanticValue whichMax ) override;
+    void setBurstMin( TRecordTime whichTime ) override;
+    void setBurstMax( TRecordTime whichTime ) override;
+    void setCommSizeMin( TCommSize whichSize ) override;
+    void setCommSizeMax( TCommSize whichSize ) override;
+    void setCommTagMin( TCommTag whichTag ) override;
+    void setCommTagMax( TCommTag whichTag ) override;
+
+
+    bool getUseFixedDelta() const override;
+    THistogramLimit getControlMin() const override;
+    THistogramLimit getControlMax() const override;
+    THistogramLimit getControlDelta() const override;
+    THistogramLimit getExtraControlMin() const override;
+    THistogramLimit getExtraControlMax() const override;
+    THistogramLimit getExtraControlDelta() const override;
+    TSemanticValue getDataMin() const override;
+    TSemanticValue getDataMax() const override;
+    TRecordTime getBurstMin() const override;
+    TRecordTime getBurstMax() const override;
+    TCommSize getCommSizeMin() const override;
+    TCommSize getCommSizeMax() const override;
+    TCommTag getCommTagMin() const override;
+    TCommTag getCommTagMax() const override;
+
+    bool getInclusiveEnabled() const override;
+    void setInclusive( bool newValue ) override;
+    bool getInclusive() const override;
+
+    void setNumColumns( THistogramColumn whichNumColumns ) override;
+
+    THistogramColumn getNumPlanes() const override;
+    THistogramColumn getNumColumns() const override;
+    THistogramColumn getCommNumColumns() const override;
+
+    TObjectOrder getNumRows() const override;
+
+    TSemanticValue getCurrentValue( PRV_UINT32 col,
+                                    PRV_UINT16 idStat,
+                                    PRV_UINT32 plane = 0 ) const override;
+    PRV_UINT32 getCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const override;
+    void setNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    void setFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    bool endCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    bool planeWithValues( PRV_UINT32 plane = 0 ) const override;
+    bool getCellValue( TSemanticValue& semVal,
+                       PRV_UINT32 whichRow,
+                       PRV_UINT32 whichCol,
+                       PRV_UINT16 idStat,
+                       PRV_UINT32 whichPlane = 0 ) const override;
+    bool getNotZeroValue( PRV_UINT32 whichRow,
+                          PRV_UINT32 whichCol,
+                          PRV_UINT16 idStat,
+                          PRV_UINT32 whichPlane = 0 ) const override;
+
+    TSemanticValue getCommCurrentValue( PRV_UINT32 col,
+                                        PRV_UINT16 idStat,
+                                        PRV_UINT32 plane = 0 ) const override;
+    PRV_UINT32 getCommCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const override;
+    void setCommNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    void setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    bool endCommCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    bool planeCommWithValues( PRV_UINT32 plane = 0 ) const override;
+    bool getCommCellValue( TSemanticValue& semVal,
+                           PRV_UINT32 whichRow,
+                           PRV_UINT32 whichCol,
+                           PRV_UINT16 idStat,
+                           PRV_UINT32 whichPlane = 0 ) const override;
+
+    HistogramTotals *getColumnTotals() const override;
+    HistogramTotals *getCommColumnTotals() const override;
+    HistogramTotals *getRowTotals() const override;
+    HistogramTotals *getCommRowTotals() const override;
+
+    void clearStatistics() override;
+    void pushbackStatistic( const std::string& whichStatistic ) override;
+
+    bool isCommunicationStat( const std::string& whichStat ) const override;
+
+    bool isNotZeroStat( const std::string& whichStat ) const override;
+
+    std::string getUnitsLabel( const std::string& whichStat ) const override;
+
+    void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
+                  std::vector<TObjectOrder>& selectedRows, ProgressController *progress ) override;
+
+    void getGroupsLabels( std::vector<std::string>& onVector ) const override;
+    void getStatisticsLabels( std::vector<std::string>& onVector,
+                              PRV_UINT32 whichGroup,
+                              bool dummy ) const override;
+    std::string getFirstStatistic() const override;
+    std::string getFirstCommStatistic() const override;
+
+    bool getControlOutOfLimits() const override;
+    bool getExtraOutOfLimits() const override;
+
+    TTimeUnit getTimeUnit() const override;
+
+    virtual KHistogram *clone() override;
+
+  protected:
+
+  private:
+    TObjectOrder numRows;
+    THistogramColumn numCols;
+    THistogramColumn numPlanes;
+
+    Cube<TSemanticValue, NUM_SEMANTIC_STATS> *cube;
+    Matrix<TSemanticValue, NUM_SEMANTIC_STATS> *matrix;
+    Cube<TSemanticValue, NUM_COMM_STATS> *commCube;
+    Matrix<TSemanticValue, NUM_COMM_STATS> *commMatrix;
+
+    KHistogramTotals *totals;
+    KHistogramTotals *rowTotals;
+    KHistogramTotals *commTotals;
+    KHistogramTotals *rowCommTotals;
+
+    //Selection of rows
+    SelectionManagement< TObjectOrder, TWindowLevel > rowSelection;
+};
 
 
