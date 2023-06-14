@@ -816,6 +816,7 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowFlagsEnabled::printLine( cfgFile, it );
     WindowNonColorMode::printLine( cfgFile, it );
     WindowColorMode::printLine( cfgFile, it );
+    WindowGradientFunction::printLine( cfgFile, it );
     WindowCustomColorEnabled::printLine( cfgFile, it );
     WindowCustomColorPalette::printLine( cfgFile, it );
     WindowSemanticScaleMinAtZero::printLine( cfgFile, it );
@@ -997,6 +998,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_NON_COLOR_MODE]      = new WindowNonColorMode();
   cfgTagFunctions[OLDCFG_TAG_WNDW_UNITS]               = new WindowUnits();
   cfgTagFunctions[OLDCFG_TAG_WNDW_COLOR_MODE]          = new WindowColorMode();
+  cfgTagFunctions[CFG_TAG_WNDW_GRADIENT_FUNCTION]      = new WindowGradientFunction();
   // Color palette
   cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED] = new WindowCustomColorEnabled();
   cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_COLOR_PALETTE] = new WindowCustomColorPalette();
@@ -1562,6 +1564,58 @@ void WindowColorMode::printLine( ofstream& cfgFile,
   else if ( ( *it )->isFusedLinesColorSet() )
     cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_FUSED_LINES << endl;
 }
+
+
+string WindowGradientFunction::tagCFG = CFG_TAG_WNDW_GRADIENT_FUNCTION;
+
+bool WindowGradientFunction::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                        Trace *whichTrace,
+                                        vector<Timeline *>& windows,
+                                        vector<Histogram *>& histograms )
+{
+  string strFunction;
+
+  if ( windows[ windows.size() - 1 ] == nullptr )
+    return false;
+
+  getline( line, strFunction );
+
+  if ( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_LINEAR ) == 0 )
+    windows[ windows.size() - 1 ]->getGradientColor().setGradientFunction( TGradientFunction::LINEAR );
+  else if ( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_STEPS ) == 0 )
+    windows[ windows.size() - 1 ]->getGradientColor().setGradientFunction( TGradientFunction::STEPS );
+  else if ( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_LOG ) == 0 )
+    windows[ windows.size() - 1 ]->getGradientColor().setGradientFunction( TGradientFunction::LOGARITHMIC );
+  else if( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_EXP ) == 0 )
+    windows[ windows.size() - 1 ]->getGradientColor().setGradientFunction( TGradientFunction::EXPONENTIAL );
+  else
+    return false;
+
+  return true;
+}
+
+void WindowGradientFunction::printLine( ofstream& cfgFile,
+                                        const vector<Timeline *>::const_iterator it )
+{
+  auto currentGradientFunction = ( *it )->getGradientColor().getGradientFunction();
+
+  if( ( *it )->isFunctionLineColorSet() ||
+      ( *it )->isPunctualColorSet() ||
+      ( *it )->isGradientColorSet() ||
+      ( *it )->isNotNullGradientColorSet() ||
+      ( *it )->isAlternativeGradientColorSet() )
+  {
+    if ( currentGradientFunction == TGradientFunction::LINEAR )
+      cfgFile << CFG_TAG_WNDW_GRADIENT_FUNCTION << " " << CFG_VAL_GRADIENT_FUNCTION_LINEAR << endl;
+    else if ( currentGradientFunction == TGradientFunction::STEPS )
+      cfgFile << CFG_TAG_WNDW_GRADIENT_FUNCTION << " " << CFG_VAL_GRADIENT_FUNCTION_STEPS << endl;
+    else if ( currentGradientFunction == TGradientFunction::LOGARITHMIC )
+      cfgFile << CFG_TAG_WNDW_GRADIENT_FUNCTION << " " << CFG_VAL_GRADIENT_FUNCTION_LOG << endl;
+    else if ( currentGradientFunction == TGradientFunction::EXPONENTIAL )
+      cfgFile << CFG_TAG_WNDW_GRADIENT_FUNCTION << " " << CFG_VAL_GRADIENT_FUNCTION_EXP << endl;
+  }
+}
+
 
 string WindowCustomColorEnabled::tagCFG = OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED;
 
