@@ -374,7 +374,8 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
           return true;
         else if ( r1.time > r2.time )
           return false;
-        return ( getTypeOrdered( &r1 ) < getTypeOrdered( &r2 ) );
+
+        return getTypeOrdered( &r1, &r2 );
       };
 
   auto sortThread = [this, compareRecords]( size_t iThread, TRecord endEmptyRecord )

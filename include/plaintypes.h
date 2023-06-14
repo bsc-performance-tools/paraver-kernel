@@ -183,6 +183,18 @@ namespace Plain
     return ret;
   }
 
+  static inline bool getTypeOrdered( const TRecord *left, const TRecord *right )
+  {
+    if ( ( isEvent( left ) && isEvent( right ) ) ||
+         ( isState( left ) && isState( right ) ) )
+      return false;
+
+    return getTypeOrdered( left ) < getTypeOrdered( right );
+
+    return true;
+  }
+
+  
 }
 
 

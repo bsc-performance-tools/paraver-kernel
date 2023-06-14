@@ -41,9 +41,10 @@ namespace Plain
     {
       if ( r1->time < r2->time )
         return true;
-      if ( getTypeOrdered( r1 ) < getTypeOrdered( r2 ) )
-        return true;
-      return false;
+      if ( r1->time > r2->time )
+        return false;
+
+      return getTypeOrdered( r1, r2 );
     }
   };
 
