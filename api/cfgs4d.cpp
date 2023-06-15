@@ -29,16 +29,6 @@ using std::string;
 using std::map;
 using std::set;
 
-bool lessWinCompare::operator()( Timeline *win1, Timeline *win2 ) const
-{
-  return win1->getName() < win2->getName();
-}
-
-bool lessHistoCompare::operator()( Histogram *histo1, Histogram *histo2 ) const
-{
-  return histo1->getName() < histo2->getName();
-}
-
 /*!
  * CFGS4DPropertyWindowsList Methods
  */
