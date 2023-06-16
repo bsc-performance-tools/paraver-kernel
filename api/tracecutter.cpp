@@ -97,7 +97,7 @@ TraceCutterProxy::TraceCutterProxy( const KernelConnection *whichKernel,
     myEventLabels.getTypes( allTypes );
     for( vector< TEventType >::iterator it = allTypes.begin(); it != allTypes.end(); ++it )
     {
-      if( *it >= 42000000 && *it < 43000000 )
+      if( *it >= 42000000 && *it < 50000000 )
         HWCTypes.push_back( *it );
     }
   }
