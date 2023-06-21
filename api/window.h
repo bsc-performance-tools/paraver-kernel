@@ -559,6 +559,10 @@ class Timeline
     {
       return std::pair<TObjectOrder, TObjectOrder>();
     }
+    virtual std::vector< TObjectOrder > getCurrentZoomRange() const
+    {
+      return std::vector< TObjectOrder >{};
+    }
     virtual std::pair<TObjectOrder, TObjectOrder> getPrevZoomSecondDimension() const
     {
       return std::pair<TObjectOrder, TObjectOrder>();
@@ -1042,6 +1046,7 @@ class TimelineProxy: public Timeline
     virtual void setZoomSecondDimension( std::pair<TObjectOrder, TObjectOrder>  &dim ) override;
     virtual std::pair<TTime, TTime> getZoomFirstDimension() const override;
     virtual std::pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const override;
+    virtual std::vector< TObjectOrder > getCurrentZoomRange() const override;
     virtual std::pair<TObjectOrder, TObjectOrder> getPrevZoomSecondDimension() const override;
     virtual std::pair<TObjectOrder, TObjectOrder> getNextZoomSecondDimension() const override;
 

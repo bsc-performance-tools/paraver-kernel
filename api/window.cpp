@@ -1474,6 +1474,16 @@ pair<TObjectOrder, TObjectOrder> TimelineProxy::getZoomSecondDimension() const
   return zoomHistory.getSecondDimension();
 }
 
+std::vector< TObjectOrder > TimelineProxy::getCurrentZoomRange() const
+{
+  vector< TObjectOrder > zoomRange;
+
+  zoomRange.push_back( getZoomSecondDimension().first );
+  zoomRange.push_back( getZoomSecondDimension().second );
+  
+  return zoomRange;
+}
+
 pair<TObjectOrder, TObjectOrder> TimelineProxy::getPrevZoomSecondDimension() const
 {
   return zoomHistory.getSecondDimension( TZoomPosition::PREV_ZOOM );
