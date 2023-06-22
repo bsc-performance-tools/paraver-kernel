@@ -1519,6 +1519,11 @@ TGroupId TimelineProxy::getSyncGroup() const
   return syncGroup;
 }
 
+bool TimelineProxy::areAllSelectedRows( TTraceLevel onLevel ) const
+{
+  return selectedRow.areAllSelected( onLevel );
+}
+
 SelectionManagement< TObjectOrder, TTraceLevel > *TimelineProxy::getSelectedRows()
 {
   return &selectedRow;
@@ -1534,6 +1539,7 @@ void TimelineProxy::setSelectedRows( TTraceLevel onLevel, vector< TObjectOrder >
 {
   selectedRow.setSelected( selected, myTrace->getLevelObjects( onLevel ), onLevel );
 }
+
 
 void TimelineProxy::getSelectedRows( TTraceLevel onLevel, vector< bool > &selected, bool lookUpLevels )
 {

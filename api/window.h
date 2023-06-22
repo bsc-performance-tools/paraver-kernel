@@ -586,6 +586,10 @@ class Timeline
     }
 
 
+    virtual bool areAllSelectedRows( TTraceLevel onLevel ) const
+    {
+      return true;
+    }
     virtual SelectionManagement< TObjectOrder, TTraceLevel > *getSelectedRows()
     {
       return nullptr;
@@ -1055,6 +1059,7 @@ class TimelineProxy: public Timeline
     virtual bool isSync() const override;
     virtual TGroupId getSyncGroup() const override;
 
+    virtual bool areAllSelectedRows( TTraceLevel onLevel ) const override;
     virtual SelectionManagement< TObjectOrder, TTraceLevel > *getSelectedRows() override;
     virtual void setSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected ) override;
     virtual void setSelectedRows( TTraceLevel onLevel, std::vector< TObjectOrder > &selected ) override;

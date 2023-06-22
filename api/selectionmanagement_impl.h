@@ -274,6 +274,13 @@ bool SelectionManagement< SelType, LevelType >::isSelectedPosition( SelType whic
 
 
 template < typename SelType, typename LevelType >
+bool SelectionManagement< SelType, LevelType >::areAllSelected( LevelType level ) const
+{
+  return selected[ static_cast<size_t>( level ) ].size() == selectedSet[ static_cast<size_t>( level ) ].size();
+}
+
+
+template < typename SelType, typename LevelType >
 void SelectionManagement< SelType, LevelType >::getSelected( std::vector< bool > &whichSelected,
     LevelType level ) const
 {

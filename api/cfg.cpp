@@ -2408,28 +2408,13 @@ void writeTasks( ofstream& cfgFile,
                  const vector<Timeline *>::const_iterator it )
 {
   vector<TTaskOrder> tmpSel;
-  vector<TThreadOrder> tmpSelThreads;
-  vector<bool> selectedAppl;
 
-  ( *it )->getSelectedRows( TTraceLevel::APPLICATION, selectedAppl );
   for ( TApplOrder iAppl = 0; iAppl < ( *it )->getTrace()->totalApplications(); ++iAppl )
   {
-    if ( !selectedAppl[ iAppl ] )
-      continue;
     TTaskOrder begin = ( *it )->getTrace()->getFirstTask( iAppl );
     TTaskOrder last = ( *it )->getTrace()->getLastTask( iAppl );
     ( *it )->getSelectedRows( TTraceLevel::TASK, tmpSel, begin, last );
-    TApplOrder tmpAppl;
-    TTaskOrder beginTask;
-    TTaskOrder lastTask;
-    ( *it )->getTrace()->getTaskLocation( begin, tmpAppl, beginTask );
-    ( *it )->getTrace()->getTaskLocation( last, tmpAppl, lastTask );
-    TThreadOrder beginThread = ( *it )->getTrace()->getFirstThread( iAppl, beginTask );
-    TThreadOrder lastThread = ( *it )->getTrace()->getLastThread( iAppl, lastTask );
-    ( *it )->getSelectedRows( TTraceLevel::THREAD, tmpSelThreads, beginThread, lastThread );
-    if ( ( /*tmpSel.size() > 0  &&*/ tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
-         || tmpSelThreads.size() != ( TObjectOrder )( lastThread - beginThread + 1 )
-       )
+    if ( tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
       writeTask( cfgFile, it, iAppl );
   }
 }
@@ -2454,26 +2439,22 @@ void writeThreads( ofstream& cfgFile,
                    const vector<Timeline *>::const_iterator it )
 {
   vector<TObjectOrder> tmpSel;
-  vector<bool> selectedAppl;
-  vector<bool> selectedTask;
 
-  ( *it )->getSelectedRows( TTraceLevel::APPLICATION, selectedAppl );
   for ( TApplOrder iAppl = 0; iAppl < ( *it )->getTrace()->totalApplications(); ++iAppl )
   {
-    if ( !selectedAppl[ iAppl ] )
-      continue;
     TTaskOrder beginTask = ( *it )->getTrace()->getFirstTask( iAppl );
     TTaskOrder lastTask = ( *it )->getTrace()->getLastTask( iAppl );
-    ( *it )->getSelectedRows( TTraceLevel::TASK, selectedTask, beginTask, lastTask );
     for ( TTaskOrder iTask = beginTask; iTask <= lastTask; ++iTask )
     {
-      if ( !selectedTask[ iTask - beginTask ] )
-        continue;
       TTaskOrder begin = ( *it )->getTrace()->getFirstThread( iAppl, iTask - beginTask );
       TTaskOrder last = ( *it )->getTrace()->getLastThread( iAppl, iTask - beginTask );
-      ( *it )->getSelectedRows( TTraceLevel::THREAD, tmpSel, begin, last );
-      if ( /*tmpSel.size() > 0  &&*/ tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
-        writeThread( cfgFile, it, iAppl, iTask - beginTask );
+
+      if( !( *it )->areAllSelectedRows( TTraceLevel::THREAD ) )
+      {
+        ( *it )->getSelectedRows( TTraceLevel::THREAD, tmpSel, begin, last );
+        if ( tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
+          writeThread( cfgFile, it, iAppl, iTask - beginTask );
+      }
     }
   }
 }
@@ -2507,18 +2488,13 @@ void writeCPUs( ofstream& cfgFile,
                 const vector<Timeline *>::const_iterator it )
 {
   vector<TObjectOrder> tmpSel;
-  vector<TObjectOrder> tmpSelCPU;
-  vector<bool> selectedNode;
 
-  ( *it )->getSelectedRows( TTraceLevel::NODE, selectedNode );
   for ( TNodeOrder iNode = 0; iNode < ( *it )->getTrace()->totalNodes(); ++iNode )
   {
-    if ( !selectedNode[ iNode ] )
-      continue;
     TCPUOrder begin = ( *it )->getTrace()->getFirstCPU( iNode );
     TCPUOrder last = ( *it )->getTrace()->getLastCPU( iNode );
     ( *it )->getSelectedRows( TTraceLevel::CPU, tmpSel, begin, last );
-    if ( tmpSel.size() > 0  && tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
+    if ( tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
       writeCPU( cfgFile, it, iNode );
   }
 }
@@ -2532,14 +2508,7 @@ void WindowObject::printLine( ofstream& cfgFile,
   {
     case TTraceLevel::WORKLOAD:
     case TTraceLevel::APPLICATION:
-      writeAppl( cfgFile, it );
-      break;
-
     case TTraceLevel::TASK:
-      writeAppl( cfgFile, it );
-      writeTasks( cfgFile, it );
-      break;
-
     case TTraceLevel::THREAD:
       writeAppl( cfgFile, it );
       writeTasks( cfgFile, it );
@@ -2548,9 +2517,6 @@ void WindowObject::printLine( ofstream& cfgFile,
 
     case TTraceLevel::SYSTEM:
     case TTraceLevel::NODE:
-      writeNode( cfgFile, it );
-      break;
-
     case TTraceLevel::CPU:
       writeNode( cfgFile, it );
       writeCPUs( cfgFile, it );
