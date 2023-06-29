@@ -25,6 +25,7 @@
 #pragma once
 
 #include <set>
+#include <unordered_set>
 
 #include "cubecontainer.h"
 #include "ktraceoptions.h"
@@ -100,6 +101,11 @@ class KTraceCutter : public TraceCutter
         ThreadInfo() : last_time( 0 ), lastCPU( 0 ), finished( false ), without_states( false ), lastStateEndTime( 0 )
         {}
 
+        ThreadInfo( std::set< TEventType > HWCTypesInPCF ) : last_time( 0 ), lastCPU( 0 ), finished( false ), without_states( false ), lastStateEndTime( 0 )
+        {
+          std::copy( HWCTypesInPCF.begin(), HWCTypesInPCF.end(), std::inserter( HWCTypesToReset, HWCTypesToReset.begin() ) );
+        }
+
         unsigned long long last_time;
         unsigned long long lastStateEndTime;
         TCPUOrder lastCPU; // last CPU to be able to write trailing records.
@@ -107,6 +113,7 @@ class KTraceCutter : public TraceCutter
         bool without_states;
         std::vector< TEventType > openedEventTypes;
         std::set< TEventType > HWCTypesInPRV;
+        std::unordered_set< TEventType > HWCTypesToReset;
     };
 
     /* struct for cutting only selected tasks */
@@ -178,7 +185,7 @@ class KTraceCutter : public TraceCutter
     void shiftLeft_TraceTimes_ToStartFromZero( const char *originalTraceName, const char *nameIn, const char *nameOut, ProgressController *progress );
     bool is_selected_task( int task_id );
 
-    ThreadInfo& initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu, bool& reset_counters );
+    ThreadInfo& initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu );
 };
 
 

@@ -566,6 +566,8 @@ void KTraceCutter::update_queue( unsigned int appl, unsigned int task, unsigned 
   {
     init_useful_tasks = true;
     ++useful_tasks;
+    ThreadInfo newThreadInfo( HWCTypesInPCF );
+    threadsInfo( appl, task, thread ) = newThreadInfo;
   }
 
   ThreadInfo& tmpInfo = threadsInfo( appl, task, thread );
@@ -723,16 +725,15 @@ bool KTraceCutter::is_selected_task( int task_id )
   return false;
 }
 
-KTraceCutter::ThreadInfo& KTraceCutter::initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu, bool& reset_counters )
+KTraceCutter::ThreadInfo& KTraceCutter::initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu )
 {
   ++useful_tasks;
   init_useful_tasks = true;
+  ThreadInfo newThreadInfo( HWCTypesInPCF );
   ThreadInfo& tmpInfo = threadsInfo( appl - 1, task - 1, thread - 1 );
+  tmpInfo = newThreadInfo;
   tmpInfo.lastCPU = cpu;
   tmpInfo.last_time = 0;
-
-  /* Have to reset HC and the begining of cut */
-  reset_counters = true;
 
   return tmpInfo;
 }
@@ -748,7 +749,6 @@ void KTraceCutter::execute( std::string trace_in,
   char *trace_file_out;
   char *buffer;
   bool end_parsing = false;
-  bool reset_counters;
 
   unsigned int id, cpu, appl, task, thread, state, cpu_2, appl_2, task_2, thread_2, size, tag;
   unsigned long long type, value, time_1, time_2, time_3, time_4;
@@ -779,8 +779,6 @@ void KTraceCutter::execute( std::string trace_in,
 
   /* Reading of the program arguments */
   read_cutter_params();
-
-  reset_counters = false;
 
   inFile = TraceStream::openFile( trace_in );
   
@@ -879,7 +877,7 @@ void KTraceCutter::execute( std::string trace_in,
         {
           ThreadInfo *tmpInfo = nullptr;
           if ( threadInfoIt == threadsInfo.end() )
-            tmpInfo = &initThreadInfo( appl, task, thread, cpu, reset_counters );
+            tmpInfo = &initThreadInfo( appl, task, thread, cpu );
           else
             tmpInfo = &threadInfoIt->second;
 
@@ -922,7 +920,7 @@ void KTraceCutter::execute( std::string trace_in,
         else // originalTime || time_1 <= time_max
         {
           if ( threadInfoIt == threadsInfo.end() )
-            initThreadInfo( appl, task, thread, cpu, reset_counters );
+            initThreadInfo( appl, task, thread, cpu );
 
           threadsInfo( appl - 1, task - 1, thread - 1 ).lastStateEndTime = time_2;
           if( time_1 < time_max && time_2 > time_max && !remLastStates && !break_states && keep_boundary_events )
@@ -975,24 +973,6 @@ void KTraceCutter::execute( std::string trace_in,
           outfile << buffer;
           if( writeToTmpFile ) ++total_tmp_lines;
 
-          if ( reset_counters )
-          {
-            reset_counters = false;
-            aux_buffer << "2:" << cpu << ":" << appl << ":" << task << ":" << thread << ":" << time_1;
-
-            std::for_each( HWCTypesInPCF.begin(), HWCTypesInPCF.end(), [&aux_buffer]( auto el )
-                                                                       {
-                                                                         aux_buffer << ":" << el << ":" << "0";
-                                                                       } );
-
-            if ( HWCTypesInPCF.size() > 0 )
-            {
-              aux_buffer << std::endl;
-              sprintf( buffer, "%s", aux_buffer.str().c_str() );
-              outfile << buffer;
-              if( writeToTmpFile ) ++total_tmp_lines;
-            }
-          }
         }
 
         break;
@@ -1062,15 +1042,9 @@ void KTraceCutter::execute( std::string trace_in,
           if ( time_1 > last_record_time )
              last_record_time = time_1;
 
-          sprintf( buffer, "%d:%d:%d:%d:%d:%lld:%s\n",
-                   id, cpu, appl, task, thread, time_1, line.c_str() );
+          sprintf( buffer, "%d:%d:%d:%d:%d:%lld",
+                   id, cpu, appl, task, thread, time_1 );
           outfile << buffer;
-
-          if( writeToTmpFile ) ++total_tmp_lines;
-
-          /* For closing all the opened calls */
-          threadsInfo( appl - 1, task - 1, thread - 1 ).last_time = time_1;
-          threadsInfo( appl - 1, task - 1, thread - 1 ).lastCPU = cpu;
 
           std::string::const_iterator itBegin = line.begin();
           const std::string::const_iterator itEnd = line.end();
@@ -1079,7 +1053,24 @@ void KTraceCutter::execute( std::string trace_in,
           {
             prv_atoll_v( itBegin, itEnd, type, value );
             update_queue( appl - 1, task - 1, thread - 1, type, value );
+
+            if( threadInfoIt->second.HWCTypesToReset.find( type ) != threadInfoIt->second.HWCTypesToReset.end() )
+            {
+              value = 0;
+              threadInfoIt->second.HWCTypesToReset.erase( type );
+            }
+
+            outfile << ":" << type << ":" << value;
           }
+
+          outfile << "\n";
+
+          if( writeToTmpFile ) ++total_tmp_lines;
+
+          /* For closing all the opened calls */
+          threadsInfo( appl - 1, task - 1, thread - 1 ).last_time = time_1;
+          threadsInfo( appl - 1, task - 1, thread - 1 ).lastCPU = cpu;
+
 
         }
 
