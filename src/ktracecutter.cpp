@@ -1054,6 +1054,9 @@ void KTraceCutter::execute( std::string trace_in,
             prv_atoll_v( itBegin, itEnd, type, value );
             update_queue( appl - 1, task - 1, thread - 1, type, value );
 
+            if( threadInfoIt == threadsInfo.end() )
+              threadInfoIt = threadsInfo.find( appl - 1, task - 1, thread - 1 );
+
             if( threadInfoIt->second.HWCTypesToReset.find( type ) != threadInfoIt->second.HWCTypesToReset.end() )
             {
               value = 0;
