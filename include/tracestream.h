@@ -129,10 +129,7 @@ class Compressed: public TraceStream
     static TTraceSize getTraceFileSize( const std::string& filename );
 
   private:
-    static const PRV_UINT32 LINESIZE = 1000 * 1024;
     gzFile file;
-    char tmpLine[ LINESIZE ];
-
 };
 
 
