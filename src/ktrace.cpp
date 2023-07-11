@@ -665,6 +665,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   unsigned long long count = 0;
   if( !( noLoad && !body->ordered() ) )
   {
+    int insertCounter = 0;
     while ( !file->eof() )
     {
       body->read( *file, *blocks, traceProcessModel, traceResourceModel, hashstates, hashevents, myTraceInfo, traceEndTime );
@@ -674,8 +675,9 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
       if ( blocks->getCountInserted() >= 10000 )
       {
         memTrace->insert( blocks );
-        if ( progress != nullptr )
+        if ( progress != nullptr && insertCounter == 100 )
         {
+          insertCounter = 0;
           if ( file->canseekend() )
             progress->setCurrentProgress( file->tellg() );
           else
