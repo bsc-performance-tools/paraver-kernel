@@ -668,6 +668,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     int insertCounter = 0;
     while ( !file->eof() )
     {
+      ++insertCounter;
       body->read( *file, *blocks, traceProcessModel, traceResourceModel, hashstates, hashevents, myTraceInfo, traceEndTime );
       if( blocks->getCountInserted() > 0 )
         ++count;
