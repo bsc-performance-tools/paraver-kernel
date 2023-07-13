@@ -33,7 +33,7 @@ class KProgressController: public ProgressController
     KProgressController();
     ~KProgressController();
 
-    void setHandler( ProgressHandler whichHandler, void *callerWindow ) override;
+    void setHandler( void* whichProgressDialog, ProgressHandler whichHandler ) override;
     void callHandler( ProgressController *not_used ) override;
     double getEndLimit() const override;
     void setEndLimit( double limit ) override;

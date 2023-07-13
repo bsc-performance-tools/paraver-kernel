@@ -32,14 +32,14 @@ class KernelConnection;
 class ProgressController
 {
   public:
-    typedef void(*ProgressHandler)( ProgressController*, void* );
+    typedef void(*ProgressHandler)( void*, ProgressController* );
 
     static ProgressController *create( KernelConnection *whichKernel );
 
     ProgressController() {};
     virtual ~ProgressController() {};
 
-    virtual void setHandler( ProgressHandler whichHandler, void *callerWindow ) = 0;
+    virtual void setHandler( void* whichProgressDialog, ProgressHandler whichHandler ) = 0;
     virtual void callHandler( ProgressController *not_used ) = 0;
     virtual double getEndLimit() const = 0;
     virtual void setEndLimit( double limit ) = 0;
@@ -67,7 +67,7 @@ class ProgressControllerProxy:public ProgressController
   public:
     ~ProgressControllerProxy();
 
-    void setHandler( ProgressHandler whichHandler, void *callerWindow ) override;
+    void setHandler( void* whichProgressDialog, ProgressHandler whichHandler ) override;
     void callHandler( ProgressController *not_used ) override;
     double getEndLimit() const override;
     void setEndLimit( double limit ) override;
@@ -92,7 +92,7 @@ class ProgressControllerProxy:public ProgressController
     ProgressController *myPartner;
 
     ProgressHandler handler;
-    void *window;
+    void *progressDialog;
     double endLimit;
     double currentProgress;
     std::string message;

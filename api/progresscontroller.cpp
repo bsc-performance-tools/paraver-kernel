@@ -45,10 +45,10 @@ ProgressControllerProxy::~ProgressControllerProxy()
   delete myPartner;
 }
 
-void ProgressControllerProxy::setHandler( ProgressHandler whichHandler, void *callerWindow )
+void ProgressControllerProxy::setHandler( void* whichProgressDialog, ProgressHandler whichHandler )
 {
   handler = whichHandler;
-  window = callerWindow;
+  progressDialog = whichProgressDialog;
 }
 
 double ProgressControllerProxy::getEndLimit() const
@@ -83,7 +83,7 @@ void ProgressControllerProxy::callHandler( ProgressController *not_used )
 {
   currentProgress = myPartner->getCurrentProgress();
   if( handler != nullptr )
-    handler( this, window );
+    handler( progressDialog, this );
 }
 
 void ProgressControllerProxy::setStop( bool value )
