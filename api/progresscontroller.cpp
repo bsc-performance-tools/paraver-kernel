@@ -37,6 +37,7 @@ ProgressControllerProxy::ProgressControllerProxy( KernelConnection * whichKernel
   handler = nullptr;
   message = "";
   messageChanged = false;
+  lastUpdate = 0.0;
 }
 
 ProgressControllerProxy::~ProgressControllerProxy()
@@ -114,6 +115,16 @@ void ProgressControllerProxy::clearMessageChanged()
 bool ProgressControllerProxy::getMessageChanged() const
 {
   return messageChanged;
+}
+
+void ProgressControllerProxy::setLastUpdate( double whichLastUpdate )
+{
+  lastUpdate = whichLastUpdate;
+}
+
+double ProgressControllerProxy::getLastUpdate() const
+{
+  return lastUpdate;
 }
 
 ProgressController *ProgressControllerProxy::getConcrete() const

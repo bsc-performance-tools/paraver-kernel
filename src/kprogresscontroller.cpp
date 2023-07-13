@@ -101,3 +101,13 @@ bool KProgressController::getMessageChanged() const
 {
   return myPartner->getMessageChanged();
 }
+
+void KProgressController::setLastUpdate( double whichLastUpdate )
+{
+  myPartner->setLastUpdate( whichLastUpdate );
+}
+
+double KProgressController::getLastUpdate() const
+{
+  return myPartner->getLastUpdate();
+}

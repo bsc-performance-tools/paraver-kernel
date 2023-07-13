@@ -46,6 +46,8 @@ class KProgressController: public ProgressController
     std::string getMessage() const override;
     void clearMessageChanged() override;
     bool getMessageChanged() const override;
+    void setLastUpdate( double whichLastUpdate ) override;
+    double getLastUpdate() const override;
 
   private:
     ProgressController *myPartner;

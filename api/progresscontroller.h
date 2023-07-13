@@ -52,6 +52,8 @@ class ProgressController
     virtual std::string getMessage() const = 0;
     virtual bool getMessageChanged() const = 0;
     virtual void clearMessageChanged() = 0;
+    virtual void setLastUpdate( double whichLastUpdate ) = 0;
+    virtual double getLastUpdate() const = 0;
 
     virtual ProgressController *getConcrete() const
     {
@@ -78,6 +80,8 @@ class ProgressControllerProxy:public ProgressController
     std::string getMessage() const override;
     void clearMessageChanged() override;
     bool getMessageChanged() const override;
+    void setLastUpdate( double whichLastUpdate ) override;
+    double getLastUpdate() const override;
 
     ProgressController *getConcrete() const override;
 
@@ -93,6 +97,8 @@ class ProgressControllerProxy:public ProgressController
     double currentProgress;
     std::string message;
     bool messageChanged;
+
+    double lastUpdate;
 
     friend ProgressController *ProgressController::create( KernelConnection * );
 };
