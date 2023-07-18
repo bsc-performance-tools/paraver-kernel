@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <list>
 #include <set>
 #include <unordered_set>
 
@@ -111,7 +112,7 @@ class KTraceCutter : public TraceCutter
         TCPUOrder lastCPU; // last CPU to be able to write trailing records.
         bool finished;
         bool without_states;
-        std::vector< TEventType > openedEventTypes;
+        std::list< TEventType > openedEventTypes;
         std::set< TEventType > HWCTypesInPRV;
         std::unordered_set< TEventType > HWCTypesToReset;
     };
