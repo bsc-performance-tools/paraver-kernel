@@ -22,29 +22,35 @@
 \*****************************************************************************/
 
 
+#include <iostream>
+#include <sstream>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string>
+
 #ifndef _WIN32
 #include <unistd.h>
 #endif
+
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <math.h>
 #include <zlib.h>
 
-//#include "filters_wait_window.h"
-#include "ktracefilter.h"
 #include "kprogresscontroller.h"
-#include "tracestream.h" // for GZIP_COMPRESSION_RATIO
+#include "ktracefilter.h"
+
+
+#include "utils/traceparser/tracebodyio_v1.h"
+#include "utils/traceparser/processmodel.h"
+#include "utils/traceparser/resourcemodel.h"
+#include "utils/traceparser/traceheader.h"
 
 
 #ifdef _WIN32
 #define atoll _atoi64
 #endif
 
-#include <iostream>
-#include <sstream>
 
 KTraceFilter::KTraceFilter( char *trace_in,
                             char *trace_out,
@@ -66,7 +72,6 @@ KTraceFilter::~KTraceFilter()
 }
 
 
-/* Function for parsing program parameters */
 void KTraceFilter::read_params()
 {
   if ( exec_options->filter_states )
@@ -101,32 +106,25 @@ void KTraceFilter::read_params()
 }
 
 
-/* For processing the Paraver header */
-void KTraceFilter::filter_process_header( char *header )
+void KTraceFilter::parseInHeaderAndDumpOut( TraceStream *whichFile, std::fstream& outfile )
 {
-  int num_comms;
-  char *word;
+  ProcessModel<> traceProcessModel = ProcessModel<>( );
+  ResourceModel<> traceResourceModel = ResourceModel<>( );
+  unsigned long long traceEndTime = 0;
+  TTimeUnit traceTimeUnit = NS;
+  std::vector< std::string > communicators;
 
-  /* Obtaining the number of communicators */
-  word = strrchr( header, ',' );
-  if ( word != nullptr )
+  string tmpDate;
+  try
   {
-    strcpy( line, word + 1 );
-    if ( strchr( line, ')' ) != nullptr )
-      return;
-
-    num_comms = atoi( line );
-    while ( num_comms > 0 )
-    {
-      if ( !is_zip_filter )
-        fgets( header, MAX_HEADER_SIZE, infile );
-      else
-        gzgets( gzInfile, header, MAX_HEADER_SIZE );
-
-      fprintf( outfile, "%s", header );
-      num_comms--;
-    }
+    parseTraceHeader( *whichFile, tmpDate, traceTimeUnit, traceEndTime, traceResourceModel, traceProcessModel, communicators );
   }
+  catch( TraceHeaderException& e )
+  {
+    throw e;
+  }
+
+  dumpTraceHeader( outfile, tmpDate, traceEndTime, traceTimeUnit, traceResourceModel, traceProcessModel, communicators );
 }
 
 
@@ -156,7 +154,6 @@ int KTraceFilter::filter_allowed_type(  int appl, int task, int thread,
         break;
       }
     }
-
 
     if ( exec_options->filter_types[i].type == type )
     {
@@ -224,18 +221,9 @@ int KTraceFilter::filter_allowed_type(  int appl, int task, int thread,
 }
 
 
-void KTraceFilter::ini_progress_bar( char *file_name, ProgressController *progress )
+void KTraceFilter::initFilterProgressBar( const std::string& fileName, ProgressController *progress )
 {
-  struct stat file_info;
-
-  if ( stat( file_name, &file_info ) < 0 )
-  {
-    perror( "Error calling stat64" );
-    exit( 1 );
-  }
-
-  total_trace_size = file_info.st_size;
-
+  total_trace_size = TraceStream::getTraceFileSize( fileName );
   if ( total_trace_size < 500000000 )
     total_iters = 10000;
   else
@@ -250,29 +238,8 @@ void KTraceFilter::ini_progress_bar( char *file_name, ProgressController *progre
 
 void KTraceFilter::show_progress_bar( ProgressController *progress )
 {
-//  double current_showed, i, j;
-#if defined(__FreeBSD__) || defined(__APPLE__)
-  if ( !is_zip_filter )
-    current_read_size = ( unsigned long long )ftello( infile );
-  else
-    current_read_size = ( unsigned long )gztell( gzInfile );
-#elif defined(_WIN32)
-  if ( !is_zip_filter )
-    current_read_size = ( unsigned long long )_ftelli64( infile );
-  else
-    current_read_size = ( unsigned long )gztell( gzInfile );
-#else
-  if ( !is_zip_filter )
-    current_read_size = ( unsigned long long )ftello64( infile );
-  else
-    current_read_size = ( unsigned long )gztell( gzInfile );
-#endif
+  current_read_size = inFile->tellg();
 
-/*  i = ( double )( current_read_size );
-  j = ( double )( total_trace_size );
-
-  current_showed = i / j;
-*/
   if ( is_zip_filter )
     current_read_size = current_read_size / TraceStream::GZIP_COMPRESSION_RATIO;
 
@@ -285,7 +252,6 @@ void KTraceFilter::load_pcf( char *pcf_name )
 {
   FILE *infile;
   unsigned int state_id;
-  // char state_name[128];
   char *state_name;
 
   state_name = (char *) malloc( sizeof(char) * MAX_STATE_NAME_SIZE );
@@ -337,7 +303,7 @@ void KTraceFilter::dump_buffer()
   while ( elem != nullptr && elem->dump )
   {
     if ( elem->dump )
-      fputs( elem->record, outfile );
+      outfile << elem->record;
 
     free( elem->record );
     elem_aux = elem;
@@ -351,23 +317,37 @@ void KTraceFilter::dump_buffer()
 }
 
 
-void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *progress )
+void KTraceFilter::translateEvent( unsigned long long &type, unsigned long long &value )
 {
-  bool end_line, print_record;
-  int i, j, k, num_char, state, size, appl, task, thread, cpu;
-  unsigned long long time_1, time_2, type, value;
-  // char *word, event_record[MAX_LINE_SIZE], trace_name[2048], *c, *trace_header;
-  //char *word, *event_record, *trace_name, *c, *trace_header;
-  char *word, *trace_name, *c, *trace_header;
+  if ( translationTable.size() > 0 )
+  {
+    TTypeValuePair p = std::make_pair( type, value );
+
+    std::map< TTypeValuePair, TTypeValuePair >::const_iterator it = translationTable.find(p);
+    if ( it != translationTable.end() )
+    {
+      type  = it->second.first;
+      value = it->second.second;
+    }
+  }
+}
+
+
+void KTraceFilter::execute( char *trace_in, char *trace_out, ProgressController *progress )
+{
+  bool print_record;
+  int i, j, k, state, size;
+  int recordType, appl, task, thread, cpu;
+  int  appl_2, task_2, thread_2, cpu_2;
+  unsigned long long time_1, time_2, time_3, time_4, type, value;
+  char *c;
   char *pcf_file;
   unsigned long num_iters = 0;
   bool end_parsing = false;
   bool dump_event_buffer, call_in;
   struct buffer_elem *new_elem, *elem_aux;
+  std::string line;
 
-  //event_record = (char *) malloc( sizeof(char) * MAX_LINE_SIZE );
-
-  trace_name   = (char *) malloc( sizeof(char) * MAX_FILENAME_SIZE );
   pcf_file     = (char *) malloc( sizeof(char) * MAX_FILENAME_SIZE );
 
   /* ini vars. */
@@ -386,82 +366,21 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
       for ( k = 0; k < MAX_THREAD; k++ )
         thread_call_info[i][j][k] = nullptr;
 
-  /* Reading of the program arguments */
+  // TODO: change in execute call
+  std::string traceIn( trace_in );
+  std::string traceOut( trace_out );
 
   read_params();
-  strcpy( trace_name, trace_in );
 
-  /* Is the trace zipped ? */
-  if ( ( c = strrchr( trace_in, '.' ) ) != nullptr )
-  {
-    /* The names finishes with .gz */
-    if ( !strcmp( c, ".gz" ) )
-      is_zip_filter = true;
-    else
-      is_zip_filter = false;
-  }
+  inFile = TraceStream::openFile( trace_in );
+  outfile.open( trace_out, ios_base::out );
 
-  /* Open the files.  If nullptr is returned there was an error */
-  if ( !is_zip_filter )
-  {
-#if defined(__FreeBSD__) || defined(__APPLE__)
-    if ( ( infile = fopen( trace_name, "r" ) ) == nullptr )
-    {
-      perror( "ERROR" );
-      printf( "Error Opening File %s\n", trace_in );
-      exit( 1 );
-    }
-#elif defined(_WIN32)
-    if ( fopen_s( &infile, trace_name, "r" ) != 0 )
-    {
-      perror( "ERROR" );
-      printf( "Error Opening File %s\n", trace_in );
-      exit( 1 );
-    }
-#else
-    if ( ( infile = fopen64( trace_name, "r" ) ) == nullptr )
-    {
-      perror( "ERROR" );
-      printf( "Error Opening File %s\n", trace_in );
-      exit( 1 );
-    }
-#endif
-  }
-  else
-  {
-    if ( ( gzInfile = gzopen( trace_name, "rb" ) ) == nullptr )
-    {
-      printf( "Filter: Error opening compressed trace\n" );
-      exit( 1 );
-    }
-  }
-
-#if defined(__FreeBSD__) || defined(__APPLE__)
-  if ( ( outfile = fopen( trace_out, "w" ) ) == nullptr )
-  {
-    printf( "Error Opening File %s\n", trace_out );
-    exit( 1 );
-  }
-#elif defined(_WIN32)
-  if ( fopen_s( &outfile, trace_out, "w" ) != 0 )
-  {
-    printf( "Error Opening File %s\n", trace_out );
-    exit( 1 );
-  }
-#else
-  if ( ( outfile = fopen64( trace_out, "w" ) ) == nullptr )
-  {
-    printf( "Error Opening File %s\n", trace_out );
-    exit( 1 );
-  }
-#endif
-
-  ini_progress_bar( trace_name, progress );
+  initFilterProgressBar( traceIn, progress);
 
   /* Symbol loading of the .pcf file */
   if ( show_states && !all_states )
   {
-    strcpy( pcf_file, trace_name );
+    strcpy( pcf_file, traceIn.c_str() );
     c = strrchr( pcf_file, '.' );
     if (is_zip_filter)
     {
@@ -475,24 +394,14 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
     load_pcf( pcf_file );
   }
 
-  /* Process header */
-  trace_header = ( char * ) malloc( sizeof( char ) * MAX_HEADER_SIZE );
-  if ( !is_zip_filter ) fgets( trace_header, MAX_HEADER_SIZE, infile );
-  else
-  {
-    gzgets( gzInfile, trace_header, MAX_HEADER_SIZE );
-  }
-
-  fprintf( outfile, "%s", trace_header );
-  filter_process_header( trace_header );
-  free( trace_header );
+  parseInHeaderAndDumpOut( inFile, outfile );
 
   if ( progress != nullptr )
     end_parsing = progress->getStop();
 
+  std::ostringstream event_record;
 
   /* Processing the trace records */
-  //int tmpline =0;
   while ( !end_parsing )
   {
     if ( progress != nullptr )
@@ -502,23 +411,13 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
         continue;
     }
 
-    /* Read one more record is possible */
-    if ( !is_zip_filter )
+    if ( inFile->eof() || !inFile->good() )
     {
-      if ( fgets( line, sizeof( line ), infile ) == nullptr )
-      {
-        end_parsing = true;
-        continue;
-      }
+      end_parsing = true;
+      continue;
     }
-    else
-    {
-      if ( gzgets( gzInfile, line, sizeof( line ) ) == nullptr )
-      {
-        end_parsing = true;
-        continue;
-      }
-    }
+    
+    inFile->getline( line );
 
     if ( num_iters == total_iters )
     {
@@ -528,18 +427,15 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
     else
       num_iters++;
 
-    std::ostringstream event_record;
-
-    // std::cout << tmpline++ << std::endl;
-
-    /* 1: state; 2: event; 3: comm; 4: global comm */
+    auto itBegin = line.cbegin();
+    auto itEnd = line.cend();
     switch ( line[0] )
     {
       case '1':
         if ( !show_states )
           break;
 
-        sscanf( line, "%*d:%*d:%*d:%*d:%*d:%lld:%lld:%d\n", &time_1, &time_2, &state );
+        prv_atoll_v( itBegin, itEnd, recordType, cpu, appl, task, thread, time_1, time_2, state );
 
         if ( !all_states )
         {
@@ -554,7 +450,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
         if ( ( !min_state_time ) || ( time_2 - time_1 >= min_state_time ) )
         {
           if ( !filter_by_call_time )
-            fputs( line, outfile );
+            outfile << line << '\n';
           else
           {
             /* Insert on event buffer */
@@ -564,7 +460,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
               exit( 1 );
             }
 
-            new_elem->record = strdup( line );
+            new_elem->record = strdup( line.c_str() );
             new_elem->dump = true;
             new_elem->appl = appl;
             new_elem->task = task;
@@ -590,58 +486,27 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
 
         if ( filter_all_types )
         {
-          fputs( line, outfile );
+          outfile << line << '\n';
           break;
         }
 
-        sscanf( line, "%*d:%d:%d:%d:%d:%lld:%*s\n", &cpu, &appl, &task, &thread, &time_1 );
+        prv_atoll_v( itBegin, itEnd, recordType, cpu, appl, task, thread, time_1 );
 
-        i = 0;
-        num_char = 0;
-        while ( 1 )
-        {
-          if ( line[i] == ':' )
-          {
-            num_char++;
-            if ( num_char == 6 )
-            {
-              // line[i] = '\0';
-              break;
-            }
-          }
-          i++;
-        }
-
-        //sprintf( event_record, "2:%d:%d:%d:%d:%lld", cpu, appl, task, thread, time_1 );
-        event_record << "2:" << cpu << ":" << appl << ":" << task << ":" << thread << ":" << time_1;
+        event_record.clear();
+        event_record.str( "" );
+        event_record << recordType << ":" << cpu << ":" << appl << ":" << task << ":" << thread << ":" << time_1;
 
         call_in = false;
         dump_event_buffer = false;
-
-        /* Event type and values */
-        end_line = false;
         print_record = false;
-        word = strtok( &line[i+1], ":" );
-        type = atoll( word );
-        word = strtok( nullptr, ":" );
-        value = atoll( word );
-
-        if ( translationTable.size() > 0 )
-        {
-          TTypeValuePair p = std::make_pair( type, value );
-
-          std::map< TTypeValuePair, TTypeValuePair >::const_iterator it = translationTable.find(p);
-          if ( it != translationTable.end() )
-          {
-            type  = it->second.first;
-            value = it->second.second;
-          }
-        }
+        
+        prv_atoll_v( itBegin, itEnd, type, value );        
+        translateEvent( type, value );
 
         if ( ( i = filter_allowed_type( appl, task, thread, time_1, type, value ) ) > 0 )
         {
           print_record = true;
-          //sprintf( event_record, "%s:%lld:%lld", event_record, type, value );
+
           event_record << ":" << type << ":" << value;
 
           if ( i == 2 )
@@ -651,54 +516,33 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
           }
         }
 
-        while ( !end_line )
+        while ( prv_atoll_v( itBegin, itEnd, type, value ) )
         {
-          if ( ( word = strtok( nullptr, ":" ) ) != nullptr )
+          translateEvent( type, value );
+
+          if ( ( i = filter_allowed_type( appl, task, thread, time_1, type, value ) ) > 0 )
           {
-            type = atoll( word );
-            word = strtok( nullptr, ":" );
-            value = atoll( word );
+            print_record = true;
+            
+            event_record << ":" << type << ":" << value;
 
-            if ( translationTable.size() > 0 )
+            if ( i == 2 )
             {
-              TTypeValuePair p = std::make_pair( type, value );
-
-              std::map< TTypeValuePair, TTypeValuePair >::const_iterator it = translationTable.find(p);
-              if ( it != translationTable.end() )
-              {
-                type  = it->second.first;
-                value = it->second.second;
-              }
+              if ( value > 0 )
+                call_in = true;
+              else
+                dump_event_buffer = true;
             }
-
-            if ( ( i = filter_allowed_type( appl, task, thread, time_1, type, value ) ) > 0 )
-            {
-              print_record = true;
-              //sprintf( event_record, "%s:%lld:%lld", event_record, type, value );
-              event_record << ":" << type << ":" << value;
-
-              if ( i == 2 )
-              {
-                if ( value > 0 )
-                  call_in = true;
-                else
-                  dump_event_buffer = true;
-              }
-            }
-          }
-          else
-          {
-            end_line = true;
-            //sprintf( event_record, "%s\n", event_record );
-            event_record << std::endl;
           }
         }
+
+        event_record << std::endl;
 
         if ( print_record )
         {
           if ( !filter_by_call_time )
           {
-            fputs( event_record.str().c_str(), outfile );
+            outfile << event_record.str();
           }
           else
           {
@@ -755,15 +599,14 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
 
         if ( exec_options->min_comm_size > 0 )
         {
-          sscanf( line, "%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%d:%*d\n", &size );
-
+          prv_atoll_v( itBegin, itEnd, recordType, cpu,   appl,   task,   thread,   time_1, time_2,
+                                                   cpu_2, appl_2, task_2, thread_2, time_3, time_4, size );
           if ( size < exec_options->min_comm_size )
             break;
         }
 
-
         if ( !filter_by_call_time )
-          fputs( line, outfile );
+          outfile << line << '\n';
         else
         {
           /* Insert on event buffer */
@@ -773,7 +616,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
             exit( 1 );
           }
 
-          new_elem->record = strdup( line );
+          new_elem->record = strdup( line.c_str() );
           new_elem->dump = true;
           new_elem->appl = appl;
           new_elem->task = task;
@@ -791,40 +634,11 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
         }
         break;
 
-
-      case '4':
-        if ( !filter_by_call_time )
-          fputs( line, outfile );
-        else
-        {
-          /* Insert on event buffer */
-          if ( ( new_elem = ( struct buffer_elem * )malloc( sizeof( struct buffer_elem ) ) ) == nullptr )
-          {
-            printf( "NO MORE MEMORY!!!!\n" );
-            exit( 1 );
-          }
-
-          new_elem->record = strdup( line );
-          new_elem->dump = true;
-          new_elem->appl = appl;
-          new_elem->task = task;
-          new_elem->thread = thread;
-          new_elem->next = nullptr;
-
-          if ( buffer_first == nullptr )
-          {
-            buffer_first = new_elem;
-            buffer_last = new_elem;
-          }
-
-          buffer_last->next = new_elem;
-          buffer_last = new_elem;
-        }
-        break;
 
       case '#':
-        fputs( line, outfile );
+        outfile << line << '\n';
         break;
+
 
       default:
         break;
@@ -838,7 +652,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
     while ( new_elem != nullptr )
     {
       if ( new_elem->dump )
-        fputs( new_elem->record, outfile );
+        outfile << new_elem->record;
 
       free( new_elem->record );
       elem_aux = new_elem;
@@ -847,16 +661,9 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
     }
   }
 
-//  ok_filter_wait_window();
+  outfile.close();
+  inFile->close();
+  delete inFile;
 
-  /* Close the files */
-  fclose( outfile );
-  if ( !is_zip_filter )
-    fclose( infile );
-  else
-    gzclose( gzInfile );
-
-//  free( event_record );
-  free( trace_name );
   free( pcf_file );
 }

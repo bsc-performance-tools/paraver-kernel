@@ -25,11 +25,14 @@
 #pragma once
 
 
+#include <fstream>
 #include <map>
+#include <zlib.h>
 
 #include "ktraceoptions.h"
-#include "zlib.h"
 #include "tracefilter.h"
+#include "tracestream.h"
+
 
 class KTraceFilter: public TraceFilter
 {
@@ -43,23 +46,15 @@ class KTraceFilter: public TraceFilter
     virtual void execute( char *trace_in, char *trace_out, ProgressController *progress );
 
   private:
-    /* Buffer for reading trace records */
     char line[MAX_LINE_SIZE];
 
-    /* Trace in and trace out */
-    FILE *infile;
-    FILE *outfile;
-    gzFile gzInfile;
+    TraceStream *inFile;
+    std::fstream outfile;
 
     /* Parameters for showing percentage */
     unsigned long long total_trace_size;
     unsigned long long current_read_size;
-    // unsigned long total_cutter_iters;
     unsigned long total_iters;
-
-    /* Vars for saving the HC that will appear on the trace */
-//    unsigned long long counters[50];
-//    int last_counter;
 
     KTraceOptions *exec_options;
 
@@ -101,15 +96,19 @@ class KTraceFilter: public TraceFilter
     std::map<TTypeValuePair, TTypeValuePair> translationTable;
 
     void read_params();
-    void filter_process_header( char *header );
-    int filter_allowed_type(  int appl, int task, int thread,
-                              unsigned long long time,
-                              unsigned long long type,
-                              unsigned long long value );
-    void ini_progress_bar( char *file_name, ProgressController *progress );
+    void parseInHeaderAndDumpOut( TraceStream *whichFile, std::fstream& outfile );
+    int filter_allowed_type( int appl, int task, int thread,
+                             unsigned long long time,
+                             unsigned long long type,
+                             unsigned long long value );
+
+    void initFilterProgressBar( const std::string& fileName, ProgressController *progress );
     void show_progress_bar( ProgressController *progress );
+
     void load_pcf( char *pcf_name );
     void dump_buffer();
+    void translateEvent( unsigned long long &type, unsigned long long &value );
+
 };
 
 

@@ -21,16 +21,15 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
+#include <algorithm>
+#include <math.h>
+#include <sstream>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <math.h>
-#include <algorithm>
 #include <vector>
-#include <string>
-#include <sstream>
 
 #ifndef _WIN32
 #include <unistd.h>
