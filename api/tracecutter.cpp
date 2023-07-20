@@ -73,7 +73,6 @@ TraceCutterProxy::TraceCutterProxy( const KernelConnection *whichKernel,
 {
   string pcf_name;
   FILE *pcfFile;
-  vector< TEventType > HWCTypes;
 #ifdef _WIN32
   struct _stat tmpStatBuffer;
 #else
@@ -88,6 +87,8 @@ TraceCutterProxy::TraceCutterProxy( const KernelConnection *whichKernel,
   statReturn = stat( pcf_name.c_str(), &tmpStatBuffer );
 #endif
 
+  vector< TEventType > HWCTypes;
+  vector< TEventType > notHWCTypes;
   if( statReturn == 0 && tmpStatBuffer.st_size > 0 )
   {
     PCFFileParser<> pcfParser( pcf_name );
@@ -99,10 +100,16 @@ TraceCutterProxy::TraceCutterProxy( const KernelConnection *whichKernel,
     {
       if( *it >= 42000000 && *it < 50000000 )
         HWCTypes.push_back( *it );
+      else
+      {
+        auto tmpValues = pcfParser.getEventValues( *it );
+        if( tmpValues.empty() )
+          notHWCTypes.push_back( *it );
+      }
     }
   }
 
-  myTraceCutter = whichKernel->newTraceCutter( options, HWCTypes );
+  myTraceCutter = whichKernel->newTraceCutter( options, HWCTypes, notHWCTypes );
 }
 
 

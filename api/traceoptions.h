@@ -263,12 +263,13 @@ class TraceOptionsProxy :public TraceOptions
     // friend TraceOptions *TraceOptions::create( KernelConnection *, char * );
     friend TraceOptions *TraceOptions::create( const KernelConnection * );
     friend TraceCutter *LocalKernel::newTraceCutter( TraceOptions *options,
-                                         const std::vector< TEventType > &whichTypesWithValuesZero ) const;
+                                                     const std::vector< TEventType > &whichHWCTypes,
+                                                     const std::vector< TEventType > &whichNotHWCTypes ) const;
     friend TraceFilter *LocalKernel::newTraceFilter( char *trace_in,
-                                          char *trace_out,
-                                          TraceOptions *options,
-                                          const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable,
-                                          ProgressController *progress ) const;
+                                                     char *trace_out,
+                                                     TraceOptions *options,
+                                                     const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable,
+                                                     ProgressController *progress ) const;
 };
 
 

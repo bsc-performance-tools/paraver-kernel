@@ -89,7 +89,8 @@ class KernelConnection
     virtual std::string getToolName( const std::string &toolID ) const = 0;
     virtual TraceOptions *newTraceOptions() const = 0;
     virtual TraceCutter *newTraceCutter( TraceOptions *options,
-                                         const std::vector< TEventType > &whichTypesWithValuesZero ) const = 0;
+                                         const std::vector< TEventType > &whichHWCTypes,
+                                         const std::vector< TEventType > &whichNotHWCTypes ) const = 0;
     virtual TraceFilter *newTraceFilter( char *trace_in,
                                          char *trace_out,
                                          TraceOptions *options,

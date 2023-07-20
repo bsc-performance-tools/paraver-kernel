@@ -57,11 +57,13 @@
 using namespace std;
 
 KTraceCutter::KTraceCutter( TraceOptions *options,
-                            const vector< TEventType > &whichTypesWithValuesZero )
+                            const vector< TEventType > &whichHWCTypes,
+                            const vector< TEventType > &whichNotHWCTypes )
 {
   total_cutter_iters = 0;
   exec_options = new KTraceOptions( (KTraceOptions *) options );
-  HWCTypesInPCF.insert( whichTypesWithValuesZero.begin(), whichTypesWithValuesZero.end() );
+  HWCTypesInPCF.insert( whichHWCTypes.begin(), whichHWCTypes.end() );
+  notHWCTypesInPCF.insert( whichNotHWCTypes.begin(), whichNotHWCTypes.end() );
   cutterApplicationCaller = CutterMetadata::ORIGINAL_APPLICATION_ID;
   
   // PROFET
@@ -562,6 +564,9 @@ void KTraceCutter::update_queue( unsigned int appl, unsigned int task, unsigned 
                                  unsigned long long type,
                                  unsigned long long value )
 {
+  if( notHWCTypesInPCF.find( type ) != notHWCTypesInPCF.end() )
+    return;
+
   if ( threadsInfo.find( appl, task, thread ) == threadsInfo.end() )
   {
     init_useful_tasks = true;

@@ -37,7 +37,8 @@ class KTraceCutter : public TraceCutter
 {
   public:
     KTraceCutter( TraceOptions *options,
-                  const std::vector< TEventType > &whichTypesWithValuesZero );
+                  const std::vector< TEventType > &whichHWCTypes,
+                  const std::vector< TEventType > &whichNotHWCTypes );
     virtual ~KTraceCutter();
 
     virtual void set_by_time( bool byTime ) override;
@@ -93,8 +94,8 @@ class KTraceCutter : public TraceCutter
     unsigned long long total_tmp_lines;
     unsigned long long current_tmp_lines;
 
-    // Event types scanned from .pcf file with declared value 0.
     std::set< TEventType > HWCTypesInPCF;
+    std::set< TEventType > notHWCTypesInPCF;
 
     class ThreadInfo
     {
