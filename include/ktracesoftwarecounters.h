@@ -55,17 +55,6 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
       int top;
     };
 
-    struct ParaverEvent
-    {
-      int thread_id;
-      int cpu;
-      unsigned long long timestamp;
-      unsigned long long type[16];
-      unsigned long long value[16];
-      struct ParaverEvent *next_event;
-      struct ParaverEvent *previous_event;
-    };
-
     struct counter_event
     {
       int cpu;
@@ -129,13 +118,10 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     unsigned long long interval;
     unsigned long long last_time;
     unsigned long long trace_time;
-    unsigned long long type_marks[10];
     unsigned long long min_state_time;
     struct sc_allowed_types types;
-    int last_type_mark;
     bool type_of_counters;
     bool keep_events;
-    int frequency;
 
     /* Trace in and trace out */
     FILE *infile, *outfile;
@@ -143,10 +129,6 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
 
     /* Pointers to the thread struct, for avoiding to much searches */
     int thread_pointer[MAX_APPL][MAX_TASK][MAX_THREAD];
-
-    /* Buffer for Paraver trace events */
-    struct ParaverEvent *first_Paraver_event;
-    struct ParaverEvent *last_Paraver_event;
 
     /* Info and counters of the threads */
     struct thread_info threads[MAX_THREADS];
@@ -167,19 +149,14 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     void proces_header( char *header, FILE *in, FILE *out );
     void write_pcf( char *file_out );
     bool allowed_type( unsigned long long type, unsigned long long value );
-    bool allowed_type_mark( unsigned long long type );
     int inc_counter( int appl, int task, int thread,
                      unsigned long long type, unsigned long long value );
-    void put_zeros( void );
-    void flush_all_events( void );
     void put_all_counters( void );
-    void put_counters_by_thread( int appl, int task, int thread, int cpu );
     void ini_progress_bar( char *file_name, ProgressController *progress );
     void show_progress_bar( ProgressController *progress );
     void put_counters_on_state_by_thread( int appl, int task, int thread );
     void sc_by_time( ProgressController *progress );
     void flush_counter_buffers( void );
-    void sc_by_event( ProgressController *progress );
     void insert_in_queue_state( int thread_id, unsigned long long time );
     void put_counters_on_state( struct KTraceSoftwareCounters::state_queue_elem *p,
                                 struct KTraceSoftwareCounters::state_queue_elem *q );
