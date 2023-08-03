@@ -24,9 +24,11 @@
 
 #pragma once
 
+#include <fstream>
 
 #include "ktraceoptions.h"
 #include "tracesoftwarecounters.h"
+#include "tracestream.h"
 
 class KTraceSoftwareCounters : public TraceSoftwareCounters
 {
@@ -106,7 +108,7 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
       struct state_queue_elem *next;
     };
 
-    char line[MAX_LINE_SIZE];  /* Buffer for reading trace records */
+    std::string line;  /* Buffer for reading trace records */
 
     /* Execution parameters */
     bool all_types;
@@ -124,7 +126,8 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     bool keep_events;
 
     /* Trace in and trace out */
-    FILE *infile, *outfile;
+    TraceStream *infile;
+    std::fstream outfile;
     KTraceOptions *exec_options;
 
     /* Pointers to the thread struct, for avoiding to much searches */
@@ -146,7 +149,7 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     struct sc_kept_types types_to_keep;
 
     void read_sc_args();
-    void proces_header( char *header, FILE *in, FILE *out );
+    void parseInHeaderAndDumpOut();
     void write_pcf( char *file_out );
     bool allowed_type( unsigned long long type, unsigned long long value );
     int inc_counter( int appl, int task, int thread,

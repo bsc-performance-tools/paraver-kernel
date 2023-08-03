@@ -22,11 +22,11 @@
 \*****************************************************************************/
 
 
+#include <errno.h>
 #include <string>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <math.h>
@@ -38,12 +38,29 @@
 #include "ktracesoftwarecounters.h"
 #include "ktraceoptions.h"
 #include "kprogresscontroller.h"
-//#include "filters_wait_window.h"
 #include "paraverconfig.h"
+
+#include "utils/traceparser/processmodel.h"
+#include "utils/traceparser/resourcemodel.h"
+#include "utils/traceparser/tracebodyio_v1.h"
+#include "utils/traceparser/traceheader.h"
 
 #ifdef _WIN32
 #define atoll _atoi64
 #endif
+
+template <typename T, typename... Targs>
+constexpr void dump_fields( std::fstream& file, T current_field )
+{
+  file << current_field;
+}
+
+template <typename T, typename... Targs>
+constexpr void dump_fields( std::fstream& file, T current_field, Targs... Fargs )
+{
+  file << current_field << ":";
+  dump_fields( file, Fargs... );
+}
 
 KTraceSoftwareCounters::KTraceSoftwareCounters( char *trace_in,
                                                 char *trace_out,
@@ -164,40 +181,28 @@ void KTraceSoftwareCounters::read_sc_args()
 
 
 /* For processing the Paraver header */
-void KTraceSoftwareCounters::proces_header( char *header, FILE *in, FILE *out )
+void KTraceSoftwareCounters::parseInHeaderAndDumpOut()
 {
-  int num_comms = 0;
-  char *word;
+  ProcessModel<> traceProcessModel = ProcessModel<>( );
+  ResourceModel<> traceResourceModel = ResourceModel<>( );
+  unsigned long long traceEndTime = 0;
+  TTimeUnit traceTimeUnit = NS;
+  std::vector< std::string > communicators;
+  std::string tmpDate;
 
-  fprintf( out, "%s", header );
-
-  /* Get the number of communicators*/
-  word = strrchr( header, ',' );
-  if ( word != nullptr )
+  try
   {
-    strcpy( line, word + 1 );
-    if ( strchr( line, ')' ) == nullptr )
-      num_comms = atoi( line );
+    parseTraceHeader( *infile, tmpDate, traceTimeUnit, traceEndTime, traceResourceModel, traceProcessModel, communicators );
+  }
+  catch( TraceHeaderException& e )
+  {
+    throw e;
   }
 
-  /* Obtaining the trace total time */
-  // #Paraver (12/03/2018 at 16:11:35.687574899):123_ns:
-  word = strtok( header, ")" );
-  word = strtok( nullptr, ":" );
-  char *tmpTimeUnitSuffix = strstr( word, "_" );
-  if ( tmpTimeUnitSuffix )
-  {
-    word[ strlen( word ) - strlen( tmpTimeUnitSuffix ) ] = '\0';
-  }
-  trace_time = atoll( word );
+  trace_time = traceEndTime;
 
-  /* Copy communicators */
-  while ( num_comms > 0 )
-  {
-    fgets( header, MAX_HEADER_SIZE, in );
-    fprintf( out, "%s", header );
-    num_comms--;
-  }
+  // Dump header in outfile
+  dumpTraceHeader( outfile, tmpDate, traceEndTime, traceTimeUnit, traceResourceModel, traceProcessModel, communicators );
 }
 
 
@@ -205,47 +210,46 @@ void KTraceSoftwareCounters::proces_header( char *header, FILE *in, FILE *out )
 void KTraceSoftwareCounters::write_pcf( char *file_out )
 {
   char *c, *trace_out;
-  FILE *pcf;
+  std::fstream pcf;
 
   trace_out = strdup( file_out );
 
   c = strrchr( trace_out, '.' );
   *c = '\0';
 
-// ??
-  printf( "\n" );
+  line = trace_out;
+  line += ".pcf";
 
-  sprintf( line, "%s.pcf", trace_out );
-
-  if ( ( pcf = fopen( line, "a" ) ) == nullptr )
+  pcf.open( line, std::ios_base::out );
+  if ( !pcf.is_open() )
     return;
 
-  fprintf( pcf, "\n\nEVENT_TYPE\n" );
-  fprintf( pcf, "9   15001059    MPI_Waitany_counter\n" );
-  fprintf( pcf, "9   15001004    MPI_Irecv_counter\n" );
-  fprintf( pcf, "9   15001003    MPI_Isend_counter\n" );
-  fprintf( pcf, "9   15001002    MPI_Recv_counter\n" );
-  fprintf( pcf, "9   15001001    MPI_Send_counter\n" );
-  fprintf( pcf, "9   15001041    MPI_Sendrecv_counter\n" );
-  fprintf( pcf, "9   15001006    MPI_Waitall_counter\n" );
-  fprintf( pcf, "9   15001005    MPI_Wait_counter\n" );
-  fprintf( pcf, "9   15001062    MPI_Iprobe_counter\n" );
-  fprintf( pcf, "9   15002010    MPI_Allreduce_counter\n" );
-  fprintf( pcf, "9   15002007    MPI_Bcast_counter\n" );
-  fprintf( pcf, "9   15002018    MPI_Allgatherv_counter\n" );
-  fprintf( pcf, "9   15002013    MPI_Gather_counter\n" );
-  fprintf( pcf, "9   15003019    MPI_Comm_rank_counter\n" );
-  fprintf( pcf, "9   15003020    MPI_Comm_size_counter\n" );
-  fprintf( pcf, "9   15003031    MPI_Init_counter\n" );
-  fprintf( pcf, "9   15003032    MPI_Finalize_counter\n" );
-  fprintf( pcf, "9      25001    MPI_Point-to-point_global_counter\n" );
-  fprintf( pcf, "9      25002    MPI_Collective_comm_global_counter\n" );
-  fprintf( pcf, "9      25003    MPI_Other_global_counter\n" );
+  pcf << "\n\nEVENT_TYPE\n";
+  pcf << "9   15001059    MPI_Waitany_counter\n";
+  pcf << "9   15001004    MPI_Irecv_counter\n";
+  pcf << "9   15001003    MPI_Isend_counter\n";
+  pcf << "9   15001002    MPI_Recv_counter\n";
+  pcf << "9   15001001    MPI_Send_counter\n";
+  pcf << "9   15001041    MPI_Sendrecv_counter\n";
+  pcf << "9   15001006    MPI_Waitall_counter\n";
+  pcf << "9   15001005    MPI_Wait_counter\n";
+  pcf << "9   15001062    MPI_Iprobe_counter\n";
+  pcf << "9   15002010    MPI_Allreduce_counter\n";
+  pcf << "9   15002007    MPI_Bcast_counter\n";
+  pcf << "9   15002018    MPI_Allgatherv_counter\n";
+  pcf << "9   15002013    MPI_Gather_counter\n";
+  pcf << "9   15003019    MPI_Comm_rank_counter\n";
+  pcf << "9   15003020    MPI_Comm_size_counter\n";
+  pcf << "9   15003031    MPI_Init_counter\n";
+  pcf << "9   15003032    MPI_Finalize_counter\n";
+  pcf << "9      25001    MPI_Point-to-point_global_counter\n";
+  pcf << "9      25002    MPI_Collective_comm_global_counter\n";
+  pcf << "9      25003    MPI_Other_global_counter\n";
 
   if ( summarize_bursts )
-    fprintf( pcf, "9          1    Total_burst_time\n" );
+    pcf << "9          1    Total_burst_time\n";
 
-  fclose( pcf );
+  pcf.close();
 }
 
 
@@ -368,16 +372,8 @@ void KTraceSoftwareCounters::put_all_counters( void )
           type_mask = threads[i].counters[j].type / 10000 + 20000 + threads[i].counters[j].type % 10000;
       }
 
-      fprintf( outfile, "2:0:%d:%d:%d:%lld:%lld:%lld\n", threads[i].appl, threads[i].task, threads[i].thread, last_time, type_mask, threads[i].counters[j].num );
-
-      /* If the counters is 0, we mark that in order to put a 0 counter */
-      /* in the period before of a non-zero counter of the same type */
-      /*         if(threads[i].counters[j].num == 0)
-        threads[i].counters[j].last_is_zero = true;
-               else {
-        threads[i].counters[j].num=0;
-        threads[i].counters[j].last_is_zero = false;
-        }*/
+      dump_fields( outfile, "2:0", threads[i].appl, threads[i].task, threads[i].thread, last_time, type_mask, threads[i].counters[j].num );
+      outfile << "\n";
     }
   }
 }
@@ -429,24 +425,7 @@ void KTraceSoftwareCounters::ini_progress_bar( char *file_name, ProgressControll
 
 void KTraceSoftwareCounters::show_progress_bar( ProgressController *progress )
 {
-//  double current_showed, i, j;
-
-#if defined(__FreeBSD__) || defined(__APPLE__)
-  current_read_size = ftello( infile );
-#elif defined(_WIN32)
-  current_read_size = _ftelli64( infile );
-#else
-  current_read_size = ftello64( infile );
-#endif
-
-/*  i = ( double )( current_read_size );
-  j = ( double )( total_trace_size );
-  current_showed = i / j;
-*/
-
-// DOESN'T WORK ON COMPRESSED TRACE
-//  if ( is_zip_filter )
-//    current_read_size = current_read_size / COMPRESSION_RATIO_GZIP;
+  current_read_size = infile->tellg();
 
   if( progress != nullptr)
     progress->setCurrentProgress( current_read_size );
@@ -484,19 +463,10 @@ void KTraceSoftwareCounters::put_counters_on_state_by_thread( int appl, int task
         type_mask = threads[i].counters[j].type / 10000 + 20000 + threads[i].counters[j].type % 10000;
     }
 
-    /*
-             if(threads[i].counters[j].num > 0 || !threads[i].counters[j].last_is_zero)*/
-    fprintf( outfile, "2:0:%d:%d:%d:%lld:%lld:%lld\n", threads[i].appl, threads[i].task, threads[i].thread, last_time, type_mask, threads[i].counters[j].num );
+    dump_fields( outfile, "2:0", threads[i].appl, threads[i].task, threads[i].thread, last_time, type_mask, threads[i].counters[j].num );
+    outfile << "\n";
 
     threads[i].counters[j].num = 0;
-    /*
-             if(threads[i].counters[j].num == 0)
-                    threads[i].counters[j].last_is_zero = true;
-             else {
-                    threads[i].counters[j].num=0;
-                    threads[i].counters[j].last_is_zero = false;
-             }
-      */
   }
 
   threads[i].last_time_of_sc = last_time;
@@ -504,7 +474,9 @@ void KTraceSoftwareCounters::put_counters_on_state_by_thread( int appl, int task
   /* Put burst counters if needed */
   if ( summarize_bursts )
   {
-    fprintf( outfile, "2:0:%d:%d:%d:%lld:1:%lld\n", threads[i].appl, threads[i].task, threads[i].thread, last_time, threads[i].total_burst_time );
+    dump_fields( outfile, "2:0", threads[i].appl, threads[i].task, threads[i].thread, last_time, threads[i].total_burst_time );
+    outfile << "\n";
+
     threads[i].total_burst_time = 0;
   }
 }
@@ -512,16 +484,12 @@ void KTraceSoftwareCounters::put_counters_on_state_by_thread( int appl, int task
 
 void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
 {
-  int id, cpu, appl, task, thread, state;
+  int recordType, cpu, appl, task, thread, state;
   unsigned long long time_1, time_2, type, value;
-  // char *word, buffer[MAX_LINE_SIZE];
-  //char *word, *buffer;
   char *word;
   bool print_line = false;
   int thread_id, i, j;
   unsigned long num_iters = 0;
-
-  //buffer = (char *) malloc( sizeof(char) * MAX_LINE_SIZE );
 
   bool end_parsing;
 
@@ -530,10 +498,14 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
   else
     end_parsing = false;
 
-  /* Trace processing */
-  while ( fscanf( infile, "%d:%d:%d:%d:%d:%lld:", &id, &cpu, &appl, &task, &thread, &time_1 ) != EOF &&
-          !end_parsing )
+  while ( !infile->eof() && !end_parsing )
   {
+    infile->getline( line );
+
+    auto itBegin = line.cbegin();
+    auto itEnd = line.cend();
+    prv_atoll_v( itBegin, itEnd, recordType, cpu, appl, task, thread, time_1 );
+
     if ( progress != nullptr )
     {
       end_parsing = progress->getStop();
@@ -541,21 +513,20 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
         continue;
     }
 
-
     if ( num_iters == total_iters )
     {
       show_progress_bar( progress );
       num_iters = 0;
     }
     else
-      num_iters++;
+      ++num_iters;
 
     std::ostringstream buffer; // only for events
 
-    switch ( id )
+    switch ( recordType )
     {
       case 1:
-        fscanf( infile, "%lld:%d\n", &time_2, &state );
+        prv_atoll_v( itBegin, itEnd, time_2, state );
 
         if ( state != 1 )
           break;
@@ -586,9 +557,11 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
         if ( summarize_bursts )
           threads[i].total_burst_time += ( time_2 - time_1 );
 
-
         if ( !remove_states )
-          fprintf( outfile, "1:%d:%d:%d:%d:%lld:%lld:%d\n", cpu, appl, task, thread, time_1, time_2, state );
+        {
+          dump_fields( outfile, recordType, cpu, appl, task, thread, time_1, time_2, state );
+          outfile << "\n";
+        }
 
         break;
 
@@ -608,62 +581,20 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
           thread_pointer[appl][task][thread] = i;
         }
 
-        /* Flush buffer and put counters */
-        /*                if(time_1 >= (threads[i].last_time_of_sc + interval)) {
-                         last_time = time_1;
-                         put_counters_on_state_by_thread(appl, task, thread);
-                        }
-        */
-        fgets( line, sizeof( line ), infile );
+        buffer.clear();
+        buffer << "2:" << cpu << ":" << appl << ":" << task << ":" << thread << ":" << time_1;
 
-        /* Event type and values */
-        word = strtok( line, ":" );
-        type = atoll( word );
-        word = strtok( nullptr, ":" );
-        value = atoll( word );
-
-        /* For keeping some events */
-        if ( keep_events )
+        while ( itBegin != itEnd )
         {
-          //sprintf( buffer, "2:%d:%d:%d:%d:%lld:", cpu, appl, task, thread, time_1 );
-          buffer << "2:" << cpu << ":" << appl << ":" << task << ":" << thread << ":" << time_1;
+          prv_atoll_v( itBegin, itEnd, type, value );
 
-          for ( j = 0; j < types_to_keep.next_free_slot; j++ )
-          {
-            if ( types_to_keep.type[i] == type )
-            {
-              //sprintf( buffer, "%s%lld:%lld", buffer, type, value );
-              buffer << ":" << type << ":" << value;
-              print_line = true;
-              break;
-            }
-          }
-        }
-
-        /* Counting events */
-        if ( only_in_bursts )
-        {
-          if ( time_1 > threads[i].ini_burst_time && time_1 <= threads[i].end_burst_time )
-            thread_id = inc_counter( appl, task, thread, type, value );
-        }
-        else
-          thread_id = inc_counter( appl, task, thread, type, value );
-
-        /* Parsing of multiple events on a single line */
-        while ( ( word = strtok( nullptr, ":" ) ) != nullptr )
-        {
-          type = atoll( word );
-          word = strtok( nullptr, ":" );
-          value = atoll( word );
-
+          /* For keeping some events */
           if ( keep_events )
           {
-            int j;
-            for ( j = 0; j < types_to_keep.next_free_slot; j++ )
+            for ( j = 0; j < types_to_keep.next_free_slot; ++j )
             {
-              if ( types_to_keep.type[i] == type )
+              if ( types_to_keep.type[j] == type )
               {
-                //sprintf( buffer, "%s%lld:%lld", buffer, type, value );
                 buffer << ":" << type << ":" << value;
                 print_line = true;
                 break;
@@ -671,27 +602,25 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
             }
           }
 
+          /* Counting events */
           if ( only_in_bursts )
           {
             if ( time_1 > threads[i].ini_burst_time && time_1 <= threads[i].end_burst_time )
               thread_id = inc_counter( appl, task, thread, type, value );
           }
           else
-            inc_counter( appl, task, thread, type, value );
+            thread_id = inc_counter( appl, task, thread, type, value );
         }
 
         if ( print_line )
         {
-          buffer << std::endl;
-          //fprintf( outfile, "%s\n", buffer );
-          fprintf( outfile, "%s", buffer.str().c_str() );
+          outfile << buffer.str() << "\n";
           print_line = false;
         }
 
         break;
 
       default:
-        fgets( line, sizeof( line ), infile );
         break;
     }
   }
@@ -699,9 +628,6 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
   /* Put counters and flush events of the last interval */
   last_time = trace_time - 10;
   put_all_counters();
-  // ok_sc_wait_window();
-
-  // free( buffer );
 }
 
 
@@ -743,7 +669,14 @@ void KTraceSoftwareCounters::flush_counter_buffers( void )
     }
 
     /* Put the event on the trace */
-    fprintf( outfile, "2:%d:%d:%d:%d:%lld:%lld:%lld\n", threads[current_thread].first_event_counter->cpu, threads[current_thread].appl, threads[current_thread].task, threads[current_thread].thread, current_time, threads[current_thread].first_event_counter->type, threads[current_thread].first_event_counter->value );
+    dump_fields( outfile, "2", 
+                          threads[current_thread].first_event_counter->cpu,
+                          threads[current_thread].appl,
+                          threads[current_thread].task,
+                          threads[current_thread].thread,
+                          current_time, threads[current_thread].first_event_counter->type,
+                          threads[current_thread].first_event_counter->value );
+    outfile << "\n";
 
     printed_event = threads[current_thread].first_event_counter;
     threads[current_thread].first_event_counter = threads[current_thread].first_event_counter->next;
@@ -823,19 +756,16 @@ void KTraceSoftwareCounters::put_counters_on_state( struct KTraceSoftwareCounter
       else
         type_mask = threads[i].counters[j].type / 10000 + 20000 + threads[i].counters[j].type % 10000;
     }
-    /*
-      if(threads[i].counters[j].num > 0 || !threads[i].counters[j].last_is_zero)
-    */
-    fprintf( outfile, "2:0:%d:%d:%d:%lld:%lld:%lld\n", threads[i].appl, threads[i].task, threads[i].thread, p->last_state_end_time, type_mask, threads[i].counters[j].num );
 
+    dump_fields( outfile, "2:0",
+                          threads[i].appl,
+                          threads[i].task,
+                          threads[i].thread,
+                          p->last_state_end_time,
+                          type_mask,
+                          threads[i].counters[j].num );
+    outfile << "\n";
     threads[i].counters[j].num = 0;
-    /*
-             if(threads[i].counters[j].num == 0)
-                    threads[i].counters[j].last_is_zero = true;
-             else {
-                    threads[i].counters[j].num=0;
-                    threads[i].counters[j].last_is_zero = false;
-             }*/
   }
 
   if ( first_state_elem == p )
@@ -849,17 +779,13 @@ void KTraceSoftwareCounters::put_counters_on_state( struct KTraceSoftwareCounter
 
 void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
 {
-  int id, cpu, appl, task, thread, state;
+  int recordType, cpu, appl, task, thread, state;
   unsigned long long time_1, time_2, type, value;
-  // char *word, buffer[MAX_LINE_SIZE];
-  //char *word, *buffer;
   char *word;
   bool print_line = false;
   struct state_queue_elem *p, *q;
   int i, j;
   unsigned long num_iters = 0;
-
-  //buffer = (char *) malloc( sizeof(char) * MAX_LINE_SIZE );
 
   p = nullptr;
   q = nullptr;
@@ -871,10 +797,16 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
   else
     end_parsing = false;
 
-  /* Trace processing */
-  while ( fscanf( infile, "%d:%d:%d:%d:%d:%lld:", &id, &cpu, &appl, &task, &thread, &time_1 ) != EOF &&
-          !end_parsing )
+  std::ostringstream buffer;
+
+  while ( !infile->eof() && !end_parsing )
   {
+    infile->getline( line );
+
+    auto itBegin = line.cbegin();
+    auto itEnd = line.cend();
+    prv_atoll_v( itBegin, itEnd, recordType, cpu, appl, task, thread, time_1 );
+
     if ( progress != nullptr )
     {
       end_parsing = progress->getStop();
@@ -890,169 +822,110 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
     else
       num_iters++;
 
-    if ( id == 1 )
+    switch( recordType )
     {
-      fscanf( infile, "%lld:%d\n", &time_2, &state );
+      case 1:
+        prv_atoll_v( itBegin, itEnd, time_2, state );
 
-      if ( ( i = thread_pointer[appl][task][thread] ) == -1 )
-      {
-        threads[next_thread_slot].appl = appl;
-        threads[next_thread_slot].task = task;
-        threads[next_thread_slot].thread = thread;
-        threads[next_thread_slot].next_free_counter = 0;
-        threads[next_thread_slot].last_time_of_sc = 0;
-        i = next_thread_slot;
-        next_thread_slot++;
-        thread_pointer[appl][task][thread] = i;
-      }
-
-
-      /* Bolcar tots els threads que hagin de posar contadors */
-      /*            for(p = first_state_elem; p!=nullptr; p = p->next) {
-        if(p->last_state_end_time <= time_1)
-         put_counters_on_state(p, q);
-        else {
-         q = p;
-         break;
-        }
-                  }
-      */
-
-      if ( ( min_state_time != 0 && ( time_2 - time_1 >= min_state_time ) && state == 1 ) || !min_state_time )
-      {
-        /* Insertar quan se li acaba l'estat */
-        insert_in_queue_state( i, time_2 );
-
-        /* Posar contadors per a aquest thread */
-        last_time = time_1;
-        put_counters_on_state_by_thread( appl, task, thread );
-
-        /* Posem el record d'estat */
-        fprintf( outfile, "1:%d:%d:%d:%d:%lld:%lld:1\n", cpu, appl, task, thread, time_1, time_2 );
-      }
-
-      continue;
-    }
-
-    if ( id == 2 )
-    {
-      std::ostringstream buffer;
-
-      /* Incrementing the counters */
-      fgets( line, sizeof( line ), infile );
-      if ( line[0] == '#' )
-        continue;
-
-      if ( ( i = thread_pointer[appl][task][thread] ) == -1 )
-      {
-        threads[next_thread_slot].appl = appl;
-        threads[next_thread_slot].task = task;
-        threads[next_thread_slot].thread = thread;
-        threads[next_thread_slot].next_free_counter = 0;
-        threads[next_thread_slot].last_time_of_sc = 0;
-        i = next_thread_slot;
-        next_thread_slot++;
-        thread_pointer[appl][task][thread] = i;
-      }
-
-      /* Bolcar tots els threads que hagin de posar contadors */
-      for ( p = first_state_elem; p != nullptr; p = p->next )
-      {
-        if ( p->last_state_end_time < time_1 )
-          put_counters_on_state( p, q );
-        else
+        if ( ( i = thread_pointer[appl][task][thread] ) == -1 )
         {
-          q = p;
-          break;
+          threads[next_thread_slot].appl = appl;
+          threads[next_thread_slot].task = task;
+          threads[next_thread_slot].thread = thread;
+          threads[next_thread_slot].next_free_counter = 0;
+          threads[next_thread_slot].last_time_of_sc = 0;
+          i = next_thread_slot;
+          next_thread_slot++;
+          thread_pointer[appl][task][thread] = i;
         }
-      }
 
-      /* Event type and values */
-      word = strtok( line, ":" );
-      type = atoll( word );
-      word = strtok( nullptr, ":" );
-      value = atoll( word );
-
-      if ( keep_events )
-      {
-        //sprintf( buffer, "2:%d:%d:%d:%d:%lld:", cpu, appl, task, thread, time_1 );
-        buffer << "2:" << cpu << ":" << appl << ":" << task << ":" << thread << ":" << time_1;
-        for ( j = 0; j < types_to_keep.next_free_slot; j++ )
+        if ( ( min_state_time != 0 && ( time_2 - time_1 >= min_state_time ) && state == 1 ) || !min_state_time )
         {
-          if ( types_to_keep.type[j] == type )
+          /* Insertar quan se li acaba l'estat */
+          insert_in_queue_state( i, time_2 );
+
+          /* Posar contadors per a aquest thread */
+          last_time = time_1;
+          put_counters_on_state_by_thread( appl, task, thread );
+
+          /* Posem el record d'estat */
+          dump_fields( outfile, recordType, cpu, appl, task, thread, time_1, time_2 );
+          outfile << "\n";
+        }
+
+        break;
+
+      case 2:
+        if ( ( i = thread_pointer[appl][task][thread] ) == -1 )
+        {
+          threads[next_thread_slot].appl = appl;
+          threads[next_thread_slot].task = task;
+          threads[next_thread_slot].thread = thread;
+          threads[next_thread_slot].next_free_counter = 0;
+          threads[next_thread_slot].last_time_of_sc = 0;
+          i = next_thread_slot;
+          next_thread_slot++;
+          thread_pointer[appl][task][thread] = i;
+        }
+
+        /* Bolcar tots els threads que hagin de posar contadors */
+        for ( p = first_state_elem; p != nullptr; p = p->next )
+        {
+          if ( p->last_state_end_time < time_1 )
+            put_counters_on_state( p, q );
+          else
           {
-            //sprintf( buffer, "%s%lld:%lld", buffer, type, value );
-            buffer << ":" << type << ":" << value;
-            print_line = true;
+            q = p;
             break;
           }
         }
-      }
 
-      inc_counter( appl, task, thread, type, value );
-
-      /* Parsing of multiple events on a single line */
-      while ( ( word = strtok( nullptr, ":" ) ) != nullptr )
-      {
-        type = atoll( word );
-        word = strtok( nullptr, ":" );
-        value = atoll( word );
-
-        if ( keep_events )
+        while ( itBegin != itEnd )
         {
-          int j;
-          for ( j = 0; j < types_to_keep.next_free_slot; j++ )
+          prv_atoll_v( itBegin, itEnd, type, value );
+
+          buffer.clear();
+          if ( keep_events )
           {
-            if ( types_to_keep.type[i] == type )
+            buffer << "2:" << cpu << ":" << appl << ":" << task << ":" << thread << ":" << time_1;
+            for ( j = 0; j < types_to_keep.next_free_slot; ++j )
             {
-              //sprintf( buffer, "%s%lld:%lld", buffer, type, value );
-              buffer << ":" << type << ":" << value;
-              print_line = true;
-              break;
+              if ( types_to_keep.type[j] == type )
+              {
+                buffer << ":" << type << ":" << value;
+                print_line = true;
+                break;
+              }
             }
           }
+
+          inc_counter( appl, task, thread, type, value );
         }
 
-        inc_counter( appl, task, thread, type, value );
-      }
+        if ( print_line )
+        {
+          outfile << buffer.str() << "\n";
+          print_line = false;
+        }
 
-      if ( print_line )
-      {
-        buffer << std::endl;
-        //fprintf( outfile, "%s\n", buffer );
-        fprintf( outfile, "%s", buffer.str().c_str() );
-        print_line = false;
-      }
-
-      continue;
+        break;
+    
+      default:
+        break;
     }
-    /* Record ni d'estat ni event, el saltem */
-    else
-      fgets( line, sizeof( line ), infile );
   }
-
 
   /* Posem els contadors que falten */
   for ( p = first_state_elem; p != nullptr; p = p->next )
   {
     put_counters_on_state( p, nullptr );
   }
-
-//  ok_sc_wait_window();
-
-  //free( buffer );
 }
 
 
 void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out, ProgressController *progress )
 {
-  bool is_zip = false;
-  // char *tmp_dir = nullptr, *c, trace_name[512], *trace_header;
-  char *c, *trace_name, *trace_header;
-  std::string tmp_dir;
   int i, j, k;
-
-  trace_name = (char *) malloc( sizeof(char) * MAX_FILENAME_SIZE );
 
   /* Ini data */
   next_thread_slot = 0;
@@ -1067,73 +940,15 @@ void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out, ProgressC
   /* Reading of program args */
   read_sc_args();
 
-  /* Open the files.  If nullptr is returned there was an error */
-  /* Is a zipped trace ? */
-  if ( ( c = strrchr( trace_in, '.' ) ) != nullptr )
-  {
-    /* The name finishes with -gz */
-    if ( strlen( c ) == 3 )
-    {
-      tmp_dir = ParaverConfig::getInstance()->getGlobalTmpPath();
-      sprintf( line, "gzip -dc %s > %s/tmp.prv", trace_in, tmp_dir.c_str() );
-//      printf( "\nDecompressing zipped trace...\n" );
-      system( line );
-      sprintf( line, "%s/tmp.prv", tmp_dir.c_str() );
-      strcpy( trace_name, line );
-      is_zip = true;
-    }
-    else
-    {
-      strcpy( trace_name, trace_in );
-    }
-  }
-
-#if defined(__FreeBSD__) || defined(__APPLE__)
-  if ( ( infile = fopen( trace_name, "r" ) ) == nullptr )
-  {
-    printf( "Error Opening File %s\n", trace_name );
-    exit( 1 );
-  }
-  if ( ( outfile = fopen( trace_out, "w" ) ) == nullptr )
-  {
-    printf( "Error Opening File %s\n", trace_out );
-    exit( 1 );
-  }
-#elif defined(_WIN32)
-  if ( fopen_s( &infile, trace_name, "r" ) != 0 )
-  {
-    printf( "Error Opening File %s\n", trace_name );
-    exit( 1 );
-  }
-
-  if ( fopen_s( &outfile, trace_out, "w" ) != 0 )
-  {
-    printf( "Error Opening File %s\n", trace_out );
-    exit( 1 );
-  }
-#else
-  if ( ( infile = fopen64( trace_name, "r" ) ) == nullptr )
-  {
-    printf( "Error Opening File %s\n", trace_name );
-    exit( 1 );
-  }
-
-  if ( ( outfile = fopen64( trace_out, "w" ) ) == nullptr )
-  {
-    printf( "Error Opening File %s\n", trace_out );
-    exit( 1 );
-  }
-#endif
-
+  infile = TraceStream::openFile( trace_in );
+  outfile = fstream( trace_out, ios_base::out );
+  
   write_pcf( trace_out );
 
-  ini_progress_bar( trace_name, progress );
+  ini_progress_bar( trace_in, progress );
 
   /* Read header */
-  trace_header = ( char * )malloc( sizeof( char ) * MAX_HEADER_SIZE );
-  fgets( trace_header, MAX_HEADER_SIZE, infile );
-  proces_header( trace_header, infile, outfile );
-  free( trace_header );
+  parseInHeaderAndDumpOut();
 
   if ( type_of_counters )
     sc_by_time( progress );
@@ -1141,14 +956,6 @@ void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out, ProgressC
     sc_by_states( progress );
 
   /* Close the files */
-  fclose( infile );
-  fclose( outfile );
-  if ( is_zip )
-  {
-    sprintf( line, "rm %s/tmp.prv", tmp_dir.c_str() );
-    system( line );
-  }
-
-  free( trace_name );
+  infile->close();
+  outfile.close();
 }
-
