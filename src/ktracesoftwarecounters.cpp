@@ -582,7 +582,7 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
         }
 
         buffer.clear();
-        buffer << "2:" << cpu << ":" << appl << ":" << task << ":" << thread << ":" << time_1;
+        buffer << recordType << ":" << cpu << ":" << appl << ":" << task << ":" << thread << ":" << time_1;
 
         while ( itBegin != itEnd )
         {
@@ -849,7 +849,7 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
           put_counters_on_state_by_thread( appl, task, thread );
 
           /* Posem el record d'estat */
-          dump_fields( outfile, recordType, cpu, appl, task, thread, time_1, time_2 );
+          dump_fields( outfile, recordType, cpu, appl, task, thread, time_1, time_2, state );
           outfile << "\n";
         }
 
@@ -880,14 +880,14 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
           }
         }
 
+        buffer.clear();
+        buffer << recordType << ":" << cpu << ":" << appl << ":" << task << ":" << thread << ":" << time_1;
         while ( itBegin != itEnd )
         {
           prv_atoll_v( itBegin, itEnd, type, value );
 
-          buffer.clear();
           if ( keep_events )
           {
-            buffer << "2:" << cpu << ":" << appl << ":" << task << ":" << thread << ":" << time_1;
             for ( j = 0; j < types_to_keep.next_free_slot; ++j )
             {
               if ( types_to_keep.type[j] == type )
