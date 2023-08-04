@@ -498,6 +498,8 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
   else
     end_parsing = false;
 
+  std::ostringstream buffer; // only for events
+
   while ( !infile->eof() && !end_parsing )
   {
     infile->getline( line );
@@ -520,8 +522,6 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
     }
     else
       ++num_iters;
-
-    std::ostringstream buffer; // only for events
 
     switch ( recordType )
     {
@@ -582,6 +582,7 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
         }
 
         buffer.clear();
+        buffer.str( "" );
         buffer << recordType << ":" << cpu << ":" << appl << ":" << task << ":" << thread << ":" << time_1;
 
         while ( itBegin != itEnd )
@@ -881,6 +882,7 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
         }
 
         buffer.clear();
+        buffer.str( "" );
         buffer << recordType << ":" << cpu << ":" << appl << ":" << task << ":" << thread << ":" << time_1;
         while ( itBegin != itEnd )
         {
