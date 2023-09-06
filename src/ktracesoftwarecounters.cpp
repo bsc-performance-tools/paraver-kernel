@@ -300,7 +300,6 @@ int KTraceSoftwareCounters::inc_counter( int appl, int task, int thread, unsigne
     threads[next_thread_slot].task = task;
     threads[next_thread_slot].thread = thread;
     threads[next_thread_slot].next_free_counter = 0;
-    threads[next_thread_slot].calls.top = -1;
     i = next_thread_slot;
     next_thread_slot++;
     thread_pointer[appl][task][thread] = i;
@@ -629,60 +628,6 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
   /* Put counters and flush events of the last interval */
   last_time = trace_time - 10;
   put_all_counters();
-}
-
-
-void KTraceSoftwareCounters::flush_counter_buffers( void )
-{
-  int i, end_flush = 0, current_thread = 0;
-  unsigned long long current_time = 0;
-  struct counter_event *printed_event;
-
-  while ( !end_flush )
-  {
-    /* Take the first event */
-    for ( i = 0; i < next_thread_slot; i++ )
-    {
-      if ( threads[i].first_event_counter != nullptr )
-      {
-        current_time = threads[i].first_event_counter->time;
-        current_thread = i;
-        break;
-      }
-    }
-    if ( i == next_thread_slot )
-    {
-      end_flush = 1;
-      continue;
-    }
-
-    /* Take the event with min time */
-    for ( i = 0; i < next_thread_slot; i++ )
-    {
-      if ( threads[i].first_event_counter != nullptr )
-      {
-        if ( threads[i].first_event_counter->time < current_time )
-        {
-          current_time = threads[i].first_event_counter->time;
-          current_thread = i;
-        }
-      }
-    }
-
-    /* Put the event on the trace */
-    dump_fields( outfile, "2", 
-                          threads[current_thread].first_event_counter->cpu,
-                          threads[current_thread].appl,
-                          threads[current_thread].task,
-                          threads[current_thread].thread,
-                          current_time, threads[current_thread].first_event_counter->type,
-                          threads[current_thread].first_event_counter->value );
-    outfile << "\n";
-
-    printed_event = threads[current_thread].first_event_counter;
-    threads[current_thread].first_event_counter = threads[current_thread].first_event_counter->next;
-    free( printed_event );
-  }
 }
 
 

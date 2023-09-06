@@ -50,22 +50,6 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
       bool last_is_zero;
     };
 
-    struct stack
-    {
-      unsigned long long type[5];
-      bool valid[5];
-      int top;
-    };
-
-    struct counter_event
-    {
-      int cpu;
-      unsigned long long time;
-      unsigned long long type;
-      unsigned long long value;
-      struct counter_event *next;
-    };
-
     struct thread_info
     {
       int appl;
@@ -73,13 +57,10 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
       int thread;
       struct counter counters[150];
       int next_free_counter;
-      struct stack calls;
       unsigned long long last_time_of_sc;
       unsigned long long ini_burst_time;
       unsigned long long end_burst_time;
       unsigned long long total_burst_time; /* To summarize bursts */
-      struct counter_event *first_event_counter;
-      struct counter_event *last_event_counter;
     };
 
     struct type_values
@@ -159,7 +140,6 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     void show_progress_bar( ProgressController *progress );
     void put_counters_on_state_by_thread( int appl, int task, int thread );
     void sc_by_time( ProgressController *progress );
-    void flush_counter_buffers( void );
     void insert_in_queue_state( int thread_id, unsigned long long time );
     void put_counters_on_state( struct KTraceSoftwareCounters::state_queue_elem *p,
                                 struct KTraceSoftwareCounters::state_queue_elem *q );
