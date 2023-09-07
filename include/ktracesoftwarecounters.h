@@ -26,6 +26,7 @@
 
 #include <fstream>
 
+#include "cubecontainer.h"
 #include "ktraceoptions.h"
 #include "tracesoftwarecounters.h"
 #include "tracestream.h"
@@ -44,23 +45,26 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
 
     struct counter
     {
+      counter( unsigned long long whichType, unsigned long long whichValue, unsigned long long whichNum, bool whichLast_is_zero )
+        : type( whichType ), value( whichValue ), num( whichNum ), last_is_zero( whichLast_is_zero )
+      {}
+
       unsigned long long type;
       unsigned long long value;
       unsigned long long num;
       bool last_is_zero;
     };
 
-    struct thread_info
+    struct ThreadInfo
     {
       int appl;
       int task;
       int thread;
-      struct counter counters[150];
-      int next_free_counter;
-      unsigned long long last_time_of_sc;
-      unsigned long long ini_burst_time;
-      unsigned long long end_burst_time;
-      unsigned long long total_burst_time; /* To summarize bursts */
+      std::vector<counter> counters;
+      unsigned long long last_time_of_sc = 0;
+      unsigned long long ini_burst_time = 0;
+      unsigned long long end_burst_time = 0;
+      unsigned long long total_burst_time = 0; /* To summarize bursts */
     };
 
     struct type_values
@@ -82,11 +86,12 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
       int next_free_slot;
     };
 
-    struct state_queue_elem
+    struct LastStateEndTime
     {
-      unsigned long long last_state_end_time;
-      int thread_id;
-      struct state_queue_elem *next;
+      int appl;
+      int task;
+      int thread;
+      unsigned long long end_time;
     };
 
     std::string line;  /* Buffer for reading trace records */
@@ -111,12 +116,9 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     std::fstream outfile;
     KTraceOptions *exec_options;
 
-    /* Pointers to the thread struct, for avoiding to much searches */
-    int thread_pointer[MAX_APPL][MAX_TASK][MAX_THREAD];
-
     /* Info and counters of the threads */
-    struct thread_info threads[MAX_THREADS];
-    int next_thread_slot;
+    using SCThreadInfo = CubeContainer<TApplOrder, TTaskOrder, TThreadOrder, ThreadInfo>;
+    SCThreadInfo threadsInfo;
 
     /* Parameters for showing percentage */
     unsigned long long total_trace_size;
@@ -124,7 +126,8 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     unsigned long total_iters;
 
     /* Struct needed for the mode SC_BY_STATE */
-    struct state_queue_elem *first_state_elem;
+    using LastStateEndTimeContainer = CubeContainer<TApplOrder, TTaskOrder, TThreadOrder, LastStateEndTime>;
+    LastStateEndTimeContainer lastStateEndTime;
 
     /* Estruct for keeping some types on trace */
     struct sc_kept_types types_to_keep;
@@ -133,16 +136,17 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     void parseInHeaderAndDumpOut();
     void write_pcf( char *file_out );
     bool allowed_type( unsigned long long type, unsigned long long value );
-    int inc_counter( int appl, int task, int thread,
-                     unsigned long long type, unsigned long long value );
+    void inc_counter( int appl, int task, int thread,
+                      unsigned long long type, unsigned long long value );
     void put_all_counters( void );
     void ini_progress_bar( char *file_name, ProgressController *progress );
     void show_progress_bar( ProgressController *progress );
     void put_counters_on_state_by_thread( int appl, int task, int thread );
+    SCThreadInfo::iterator findThreadInfo( int appl, int task, int thread );
     void sc_by_time( ProgressController *progress );
-    void insert_in_queue_state( int thread_id, unsigned long long time );
-    void put_counters_on_state( struct KTraceSoftwareCounters::state_queue_elem *p,
-                                struct KTraceSoftwareCounters::state_queue_elem *q );
+    void insert_in_queue_state( int appl, int task, int thread, unsigned long long time );
+    void put_counters_on_state( LastStateEndTimeContainer::iterator itLastState );
+    void resumeStateCounters( unsigned long long time );
     void sc_by_states( ProgressController *progress );
 };
 

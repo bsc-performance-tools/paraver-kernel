@@ -71,7 +71,6 @@ KTraceSoftwareCounters::KTraceSoftwareCounters( char *trace_in,
   type_of_counters = false;
   keep_events = false;
   total_iters = 0;
-  first_state_elem = nullptr;
 
   exec_options = new KTraceOptions( (KTraceOptions *) options );
 
@@ -287,91 +286,75 @@ bool KTraceSoftwareCounters::allowed_type( unsigned long long type, unsigned lon
 
 
 /* Increment of a counter for a given type and value */
-int KTraceSoftwareCounters::inc_counter( int appl, int task, int thread, unsigned long long type, unsigned long long value )
+void KTraceSoftwareCounters::inc_counter( int appl, int task, int thread, unsigned long long type, unsigned long long value )
 {
-  int i, j;
-
-  /* If the pointer is -1, we haven't registered yet the thread into the */
-  /* threads struct. We create the thread in the struct saving:appl, task, */
-  /* thread, create a empty counters list, and an empty call stack */
-  if ( ( i = thread_pointer[appl][task][thread] ) == -1 )
+  if( threadsInfo.find( appl, task, thread ) == threadsInfo.end() )
   {
-    threads[next_thread_slot].appl = appl;
-    threads[next_thread_slot].task = task;
-    threads[next_thread_slot].thread = thread;
-    threads[next_thread_slot].next_free_counter = 0;
-    i = next_thread_slot;
-    next_thread_slot++;
-    thread_pointer[appl][task][thread] = i;
+    ThreadInfo newThreadInfo;
+    newThreadInfo.appl = appl;
+    newThreadInfo.task = task;
+    newThreadInfo.thread = thread;
+    threadsInfo( appl, task, thread ) = newThreadInfo;
   }
 
   if ( ( all_types && value > 0 ) || allowed_type( type, value ) )
   {
     /* Searching of the specified counter for the given thread */
-    for ( j = 0; j < threads[i].next_free_counter; j++ )
+    auto itCounter = threadsInfo( appl, task, thread ).counters.begin();
+    for ( ; itCounter != threadsInfo( appl, task, thread ).counters.end(); ++itCounter )
     {
-      if ( threads[i].counters[j].type == type && ( threads[i].counters[j].value == value || global_counters || acumm_values ) )
+      if ( itCounter->type == type && ( itCounter->value == value || global_counters || acumm_values ) )
       {
         if ( !acumm_values )
-          threads[i].counters[j].num++;
+          ++itCounter->num;
         else
         {
-          threads[i].counters[j].num += value;
-
+          itCounter->num += value;
         }
         break;
       }
     }
 
     /* The counter doesn't exist. Create it */
-    if ( j == threads[i].next_free_counter )
+    if ( itCounter == threadsInfo( appl, task, thread ).counters.end() )
     {
-      threads[i].counters[j].type = type;
-      threads[i].counters[j].value = value;
-      threads[i].counters[j].last_is_zero = false;
-
+      unsigned long long tmpNum;
       if ( !acumm_values )
-        threads[i].counters[j].num = 1;
+        tmpNum = 1;
       else
-        threads[i].counters[j].num = value;
+        tmpNum = value;
 
-      threads[i].next_free_counter++;
-
-//std::cout << "next_free_counter=" << threads[i].next_free_counter << std::endl;
-//std::cout << "type=" << threads[i].next_free_counter << std::endl;
+      threadsInfo( appl, task, thread ).counters.emplace_back( type, value, tmpNum, false );
     }
   }
-
-  return i;
 }
 
 
 /* Function for putting soft counters in the trace for every specified period */
 void KTraceSoftwareCounters::put_all_counters( void )
 {
-  int i, j;
   unsigned long long type_mask;
 
   /* We pass over all the threads on the struct */
-  for ( i = 0; i < next_thread_slot; i++ )
+  for ( auto itThread = threadsInfo.begin(); itThread != threadsInfo.end(); ++itThread )
   {
     /* For every thread, we pass over all its counters */
-    for ( j = 0; j < threads[i].next_free_counter; j++ )
+    for ( auto itCounter = itThread->second.counters.begin(); itCounter != itThread->second.counters.end(); ++itCounter )
     {
       if ( acumm_values )
-        type_mask = threads[i].counters[j].type;
+        type_mask = itCounter->type;
       else
       {
         if ( !global_counters )
         {
-          type_mask = ( ( ( threads[i].counters[j].type ) / 10000 ) + threads[i].counters[j].type % 10000 + 10000 ) * 1000;
-          type_mask += threads[i].counters[j].value;
+          type_mask = ( ( ( itCounter->type ) / 10000 ) + itCounter->type % 10000 + 10000 ) * 1000;
+          type_mask += itCounter->value;
         }
         else
-          type_mask = threads[i].counters[j].type / 10000 + 20000 + threads[i].counters[j].type % 10000;
+          type_mask = itCounter->type / 10000 + 20000 + itCounter->type % 10000;
       }
 
-      dump_fields( outfile, "2:0", threads[i].appl, threads[i].task, threads[i].thread, last_time, type_mask, threads[i].counters[j].num );
+      dump_fields( outfile, "2:0", itThread->second.appl, itThread->second.task, itThread->second.thread, last_time, type_mask, itCounter->num );
       outfile << "\n";
     }
   }
@@ -433,52 +416,62 @@ void KTraceSoftwareCounters::show_progress_bar( ProgressController *progress )
 
 void KTraceSoftwareCounters::put_counters_on_state_by_thread( int appl, int task, int thread )
 {
-  int i, j;
   unsigned long long type_mask;
 
-  /* We search the thread on the struct */
-  for ( i = 0; i < next_thread_slot; i++ )
-  {
-    if ( threads[i].appl == appl && threads[i].task == task && threads[i].thread == thread )
-      break;
-  }
-
-  if ( i == next_thread_slot )
+  auto itThread = threadsInfo.find( appl, task, thread );
+  if ( itThread == threadsInfo.end() )
     return;
+  auto tmpThreadInfo = itThread->second;
 
   /* we pass over all its counters */
-  for ( j = 0; j < threads[i].next_free_counter; j++ )
+  for ( auto itCounter = tmpThreadInfo.counters.begin(); itCounter != tmpThreadInfo.counters.end(); ++itCounter )
   {
     if ( acumm_values )
-      type_mask = threads[i].counters[j].type;
+      type_mask = itCounter->type;
     else
     {
       if ( !global_counters )
       {
-        type_mask = ( ( ( threads[i].counters[j].type ) / 10000 ) + threads[i].counters[j].type % 10000 + 10000 ) * 1000;
-        type_mask += threads[i].counters[j].value;
+        type_mask = ( ( ( itCounter->type ) / 10000 ) + itCounter->type % 10000 + 10000 ) * 1000;
+        type_mask += itCounter->value;
       }
       else
-        type_mask = threads[i].counters[j].type / 10000 + 20000 + threads[i].counters[j].type % 10000;
+        type_mask = itCounter->type / 10000 + 20000 + itCounter->type % 10000;
     }
 
-    dump_fields( outfile, "2:0", threads[i].appl, threads[i].task, threads[i].thread, last_time, type_mask, threads[i].counters[j].num );
+    dump_fields( outfile, "2:0", tmpThreadInfo.appl, tmpThreadInfo.task, tmpThreadInfo.thread, last_time, type_mask, itCounter->num );
     outfile << "\n";
 
-    threads[i].counters[j].num = 0;
+    itCounter->num = 0;
   }
 
-  threads[i].last_time_of_sc = last_time;
+  tmpThreadInfo.last_time_of_sc = last_time;
 
   /* Put burst counters if needed */
   if ( summarize_bursts )
   {
-    dump_fields( outfile, "2:0", threads[i].appl, threads[i].task, threads[i].thread, last_time, threads[i].total_burst_time );
+    dump_fields( outfile, "2:0", tmpThreadInfo.appl, tmpThreadInfo.task, tmpThreadInfo.thread, last_time, tmpThreadInfo.total_burst_time );
     outfile << "\n";
 
-    threads[i].total_burst_time = 0;
+    tmpThreadInfo.total_burst_time = 0;
   }
 }
+
+
+KTraceSoftwareCounters::SCThreadInfo::iterator KTraceSoftwareCounters::findThreadInfo( int appl, int task, int thread )
+{
+  auto itThread = threadsInfo.find( appl, task, thread );
+  if( itThread == threadsInfo.end() )
+  {
+    ThreadInfo newThreadInfo;
+    newThreadInfo.appl = appl;
+    newThreadInfo.task = task;
+    newThreadInfo.thread = thread;
+    threadsInfo( appl, task, thread ) = newThreadInfo;
+    itThread = threadsInfo.find( appl, task, thread );
+  }
+  return itThread;
+};
 
 
 void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
@@ -503,6 +496,12 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
   {
     infile->getline( line );
 
+    if( line[0] == '#' )
+    {
+      outfile << line;
+      continue;
+    }
+
     auto itBegin = line.cbegin();
     auto itEnd = line.cend();
     prv_atoll_v( itBegin, itEnd, recordType, cpu, appl, task, thread, time_1 );
@@ -522,6 +521,8 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
     else
       ++num_iters;
 
+    auto itThread = findThreadInfo( appl, task, thread );
+
     switch ( recordType )
     {
       case 1:
@@ -530,23 +531,10 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
         if ( state != 1 )
           break;
 
-        if ( ( i = thread_pointer[appl][task][thread] ) == -1 )
-        {
-          threads[next_thread_slot].appl = appl;
-          threads[next_thread_slot].task = task;
-          threads[next_thread_slot].thread = thread;
-          threads[next_thread_slot].next_free_counter = 0;
-          threads[next_thread_slot].last_time_of_sc = 0;
-          threads[next_thread_slot].total_burst_time = 0;
-          i = next_thread_slot;
-          next_thread_slot++;
-          thread_pointer[appl][task][thread] = i;
-        }
+        itThread->second.ini_burst_time = time_1;
+        itThread->second.end_burst_time = time_2;
 
-        threads[i].ini_burst_time = time_1;
-        threads[i].end_burst_time = time_2;
-
-        if ( time_2 >= ( threads[i].last_time_of_sc + interval ) )
+        if ( time_2 >= ( itThread->second.last_time_of_sc + interval ) )
         {
           last_time = time_1;
           put_counters_on_state_by_thread( appl, task, thread );
@@ -554,7 +542,7 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
 
         /* Saving the burst time in order to summarize */
         if ( summarize_bursts )
-          threads[i].total_burst_time += ( time_2 - time_1 );
+          itThread->second.total_burst_time += ( time_2 - time_1 );
 
         if ( !remove_states )
         {
@@ -565,21 +553,6 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
         break;
 
       case 2:
-        if ( ( i = thread_pointer[appl][task][thread] ) == -1 )
-        {
-          threads[next_thread_slot].appl = appl;
-          threads[next_thread_slot].task = task;
-          threads[next_thread_slot].thread = thread;
-          threads[next_thread_slot].next_free_counter = 0;
-          threads[next_thread_slot].last_time_of_sc = 0;
-          threads[next_thread_slot].ini_burst_time = 0;
-          threads[next_thread_slot].end_burst_time = 0;
-          threads[next_thread_slot].total_burst_time = 0;
-          i = next_thread_slot;
-          next_thread_slot++;
-          thread_pointer[appl][task][thread] = i;
-        }
-
         buffer.clear();
         buffer.str( "" );
         buffer << recordType << ":" << cpu << ":" << appl << ":" << task << ":" << thread << ":" << time_1;
@@ -605,11 +578,11 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
           /* Counting events */
           if ( only_in_bursts )
           {
-            if ( time_1 > threads[i].ini_burst_time && time_1 <= threads[i].end_burst_time )
-              thread_id = inc_counter( appl, task, thread, type, value );
+            if ( time_1 > itThread->second.ini_burst_time && time_1 <= itThread->second.end_burst_time )
+              inc_counter( appl, task, thread, type, value );
           }
           else
-            thread_id = inc_counter( appl, task, thread, type, value );
+            inc_counter( appl, task, thread, type, value );
         }
 
         if ( print_line )
@@ -631,97 +604,63 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
 }
 
 
-void KTraceSoftwareCounters::insert_in_queue_state( int thread_id, unsigned long long time )
+void KTraceSoftwareCounters::insert_in_queue_state( int appl, int task, int thread, unsigned long long time )
 {
-  struct state_queue_elem *p, *q, *new_elem;
-  p = nullptr;
-  q = nullptr;
-  new_elem = nullptr;
-
-  if ( ( new_elem = ( struct state_queue_elem * )malloc( sizeof( struct state_queue_elem ) ) ) == nullptr )
+  auto itLastState = lastStateEndTime.find( appl, task, thread );
+  if( itLastState == lastStateEndTime.end() )
   {
-    perror( "No more memory for state queue!!!!\n" );
-    exit( 1 );
-  }
-
-  new_elem->last_state_end_time = time;
-  new_elem->thread_id = thread_id;
-  new_elem->next = nullptr;
-
-  if ( first_state_elem == nullptr )
-  {
-    first_state_elem = new_elem;
-    return;
-  }
-
-  for ( p = first_state_elem; p != nullptr; p = p->next )
-  {
-    if ( p->last_state_end_time > time )
-    {
-      if ( first_state_elem == p )
-      {
-        new_elem->next = p;
-        first_state_elem = new_elem;
-      }
-      else
-      {
-        new_elem->next = p;
-        q->next = new_elem;
-      }
-      break;
-    }
-    else
-      q = p;
-  }
-  if ( p == nullptr )
-  {
-    q->next = new_elem;
+    KTraceSoftwareCounters::LastStateEndTime newLastState{ appl, task, thread, time };
+    lastStateEndTime( appl, task, thread ) = newLastState;
+    itLastState = lastStateEndTime.find( appl, task, thread );
   }
 }
 
 
-void KTraceSoftwareCounters::put_counters_on_state( struct KTraceSoftwareCounters::state_queue_elem *p,
-                                                    struct KTraceSoftwareCounters::state_queue_elem *q )
+void KTraceSoftwareCounters::put_counters_on_state( LastStateEndTimeContainer::iterator itLastState )
 {
-  int i, j;
   unsigned long long type_mask;
 
-  i = p->thread_id;
+  auto tmpThreadInfo = threadsInfo( itLastState->second.appl, itLastState->second.task, itLastState->second.thread );
   /* For every thread, we pass over all its counters */
-  for ( j = 0; j < threads[i].next_free_counter; j++ )
+  for ( auto itCounter = tmpThreadInfo.counters.begin(); itCounter != tmpThreadInfo.counters.end(); ++itCounter )
   {
     if ( acumm_values )
-      type_mask = threads[i].counters[j].type;
+      type_mask = itCounter->type;
     else
     {
       if ( !global_counters )
       {
-        type_mask = ( ( ( threads[i].counters[j].type ) / 10000 ) + threads[i].counters[j].type % 10000 + 10000 ) * 1000;
-        type_mask += threads[i].counters[j].value;
+        type_mask = ( ( ( itCounter->type ) / 10000 ) + itCounter->type % 10000 + 10000 ) * 1000;
+        type_mask += itCounter->value;
       }
       else
-        type_mask = threads[i].counters[j].type / 10000 + 20000 + threads[i].counters[j].type % 10000;
+        type_mask = itCounter->type / 10000 + 20000 + itCounter->type % 10000;
     }
 
     dump_fields( outfile, "2:0",
-                          threads[i].appl,
-                          threads[i].task,
-                          threads[i].thread,
-                          p->last_state_end_time,
+                          tmpThreadInfo.appl,
+                          tmpThreadInfo.task,
+                          tmpThreadInfo.thread,
+                          itLastState->second.end_time,
                           type_mask,
-                          threads[i].counters[j].num );
+                          itCounter->num );
     outfile << "\n";
-    threads[i].counters[j].num = 0;
+    itCounter->num = 0;
   }
-
-  if ( first_state_elem == p )
-    first_state_elem = p->next;
-  else
-    q->next = p->next;
-
-  free( p );
 }
 
+void KTraceSoftwareCounters::resumeStateCounters( unsigned long long time )
+{
+  auto itLastState = lastStateEndTime.begin();
+  while( itLastState != lastStateEndTime.end() )
+  {
+    if( itLastState->second.end_time < time )
+    {
+      put_counters_on_state( itLastState );
+      itLastState = lastStateEndTime.erase( itLastState );
+    }
+  }
+}
 
 void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
 {
@@ -730,7 +669,7 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
   char *word;
   bool print_line = false;
   struct state_queue_elem *p, *q;
-  int i, j;
+  int j;
   unsigned long num_iters = 0;
 
   p = nullptr;
@@ -748,6 +687,12 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
   while ( !infile->eof() && !end_parsing )
   {
     infile->getline( line );
+
+    if( line[0] == '#' )
+    {
+      outfile << line;
+      continue;
+    }
 
     auto itBegin = line.cbegin();
     auto itEnd = line.cend();
@@ -768,27 +713,17 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
     else
       num_iters++;
 
+    auto itThread = findThreadInfo( appl, task, thread );
+
     switch( recordType )
     {
       case 1:
         prv_atoll_v( itBegin, itEnd, time_2, state );
 
-        if ( ( i = thread_pointer[appl][task][thread] ) == -1 )
-        {
-          threads[next_thread_slot].appl = appl;
-          threads[next_thread_slot].task = task;
-          threads[next_thread_slot].thread = thread;
-          threads[next_thread_slot].next_free_counter = 0;
-          threads[next_thread_slot].last_time_of_sc = 0;
-          i = next_thread_slot;
-          next_thread_slot++;
-          thread_pointer[appl][task][thread] = i;
-        }
-
         if ( ( min_state_time != 0 && ( time_2 - time_1 >= min_state_time ) && state == 1 ) || !min_state_time )
         {
           /* Insertar quan se li acaba l'estat */
-          insert_in_queue_state( i, time_2 );
+          insert_in_queue_state( appl, task, thread, time_2 );
 
           /* Posar contadors per a aquest thread */
           last_time = time_1;
@@ -802,29 +737,7 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
         break;
 
       case 2:
-        if ( ( i = thread_pointer[appl][task][thread] ) == -1 )
-        {
-          threads[next_thread_slot].appl = appl;
-          threads[next_thread_slot].task = task;
-          threads[next_thread_slot].thread = thread;
-          threads[next_thread_slot].next_free_counter = 0;
-          threads[next_thread_slot].last_time_of_sc = 0;
-          i = next_thread_slot;
-          next_thread_slot++;
-          thread_pointer[appl][task][thread] = i;
-        }
-
-        /* Bolcar tots els threads que hagin de posar contadors */
-        for ( p = first_state_elem; p != nullptr; p = p->next )
-        {
-          if ( p->last_state_end_time < time_1 )
-            put_counters_on_state( p, q );
-          else
-          {
-            q = p;
-            break;
-          }
-        }
+        resumeStateCounters( time_1 );
 
         buffer.clear();
         buffer.str( "" );
@@ -862,28 +775,17 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
     }
   }
 
-  /* Posem els contadors que falten */
-  for ( p = first_state_elem; p != nullptr; p = p->next )
+  auto itLastState = lastStateEndTime.begin();
+  while( itLastState != lastStateEndTime.end() )
   {
-    put_counters_on_state( p, nullptr );
+    put_counters_on_state( itLastState );
+    itLastState = lastStateEndTime.erase( itLastState );
   }
 }
 
 
 void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out, ProgressController *progress )
 {
-  int i, j, k;
-
-  /* Ini data */
-  next_thread_slot = 0;
-  types.next_free_slot = 0;
-  types_to_keep.next_free_slot = 0;
-
-  for ( i = 0;i < MAX_APPL;i++ )
-    for ( j = 0;j < MAX_TASK;j++ )
-      for ( k = 0;k < MAX_THREAD;k++ )
-        thread_pointer[i][j][k] = -1;
-
   /* Reading of program args */
   read_sc_args();
 
