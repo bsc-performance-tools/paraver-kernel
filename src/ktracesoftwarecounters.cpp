@@ -148,13 +148,11 @@ void KTraceSoftwareCounters::read_sc_args()
   {
     keep_events = true;
     words[0] = strtok( exec_options->types_kept, ";" );
-    types_to_keep.type[types_to_keep.next_free_slot] = atoll( words[0] );
-    types_to_keep.next_free_slot++;
+    keep_types.push_back( atoll( words[0] ) );
 
     while ( ( words[0] = strtok( nullptr, ";" ) ) != nullptr )
     {
-      types_to_keep.type[types_to_keep.next_free_slot] = atoll( words[0] );
-      types_to_keep.next_free_slot++;
+      keep_types.push_back( atoll( words[0] ) );
     }
 
     free( exec_options->types_kept );
@@ -549,14 +547,11 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
           /* For keeping some events */
           if ( keep_events )
           {
-            for ( j = 0; j < types_to_keep.next_free_slot; ++j )
+            auto itKeepType = std::find( keep_types.begin(), keep_types.end(), type );
+            if( itKeepType != keep_types.end() )
             {
-              if ( types_to_keep.type[j] == type )
-              {
-                buffer << ":" << type << ":" << value;
-                print_line = true;
-                break;
-              }
+              buffer << ":" << type << ":" << value;
+              print_line = true;
             }
           }
 
@@ -733,14 +728,11 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
 
           if ( keep_events )
           {
-            for ( j = 0; j < types_to_keep.next_free_slot; ++j )
+            auto itKeepType = std::find( keep_types.begin(), keep_types.end(), type );
+            if( itKeepType != keep_types.end() )
             {
-              if ( types_to_keep.type[j] == type )
-              {
                 buffer << ":" << type << ":" << value;
                 print_line = true;
-                break;
-              }
             }
           }
 

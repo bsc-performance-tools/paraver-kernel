@@ -76,11 +76,7 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
 
     std::vector<type_values> allowed_types;
 
-    struct sc_kept_types
-    {
-      unsigned long long type[16];
-      int next_free_slot;
-    };
+    std::vector<unsigned long long> keep_types;
 
     struct LastStateEndTime
     {
@@ -123,9 +119,6 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     /* Struct needed for the mode SC_BY_STATE */
     using LastStateEndTimeContainer = CubeContainer<TApplOrder, TTaskOrder, TThreadOrder, LastStateEndTime>;
     LastStateEndTimeContainer lastStateEndTime;
-
-    /* Estruct for keeping some types on trace */
-    struct sc_kept_types types_to_keep;
 
     void read_sc_args();
     void parseInHeaderAndDumpOut();
