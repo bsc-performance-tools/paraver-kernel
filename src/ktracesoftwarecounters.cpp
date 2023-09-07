@@ -21,7 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-
 #include <errno.h>
 #include <string>
 #include <stdio.h>
@@ -87,7 +86,7 @@ KTraceSoftwareCounters::~KTraceSoftwareCounters()
 /* Function for parsing program arguments */
 void KTraceSoftwareCounters::read_sc_args()
 {
-  int i, j, k;
+  int i, k;
   char *words[16], *word_type, *word_values, *word_value;
 
   all_types = true;
@@ -122,31 +121,26 @@ void KTraceSoftwareCounters::read_sc_args()
     k = 0;
     while ( k < i )
     {
+      auto itCurrentType = allowed_types.insert( allowed_types.end(), type_values() );
       word_type = strtok( words[k], ":" );
-      types.type_values[types.next_free_slot].type = atoll( word_type );
+      itCurrentType->type = atoll( word_type );
       if ( ( word_values = strtok( nullptr, ":" ) ) == nullptr )
       {
-        types.type_values[types.next_free_slot].all_values = true;
+        itCurrentType->all_values = true;
       }
       else
       {
         word_value = strtok( word_values, "," );
-        types.type_values[types.next_free_slot].all_values = false;
-        types.type_values[types.next_free_slot].values[0] = atoll( word_value );
-        types.type_values[types.next_free_slot].values[1] = 0;
-        j = 1;
+        itCurrentType->all_values = false;
+        itCurrentType->values.push_back( atoll( word_value ) );
         while ( ( word_value = strtok( nullptr, "," ) ) != nullptr )
         {
-          types.type_values[types.next_free_slot].values[j] = atoll( word_value );
-          j++;
-          types.type_values[types.next_free_slot].values[j] = 0;
+          itCurrentType->values.push_back( atoll( word_value ) );
         }
       }
-      types.next_free_slot++;
-      k++;
+      ++k;
     }
 
-    types.next_free_slot++;
     free( exec_options->types );
   }
 
@@ -252,36 +246,27 @@ void KTraceSoftwareCounters::write_pcf( char *file_out )
 }
 
 
-/* Return 0: not allowd call type; Return 1: allowed call type */
 bool KTraceSoftwareCounters::allowed_type( unsigned long long type, unsigned long long value )
 {
-  int i, j;
+  int i;
 
   if ( value == 0 )
     return false;
 
-  /* Searching for that type and value */
-  for ( i = 0; i < types.next_free_slot; i++ )
-  {
-    if ( types.type_values[i].type == type )
-    {
-      if ( types.type_values[i].all_values )
-        return true;
+  auto itAllowed = std::find_if( allowed_types.begin(), allowed_types.end(),
+                                 [type, value]( auto el )
+                                 {
+                                   if( el.type == type )
+                                   {
+                                     if( el.all_values )
+                                       return true;
+                                     auto itValue = std::find( el.values.begin(), el.values.end(), value );
+                                     return itValue != el.values.end();
+                                   }
+                                   return false;
+                                 } );
 
-
-// TODO: POTENTIAL BUG: DOESN'T SEARCH ALL ALONG THE VALUES!!!
-      for ( j = 0; j < 16; j++ )
-      {
-        if ( types.type_values[i].values[j] == 0 )
-          return false;
-
-        if ( types.type_values[i].values[j] == value )
-          return true;
-      }
-    }
-  }
-
-  return false;
+  return itAllowed != allowed_types.end();
 }
 
 

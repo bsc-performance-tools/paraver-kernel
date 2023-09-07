@@ -71,14 +71,10 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     {
       unsigned long long type;
       bool all_values;
-      unsigned long long values[16];
+      std::vector<unsigned long long> values;
     };
 
-    struct sc_allowed_types
-    {
-      struct type_values type_values[16];
-      int next_free_slot;
-    };
+    std::vector<type_values> allowed_types;
 
     struct sc_kept_types
     {
@@ -107,7 +103,6 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     unsigned long long last_time;
     unsigned long long trace_time;
     unsigned long long min_state_time;
-    struct sc_allowed_types types;
     bool type_of_counters;
     bool keep_events;
 
