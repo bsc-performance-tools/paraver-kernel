@@ -728,7 +728,8 @@ void CFGLoader::pushbackWindow( Timeline *whichWindow,
 
 void CFGLoader::pushbackAllWindows( const vector<Timeline *>& selectedWindows,
                                     const vector<Histogram *>& selectedHistos,
-                                    vector<Timeline *>& allWindows )
+                                    vector<Timeline *>& allWindows,
+                                    vector<Timeline *>& forcedOpenWindows )
 {
   for ( vector<Timeline *>::const_iterator it = selectedWindows.begin();
         it != selectedWindows.end(); ++it )
@@ -736,20 +737,28 @@ void CFGLoader::pushbackAllWindows( const vector<Timeline *>& selectedWindows,
     pushbackWindow( ( *it ), allWindows );
   }
 
+  auto checkTimelineAndPushback = [ &selectedWindows, &allWindows, &forcedOpenWindows ]( auto cond, Timeline *whichTimeline )
+    {
+      if( cond )
+      {
+        if( find( selectedWindows.begin(), selectedWindows.end(), whichTimeline ) == selectedWindows.end() )
+          pushbackWindow( whichTimeline, allWindows );
+        else
+          forcedOpenWindows.push_back( whichTimeline );
+      }
+    };
+
   for ( vector<Histogram *>::const_iterator it = selectedHistos.begin();
         it != selectedHistos.end(); ++it )
   {
-    // TODO: Consider substitute this section with direct insertions
-    if( find( selectedWindows.begin(), selectedWindows.end(), ( *it )->getControlWindow() ) == selectedWindows.end() )
-      pushbackWindow( ( *it )->getControlWindow(), allWindows );
-    if ( ( *it )->getControlWindow() != ( *it )->getDataWindow() &&
-         find( selectedWindows.begin(), selectedWindows.end(), ( *it )->getDataWindow() ) == selectedWindows.end() )
-      pushbackWindow( ( *it )->getDataWindow(), allWindows );
-    if ( ( *it )->getThreeDimensions() &&
-         ( *it )->getExtraControlWindow() != ( *it )->getControlWindow() &&
-         ( *it )->getExtraControlWindow() != ( *it )->getDataWindow() &&
-         find( selectedWindows.begin(), selectedWindows.end(), ( *it )->getExtraControlWindow() ) == selectedWindows.end() )
-      pushbackWindow( ( *it )->getExtraControlWindow(), allWindows );
+    checkTimelineAndPushback( true, ( *it )->getControlWindow() );
+
+    checkTimelineAndPushback( ( *it )->getControlWindow() != ( *it )->getDataWindow(), ( *it )->getDataWindow() );
+
+    checkTimelineAndPushback( ( *it )->getThreeDimensions() &&
+                               ( *it )->getExtraControlWindow() != ( *it )->getControlWindow() &&
+                               ( *it )->getExtraControlWindow() != ( *it )->getDataWindow(),
+                               ( *it )->getExtraControlWindow() );
   }
 }
 
@@ -760,6 +769,7 @@ bool CFGLoader::saveCFG( const string& filename,
                          const vector<CFGS4DLinkedPropertiesManager>& linkedProperties )
 {
   vector<Timeline *> allWindows;
+  vector<Timeline *> forcedOpenWindows;
 
   ofstream cfgFile( filename.c_str() );
   if ( !cfgFile )
@@ -770,7 +780,7 @@ bool CFGLoader::saveCFG( const string& filename,
 
   initDrawModeTags();
 
-  pushbackAllWindows( windows, histograms, allWindows );
+  pushbackAllWindows( windows, histograms, allWindows, forcedOpenWindows );
 
   cfgFile << fixed;
   cfgFile.precision( 12 );
@@ -842,7 +852,7 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowEndTime::printLine( cfgFile, options, it );
     WindowStopTime::printLine( cfgFile, options, it );
     WindowBeginTimeRelative::printLine( cfgFile, options, it );
-    WindowOpen::printLine( cfgFile, it );
+    WindowOpen::printLine( cfgFile, it, forcedOpenWindows );
     WindowDrawMode::printLine( cfgFile, it );
     WindowDrawModeRows::printLine( cfgFile, it );
     WindowPixelSize::printLine( cfgFile, it );
@@ -3578,10 +3588,17 @@ bool WindowOpen::parseLine( KernelConnection *whichKernel, istringstream& line,
 }
 
 void WindowOpen::printLine( ofstream& cfgFile,
-                            const vector<Timeline *>::const_iterator it )
+                            const vector<Timeline *>::const_iterator it,
+                            const vector<Timeline *>& forcedOpenWindows )
 {
   cfgFile << OLDCFG_TAG_WNDW_OPEN << " ";
-  if ( ( *it )->getShowWindow() && !( *it )->getUsedByHistogram() )
+
+  bool showWindow = ( *it )->getShowWindow() && 
+                    std::find( forcedOpenWindows.begin(), forcedOpenWindows.end(), *it ) != forcedOpenWindows.end();
+
+  if ( showWindow )
+    cfgFile << OLDCFG_VAL_TRUE;
+  else if( !( *it )->getUsedByHistogram() )
   {
     if ( ( *it )->getChild() != nullptr )
       cfgFile << OLDCFG_VAL_FALSE;

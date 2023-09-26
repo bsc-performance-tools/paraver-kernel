@@ -161,7 +161,8 @@ class CFGLoader
                                 std::vector<Timeline *>& allWindows );
     static void pushbackAllWindows( const std::vector<Timeline *>& selected,
                                     const std::vector<Histogram *>& selectedHistos,
-                                    std::vector<Timeline *>& allWindows );
+                                    std::vector<Timeline *>& allWindows,
+                                    std::vector<Timeline *>& forcedOpenWindows );
 
   public:
     static bool hasCFGExtension( const std::string& filename );
@@ -1326,7 +1327,8 @@ class WindowOpen: public TagFunction
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Timeline *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it,
+                           const std::vector<Timeline *>& forcedOpenWindows );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
