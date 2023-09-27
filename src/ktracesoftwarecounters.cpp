@@ -433,7 +433,7 @@ void KTraceSoftwareCounters::put_counters_on_state_by_thread( int appl, int task
   /* Put burst counters if needed */
   if ( summarize_bursts )
   {
-    dump_fields( outfile, "2:0", tmpThreadInfo.appl, tmpThreadInfo.task, tmpThreadInfo.thread, last_time, tmpThreadInfo.total_burst_time );
+    dump_fields( outfile, "2:0", tmpThreadInfo.appl, tmpThreadInfo.task, tmpThreadInfo.thread, last_time, "1", tmpThreadInfo.total_burst_time );
     outfile << "\n";
 
     tmpThreadInfo.total_burst_time = 0;
