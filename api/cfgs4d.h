@@ -37,18 +37,20 @@ static const TCFGS4DIndexLink NO_INDEX_LINK = 0;
 class Timeline;
 class Histogram;
 
+template<typename TWindow>
 struct lessWinCompare
 {
-  bool operator()( Timeline *win1, Timeline *win2 ) const;
+  bool operator()( TWindow *leftWin, TWindow *rightWin ) const
+  {
+    if( leftWin->getName() == rightWin->getName() )
+      return leftWin < rightWin;
+
+    return leftWin->getName() < rightWin->getName();
+  }
 };
 
-struct lessHistoCompare
-{
-  bool operator()( Histogram *histo1, Histogram *histo2 ) const;
-};
-
-typedef std::set<Timeline *, lessWinCompare> TWindowsSet;
-typedef std::set<Histogram *, lessHistoCompare> THistogramsSet;
+using TWindowsSet = std::set<Timeline *, lessWinCompare<Timeline> >;
+using THistogramsSet = std::set<Histogram *, lessWinCompare<Histogram> >;
 
 class CFGS4DPropertyWindowsList
 {

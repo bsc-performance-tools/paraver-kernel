@@ -1474,6 +1474,16 @@ pair<TObjectOrder, TObjectOrder> TimelineProxy::getZoomSecondDimension() const
   return zoomHistory.getSecondDimension();
 }
 
+std::vector< TObjectOrder > TimelineProxy::getCurrentZoomRange() const
+{
+  vector< TObjectOrder > zoomRange;
+
+  zoomRange.push_back( getZoomSecondDimension().first );
+  zoomRange.push_back( getZoomSecondDimension().second );
+  
+  return zoomRange;
+}
+
 pair<TObjectOrder, TObjectOrder> TimelineProxy::getPrevZoomSecondDimension() const
 {
   return zoomHistory.getSecondDimension( TZoomPosition::PREV_ZOOM );
@@ -1509,6 +1519,11 @@ TGroupId TimelineProxy::getSyncGroup() const
   return syncGroup;
 }
 
+bool TimelineProxy::areAllSelectedRows( TTraceLevel onLevel ) const
+{
+  return selectedRow.areAllSelected( onLevel );
+}
+
 SelectionManagement< TObjectOrder, TTraceLevel > *TimelineProxy::getSelectedRows()
 {
   return &selectedRow;
@@ -1524,6 +1539,7 @@ void TimelineProxy::setSelectedRows( TTraceLevel onLevel, vector< TObjectOrder >
 {
   selectedRow.setSelected( selected, myTrace->getLevelObjects( onLevel ), onLevel );
 }
+
 
 void TimelineProxy::getSelectedRows( TTraceLevel onLevel, vector< bool > &selected, bool lookUpLevels )
 {

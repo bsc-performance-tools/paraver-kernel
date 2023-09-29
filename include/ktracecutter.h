@@ -24,7 +24,9 @@
 
 #pragma once
 
+#include <list>
 #include <set>
+#include <unordered_set>
 
 #include "cubecontainer.h"
 #include "ktraceoptions.h"
@@ -35,7 +37,8 @@ class KTraceCutter : public TraceCutter
 {
   public:
     KTraceCutter( TraceOptions *options,
-                  const std::vector< TEventType > &whichTypesWithValuesZero );
+                  const std::vector< TEventType > &whichHWCTypes,
+                  const std::vector< TEventType > &whichNotHWCTypes );
     virtual ~KTraceCutter();
 
     virtual void set_by_time( bool byTime ) override;
@@ -91,8 +94,8 @@ class KTraceCutter : public TraceCutter
     unsigned long long total_tmp_lines;
     unsigned long long current_tmp_lines;
 
-    // Event types scanned from .pcf file with declared value 0.
     std::set< TEventType > HWCTypesInPCF;
+    std::set< TEventType > notHWCTypesInPCF;
 
     class ThreadInfo
     {
@@ -100,13 +103,19 @@ class KTraceCutter : public TraceCutter
         ThreadInfo() : last_time( 0 ), lastCPU( 0 ), finished( false ), without_states( false ), lastStateEndTime( 0 )
         {}
 
+        ThreadInfo( std::set< TEventType > HWCTypesInPCF ) : last_time( 0 ), lastCPU( 0 ), finished( false ), without_states( false ), lastStateEndTime( 0 )
+        {
+          std::copy( HWCTypesInPCF.begin(), HWCTypesInPCF.end(), std::inserter( HWCTypesToReset, HWCTypesToReset.begin() ) );
+        }
+
         unsigned long long last_time;
         unsigned long long lastStateEndTime;
         TCPUOrder lastCPU; // last CPU to be able to write trailing records.
         bool finished;
         bool without_states;
-        std::vector< TEventType > openedEventTypes;
+        std::list< TEventType > openedEventTypes;
         std::set< TEventType > HWCTypesInPRV;
+        std::unordered_set< TEventType > HWCTypesToReset;
     };
 
     /* struct for cutting only selected tasks */
@@ -178,7 +187,7 @@ class KTraceCutter : public TraceCutter
     void shiftLeft_TraceTimes_ToStartFromZero( const char *originalTraceName, const char *nameIn, const char *nameOut, ProgressController *progress );
     bool is_selected_task( int task_id );
 
-    ThreadInfo& initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu, bool& reset_counters );
+    ThreadInfo& initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu );
 };
 
 

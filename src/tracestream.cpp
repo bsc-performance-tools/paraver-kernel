@@ -197,27 +197,16 @@ void Compressed::close()
 void Compressed::getline( string& strLine )
 {
 #ifndef _MSC_VER
-  gzgets( file, tmpLine, LINESIZE );
+  strLine.clear();
+  int c = gzgetc( file );
+  while ( c != -1 && c != '\n' )
+  {
+    strLine += c;
+    c = gzgetc( file );
+  }
 #else
   throw ParaverKernelException( ParaverKernelException::gzipNotSupported );
-  int c;
-  c = gzgetc( file );
-  PRV_UINT32 i = 0;
-  while( c != '\n' )
-  {
-    if( c == '\r' )
-      continue;
-    if( c == -1 )
-      break;
-    tmpLine[ i ] = c;
-    c = gzgetc( file );
-    ++i;
-  }
-  tmpLine[ i ] = '\0';
 #endif
-  strLine = tmpLine;
-  if ( strLine.back() == '\n' )
-    strLine.pop_back();
 }
 
 bool Compressed::eof()

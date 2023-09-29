@@ -374,7 +374,8 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
           return true;
         else if ( r1.time > r2.time )
           return false;
-        return ( getTypeOrdered( &r1 ) < getTypeOrdered( &r2 ) );
+
+        return getTypeOrdered( &r1, &r2 );
       };
 
   auto sortThread = [this, compareRecords]( size_t iThread, TRecord endEmptyRecord )
@@ -410,26 +411,15 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
     for( iThread = 0; iThread < processModel.totalThreads(); ++iThread )
     {
       sortThread( iThread, endEmptyRecord );
-#ifndef _WIN32
-      if ( progress != nullptr )
-      {
-        #pragma omp atomic
-        ++progressCounter;
-        #pragma omp critical
-        {
-          if( processModel.totalThreads() < 128 ||
-              progressCounter % 16 == 0 )
-            progress->setCurrentProgress( progressCounter );
-        }
-      }
-#endif
+
+      updateProgress( progressCounter );
     }
   }
   else
   {
 #ifndef _WIN32
     if ( progress != nullptr )
-      progress->setEndLimit( resourceModel.totalCPUs() );
+      progress->setEndLimit( processModel.totalThreads() + resourceModel.totalCPUs() );
 #endif
 
     size_t iNode;
@@ -470,6 +460,8 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
           if( itRecord->CPU != 0 )
             cpuRecords[ itRecord->CPU - 1 ].emplace_back( &( *itRecord ) );
         }
+
+        updateProgress( progressCounter );
       }
 
       for( TCPUOrder iCPU = resourceModel.getFirstCPU( iNode ); iCPU <= resourceModel.getLastCPU( iNode ); ++iCPU )
@@ -486,20 +478,27 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
 
         cpuRecords[ iCPU - 1 ].shrink_to_fit();
 
-#ifndef _WIN32
-        if ( progress != nullptr )
-        {
-          #pragma omp atomic
-          ++progressCounter;
-          #pragma omp critical
-          {
-            if( resourceModel.totalCPUs() < 128 ||
-                progressCounter % 16 == 0 )
-              progress->setCurrentProgress( progressCounter );
-          }
-        }
-#endif
+        updateProgress( progressCounter );
       }
     }
   }
+}
+
+void VectorBlocks::updateProgress( size_t &progressCounter )
+{
+#ifndef _WIN32
+  if ( progress != nullptr )
+  {
+    #pragma omp atomic
+    ++progressCounter;
+
+    #pragma omp critical
+    {
+      if( progress->getEndLimit() < 100 ||
+          ( progress->getEndLimit() >= 100 && progress->getEndLimit() < 1600 && progressCounter % 16 == 0 ) ||
+          ( progressCounter % 640 == 0 ) )
+        progress->setCurrentProgress( progressCounter );
+    }
+  }
+#endif 
 }

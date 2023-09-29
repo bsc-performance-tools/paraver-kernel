@@ -58,6 +58,7 @@ class SelectionManagement
     void getSelected( std::vector< SelType > &selection, SelType first, SelType last, LevelType level = (LevelType)0 ) const;
 
     bool isSelectedPosition( SelType whichSelected, LevelType level = (LevelType)0 ) const;
+    bool areAllSelected( LevelType level ) const;
 
     SelType shiftFirst( SelType whichFirst, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, LevelType level = (LevelType)0 ) const;
     SelType shiftLast( SelType whichLast, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, LevelType level = (LevelType)0 ) const;

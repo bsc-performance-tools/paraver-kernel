@@ -21,16 +21,15 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
+#include <algorithm>
+#include <math.h>
+#include <sstream>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <math.h>
-#include <algorithm>
 #include <vector>
-#include <string>
-#include <sstream>
 
 #ifndef _WIN32
 #include <unistd.h>
@@ -57,11 +56,13 @@
 using namespace std;
 
 KTraceCutter::KTraceCutter( TraceOptions *options,
-                            const vector< TEventType > &whichTypesWithValuesZero )
+                            const vector< TEventType > &whichHWCTypes,
+                            const vector< TEventType > &whichNotHWCTypes )
 {
   total_cutter_iters = 0;
   exec_options = new KTraceOptions( (KTraceOptions *) options );
-  HWCTypesInPCF.insert( whichTypesWithValuesZero.begin(), whichTypesWithValuesZero.end() );
+  HWCTypesInPCF.insert( whichHWCTypes.begin(), whichHWCTypes.end() );
+  notHWCTypesInPCF.insert( whichNotHWCTypes.begin(), whichNotHWCTypes.end() );
   cutterApplicationCaller = CutterMetadata::ORIGINAL_APPLICATION_ID;
   
   // PROFET
@@ -562,32 +563,49 @@ void KTraceCutter::update_queue( unsigned int appl, unsigned int task, unsigned 
                                  unsigned long long type,
                                  unsigned long long value )
 {
+  if( notHWCTypesInPCF.find( type ) != notHWCTypesInPCF.end() )
+    return;
+
   if ( threadsInfo.find( appl, task, thread ) == threadsInfo.end() )
   {
     init_useful_tasks = true;
     ++useful_tasks;
+    ThreadInfo newThreadInfo( HWCTypesInPCF );
+    threadsInfo( appl, task, thread ) = newThreadInfo;
   }
 
   ThreadInfo& tmpInfo = threadsInfo( appl, task, thread );
+  bool isHWC = HWCTypesInPCF.find( type ) != HWCTypesInPCF.end();
   if ( value > 0 )
   {
-    if ( HWCTypesInPCF.find( type ) != HWCTypesInPCF.end() )
-    {
+    if( isHWC )
       tmpInfo.HWCTypesInPRV.insert( (TEventType)type );
-    }
     else
-    {
       tmpInfo.openedEventTypes.push_back( (TEventType)type );
-    }
   }
   else
   {
-    auto it = std::find( tmpInfo.openedEventTypes.rbegin(), tmpInfo.openedEventTypes.rend(), (TEventType)type );
-    if( it != tmpInfo.openedEventTypes.rend() )
-      tmpInfo.openedEventTypes.erase( std::next( it ).base() ); // calling base() points resulting iterator to previous position
+    if( !isHWC )
+    {
+      auto it = std::find( tmpInfo.openedEventTypes.rbegin(), tmpInfo.openedEventTypes.rend(), (TEventType)type );
+      if( it != tmpInfo.openedEventTypes.rend() )
+        tmpInfo.openedEventTypes.erase( std::next( it ).base() ); // calling base() points resulting iterator to previous position
+    }
   }
 }
 
+template <typename T, typename... Targs>
+constexpr void dump_fields( fstream& file, T current_field )
+{
+  file << current_field;
+}
+
+template <typename T, typename... Targs>
+constexpr void dump_fields( fstream& file, T current_field, Targs... Fargs )
+{
+  file << current_field << ":";
+  dump_fields( file, Fargs... );
+}
 
 // Substract to all the times in the trace the first time of the first record
 // Doesn't change header
@@ -595,10 +613,8 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
                                                          const char *nameIn, const char *nameOut, ProgressController *progress )
 {
   unsigned long long timeOffset = 0, time_1, time_2, time_3, time_4;
-  int cpu, appl, task, thread, state, cpu_2, appl_2, task_2, thread_2;
-  std::string trace_header;
-  char *line = (char *) malloc( sizeof( char ) * MAX_TRACE_HEADER );
-  char *outBuffer = (char *) malloc( sizeof( char ) * MAX_TRACE_HEADER );
+  int recordType, cpu, appl, task, thread, state, cpu_2, appl_2, task_2, thread_2;
+  std::string line;
   TraceStream *infile = TraceStream::openFile( nameIn );
 
   fstream outfile( nameOut, ios_base::out );
@@ -615,11 +631,11 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
   if ( infile->eof() )
     end_read = true;
   else
-    infile->getline( trace_header );
+    infile->getline( line );
 
   // Get time of the first record ignoring any other field.
   if (!end_read)
-    sscanf( trace_header.c_str(), "%*d:%*d:%*d:%*d:%*d:%lld:", &timeOffset );
+    sscanf( line.c_str(), "%*d:%*d:%*d:%*d:%*d:%lld:", &timeOffset );
 
   // Override it: we have the minimum time of the written records.
   timeOffset = first_record_time;
@@ -631,53 +647,55 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
   {
     show_cutter_progress_bar( progress, infile );
 
-    switch ( trace_header[0] )
+    auto itBegin = line.cbegin();
+    auto itEnd = line.cend();
+    switch ( line[0] )
     {
       case '1':
-        sscanf( trace_header.c_str(), "%*d:%d:%d:%d:%d:%lld:%lld:%d\n", &cpu, &appl, &task, &thread, &time_1, &time_2, &state );
-
+        prv_atoll_v( itBegin, itEnd, recordType, cpu, appl, task, thread, time_1, time_2, state );
 
         time_1 = time_1 - timeOffset;
         time_2 = time_2 - timeOffset;
 
-        sprintf( outBuffer, "1:%d:%d:%d:%d:%lld:%lld:%d\n", cpu, appl, task, thread, time_1, time_2, state );
-        outfile << outBuffer;
+        dump_fields( outfile, recordType, cpu, appl, task, thread, time_1, time_2, state );
+        outfile << "\n";
 
         ++current_tmp_lines;
         break;
 
-
       case '2':
-        sscanf( trace_header.c_str(), "%*d:%d:%d:%d:%d:%lld:%s\n", &cpu, &appl, &task, &thread, &time_1, line );
+        prv_atoll_v( itBegin, itEnd, recordType, cpu, appl, task, thread, time_1 );
 
         time_1 = time_1 - timeOffset;
 
-        sprintf( outBuffer, "2:%d:%d:%d:%d:%lld:%s\n", cpu, appl, task, thread, time_1, line );
-        outfile << outBuffer;
+        dump_fields( outfile, recordType, cpu, appl, task, thread, time_1 );
+        outfile << ":";
+        std::for_each( itBegin, itEnd, [&outfile]( auto c ){ outfile.put( c ); } );
+        outfile << "\n";
 
         ++current_tmp_lines;
         break;
 
       case '3':
-        sscanf( trace_header.c_str(), "%*d:%d:%d:%d:%d:%lld:%lld:%d:%d:%d:%d:%lld:%lld:%s\n",
-                &cpu,   &appl,   &task,   &thread,   &time_1, &time_2,
-                &cpu_2, &appl_2, &task_2, &thread_2, &time_3, &time_4, line );
+        prv_atoll_v( itBegin, itEnd, recordType, cpu,   appl,   task,   thread,   time_1, time_2,
+                                                 cpu_2, appl_2, task_2, thread_2, time_3, time_4 );
 
         time_1 = time_1 - timeOffset;
         time_2 = time_2 - timeOffset;
         time_3 = time_3 - timeOffset;
         time_4 = time_4 - timeOffset;
 
-        sprintf( outBuffer, "3:%d:%d:%d:%d:%lld:%lld:%d:%d:%d:%d:%lld:%lld:%s\n",
-                 cpu,   appl,   task,   thread,   time_1, time_2,
-                 cpu_2, appl_2, task_2, thread_2, time_3, time_4, line );
-        outfile << outBuffer;
+        dump_fields( outfile, recordType, cpu,   appl,   task,   thread,   time_1, time_2,
+                                          cpu_2, appl_2, task_2, thread_2, time_3, time_4 );
+        outfile << ":";
+        std::for_each( itBegin, itEnd, [&outfile]( auto c ){ outfile.put( c ); } );
+        outfile << "\n";
 
         ++current_tmp_lines;
         break;
 
       case '#':
-        outfile << trace_header << "\n";
+        outfile << line << "\n";
         ++current_tmp_lines;
         break;
 
@@ -689,11 +707,8 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
     if ( infile->eof() )
       end_read = true;
     else
-      infile->getline( trace_header );
+      infile->getline( line );
   }
-
-  free( line );
-  free( outBuffer );
 
   infile->close();
   outfile.close();
@@ -723,16 +738,15 @@ bool KTraceCutter::is_selected_task( int task_id )
   return false;
 }
 
-KTraceCutter::ThreadInfo& KTraceCutter::initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu, bool& reset_counters )
+KTraceCutter::ThreadInfo& KTraceCutter::initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu )
 {
   ++useful_tasks;
   init_useful_tasks = true;
+  ThreadInfo newThreadInfo( HWCTypesInPCF );
   ThreadInfo& tmpInfo = threadsInfo( appl - 1, task - 1, thread - 1 );
+  tmpInfo = newThreadInfo;
   tmpInfo.lastCPU = cpu;
   tmpInfo.last_time = 0;
-
-  /* Have to reset HC and the begining of cut */
-  reset_counters = true;
 
   return tmpInfo;
 }
@@ -746,9 +760,7 @@ void KTraceCutter::execute( std::string trace_in,
   string line;
   string tmp_dir;
   char *trace_file_out;
-  char *buffer;
   bool end_parsing = false;
-  bool reset_counters;
 
   unsigned int id, cpu, appl, task, thread, state, cpu_2, appl_2, task_2, thread_2, size, tag;
   unsigned long long type, value, time_1, time_2, time_3, time_4;
@@ -762,7 +774,6 @@ void KTraceCutter::execute( std::string trace_in,
     tmpKProgressControler = (KProgressController *)progress->getConcrete();
 
   trace_file_out = (char *) malloc( sizeof(char) * MAX_FILENAME_SIZE );
-  buffer         = (char *) malloc( sizeof(char) * MAX_LINE_SIZE );
 
   by_time = false;
   originalTime = false;
@@ -779,8 +790,6 @@ void KTraceCutter::execute( std::string trace_in,
 
   /* Reading of the program arguments */
   read_cutter_params();
-
-  reset_counters = false;
 
   inFile = TraceStream::openFile( trace_in );
   
@@ -850,16 +859,15 @@ void KTraceCutter::execute( std::string trace_in,
     else
       ++num_iters;
 
-    std::ostringstream aux_buffer;
-
     CutterThreadInfo::iterator threadInfoIt;
 
+    auto itBegin = line.cbegin();
+    auto itEnd = line.cend();
     switch ( line[0] )
     {
       case '1':
-        sscanf( line.c_str(), "%d:%d:%d:%d:%d:%lld:%lld:%d\n",
-                &id, &cpu, &appl, &task, &thread, &time_1, &time_2, &state );
-        
+        prv_atoll_v( itBegin, itEnd, id, cpu, appl, task, thread, time_1, time_2, state );
+
         // PROFET
         if ( exec_options->get_max_cut_time_to_finish_of_first_appl() &&
              firstApplicationFinished &&
@@ -879,7 +887,7 @@ void KTraceCutter::execute( std::string trace_in,
         {
           ThreadInfo *tmpInfo = nullptr;
           if ( threadInfoIt == threadsInfo.end() )
-            tmpInfo = &initThreadInfo( appl, task, thread, cpu, reset_counters );
+            tmpInfo = &initThreadInfo( appl, task, thread, cpu );
           else
             tmpInfo = &threadInfoIt->second;
 
@@ -922,7 +930,7 @@ void KTraceCutter::execute( std::string trace_in,
         else // originalTime || time_1 <= time_max
         {
           if ( threadInfoIt == threadsInfo.end() )
-            initThreadInfo( appl, task, thread, cpu, reset_counters );
+            initThreadInfo( appl, task, thread, cpu );
 
           threadsInfo( appl - 1, task - 1, thread - 1 ).lastStateEndTime = time_2;
           if( time_1 < time_max && time_2 > time_max && !remLastStates && !break_states && keep_boundary_events )
@@ -970,36 +978,15 @@ void KTraceCutter::execute( std::string trace_in,
           if ( time_2 > last_record_time )
              last_record_time = time_2;
 
-          sprintf( buffer, "%d:%d:%d:%d:%d:%lld:%lld:%d\n",
-                   id, cpu, appl, task, thread, time_1, time_2, state );
-          outfile << buffer;
+          dump_fields( outfile, id, cpu, appl, task, thread, time_1, time_2, state );
+          outfile << "\n";
           if( writeToTmpFile ) ++total_tmp_lines;
-
-          if ( reset_counters )
-          {
-            reset_counters = false;
-            aux_buffer << "2:" << cpu << ":" << appl << ":" << task << ":" << thread << ":" << time_1;
-
-            std::for_each( HWCTypesInPCF.begin(), HWCTypesInPCF.end(), [&aux_buffer]( auto el )
-                                                                       {
-                                                                         aux_buffer << ":" << el << ":" << "0";
-                                                                       } );
-
-            if ( HWCTypesInPCF.size() > 0 )
-            {
-              aux_buffer << std::endl;
-              sprintf( buffer, "%s", aux_buffer.str().c_str() );
-              outfile << buffer;
-              if( writeToTmpFile ) ++total_tmp_lines;
-            }
-          }
         }
 
         break;
 
       case '2':
-        sscanf( line.c_str(), "%d:%d:%d:%d:%d:%lld:%s\n", &id, &cpu, &appl, &task, &thread, &time_1, buffer );
-        line = buffer;
+        prv_atoll_v( itBegin, itEnd, id, cpu, appl, task, thread, time_1 );
 
         // PROFET
         if ( exec_options->get_max_cut_time_to_finish_of_first_appl() &&
@@ -1062,34 +1049,41 @@ void KTraceCutter::execute( std::string trace_in,
           if ( time_1 > last_record_time )
              last_record_time = time_1;
 
-          sprintf( buffer, "%d:%d:%d:%d:%d:%lld:%s\n",
-                   id, cpu, appl, task, thread, time_1, line.c_str() );
-          outfile << buffer;
+          dump_fields( outfile, id, cpu, appl, task, thread, time_1 );
+
+          while ( itBegin != itEnd )
+          {
+            prv_atoll_v( itBegin, itEnd, type, value );
+            update_queue( appl - 1, task - 1, thread - 1, type, value );
+
+            if( threadInfoIt == threadsInfo.end() )
+              threadInfoIt = threadsInfo.find( appl - 1, task - 1, thread - 1 );
+
+            if( threadInfoIt->second.HWCTypesToReset.find( type ) != threadInfoIt->second.HWCTypesToReset.end() )
+            {
+              value = 0;
+              threadInfoIt->second.HWCTypesToReset.erase( type );
+            }
+
+            outfile << ":" << type << ":" << value;
+          }
+
+          outfile << "\n";
 
           if( writeToTmpFile ) ++total_tmp_lines;
 
           /* For closing all the opened calls */
           threadsInfo( appl - 1, task - 1, thread - 1 ).last_time = time_1;
           threadsInfo( appl - 1, task - 1, thread - 1 ).lastCPU = cpu;
-
-          std::string::const_iterator itBegin = line.begin();
-          const std::string::const_iterator itEnd = line.end();
-
-          while ( itBegin != itEnd )
-          {
-            prv_atoll_v( itBegin, itEnd, type, value );
-            update_queue( appl - 1, task - 1, thread - 1, type, value );
-          }
-
         }
 
         break;
 
       case '3':
-        sscanf( line.c_str(), "%d:%d:%d:%d:%d:%lld:%lld:%d:%d:%d:%d:%lld:%lld:%d:%d\n",
-                &id,
-                &cpu,   &appl,   &task,   &thread,   &time_1, &time_2,
-                &cpu_2, &appl_2, &task_2, &thread_2, &time_3, &time_4, &size, &tag );
+        prv_atoll_v( itBegin, itEnd,
+                     id,
+                     cpu,   appl,   task,   thread,   time_1, time_2,
+                     cpu_2, appl_2, task_2, thread_2, time_3, time_4, size, tag );
 
         // PROFET
         if ( exec_options->get_max_cut_time_to_finish_of_first_appl() &&
@@ -1134,12 +1128,11 @@ void KTraceCutter::execute( std::string trace_in,
             if ( times[3] > last_record_time )
               last_record_time = times[3];
 
-            sprintf( buffer, "%d:%d:%d:%d:%d:%lld:%lld:%d:%d:%d:%d:%lld:%lld:%d:%d\n",
-                     id,
-                     cpu,   appl,   task,   thread,   time_1, time_2,
-                     cpu_2, appl_2, task_2, thread_2, time_3, time_4, size, tag );
-            outfile << buffer;
-
+            dump_fields( outfile,
+                         id,
+                         cpu,   appl,   task,   thread,   time_1, time_2,
+                         cpu_2, appl_2, task_2, thread_2, time_3, time_4, size, tag );
+            outfile << "\n";
             if( writeToTmpFile ) ++total_tmp_lines;
           }
         }
@@ -1185,5 +1178,4 @@ void KTraceCutter::execute( std::string trace_in,
   }
 
   free( trace_file_out );
-  free( buffer );
 }

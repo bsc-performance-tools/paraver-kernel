@@ -816,6 +816,7 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowFlagsEnabled::printLine( cfgFile, it );
     WindowNonColorMode::printLine( cfgFile, it );
     WindowColorMode::printLine( cfgFile, it );
+    WindowGradientFunction::printLine( cfgFile, it );
     WindowCustomColorEnabled::printLine( cfgFile, it );
     WindowCustomColorPalette::printLine( cfgFile, it );
     WindowSemanticScaleMinAtZero::printLine( cfgFile, it );
@@ -997,6 +998,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_NON_COLOR_MODE]      = new WindowNonColorMode();
   cfgTagFunctions[OLDCFG_TAG_WNDW_UNITS]               = new WindowUnits();
   cfgTagFunctions[OLDCFG_TAG_WNDW_COLOR_MODE]          = new WindowColorMode();
+  cfgTagFunctions[CFG_TAG_WNDW_GRADIENT_FUNCTION]      = new WindowGradientFunction();
   // Color palette
   cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED] = new WindowCustomColorEnabled();
   cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_COLOR_PALETTE] = new WindowCustomColorPalette();
@@ -1562,6 +1564,58 @@ void WindowColorMode::printLine( ofstream& cfgFile,
   else if ( ( *it )->isFusedLinesColorSet() )
     cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_FUSED_LINES << endl;
 }
+
+
+string WindowGradientFunction::tagCFG = CFG_TAG_WNDW_GRADIENT_FUNCTION;
+
+bool WindowGradientFunction::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                        Trace *whichTrace,
+                                        vector<Timeline *>& windows,
+                                        vector<Histogram *>& histograms )
+{
+  string strFunction;
+
+  if ( windows[ windows.size() - 1 ] == nullptr )
+    return false;
+
+  getline( line, strFunction );
+
+  if ( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_LINEAR ) == 0 )
+    windows[ windows.size() - 1 ]->getGradientColor().setGradientFunction( TGradientFunction::LINEAR );
+  else if ( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_STEPS ) == 0 )
+    windows[ windows.size() - 1 ]->getGradientColor().setGradientFunction( TGradientFunction::STEPS );
+  else if ( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_LOG ) == 0 )
+    windows[ windows.size() - 1 ]->getGradientColor().setGradientFunction( TGradientFunction::LOGARITHMIC );
+  else if( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_EXP ) == 0 )
+    windows[ windows.size() - 1 ]->getGradientColor().setGradientFunction( TGradientFunction::EXPONENTIAL );
+  else
+    return false;
+
+  return true;
+}
+
+void WindowGradientFunction::printLine( ofstream& cfgFile,
+                                        const vector<Timeline *>::const_iterator it )
+{
+  auto currentGradientFunction = ( *it )->getGradientColor().getGradientFunction();
+
+  if( ( *it )->isFunctionLineColorSet() ||
+      ( *it )->isPunctualColorSet() ||
+      ( *it )->isGradientColorSet() ||
+      ( *it )->isNotNullGradientColorSet() ||
+      ( *it )->isAlternativeGradientColorSet() )
+  {
+    if ( currentGradientFunction == TGradientFunction::LINEAR )
+      cfgFile << CFG_TAG_WNDW_GRADIENT_FUNCTION << " " << CFG_VAL_GRADIENT_FUNCTION_LINEAR << endl;
+    else if ( currentGradientFunction == TGradientFunction::STEPS )
+      cfgFile << CFG_TAG_WNDW_GRADIENT_FUNCTION << " " << CFG_VAL_GRADIENT_FUNCTION_STEPS << endl;
+    else if ( currentGradientFunction == TGradientFunction::LOGARITHMIC )
+      cfgFile << CFG_TAG_WNDW_GRADIENT_FUNCTION << " " << CFG_VAL_GRADIENT_FUNCTION_LOG << endl;
+    else if ( currentGradientFunction == TGradientFunction::EXPONENTIAL )
+      cfgFile << CFG_TAG_WNDW_GRADIENT_FUNCTION << " " << CFG_VAL_GRADIENT_FUNCTION_EXP << endl;
+  }
+}
+
 
 string WindowCustomColorEnabled::tagCFG = OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED;
 
@@ -2354,28 +2408,13 @@ void writeTasks( ofstream& cfgFile,
                  const vector<Timeline *>::const_iterator it )
 {
   vector<TTaskOrder> tmpSel;
-  vector<TThreadOrder> tmpSelThreads;
-  vector<bool> selectedAppl;
 
-  ( *it )->getSelectedRows( TTraceLevel::APPLICATION, selectedAppl );
   for ( TApplOrder iAppl = 0; iAppl < ( *it )->getTrace()->totalApplications(); ++iAppl )
   {
-    if ( !selectedAppl[ iAppl ] )
-      continue;
     TTaskOrder begin = ( *it )->getTrace()->getFirstTask( iAppl );
     TTaskOrder last = ( *it )->getTrace()->getLastTask( iAppl );
     ( *it )->getSelectedRows( TTraceLevel::TASK, tmpSel, begin, last );
-    TApplOrder tmpAppl;
-    TTaskOrder beginTask;
-    TTaskOrder lastTask;
-    ( *it )->getTrace()->getTaskLocation( begin, tmpAppl, beginTask );
-    ( *it )->getTrace()->getTaskLocation( last, tmpAppl, lastTask );
-    TThreadOrder beginThread = ( *it )->getTrace()->getFirstThread( iAppl, beginTask );
-    TThreadOrder lastThread = ( *it )->getTrace()->getLastThread( iAppl, lastTask );
-    ( *it )->getSelectedRows( TTraceLevel::THREAD, tmpSelThreads, beginThread, lastThread );
-    if ( ( /*tmpSel.size() > 0  &&*/ tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
-         || tmpSelThreads.size() != ( TObjectOrder )( lastThread - beginThread + 1 )
-       )
+    if ( tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
       writeTask( cfgFile, it, iAppl );
   }
 }
@@ -2400,26 +2439,22 @@ void writeThreads( ofstream& cfgFile,
                    const vector<Timeline *>::const_iterator it )
 {
   vector<TObjectOrder> tmpSel;
-  vector<bool> selectedAppl;
-  vector<bool> selectedTask;
 
-  ( *it )->getSelectedRows( TTraceLevel::APPLICATION, selectedAppl );
   for ( TApplOrder iAppl = 0; iAppl < ( *it )->getTrace()->totalApplications(); ++iAppl )
   {
-    if ( !selectedAppl[ iAppl ] )
-      continue;
     TTaskOrder beginTask = ( *it )->getTrace()->getFirstTask( iAppl );
     TTaskOrder lastTask = ( *it )->getTrace()->getLastTask( iAppl );
-    ( *it )->getSelectedRows( TTraceLevel::TASK, selectedTask, beginTask, lastTask );
     for ( TTaskOrder iTask = beginTask; iTask <= lastTask; ++iTask )
     {
-      if ( !selectedTask[ iTask - beginTask ] )
-        continue;
       TTaskOrder begin = ( *it )->getTrace()->getFirstThread( iAppl, iTask - beginTask );
       TTaskOrder last = ( *it )->getTrace()->getLastThread( iAppl, iTask - beginTask );
-      ( *it )->getSelectedRows( TTraceLevel::THREAD, tmpSel, begin, last );
-      if ( /*tmpSel.size() > 0  &&*/ tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
-        writeThread( cfgFile, it, iAppl, iTask - beginTask );
+
+      if( !( *it )->areAllSelectedRows( TTraceLevel::THREAD ) )
+      {
+        ( *it )->getSelectedRows( TTraceLevel::THREAD, tmpSel, begin, last );
+        if ( tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
+          writeThread( cfgFile, it, iAppl, iTask - beginTask );
+      }
     }
   }
 }
@@ -2453,18 +2488,13 @@ void writeCPUs( ofstream& cfgFile,
                 const vector<Timeline *>::const_iterator it )
 {
   vector<TObjectOrder> tmpSel;
-  vector<TObjectOrder> tmpSelCPU;
-  vector<bool> selectedNode;
 
-  ( *it )->getSelectedRows( TTraceLevel::NODE, selectedNode );
   for ( TNodeOrder iNode = 0; iNode < ( *it )->getTrace()->totalNodes(); ++iNode )
   {
-    if ( !selectedNode[ iNode ] )
-      continue;
     TCPUOrder begin = ( *it )->getTrace()->getFirstCPU( iNode );
     TCPUOrder last = ( *it )->getTrace()->getLastCPU( iNode );
     ( *it )->getSelectedRows( TTraceLevel::CPU, tmpSel, begin, last );
-    if ( tmpSel.size() > 0  && tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
+    if ( tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
       writeCPU( cfgFile, it, iNode );
   }
 }
@@ -2478,14 +2508,7 @@ void WindowObject::printLine( ofstream& cfgFile,
   {
     case TTraceLevel::WORKLOAD:
     case TTraceLevel::APPLICATION:
-      writeAppl( cfgFile, it );
-      break;
-
     case TTraceLevel::TASK:
-      writeAppl( cfgFile, it );
-      writeTasks( cfgFile, it );
-      break;
-
     case TTraceLevel::THREAD:
       writeAppl( cfgFile, it );
       writeTasks( cfgFile, it );
@@ -2494,9 +2517,6 @@ void WindowObject::printLine( ofstream& cfgFile,
 
     case TTraceLevel::SYSTEM:
     case TTraceLevel::NODE:
-      writeNode( cfgFile, it );
-      break;
-
     case TTraceLevel::CPU:
       writeNode( cfgFile, it );
       writeCPUs( cfgFile, it );

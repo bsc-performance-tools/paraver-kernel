@@ -61,7 +61,8 @@ class LocalKernel: public KernelConnection
     virtual std::string getToolName( const std::string &toolID ) const override;
     virtual TraceOptions *newTraceOptions() const override;
     virtual TraceCutter *newTraceCutter( TraceOptions *options,
-                                         const std::vector< TEventType > &whichTypesWithValuesZero ) const override;
+                                         const std::vector< TEventType > &whichHWCTypes,
+                                         const std::vector< TEventType > &whichNotHWCTypes ) const override;
     virtual TraceFilter *newTraceFilter( char *trace_in,
                                          char *trace_out,
                                          TraceOptions *options,

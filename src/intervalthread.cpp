@@ -53,6 +53,8 @@ KRecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
   }
 
   begin = window->getThreadRecordByTime( order )->clone();
+  if( !function->validRecord( begin ) )
+    begin = getPrevRecord( begin, displayList );
   end = begin->clone();
 
   if ( ( !function->getInitFromBegin() ) && ( initialTime > 0.0 ) )

@@ -354,9 +354,10 @@ TraceOptions *LocalKernel::newTraceOptions() const
 
 
 TraceCutter *LocalKernel::newTraceCutter( TraceOptions *options,
-                                          const vector< TEventType > &whichTypesWithValuesZero ) const
+                                          const vector< TEventType > &whichHWCTypes,
+                                          const vector< TEventType > &whichNotHWCTypes ) const
 {
-  return new KTraceCutter( options,  whichTypesWithValuesZero );
+  return new KTraceCutter( options,  whichHWCTypes, whichNotHWCTypes );
 }
 
 

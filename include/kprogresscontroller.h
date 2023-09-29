@@ -33,7 +33,7 @@ class KProgressController: public ProgressController
     KProgressController();
     ~KProgressController();
 
-    void setHandler( ProgressHandler whichHandler, void *callerWindow ) override;
+    void setHandler( void* whichProgressDialog, ProgressHandler whichHandler ) override;
     void callHandler( ProgressController *not_used ) override;
     double getEndLimit() const override;
     void setEndLimit( double limit ) override;
@@ -46,6 +46,8 @@ class KProgressController: public ProgressController
     std::string getMessage() const override;
     void clearMessageChanged() override;
     bool getMessageChanged() const override;
+    void setLastUpdate( double whichLastUpdate ) override;
+    double getLastUpdate() const override;
 
   private:
     ProgressController *myPartner;

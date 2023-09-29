@@ -80,7 +80,6 @@ enum TOptionID
   OUTPUT_NAME,
 
   // TIMELINES
-  TIMELINE_OBJECT_HIERARCHY,
   TIMELINE_TRACE_UNITS,
 
   // HISTOGRAMS
@@ -122,7 +121,6 @@ TOptionParamedir definedOption[] =
   { "-o", "--output-name", false, 1, "", "<tracename>",  "Output trace name (only for processing trace)" },
 
   // TIMELINES
-  { "-obj", "--object-hierarchy", false, 0, "", "", "Print object hierarchy in timelines instead of global object order" },
   { "-tu", "--trace-units", false, 0, "", "",  "Use trace time units in timelines instead of time window units selected in the cfg file" },
 
   // HISTOGRAMS
@@ -292,13 +290,13 @@ void printHelp()
   std::cout << std::endl;
   std::cout << "  Output file options:" << std::endl;
 
-  for ( int i = MANY_FILES; i < TIMELINE_OBJECT_HIERARCHY; ++i )
+  for ( int i = MANY_FILES; i < TIMELINE_TRACE_UNITS; ++i )
     printOptionHelp( TOptionID( i ) );
 
   std::cout << std::endl;
   std::cout << "  Timeline options:" << std::endl;
 
-  for ( int i = TIMELINE_OBJECT_HIERARCHY; i < EMPTY_COLUMNS; ++i )
+  for ( int i = TIMELINE_TRACE_UNITS; i < EMPTY_COLUMNS; ++i )
     printOptionHelp( TOptionID( i ) );
 
   std::cout << std::endl;
@@ -769,7 +767,6 @@ void loadCFGs( KernelConnection *myKernel )
     {
       TextOutput output;
       output.setMultipleFiles( option[ MANY_FILES ].active );
-      output.setObjectHierarchy( option[ TIMELINE_OBJECT_HIERARCHY ].active );
       output.setWindowTimeUnits( !option[ TIMELINE_TRACE_UNITS ].active );
 
       if ( histograms.begin() != histograms.end() &&

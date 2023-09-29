@@ -30,7 +30,7 @@ using namespace NoLoad;
 class TraceStream;
 
 TraceEditBlocks::TraceEditBlocks( const ResourceModel<>& resource, const ProcessModel<>& process,
-                            TraceBodyIO<PARAM_TRACEBODY_CLASS> *whichBody, TraceStream *whichFile, TRecordTime endTime )
+                                  TraceBodyIO<PARAM_TRACEBODY_CLASS> *whichBody, TraceStream *whichFile, TRecordTime endTime )
     : NoLoadBlocks( resource, process ),
       resourceModel( resource ), processModel( process ),
       body( whichBody ), file( whichFile )

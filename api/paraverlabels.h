@@ -78,6 +78,7 @@ constexpr char OLDCFG_TAG_WNDW_COMM_LINES[] =  "window_comm_lines_enabled";
 constexpr char OLDCFG_TAG_WNDW_FLAGS_ENABLED[] =  "window_flags_enabled";
 constexpr char OLDCFG_TAG_WNDW_NON_COLOR_MODE[] =  "window_noncolor_mode";
 constexpr char OLDCFG_TAG_WNDW_COLOR_MODE[] =  "window_color_mode";
+constexpr char CFG_TAG_WNDW_GRADIENT_FUNCTION[] =  "window_gradient_function";
 constexpr char OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED[] =  "window_custom_color_enabled";
 constexpr char OLDCFG_TAG_WNDW_CUSTOM_COLOR_PALETTE[] =  "window_custom_color_palette";
 constexpr char OLDCFG_TAG_WNDW_SEMANTIC_SCALE_MIN_AT_ZERO[] =  "window_semantic_scale_min_at_zero";
@@ -177,6 +178,11 @@ constexpr char OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT[] =     "window_in_null_gradi
 constexpr char CFG_VAL_COLOR_MODE_ALTERNATIVE_GRADIENT[] = "window_in_alternative_gradient_mode";
 constexpr char CFG_VAL_COLOR_MODE_PUNCTUAL[] =             "window_in_punctual_mode";
 constexpr char CFG_VAL_COLOR_MODE_FUSED_LINES[] =          "window_in_fused_lines_mode";
+
+constexpr char CFG_VAL_GRADIENT_FUNCTION_LINEAR[] =        "gradient_function_linear";
+constexpr char CFG_VAL_GRADIENT_FUNCTION_STEPS[] =         "gradient_function_steps";
+constexpr char CFG_VAL_GRADIENT_FUNCTION_LOG[] =           "gradient_function_log";
+constexpr char CFG_VAL_GRADIENT_FUNCTION_EXP[] =           "gradient_function_exp";
 
 constexpr char OLDCFG_VAL_TIMEUNIT_NS[] = "Nanoseconds";
 constexpr char OLDCFG_VAL_TIMEUNIT_US[] = "Microseconds";

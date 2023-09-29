@@ -135,4 +135,6 @@ class VectorBlocks : public MemoryBlocks
     friend class VectorTrace;
     friend class VectorTrace::iterator;
 
+    void updateProgress( size_t &progressCounter );
+
 };

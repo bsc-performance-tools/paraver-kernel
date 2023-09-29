@@ -32,14 +32,14 @@ class KernelConnection;
 class ProgressController
 {
   public:
-    typedef void(*ProgressHandler)( ProgressController*, void* );
+    typedef void(*ProgressHandler)( void*, ProgressController* );
 
     static ProgressController *create( KernelConnection *whichKernel );
 
     ProgressController() {};
     virtual ~ProgressController() {};
 
-    virtual void setHandler( ProgressHandler whichHandler, void *callerWindow ) = 0;
+    virtual void setHandler( void* whichProgressDialog, ProgressHandler whichHandler ) = 0;
     virtual void callHandler( ProgressController *not_used ) = 0;
     virtual double getEndLimit() const = 0;
     virtual void setEndLimit( double limit ) = 0;
@@ -52,6 +52,8 @@ class ProgressController
     virtual std::string getMessage() const = 0;
     virtual bool getMessageChanged() const = 0;
     virtual void clearMessageChanged() = 0;
+    virtual void setLastUpdate( double whichLastUpdate ) = 0;
+    virtual double getLastUpdate() const = 0;
 
     virtual ProgressController *getConcrete() const
     {
@@ -65,7 +67,7 @@ class ProgressControllerProxy:public ProgressController
   public:
     ~ProgressControllerProxy();
 
-    void setHandler( ProgressHandler whichHandler, void *callerWindow ) override;
+    void setHandler( void* whichProgressDialog, ProgressHandler whichHandler ) override;
     void callHandler( ProgressController *not_used ) override;
     double getEndLimit() const override;
     void setEndLimit( double limit ) override;
@@ -78,6 +80,8 @@ class ProgressControllerProxy:public ProgressController
     std::string getMessage() const override;
     void clearMessageChanged() override;
     bool getMessageChanged() const override;
+    void setLastUpdate( double whichLastUpdate ) override;
+    double getLastUpdate() const override;
 
     ProgressController *getConcrete() const override;
 
@@ -88,11 +92,13 @@ class ProgressControllerProxy:public ProgressController
     ProgressController *myPartner;
 
     ProgressHandler handler;
-    void *window;
+    void *progressDialog;
     double endLimit;
     double currentProgress;
     std::string message;
     bool messageChanged;
+
+    double lastUpdate;
 
     friend ProgressController *ProgressController::create( KernelConnection * );
 };

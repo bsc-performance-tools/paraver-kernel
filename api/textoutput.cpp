@@ -30,7 +30,7 @@
 using namespace std;
 
 TextOutput::TextOutput()
-    : multipleFiles( false ), objectHierarchy( false ), windowTimeUnits( true ),
+    : multipleFiles( false ), windowTimeUnits( true ),
       textualSemantic( false ), minTime( 0.0 )
 {}
 
@@ -117,10 +117,7 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, Progr
       outputFile << setprecision( config->getTimelinePrecision() );
       if ( !multipleFiles )
       {
-        if( objectHierarchy )
-          outputFile << LabelConstructor::objectLabel( i, whichWindow->getLevel(), trace, false, false ) << "\t";
-        else
-          outputFile << i + 1 << "\t";
+        outputFile << LabelConstructor::objectLabel( i, whichWindow->getLevel(), trace, false, false ) << "\t";
       }
 
       if( windowTimeUnits )
@@ -146,10 +143,7 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, Progr
     outputFile << setprecision( config->getTimelinePrecision() );
     if ( !multipleFiles )
     {
-      if( objectHierarchy )
-        outputFile << LabelConstructor::objectLabel( i, whichWindow->getLevel(), trace, false, false ) << "\t";
-      else
-        outputFile << i + 1 << "\t";
+      outputFile << LabelConstructor::objectLabel( i, whichWindow->getLevel(), trace, false, false ) << "\t";
     }
     if( windowTimeUnits )
     {
@@ -648,16 +642,6 @@ bool TextOutput::getMultipleFiles() const
 void TextOutput::setMultipleFiles( bool newValue )
 {
   multipleFiles = newValue;
-}
-
-bool TextOutput::getObjectHierarchy() const
-{
-  return objectHierarchy;
-}
-
-void TextOutput::setObjectHierarchy( bool newValue )
-{
-  objectHierarchy = newValue;
 }
 
 bool TextOutput::getWindowTimeUnits() const
