@@ -60,7 +60,8 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
       int appl;
       int task;
       int thread;
-      std::vector<counter> counters;
+      std::vector<counter> acumm_counters;
+      std::vector<counter> count_counters;
       unsigned long long last_time_of_sc = 0;
       unsigned long long ini_burst_time = 0;
       unsigned long long end_burst_time = 0;
@@ -74,7 +75,8 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
       std::vector<unsigned long long> values;
     };
 
-    std::vector<type_values> allowed_types;
+    std::vector<type_values> acumm_events;
+    std::vector<type_values> count_events;
 
     std::vector<unsigned long long> keep_types;
 
@@ -91,7 +93,6 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     /* Execution parameters */
     bool all_types;
     bool global_counters;
-    bool acumm_values;
     bool remove_states;
     bool only_in_bursts;
     bool summarize_bursts;
@@ -100,7 +101,6 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     unsigned long long trace_time;
     unsigned long long min_state_time;
     bool type_of_counters;
-    bool keep_events;
 
     /* Trace in and trace out */
     TraceStream *infile;
@@ -120,10 +120,16 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     using LastStateEndTimeContainer = CubeContainer<TApplOrder, TTaskOrder, TThreadOrder, LastStateEndTime>;
     LastStateEndTimeContainer lastStateEndTime;
 
+    void parse_types( char* whichTypes, std::vector<type_values>& onTypes );
     void read_sc_args();
     void parseInHeaderAndDumpOut();
     void write_pcf( char *file_out );
-    bool allowed_type( unsigned long long type, unsigned long long value );
+    bool allowed_type( const std::vector<type_values>& whichEvents, unsigned long long type, unsigned long long value );
+    void findIncrementCounter( std::vector<counter>& whichCounters, 
+                               const std::vector<type_values>& whichAllowedEvents,
+                               unsigned long long type,
+                               unsigned long long value,
+                               bool acumm_values );
     void inc_counter( int appl, int task, int thread,
                       unsigned long long type, unsigned long long value );
     void put_all_counters( void );
@@ -136,5 +142,6 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     void put_counters_on_state( LastStateEndTimeContainer::iterator itLastState );
     void resumeStateCounters( unsigned long long time );
     void sc_by_states( ProgressController *progress );
+
 };
 

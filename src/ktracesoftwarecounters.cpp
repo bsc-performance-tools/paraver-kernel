@@ -68,7 +68,6 @@ KTraceSoftwareCounters::KTraceSoftwareCounters( char *trace_in,
 {
   min_state_time = 0;
   type_of_counters = false;
-  keep_events = false;
   total_iters = 0;
 
   exec_options = new KTraceOptions( (KTraceOptions *) options );
@@ -82,37 +81,15 @@ KTraceSoftwareCounters::~KTraceSoftwareCounters()
   delete exec_options;
 }
 
-
-/* Function for parsing program arguments */
-void KTraceSoftwareCounters::read_sc_args()
+void KTraceSoftwareCounters::parse_types( char* whichTypes, std::vector<type_values>& onTypes )
 {
+  char *words[16], *word_type, *word_values, *word_value;;
   int i, k;
-  char *words[16], *word_type, *word_values, *word_value;
 
-  all_types = true;
-  global_counters = false;
-  acumm_values = false;
-  remove_states = false;
-  only_in_bursts = false;
-  summarize_bursts = false;
-
-  type_of_counters = exec_options->sc_onInterval;
-
-  if ( exec_options->sc_onInterval )
-  {
-    interval = exec_options->sc_sampling_interval;
-    last_time = interval;
-  }
-  else
-  {
-    min_state_time = exec_options->sc_minimum_burst_time;
-    last_time = min_state_time;
-  }
-
-  if ( strlen( exec_options->types ) > 0 )
+  if ( strlen( whichTypes ) > 0 )
   {
     all_types = false;
-    words[0] = strtok( exec_options->types, ";" );
+    words[0] = strtok( whichTypes, ";" );
 
     i = 1;
     while ( ( words[i] = strtok( nullptr, ";" ) ) != nullptr )
@@ -121,7 +98,7 @@ void KTraceSoftwareCounters::read_sc_args()
     k = 0;
     while ( k < i )
     {
-      auto itCurrentType = allowed_types.insert( allowed_types.end(), type_values() );
+      auto itCurrentType = onTypes.insert( onTypes.end(), type_values() );
       word_type = strtok( words[k], ":" );
       itCurrentType->type = atoll( word_type );
       if ( ( word_values = strtok( nullptr, ":" ) ) == nullptr )
@@ -140,13 +117,42 @@ void KTraceSoftwareCounters::read_sc_args()
       }
       ++k;
     }
-
-    free( exec_options->types );
   }
+}
+
+/* Function for parsing program arguments */
+void KTraceSoftwareCounters::read_sc_args()
+{
+  int i, k;
+  char *words[16], *word_type, *word_values, *word_value;
+
+  all_types = true;
+  global_counters = false;
+  remove_states = false;
+  only_in_bursts = false;
+  summarize_bursts = false;
+
+  type_of_counters = exec_options->sc_onInterval;
+
+  if ( exec_options->sc_onInterval )
+  {
+    interval = exec_options->sc_sampling_interval;
+    last_time = interval;
+  }
+  else
+  {
+    min_state_time = exec_options->sc_minimum_burst_time;
+    last_time = min_state_time;
+  }
+
+  parse_types( exec_options->acumm_types, acumm_events );
+  free( exec_options->acumm_types );
+
+  parse_types( exec_options->count_types, count_events );
+  free( exec_options->count_types );
 
   if ( strlen( exec_options->types_kept ) > 0 )
   {
-    keep_events = true;
     words[0] = strtok( exec_options->types_kept, ";" );
     keep_types.push_back( atoll( words[0] ) );
 
@@ -159,8 +165,6 @@ void KTraceSoftwareCounters::read_sc_args()
   }
 
   global_counters = exec_options->sc_global_counters;
-
-  acumm_values = exec_options->sc_acumm_counters;
 
   remove_states = exec_options->sc_remove_states;
 
@@ -244,14 +248,14 @@ void KTraceSoftwareCounters::write_pcf( char *file_out )
 }
 
 
-bool KTraceSoftwareCounters::allowed_type( unsigned long long type, unsigned long long value )
+bool KTraceSoftwareCounters::allowed_type( const std::vector<type_values>& whichEvents, unsigned long long type, unsigned long long value )
 {
   int i;
 
   if ( value == 0 )
     return false;
 
-  auto itAllowed = std::find_if( allowed_types.begin(), allowed_types.end(),
+  auto itAllowed = std::find_if( whichEvents.begin(), whichEvents.end(),
                                  [type, value]( auto el )
                                  {
                                    if( el.type == type )
@@ -264,9 +268,33 @@ bool KTraceSoftwareCounters::allowed_type( unsigned long long type, unsigned lon
                                    return false;
                                  } );
 
-  return itAllowed != allowed_types.end();
+  return itAllowed != whichEvents.end();
 }
 
+void KTraceSoftwareCounters::findIncrementCounter( std::vector<counter>& whichCounters, 
+                                                   const std::vector<type_values>& whichAllowedEvents,
+                                                   unsigned long long type,
+                                                   unsigned long long value,
+                                                   bool acumm_values )
+{
+  if ( ( all_types && value > 0 ) || allowed_type( whichAllowedEvents, type, value ) )
+  {
+    auto itCounter = whichCounters.begin();
+    for ( ; itCounter != whichCounters.end(); ++itCounter )
+    {
+      if ( itCounter->type == type && ( itCounter->value == value || global_counters || acumm_values ) )
+      {
+        itCounter->num += value;
+        break;
+      }
+    }
+
+    if ( itCounter == whichCounters.end() )
+    {
+      whichCounters.emplace_back( type, value, value, false );
+    }
+  }
+}
 
 /* Increment of a counter for a given type and value */
 void KTraceSoftwareCounters::inc_counter( int appl, int task, int thread, unsigned long long type, unsigned long long value )
@@ -280,66 +308,52 @@ void KTraceSoftwareCounters::inc_counter( int appl, int task, int thread, unsign
     threadsInfo( appl, task, thread ) = newThreadInfo;
   }
 
-  if ( ( all_types && value > 0 ) || allowed_type( type, value ) )
-  {
-    /* Searching of the specified counter for the given thread */
-    auto itCounter = threadsInfo( appl, task, thread ).counters.begin();
-    for ( ; itCounter != threadsInfo( appl, task, thread ).counters.end(); ++itCounter )
-    {
-      if ( itCounter->type == type && ( itCounter->value == value || global_counters || acumm_values ) )
-      {
-        if ( !acumm_values )
-          ++itCounter->num;
-        else
-        {
-          itCounter->num += value;
-        }
-        break;
-      }
-    }
-
-    /* The counter doesn't exist. Create it */
-    if ( itCounter == threadsInfo( appl, task, thread ).counters.end() )
-    {
-      unsigned long long tmpNum;
-      if ( !acumm_values )
-        tmpNum = 1;
-      else
-        tmpNum = value;
-
-      threadsInfo( appl, task, thread ).counters.emplace_back( type, value, tmpNum, false );
-    }
-  }
+  findIncrementCounter( threadsInfo( appl, task, thread ).acumm_counters, acumm_events, type, value, true );
+  findIncrementCounter( threadsInfo( appl, task, thread ).count_counters, count_events, type, 1, false );
 }
 
 
 /* Function for putting soft counters in the trace for every specified period */
 void KTraceSoftwareCounters::put_all_counters( void )
 {
-  unsigned long long type_mask;
-
-  /* We pass over all the threads on the struct */
-  for ( auto itThread = threadsInfo.begin(); itThread != threadsInfo.end(); ++itThread )
+  auto generateTypeMaskAcumm = [ this ]( unsigned long long whichType, unsigned long long whichValue )
   {
-    /* For every thread, we pass over all its counters */
-    for ( auto itCounter = itThread->second.counters.begin(); itCounter != itThread->second.counters.end(); ++itCounter )
-    {
-      if ( acumm_values )
-        type_mask = itCounter->type;
-      else
-      {
-        if ( !global_counters )
-        {
-          type_mask = ( ( ( itCounter->type ) / 10000 ) + itCounter->type % 10000 + 10000 ) * 1000;
-          type_mask += itCounter->value;
-        }
-        else
-          type_mask = itCounter->type / 10000 + 20000 + itCounter->type % 10000;
-      }
+    return whichType;
+  };
 
-      dump_fields( outfile, "2:0", itThread->second.appl, itThread->second.task, itThread->second.thread, last_time, type_mask, itCounter->num );
+  auto generateTypeMaskCount = [ this ]( unsigned long long whichType, unsigned long long whichValue )
+  {
+    unsigned long long returnType;
+
+    if ( !global_counters )
+    {
+      returnType = ( ( ( whichType ) / 10000 ) + whichType % 10000 + 10000 ) * 1000;
+      returnType += whichValue;
+    }
+    else
+      returnType = whichType / 10000 + 20000 + whichType % 10000;
+
+    return returnType;
+  };
+
+  auto dumpAllCountersFor = [ this ]( const auto& whichThread, const std::vector<counter>& whichCounters, auto generateTypeMask )
+  {
+    for ( auto itCounter = whichCounters.cbegin(); itCounter != whichCounters.cend(); ++itCounter )
+    {
+      dump_fields( outfile, "2:0", whichThread.appl,
+                                   whichThread.task,
+                                   whichThread.thread,
+                                   last_time,
+                                   generateTypeMask( itCounter->type, itCounter->value ),
+                                   itCounter->num );
       outfile << "\n";
     }
+  };
+
+  for ( auto itThread = threadsInfo.begin(); itThread != threadsInfo.end(); ++itThread )
+  {
+    dumpAllCountersFor( itThread->second, itThread->second.acumm_counters, generateTypeMaskAcumm );
+    dumpAllCountersFor( itThread->second, itThread->second.count_counters, generateTypeMaskCount );
   }
 }
 
@@ -399,34 +413,49 @@ void KTraceSoftwareCounters::show_progress_bar( ProgressController *progress )
 
 void KTraceSoftwareCounters::put_counters_on_state_by_thread( int appl, int task, int thread )
 {
-  unsigned long long type_mask;
-
   auto itThread = threadsInfo.find( appl, task, thread );
   if ( itThread == threadsInfo.end() )
     return;
   auto tmpThreadInfo = itThread->second;
 
-  /* we pass over all its counters */
-  for ( auto itCounter = tmpThreadInfo.counters.begin(); itCounter != tmpThreadInfo.counters.end(); ++itCounter )
+  auto generateTypeMaskAcumm = [ this ]( unsigned long long whichType, unsigned long long whichValue )
   {
-    if ( acumm_values )
-      type_mask = itCounter->type;
-    else
+    return whichType;
+  };
+
+  auto generateTypeMaskCount = [ this ]( unsigned long long whichType, unsigned long long whichValue )
+  {
+    unsigned long long returnType;
+
+    if ( !global_counters )
     {
-      if ( !global_counters )
-      {
-        type_mask = ( ( ( itCounter->type ) / 10000 ) + itCounter->type % 10000 + 10000 ) * 1000;
-        type_mask += itCounter->value;
-      }
-      else
-        type_mask = itCounter->type / 10000 + 20000 + itCounter->type % 10000;
+      returnType = ( ( ( whichType ) / 10000 ) + whichType % 10000 + 10000 ) * 1000;
+      returnType += whichValue;
     }
+    else
+      returnType = whichType / 10000 + 20000 + whichType % 10000;
 
-    dump_fields( outfile, "2:0", tmpThreadInfo.appl, tmpThreadInfo.task, tmpThreadInfo.thread, last_time, type_mask, itCounter->num );
-    outfile << "\n";
+    return returnType;
+  };
 
-    itCounter->num = 0;
-  }
+  auto dumpAllCountersFor = [ this ]( const auto& whichThread, std::vector<counter>& whichCounters, auto generateTypeMask )
+  {
+    for ( auto itCounter = whichCounters.begin(); itCounter != whichCounters.end(); ++itCounter )
+    {
+      dump_fields( outfile, "2:0", whichThread.appl,
+                                   whichThread.task,
+                                   whichThread.thread,
+                                   last_time,
+                                   generateTypeMask( itCounter->type, itCounter->value ),
+                                   itCounter->num );
+      outfile << "\n";
+
+      itCounter->num = 0;
+    }
+  };
+
+  dumpAllCountersFor( tmpThreadInfo, tmpThreadInfo.acumm_counters, generateTypeMaskAcumm );
+  dumpAllCountersFor( tmpThreadInfo, tmpThreadInfo.count_counters, generateTypeMaskCount );
 
   tmpThreadInfo.last_time_of_sc = last_time;
 
@@ -545,7 +574,7 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
           prv_atoll_v( itBegin, itEnd, type, value );
 
           /* For keeping some events */
-          if ( keep_events )
+          if ( !keep_types.empty() )
           {
             auto itKeepType = std::find( keep_types.begin(), keep_types.end(), type );
             if( itKeepType != keep_types.end() )
@@ -598,35 +627,47 @@ void KTraceSoftwareCounters::insert_in_queue_state( int appl, int task, int thre
 
 void KTraceSoftwareCounters::put_counters_on_state( LastStateEndTimeContainer::iterator itLastState )
 {
-  unsigned long long type_mask;
-
   auto tmpThreadInfo = threadsInfo( itLastState->second.appl, itLastState->second.task, itLastState->second.thread );
-  /* For every thread, we pass over all its counters */
-  for ( auto itCounter = tmpThreadInfo.counters.begin(); itCounter != tmpThreadInfo.counters.end(); ++itCounter )
-  {
-    if ( acumm_values )
-      type_mask = itCounter->type;
-    else
-    {
-      if ( !global_counters )
-      {
-        type_mask = ( ( ( itCounter->type ) / 10000 ) + itCounter->type % 10000 + 10000 ) * 1000;
-        type_mask += itCounter->value;
-      }
-      else
-        type_mask = itCounter->type / 10000 + 20000 + itCounter->type % 10000;
-    }
 
-    dump_fields( outfile, "2:0",
-                          tmpThreadInfo.appl,
-                          tmpThreadInfo.task,
-                          tmpThreadInfo.thread,
-                          itLastState->second.end_time,
-                          type_mask,
-                          itCounter->num );
-    outfile << "\n";
-    itCounter->num = 0;
-  }
+  auto generateTypeMaskAcumm = [ this ]( unsigned long long whichType, unsigned long long whichValue )
+  {
+    return whichType;
+  };
+
+  auto generateTypeMaskCount = [ this ]( unsigned long long whichType, unsigned long long whichValue )
+  {
+    unsigned long long returnType;
+
+    if ( !global_counters )
+    {
+      returnType = ( ( ( whichType ) / 10000 ) + whichType % 10000 + 10000 ) * 1000;
+      returnType += whichValue;
+    }
+    else
+      returnType = whichType / 10000 + 20000 + whichType % 10000;
+
+    return returnType;
+  };
+
+  auto dumpAllCountersFor = [ this ]( const auto& whichThread, std::vector<counter>& whichCounters, auto generateTypeMask )
+  {
+    for ( auto itCounter = whichCounters.begin(); itCounter != whichCounters.end(); ++itCounter )
+    {
+      dump_fields( outfile, "2:0", whichThread.appl,
+                                   whichThread.task,
+                                   whichThread.thread,
+                                   last_time,
+                                   generateTypeMask( itCounter->type, itCounter->value ),
+                                   itCounter->num );
+      outfile << "\n";
+
+      itCounter->num = 0;
+    }
+  };
+
+  dumpAllCountersFor( tmpThreadInfo, tmpThreadInfo.acumm_counters, generateTypeMaskAcumm );
+  dumpAllCountersFor( tmpThreadInfo, tmpThreadInfo.count_counters, generateTypeMaskCount );
+
 }
 
 void KTraceSoftwareCounters::resumeStateCounters( unsigned long long time )
@@ -726,7 +767,7 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
         {
           prv_atoll_v( itBegin, itEnd, type, value );
 
-          if ( keep_events )
+          if ( !keep_types.empty() )
           {
             auto itKeepType = std::find( keep_types.begin(), keep_types.end(), type );
             if( itKeepType != keep_types.end() )
