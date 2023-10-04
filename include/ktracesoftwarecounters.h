@@ -60,7 +60,7 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
       int appl;
       int task;
       int thread;
-      std::vector<counter> acumm_counters;
+      std::vector<counter> accum_counters;
       std::vector<counter> count_counters;
       unsigned long long last_time_of_sc = 0;
       unsigned long long ini_burst_time = 0;
@@ -75,7 +75,7 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
       std::vector<unsigned long long> values;
     };
 
-    std::vector<type_values> acumm_events;
+    std::vector<type_values> accum_events;
     std::vector<type_values> count_events;
 
     std::vector<unsigned long long> keep_types;
@@ -129,7 +129,7 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
                                const std::vector<type_values>& whichAllowedEvents,
                                unsigned long long type,
                                unsigned long long value,
-                               bool acumm_values );
+                               bool accum_values );
     void inc_counter( int appl, int task, int thread,
                       unsigned long long type, unsigned long long value );
     void put_all_counters( void );

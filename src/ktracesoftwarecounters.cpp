@@ -145,8 +145,8 @@ void KTraceSoftwareCounters::read_sc_args()
     last_time = min_state_time;
   }
 
-  parse_types( exec_options->acumm_types, acumm_events );
-  free( exec_options->acumm_types );
+  parse_types( exec_options->accum_types, accum_events );
+  free( exec_options->accum_types );
 
   parse_types( exec_options->count_types, count_events );
   free( exec_options->count_types );
@@ -275,14 +275,14 @@ void KTraceSoftwareCounters::findIncrementCounter( std::vector<counter>& whichCo
                                                    const std::vector<type_values>& whichAllowedEvents,
                                                    unsigned long long type,
                                                    unsigned long long value,
-                                                   bool acumm_values )
+                                                   bool accum_values )
 {
   if ( ( all_types && value > 0 ) || allowed_type( whichAllowedEvents, type, value ) )
   {
     auto itCounter = whichCounters.begin();
     for ( ; itCounter != whichCounters.end(); ++itCounter )
     {
-      if ( itCounter->type == type && ( itCounter->value == value || global_counters || acumm_values ) )
+      if ( itCounter->type == type && ( itCounter->value == value || global_counters || accum_values ) )
       {
         itCounter->num += value;
         break;
@@ -308,7 +308,7 @@ void KTraceSoftwareCounters::inc_counter( int appl, int task, int thread, unsign
     threadsInfo( appl, task, thread ) = newThreadInfo;
   }
 
-  findIncrementCounter( threadsInfo( appl, task, thread ).acumm_counters, acumm_events, type, value, true );
+  findIncrementCounter( threadsInfo( appl, task, thread ).accum_counters, accum_events, type, value, true );
   findIncrementCounter( threadsInfo( appl, task, thread ).count_counters, count_events, type, 1, false );
 }
 
@@ -316,7 +316,7 @@ void KTraceSoftwareCounters::inc_counter( int appl, int task, int thread, unsign
 /* Function for putting soft counters in the trace for every specified period */
 void KTraceSoftwareCounters::put_all_counters( void )
 {
-  auto generateTypeMaskAcumm = [ this ]( unsigned long long whichType, unsigned long long whichValue )
+  auto generateTypeMaskAccum = [ this ]( unsigned long long whichType, unsigned long long whichValue )
   {
     return whichType;
   };
@@ -352,7 +352,7 @@ void KTraceSoftwareCounters::put_all_counters( void )
 
   for ( auto itThread = threadsInfo.begin(); itThread != threadsInfo.end(); ++itThread )
   {
-    dumpAllCountersFor( itThread->second, itThread->second.acumm_counters, generateTypeMaskAcumm );
+    dumpAllCountersFor( itThread->second, itThread->second.accum_counters, generateTypeMaskAccum );
     dumpAllCountersFor( itThread->second, itThread->second.count_counters, generateTypeMaskCount );
   }
 }
@@ -418,7 +418,7 @@ void KTraceSoftwareCounters::put_counters_on_state_by_thread( int appl, int task
     return;
   auto tmpThreadInfo = itThread->second;
 
-  auto generateTypeMaskAcumm = [ this ]( unsigned long long whichType, unsigned long long whichValue )
+  auto generateTypeMaskAccum = [ this ]( unsigned long long whichType, unsigned long long whichValue )
   {
     return whichType;
   };
@@ -454,7 +454,7 @@ void KTraceSoftwareCounters::put_counters_on_state_by_thread( int appl, int task
     }
   };
 
-  dumpAllCountersFor( tmpThreadInfo, tmpThreadInfo.acumm_counters, generateTypeMaskAcumm );
+  dumpAllCountersFor( tmpThreadInfo, tmpThreadInfo.accum_counters, generateTypeMaskAccum );
   dumpAllCountersFor( tmpThreadInfo, tmpThreadInfo.count_counters, generateTypeMaskCount );
 
   tmpThreadInfo.last_time_of_sc = last_time;
@@ -629,7 +629,7 @@ void KTraceSoftwareCounters::put_counters_on_state( LastStateEndTimeContainer::i
 {
   auto tmpThreadInfo = threadsInfo( itLastState->second.appl, itLastState->second.task, itLastState->second.thread );
 
-  auto generateTypeMaskAcumm = [ this ]( unsigned long long whichType, unsigned long long whichValue )
+  auto generateTypeMaskAccum = [ this ]( unsigned long long whichType, unsigned long long whichValue )
   {
     return whichType;
   };
@@ -665,7 +665,7 @@ void KTraceSoftwareCounters::put_counters_on_state( LastStateEndTimeContainer::i
     }
   };
 
-  dumpAllCountersFor( tmpThreadInfo, tmpThreadInfo.acumm_counters, generateTypeMaskAcumm );
+  dumpAllCountersFor( tmpThreadInfo, tmpThreadInfo.accum_counters, generateTypeMaskAccum );
   dumpAllCountersFor( tmpThreadInfo, tmpThreadInfo.count_counters, generateTypeMaskCount );
 
 }

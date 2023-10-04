@@ -112,7 +112,7 @@ class KTraceOptions: public TraceOptions
     unsigned long long sc_sampling_interval;
     unsigned long long sc_minimum_burst_time;
 
-    char *acumm_types;
+    char *accum_types;
     char *count_types;
     char *types_kept;
 
@@ -485,9 +485,9 @@ class KTraceOptions: public TraceOptions
       sc_remove_states = whichSCRemoveStates;
     }
 
-    inline void set_sc_acumm_types( char *whichTypes ) override
+    inline void set_sc_accum_types( char *whichTypes ) override
     {
-      acumm_types = whichTypes;
+      accum_types = whichTypes;
     }
 
     inline void set_sc_count_types( char *whichTypes ) override
@@ -535,9 +535,9 @@ class KTraceOptions: public TraceOptions
       return sc_remove_states;
     }
 
-    inline char *get_sc_acumm_types() const override
+    inline char *get_sc_accum_types() const override
     {
-      return strdup( acumm_types );
+      return strdup( accum_types );
     }
 
     inline char *get_sc_count_types() const override

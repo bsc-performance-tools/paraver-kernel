@@ -122,7 +122,7 @@ class TraceOptions
     virtual void set_sc_summarize_states( bool scSummarizeStates ) = 0;
     virtual void set_sc_only_in_bursts( bool scOnlyInBursts ) = 0;
     virtual void set_sc_remove_states( bool scRemoveStates ) = 0;
-    virtual void set_sc_acumm_types( char *whichTypes ) = 0;
+    virtual void set_sc_accum_types( char *whichTypes ) = 0;
     virtual void set_sc_count_types( char *whichTypes ) = 0;
     virtual void set_sc_types_kept( char *typesKept ) = 0;
 
@@ -133,7 +133,7 @@ class TraceOptions
     virtual bool get_sc_summarize_states() const = 0;
     virtual bool get_sc_only_in_bursts() const = 0;
     virtual bool get_sc_remove_states() const = 0;
-    virtual char *get_sc_acumm_types() const = 0;
+    virtual char *get_sc_accum_types() const = 0;
     virtual char *get_sc_count_types() const = 0;
     virtual char *get_sc_types_kept() const = 0;
 
@@ -226,7 +226,7 @@ class TraceOptionsProxy :public TraceOptions
     virtual void set_sc_summarize_states( bool scSummarizeStates ) override;
     virtual void set_sc_only_in_bursts( bool scOnlyInBursts ) override;
     virtual void set_sc_remove_states( bool scRemoveStates ) override;
-    virtual void set_sc_acumm_types( char *whichTypes ) override;
+    virtual void set_sc_accum_types( char *whichTypes ) override;
     virtual void set_sc_count_types( char *whichTypes ) override;
     virtual void set_sc_types_kept( char *typesKept ) override;
 
@@ -237,7 +237,7 @@ class TraceOptionsProxy :public TraceOptions
     virtual bool get_sc_summarize_states() const override;
     virtual bool get_sc_only_in_bursts() const override;
     virtual bool get_sc_remove_states() const override;
-    virtual char *get_sc_acumm_types() const override;
+    virtual char *get_sc_accum_types() const override;
     virtual char *get_sc_count_types() const override;
     virtual char *get_sc_types_kept() const override;
 
