@@ -680,6 +680,8 @@ void KTraceSoftwareCounters::resumeStateCounters( unsigned long long time )
       put_counters_on_state( itLastState );
       itLastState = lastStateEndTime.erase( itLastState );
     }
+    else
+      ++itLastState;
   }
 }
 
