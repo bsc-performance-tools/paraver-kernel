@@ -129,6 +129,7 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
                                const std::vector<type_values>& whichAllowedEvents,
                                unsigned long long type,
                                unsigned long long value,
+                               unsigned long long amount,
                                bool accum_values );
     void inc_counter( int appl, int task, int thread,
                       unsigned long long type, unsigned long long value );

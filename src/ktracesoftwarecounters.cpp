@@ -281,21 +281,27 @@ void KTraceSoftwareCounters::write_pcf( char *file_in, char *file_out )
       else
       {
         if( currentType.all_values )
+        {
           for( const auto& currentValue : inPCFParser.getEventValues( currentType.type ) )
           {
-            outPCFParser.setEventType( getCounterEventType( currentType.type, currentValue.first, global_counters ),
-                                       inPCFParser.getEventPrecision( currentType.type ),
-                                       currentValue.second + "_counter",
-                                       {} );
+            if( currentValue.first > 0 )
+              outPCFParser.setEventType( getCounterEventType( currentType.type, currentValue.first, global_counters ),
+                                        inPCFParser.getEventPrecision( currentType.type ),
+                                        currentValue.second + "_counter",
+                                        {} );
           }
+        }
         else
+        {
           for( const auto& currentValue : currentType.values )
           {
-            outPCFParser.setEventType( getCounterEventType( currentType.type, currentValue, global_counters ),
-                                       inPCFParser.getEventPrecision( currentType.type ),
-                                       inPCFParser.getEventValues( currentType.type ).find( currentValue )->second + "_counter",
-                                       {} );
+            if( currentValue > 0 )
+              outPCFParser.setEventType( getCounterEventType( currentType.type, currentValue, global_counters ),
+                                        inPCFParser.getEventPrecision( currentType.type ),
+                                        inPCFParser.getEventValues( currentType.type ).find( currentValue )->second + "_counter",
+                                        {} );
           }
+        }
       }
     }
   }
@@ -332,6 +338,7 @@ void KTraceSoftwareCounters::findIncrementCounter( std::vector<counter>& whichCo
                                                    const std::vector<type_values>& whichAllowedEvents,
                                                    unsigned long long type,
                                                    unsigned long long value,
+                                                   unsigned long long amount,
                                                    bool accum_values )
 {
   if ( ( all_types && value > 0 ) || allowed_type( whichAllowedEvents, type, value ) )
@@ -341,7 +348,7 @@ void KTraceSoftwareCounters::findIncrementCounter( std::vector<counter>& whichCo
     {
       if ( itCounter->type == type && ( itCounter->value == value || global_counters || accum_values ) )
       {
-        itCounter->num += value;
+        itCounter->num += amount;
         break;
       }
     }
@@ -365,8 +372,8 @@ void KTraceSoftwareCounters::inc_counter( int appl, int task, int thread, unsign
     threadsInfo( appl, task, thread ) = newThreadInfo;
   }
 
-  findIncrementCounter( threadsInfo( appl, task, thread ).accum_counters, accum_events, type, value, true );
-  findIncrementCounter( threadsInfo( appl, task, thread ).count_counters, count_events, type, 1, false );
+  findIncrementCounter( threadsInfo( appl, task, thread ).accum_counters, accum_events, type, value, value, true );
+  findIncrementCounter( threadsInfo( appl, task, thread ).count_counters, count_events, type, value, 1, false );
 }
 
 
