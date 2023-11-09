@@ -174,7 +174,6 @@ void KTraceSoftwareCounters::read_sc_args()
     remove_states = true;
 }
 
-
 /* For processing the Paraver header */
 void KTraceSoftwareCounters::parseInHeaderAndDumpOut()
 {
@@ -201,50 +200,108 @@ void KTraceSoftwareCounters::parseInHeaderAndDumpOut()
 }
 
 
-/* For copy .pcf and add the counter types and values */
-void KTraceSoftwareCounters::write_pcf( char *file_out )
+unsigned long long getCounterEventType( unsigned long long whichType, unsigned long long whichValue, bool global_counters )
 {
-  char *c, *trace_out;
-  std::fstream pcf;
+  if ( global_counters )
+    whichType = whichType / 10000 + 20000 + whichType % 10000;
+  else
+  {
+    whichType = ( ( ( whichType ) / 10000 ) + whichType % 10000 + 10000 ) * 1000;
+    whichType += whichValue;
+  }
 
-  trace_out = strdup( file_out );
+  return whichType;
+}
 
-  c = strrchr( trace_out, '.' );
-  *c = '\0';
+/* For copy .pcf and add the counter types and values */
+void KTraceSoftwareCounters::write_pcf( char *file_in, char *file_out )
+{
+  std::string pcfOutFilename{ file_out };
+  std::string pcfInFilename{ file_in };
 
-  line = trace_out;
-  line += ".pcf";
+  pcfOutFilename.erase( pcfOutFilename.size() - 3 );
+  pcfOutFilename += "pcf";
+  PCFFileParser<> outPCFParser;
 
-  pcf.open( line, std::ios_base::out );
-  if ( !pcf.is_open() )
-    return;
+  if( pcfInFilename.substr( pcfInFilename.size() - 2 ) == "gz" )
+    pcfInFilename.erase( pcfInFilename.size() - 5 );
+  else
+    pcfInFilename.erase( pcfInFilename.size() - 3 );
+  pcfInFilename += "pcf";
+  PCFFileParser<> inPCFParser( pcfInFilename );
 
-  pcf << "\n\nEVENT_TYPE\n";
-  pcf << "9   15001059    MPI_Waitany_counter\n";
-  pcf << "9   15001004    MPI_Irecv_counter\n";
-  pcf << "9   15001003    MPI_Isend_counter\n";
-  pcf << "9   15001002    MPI_Recv_counter\n";
-  pcf << "9   15001001    MPI_Send_counter\n";
-  pcf << "9   15001041    MPI_Sendrecv_counter\n";
-  pcf << "9   15001006    MPI_Waitall_counter\n";
-  pcf << "9   15001005    MPI_Wait_counter\n";
-  pcf << "9   15001062    MPI_Iprobe_counter\n";
-  pcf << "9   15002010    MPI_Allreduce_counter\n";
-  pcf << "9   15002007    MPI_Bcast_counter\n";
-  pcf << "9   15002018    MPI_Allgatherv_counter\n";
-  pcf << "9   15002013    MPI_Gather_counter\n";
-  pcf << "9   15003019    MPI_Comm_rank_counter\n";
-  pcf << "9   15003020    MPI_Comm_size_counter\n";
-  pcf << "9   15003031    MPI_Init_counter\n";
-  pcf << "9   15003032    MPI_Finalize_counter\n";
-  pcf << "9      25001    MPI_Point-to-point_global_counter\n";
-  pcf << "9      25002    MPI_Collective_comm_global_counter\n";
-  pcf << "9      25003    MPI_Other_global_counter\n";
+  outPCFParser.setLevel( inPCFParser.getLevel() );
+  outPCFParser.setUnits( inPCFParser.getUnits() );
+  outPCFParser.setLookBack( inPCFParser.getLookBack() );
+  outPCFParser.setSpeed( inPCFParser.getSpeed() );
+  outPCFParser.setFlagIcons( inPCFParser.getFlagIcons() );
+  outPCFParser.setYmaxScale( inPCFParser.getYmaxScale() );
+  outPCFParser.setThreadFunc( inPCFParser.getThreadFunc() );
+  for( const auto& el : inPCFParser.getStates() )
+    outPCFParser.setState( el.first, el.second );
+  for( const auto& el : inPCFParser.getSemanticColors() )
+    outPCFParser.setSemanticColor( el.first, el.second );
 
-  if ( summarize_bursts )
-    pcf << "9          1    Total_burst_time\n";
+  std::vector< TEventType > inPCFTypes;
+  inPCFParser.getEventTypes( inPCFTypes );
 
-  pcf.close();
+  for( const auto& currentType : keep_types )
+  {
+    if( std::find( inPCFTypes.begin(), inPCFTypes.end(), currentType ) != inPCFTypes.end() )
+    {
+      outPCFParser.setEventType( currentType,
+                                 inPCFParser.getEventPrecision( currentType ),
+                                 inPCFParser.getEventLabel( currentType ),
+                                 inPCFParser.getEventValues( currentType ) );
+    }
+  }
+
+  for( const auto& currentType : accum_events )
+  {
+    if( std::find( inPCFTypes.begin(), inPCFTypes.end(), currentType.type ) != inPCFTypes.end() )
+    {
+      outPCFParser.setEventType( currentType.type,
+                                 inPCFParser.getEventPrecision( currentType.type ),
+                                 inPCFParser.getEventLabel( currentType.type ),
+                                 {} );
+    }
+  }
+
+  for( const auto& currentType : count_events )
+  {
+    if( std::find( inPCFTypes.begin(), inPCFTypes.end(), currentType.type ) != inPCFTypes.end() )
+    {
+      if( global_counters )
+      {
+        outPCFParser.setEventType( getCounterEventType( currentType.type, 0, global_counters ),
+                                   inPCFParser.getEventPrecision( currentType.type ),
+                                   inPCFParser.getEventLabel( currentType.type ) + "_counter",
+                                   {} );
+      }
+      else
+      {
+        if( currentType.all_values )
+          for( const auto& currentValue : inPCFParser.getEventValues( currentType.type ) )
+          {
+            outPCFParser.setEventType( getCounterEventType( currentType.type, currentValue.first, global_counters ),
+                                       inPCFParser.getEventPrecision( currentType.type ),
+                                       currentValue.second + "_counter",
+                                       {} );
+          }
+        else
+          for( const auto& currentValue : currentType.values )
+          {
+            outPCFParser.setEventType( getCounterEventType( currentType.type, currentValue, global_counters ),
+                                       inPCFParser.getEventPrecision( currentType.type ),
+                                       inPCFParser.getEventValues( currentType.type ).find( currentValue )->second + "_counter",
+                                       {} );
+          }
+      }
+    }
+  }
+
+
+  outPCFParser.dumpToFile( pcfOutFilename );
 }
 
 
@@ -812,7 +869,7 @@ void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out, ProgressC
   infile = TraceStream::openFile( trace_in );
   outfile = fstream( trace_out, ios_base::out );
   
-  write_pcf( trace_out );
+  write_pcf( trace_in, trace_out );
 
   ini_progress_bar( trace_in, progress );
 

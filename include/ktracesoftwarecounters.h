@@ -123,7 +123,7 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     void parse_types( char* whichTypes, std::vector<type_values>& onTypes );
     void read_sc_args();
     void parseInHeaderAndDumpOut();
-    void write_pcf( char *file_out );
+    void write_pcf( char *file_in, char *file_out );
     bool allowed_type( const std::vector<type_values>& whichEvents, unsigned long long type, unsigned long long value );
     void findIncrementCounter( std::vector<counter>& whichCounters, 
                                const std::vector<type_values>& whichAllowedEvents,
