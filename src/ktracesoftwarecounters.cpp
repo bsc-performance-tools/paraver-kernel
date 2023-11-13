@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 #include <errno.h>
+#include <functional>
 #include <string>
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -48,6 +48,9 @@
 #define atoll _atoi64
 #endif
 
+using namespace std::placeholders;
+
+
 template <typename T, typename... Targs>
 constexpr void dump_fields( std::fstream& file, T current_field )
 {
@@ -60,6 +63,24 @@ constexpr void dump_fields( std::fstream& file, T current_field, Targs... Fargs 
   file << current_field << ":";
   dump_fields( file, Fargs... );
 }
+
+
+unsigned long long getCounterEventType( unsigned long long whichType, unsigned long long whichValue, bool global_counters, bool accum_counter )
+{
+  if( accum_counter )
+    return whichType;
+
+  if ( global_counters )
+    whichType = whichType / 10000 + 20000 + whichType % 10000;
+  else
+  {
+    whichType = ( ( ( whichType ) / 10000 ) + whichType % 10000 + 10000 ) * 1000;
+    whichType += whichValue;
+  }
+
+  return whichType;
+}
+
 
 KTraceSoftwareCounters::KTraceSoftwareCounters( char *trace_in,
                                                 char *trace_out,
@@ -200,19 +221,6 @@ void KTraceSoftwareCounters::parseInHeaderAndDumpOut()
 }
 
 
-unsigned long long getCounterEventType( unsigned long long whichType, unsigned long long whichValue, bool global_counters )
-{
-  if ( global_counters )
-    whichType = whichType / 10000 + 20000 + whichType % 10000;
-  else
-  {
-    whichType = ( ( ( whichType ) / 10000 ) + whichType % 10000 + 10000 ) * 1000;
-    whichType += whichValue;
-  }
-
-  return whichType;
-}
-
 /* For copy .pcf and add the counter types and values */
 void KTraceSoftwareCounters::write_pcf( char *file_in, char *file_out )
 {
@@ -260,7 +268,7 @@ void KTraceSoftwareCounters::write_pcf( char *file_in, char *file_out )
   {
     if( std::find( inPCFTypes.begin(), inPCFTypes.end(), currentType.type ) != inPCFTypes.end() )
     {
-      outPCFParser.setEventType( currentType.type,
+      outPCFParser.setEventType( getCounterEventType( currentType.type, 0, global_counters, true ),
                                  inPCFParser.getEventPrecision( currentType.type ),
                                  inPCFParser.getEventLabel( currentType.type ),
                                  {} );
@@ -273,7 +281,7 @@ void KTraceSoftwareCounters::write_pcf( char *file_in, char *file_out )
     {
       if( global_counters )
       {
-        outPCFParser.setEventType( getCounterEventType( currentType.type, 0, global_counters ),
+        outPCFParser.setEventType( getCounterEventType( currentType.type, 0, global_counters, false ),
                                    inPCFParser.getEventPrecision( currentType.type ),
                                    inPCFParser.getEventLabel( currentType.type ) + "_counter",
                                    {} );
@@ -285,10 +293,10 @@ void KTraceSoftwareCounters::write_pcf( char *file_in, char *file_out )
           for( const auto& currentValue : inPCFParser.getEventValues( currentType.type ) )
           {
             if( currentValue.first > 0 )
-              outPCFParser.setEventType( getCounterEventType( currentType.type, currentValue.first, global_counters ),
-                                        inPCFParser.getEventPrecision( currentType.type ),
-                                        currentValue.second + "_counter",
-                                        {} );
+              outPCFParser.setEventType( getCounterEventType( currentType.type, currentValue.first, global_counters, false ),
+                                         inPCFParser.getEventPrecision( currentType.type ),
+                                         currentValue.second + "_counter",
+                                         {} );
           }
         }
         else
@@ -296,7 +304,7 @@ void KTraceSoftwareCounters::write_pcf( char *file_in, char *file_out )
           for( const auto& currentValue : currentType.values )
           {
             if( currentValue > 0 )
-              outPCFParser.setEventType( getCounterEventType( currentType.type, currentValue, global_counters ),
+              outPCFParser.setEventType( getCounterEventType( currentType.type, currentValue, global_counters, false ),
                                         inPCFParser.getEventPrecision( currentType.type ),
                                         inPCFParser.getEventValues( currentType.type ).find( currentValue )->second + "_counter",
                                         {} );
@@ -380,26 +388,6 @@ void KTraceSoftwareCounters::inc_counter( int appl, int task, int thread, unsign
 /* Function for putting soft counters in the trace for every specified period */
 void KTraceSoftwareCounters::put_all_counters( void )
 {
-  auto generateTypeMaskAccum = [ this ]( unsigned long long whichType, unsigned long long whichValue )
-  {
-    return whichType;
-  };
-
-  auto generateTypeMaskCount = [ this ]( unsigned long long whichType, unsigned long long whichValue )
-  {
-    unsigned long long returnType;
-
-    if ( !global_counters )
-    {
-      returnType = ( ( ( whichType ) / 10000 ) + whichType % 10000 + 10000 ) * 1000;
-      returnType += whichValue;
-    }
-    else
-      returnType = whichType / 10000 + 20000 + whichType % 10000;
-
-    return returnType;
-  };
-
   auto dumpAllCountersFor = [ this ]( const auto& whichThread, const std::vector<counter>& whichCounters, auto generateTypeMask )
   {
     for ( auto itCounter = whichCounters.cbegin(); itCounter != whichCounters.cend(); ++itCounter )
@@ -416,8 +404,8 @@ void KTraceSoftwareCounters::put_all_counters( void )
 
   for ( auto itThread = threadsInfo.begin(); itThread != threadsInfo.end(); ++itThread )
   {
-    dumpAllCountersFor( itThread->second, itThread->second.accum_counters, generateTypeMaskAccum );
-    dumpAllCountersFor( itThread->second, itThread->second.count_counters, generateTypeMaskCount );
+    dumpAllCountersFor( itThread->second, itThread->second.accum_counters, std::bind( getCounterEventType, _1, _2, global_counters, true ) );
+    dumpAllCountersFor( itThread->second, itThread->second.count_counters, std::bind( getCounterEventType, _1, _2, global_counters, false ) );
   }
 }
 
@@ -482,26 +470,6 @@ void KTraceSoftwareCounters::put_counters_on_state_by_thread( int appl, int task
     return;
   auto& tmpThreadInfo = itThread->second;
 
-  auto generateTypeMaskAccum = [ this ]( unsigned long long whichType, unsigned long long whichValue )
-  {
-    return whichType;
-  };
-
-  auto generateTypeMaskCount = [ this ]( unsigned long long whichType, unsigned long long whichValue )
-  {
-    unsigned long long returnType;
-
-    if ( !global_counters )
-    {
-      returnType = ( ( ( whichType ) / 10000 ) + whichType % 10000 + 10000 ) * 1000;
-      returnType += whichValue;
-    }
-    else
-      returnType = whichType / 10000 + 20000 + whichType % 10000;
-
-    return returnType;
-  };
-
   auto dumpAllCountersFor = [ this ]( const auto& whichThread, std::vector<counter>& whichCounters, auto generateTypeMask )
   {
     for ( auto itCounter = whichCounters.begin(); itCounter != whichCounters.end(); ++itCounter )
@@ -518,8 +486,8 @@ void KTraceSoftwareCounters::put_counters_on_state_by_thread( int appl, int task
     }
   };
 
-  dumpAllCountersFor( tmpThreadInfo, tmpThreadInfo.accum_counters, generateTypeMaskAccum );
-  dumpAllCountersFor( tmpThreadInfo, tmpThreadInfo.count_counters, generateTypeMaskCount );
+  dumpAllCountersFor( tmpThreadInfo, tmpThreadInfo.accum_counters, std::bind( getCounterEventType, _1, _2, global_counters, true ) );
+  dumpAllCountersFor( tmpThreadInfo, tmpThreadInfo.count_counters, std::bind( getCounterEventType, _1, _2, global_counters, false ) );
 
   tmpThreadInfo.last_time_of_sc = last_time;
 
@@ -693,26 +661,6 @@ void KTraceSoftwareCounters::put_counters_on_state( LastStateEndTimeContainer::i
 {
   auto& tmpThreadInfo = threadsInfo( itLastState->second.appl, itLastState->second.task, itLastState->second.thread );
 
-  auto generateTypeMaskAccum = [ this ]( unsigned long long whichType, unsigned long long whichValue )
-  {
-    return whichType;
-  };
-
-  auto generateTypeMaskCount = [ this ]( unsigned long long whichType, unsigned long long whichValue )
-  {
-    unsigned long long returnType;
-
-    if ( !global_counters )
-    {
-      returnType = ( ( ( whichType ) / 10000 ) + whichType % 10000 + 10000 ) * 1000;
-      returnType += whichValue;
-    }
-    else
-      returnType = whichType / 10000 + 20000 + whichType % 10000;
-
-    return returnType;
-  };
-
   auto dumpAllCountersFor = [ this ]( const auto& whichThread, std::vector<counter>& whichCounters, auto generateTypeMask )
   {
     for ( auto itCounter = whichCounters.begin(); itCounter != whichCounters.end(); ++itCounter )
@@ -729,9 +677,8 @@ void KTraceSoftwareCounters::put_counters_on_state( LastStateEndTimeContainer::i
     }
   };
 
-  dumpAllCountersFor( tmpThreadInfo, tmpThreadInfo.accum_counters, generateTypeMaskAccum );
-  dumpAllCountersFor( tmpThreadInfo, tmpThreadInfo.count_counters, generateTypeMaskCount );
-
+  dumpAllCountersFor( tmpThreadInfo, tmpThreadInfo.accum_counters, std::bind( getCounterEventType, _1, _2, global_counters, true ) );
+  dumpAllCountersFor( tmpThreadInfo, tmpThreadInfo.count_counters, std::bind( getCounterEventType, _1, _2, global_counters, false ) );
 }
 
 void KTraceSoftwareCounters::resumeStateCounters( unsigned long long time )
