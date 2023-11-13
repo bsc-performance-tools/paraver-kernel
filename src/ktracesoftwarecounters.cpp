@@ -480,7 +480,7 @@ void KTraceSoftwareCounters::put_counters_on_state_by_thread( int appl, int task
   auto itThread = threadsInfo.find( appl, task, thread );
   if ( itThread == threadsInfo.end() )
     return;
-  auto tmpThreadInfo = itThread->second;
+  auto& tmpThreadInfo = itThread->second;
 
   auto generateTypeMaskAccum = [ this ]( unsigned long long whichType, unsigned long long whichValue )
   {
@@ -691,7 +691,7 @@ void KTraceSoftwareCounters::insert_in_queue_state( int appl, int task, int thre
 
 void KTraceSoftwareCounters::put_counters_on_state( LastStateEndTimeContainer::iterator itLastState )
 {
-  auto tmpThreadInfo = threadsInfo( itLastState->second.appl, itLastState->second.task, itLastState->second.thread );
+  auto& tmpThreadInfo = threadsInfo( itLastState->second.appl, itLastState->second.task, itLastState->second.thread );
 
   auto generateTypeMaskAccum = [ this ]( unsigned long long whichType, unsigned long long whichValue )
   {
