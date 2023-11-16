@@ -24,9 +24,12 @@
 
 #pragma once
 
+#include <fstream>
 
+#include "cubecontainer.h"
 #include "ktraceoptions.h"
 #include "tracesoftwarecounters.h"
+#include "tracestream.h"
 
 class KTraceSoftwareCounters : public TraceSoftwareCounters
 {
@@ -42,115 +45,71 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
 
     struct counter
     {
+      counter( unsigned long long whichType, unsigned long long whichValue, unsigned long long whichNum, bool whichLast_is_zero )
+        : type( whichType ), value( whichValue ), num( whichNum ), last_is_zero( whichLast_is_zero )
+      {}
+
       unsigned long long type;
       unsigned long long value;
       unsigned long long num;
       bool last_is_zero;
     };
 
-    struct stack
-    {
-      unsigned long long type[5];
-      bool valid[5];
-      int top;
-    };
-
-    struct ParaverEvent
-    {
-      int thread_id;
-      int cpu;
-      unsigned long long timestamp;
-      unsigned long long type[16];
-      unsigned long long value[16];
-      struct ParaverEvent *next_event;
-      struct ParaverEvent *previous_event;
-    };
-
-    struct counter_event
-    {
-      int cpu;
-      unsigned long long time;
-      unsigned long long type;
-      unsigned long long value;
-      struct counter_event *next;
-    };
-
-    struct thread_info
+    struct ThreadInfo
     {
       int appl;
       int task;
       int thread;
-      struct counter counters[150];
-      int next_free_counter;
-      struct stack calls;
-      unsigned long long last_time_of_sc;
-      unsigned long long ini_burst_time;
-      unsigned long long end_burst_time;
-      unsigned long long total_burst_time; /* To summarize bursts */
-      struct counter_event *first_event_counter;
-      struct counter_event *last_event_counter;
+      std::vector<counter> accum_counters;
+      std::vector<counter> count_counters;
+      unsigned long long last_time_of_sc = 0;
+      unsigned long long ini_burst_time = 0;
+      unsigned long long end_burst_time = 0;
+      unsigned long long total_burst_time = 0; /* To summarize bursts */
     };
 
     struct type_values
     {
       unsigned long long type;
       bool all_values;
-      unsigned long long values[16];
+      std::vector<unsigned long long> values;
     };
 
-    struct sc_allowed_types
+    std::vector<type_values> accum_events;
+    std::vector<type_values> count_events;
+
+    std::vector<unsigned long long> keep_types;
+
+    struct LastStateEndTime
     {
-      struct type_values type_values[16];
-      int next_free_slot;
+      int appl;
+      int task;
+      int thread;
+      unsigned long long end_time;
     };
 
-    struct sc_kept_types
-    {
-      unsigned long long type[16];
-      int next_free_slot;
-    };
-
-    struct state_queue_elem
-    {
-      unsigned long long last_state_end_time;
-      int thread_id;
-      struct state_queue_elem *next;
-    };
-
-    char line[MAX_LINE_SIZE];  /* Buffer for reading trace records */
+    std::string line;  /* Buffer for reading trace records */
 
     /* Execution parameters */
     bool all_types;
     bool global_counters;
-    bool acumm_values;
     bool remove_states;
     bool only_in_bursts;
     bool summarize_bursts;
     unsigned long long interval;
     unsigned long long last_time;
     unsigned long long trace_time;
-    unsigned long long type_marks[10];
     unsigned long long min_state_time;
-    struct sc_allowed_types types;
-    int last_type_mark;
     bool type_of_counters;
-    bool keep_events;
-    int frequency;
 
     /* Trace in and trace out */
-    FILE *infile, *outfile;
+    TraceStream *infile;
+    std::fstream outfile;
     KTraceOptions *exec_options;
 
-    /* Pointers to the thread struct, for avoiding to much searches */
-    int thread_pointer[MAX_APPL][MAX_TASK][MAX_THREAD];
-
-    /* Buffer for Paraver trace events */
-    struct ParaverEvent *first_Paraver_event;
-    struct ParaverEvent *last_Paraver_event;
-
     /* Info and counters of the threads */
-    struct thread_info threads[MAX_THREADS];
-    int next_thread_slot;
+    using SCThreadInfo = CubeContainer<TApplOrder, TTaskOrder, TThreadOrder, ThreadInfo>;
+    SCThreadInfo threadsInfo;
 
     /* Parameters for showing percentage */
     unsigned long long total_trace_size;
@@ -158,31 +117,32 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     unsigned long total_iters;
 
     /* Struct needed for the mode SC_BY_STATE */
-    struct state_queue_elem *first_state_elem;
+    using LastStateEndTimeContainer = CubeContainer<TApplOrder, TTaskOrder, TThreadOrder, LastStateEndTime>;
+    LastStateEndTimeContainer lastStateEndTime;
 
-    /* Estruct for keeping some types on trace */
-    struct sc_kept_types types_to_keep;
-
+    void parse_types( char* whichTypes, std::vector<type_values>& onTypes );
     void read_sc_args();
-    void proces_header( char *header, FILE *in, FILE *out );
-    void write_pcf( char *file_out );
-    bool allowed_type( unsigned long long type, unsigned long long value );
-    bool allowed_type_mark( unsigned long long type );
-    int inc_counter( int appl, int task, int thread,
-                     unsigned long long type, unsigned long long value );
-    void put_zeros( void );
-    void flush_all_events( void );
+    void parseInHeaderAndDumpOut();
+    void write_pcf( char *file_in, char *file_out );
+    bool allowed_type( const std::vector<type_values>& whichEvents, unsigned long long type, unsigned long long value );
+    void findIncrementCounter( std::vector<counter>& whichCounters, 
+                               const std::vector<type_values>& whichAllowedEvents,
+                               unsigned long long type,
+                               unsigned long long value,
+                               unsigned long long amount,
+                               bool accum_values );
+    void inc_counter( int appl, int task, int thread,
+                      unsigned long long type, unsigned long long value );
     void put_all_counters( void );
-    void put_counters_by_thread( int appl, int task, int thread, int cpu );
     void ini_progress_bar( char *file_name, ProgressController *progress );
     void show_progress_bar( ProgressController *progress );
     void put_counters_on_state_by_thread( int appl, int task, int thread );
+    SCThreadInfo::iterator findThreadInfo( int appl, int task, int thread );
     void sc_by_time( ProgressController *progress );
-    void flush_counter_buffers( void );
-    void sc_by_event( ProgressController *progress );
-    void insert_in_queue_state( int thread_id, unsigned long long time );
-    void put_counters_on_state( struct KTraceSoftwareCounters::state_queue_elem *p,
-                                struct KTraceSoftwareCounters::state_queue_elem *q );
+    void insert_in_queue_state( int appl, int task, int thread, unsigned long long time );
+    void put_counters_on_state( LastStateEndTimeContainer::iterator itLastState );
+    void resumeStateCounters( unsigned long long time );
     void sc_by_states( ProgressController *progress );
+
 };
 

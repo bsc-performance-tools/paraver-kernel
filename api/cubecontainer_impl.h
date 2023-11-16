@@ -93,3 +93,9 @@ typename CubeContainer<Dimension1, Dimension2, Dimension3, T>::iterator CubeCont
   return cube.end();
 }
 
+template<typename Dimension1, typename Dimension2, typename Dimension3, typename T>
+typename CubeContainer<Dimension1, Dimension2, Dimension3, T>::iterator CubeContainer<Dimension1, Dimension2, Dimension3, T>::erase( typename CubeContainer<Dimension1, Dimension2, Dimension3, T>::iterator it )
+{
+  auto nextIt = cube.erase( it );
+  return nextIt;
+}

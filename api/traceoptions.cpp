@@ -373,11 +373,6 @@ void TraceOptionsProxy::set_sc_global_counters( bool scGlobalCounters )
   myTraceOptions->set_sc_global_counters( scGlobalCounters );
 }
 
-void TraceOptionsProxy::set_sc_acumm_counters( bool scAcummCounters )
-{
-  myTraceOptions->set_sc_acumm_counters( scAcummCounters );
-}
-
 void TraceOptionsProxy::set_sc_summarize_states( bool scSummarizeStates )
 {
   myTraceOptions->set_sc_summarize_states( scSummarizeStates );
@@ -393,9 +388,14 @@ void TraceOptionsProxy::set_sc_remove_states( bool scRemoveStates )
   myTraceOptions->set_sc_remove_states( scRemoveStates );
 }
 
-void TraceOptionsProxy::set_sc_types( char *whichTypes )
+void TraceOptionsProxy::set_sc_accum_types( char *whichTypes )
 {
-  myTraceOptions->set_sc_types( whichTypes );
+  myTraceOptions->set_sc_accum_types( whichTypes );
+}
+
+void TraceOptionsProxy::set_sc_count_types( char *whichTypes )
+{
+  myTraceOptions->set_sc_count_types( whichTypes );
 }
 
 void TraceOptionsProxy::set_sc_types_kept( char *typesKept )
@@ -424,11 +424,6 @@ bool TraceOptionsProxy::get_sc_global_counters() const
   return myTraceOptions->get_sc_global_counters();
 }
 
-bool TraceOptionsProxy::get_sc_acumm_counters() const
-{
-  return myTraceOptions->get_sc_acumm_counters();
-}
-
 bool TraceOptionsProxy::get_sc_summarize_states() const
 {
   return myTraceOptions->get_sc_summarize_states();
@@ -444,9 +439,14 @@ bool TraceOptionsProxy::get_sc_remove_states() const
   return myTraceOptions->get_sc_remove_states();
 }
 
-char *TraceOptionsProxy::get_sc_types() const
+char *TraceOptionsProxy::get_sc_accum_types() const
 {
-  return myTraceOptions->get_sc_types();
+  return myTraceOptions->get_sc_accum_types();
+}
+
+char *TraceOptionsProxy::get_sc_count_types() const
+{
+  return myTraceOptions->get_sc_count_types();
 }
 
 char *TraceOptionsProxy::get_sc_types_kept() const

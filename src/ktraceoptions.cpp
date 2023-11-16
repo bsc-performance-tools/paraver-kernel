@@ -115,9 +115,9 @@ KTraceOptions::KTraceOptions( const KTraceOptions *whichTraceOptions )
   else
     set_sc_minimum_burst_time( whichTraceOptions->get_sc_minimum_burst_time() );
 
-  set_sc_types( whichTraceOptions->get_sc_types() );
+  set_sc_accum_types( whichTraceOptions->get_sc_accum_types() );
+  set_sc_count_types( whichTraceOptions->get_sc_count_types() );
 
-  set_sc_acumm_counters( whichTraceOptions->get_sc_acumm_counters() ); // accumulate or count?
   set_sc_remove_states( whichTraceOptions->get_sc_remove_states() );
   set_sc_summarize_states( whichTraceOptions->get_sc_summarize_states() );
   set_sc_global_counters( whichTraceOptions->get_sc_global_counters() );
@@ -192,9 +192,6 @@ void KTraceOptions::init()
   set_sc_sampling_interval( ParaverConfig::getInstance()->getSoftwareCountersSamplingInterval() );
   set_sc_minimum_burst_time( ParaverConfig::getInstance()->getSoftwareCountersMinimumBurstTime() );
 
-  set_sc_types( (char *)ParaverConfig::getInstance()->getSoftwareCountersTypes().c_str() );
-
-  set_sc_acumm_counters( ParaverConfig::getInstance()->getSoftwareCountersCountEventsOrAcummulateValues() ); // accumulate or count?
   set_sc_remove_states( ParaverConfig::getInstance()->getSoftwareCountersRemoveStates() );
   set_sc_summarize_states( ParaverConfig::getInstance()->getSoftwareCountersSummarizeStates() );
   set_sc_global_counters( ParaverConfig::getInstance()->getSoftwareCountersGlobalCounters() );
@@ -538,11 +535,10 @@ void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cu
   xmlNodePtr child;
   xmlChar *word;
 
-/* PARAMETERS TO FILL
-    int sc_global_counters;
-    unsigned long long sc_interval;
-    int sc_frequency;
-*/
+  // Compatibility variables with previous versions of XML
+  char *tmp_compat_types = nullptr;
+  bool tmp_compat_accum_counters = true;
+
   while ( cur != nullptr )
   {
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"range" ) )
@@ -576,9 +572,22 @@ void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cu
 
         if ( !xmlStrcmp( child->name, ( const xmlChar * )"events" ) )
         {
-          /* Navigate throug nodes */
           word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          types = strdup( (char *)word );
+          tmp_compat_types = strdup( (char *)word );
+          xmlFree( word );
+        }
+
+        if ( !xmlStrcmp( child->name, ( const xmlChar * )"accum_events" ) )
+        {
+          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+          accum_types = strdup( (char *)word );
+          xmlFree( word );
+        }
+
+        if ( !xmlStrcmp( child->name, ( const xmlChar * )"count_events" ) )
+        {
+          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+          count_types = strdup( (char *)word );
           xmlFree( word );
         }
 
@@ -594,10 +603,10 @@ void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cu
 
       while ( child != nullptr )
       {
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"count_events_vs_acummulate_values" ) )
+        if ( !xmlStrcmp( child->name, ( const xmlChar * )"count_events_vs_accumulate_values" ) )
         {
           word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          sc_acumm_counters = (bool)atoi( ( char * )word );
+          tmp_compat_accum_counters = (bool)atoi( ( char * )word );
           xmlFree( word );
         }
 
@@ -641,6 +650,14 @@ void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cu
     }
 
     cur = cur->next;
+  }
+
+  if( tmp_compat_types != nullptr )
+  {
+    if( tmp_compat_accum_counters )
+      accum_types = tmp_compat_types;
+    else
+      count_types = tmp_compat_types;
   }
 }
 
@@ -899,13 +916,13 @@ void KTraceOptions::saveXMLSoftwareCounters( xmlTextWriterPtr &writer )
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "by_intervals_vs_by_states", "%d", (int)get_sc_onInterval() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "sampling_interval", "%lld", get_sc_sampling_interval() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "minimum_burst_time", "%lld", get_sc_minimum_burst_time() );
-  rc = xmlTextWriterWriteElement( writer, BAD_CAST "events", BAD_CAST get_sc_types() );
+  rc = xmlTextWriterWriteElement( writer, BAD_CAST "accum_events", BAD_CAST get_sc_accum_types() );
+  rc = xmlTextWriterWriteElement( writer, BAD_CAST "count_events", BAD_CAST get_sc_count_types() );
 
   rc = xmlTextWriterEndElement( writer ); // range
 
   rc = xmlTextWriterStartElement( writer, BAD_CAST "algorithm" );
 
-  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "count_events_vs_acummulate_values", "%d", (int)get_sc_acumm_counters() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "remove_states", "%d", (int)get_sc_remove_states() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "summarize_useful_states", "%d", (int)get_sc_summarize_states() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "global_counters", "%d", (int)get_sc_global_counters() );

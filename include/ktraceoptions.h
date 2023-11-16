@@ -104,7 +104,6 @@ class KTraceOptions: public TraceOptions
     /* Parameters for software counters */
     bool sc_onInterval;
     bool sc_global_counters;
-    bool sc_acumm_counters;
     bool sc_summarize_states;
     bool sc_only_in_bursts;
     bool sc_remove_states;
@@ -113,7 +112,8 @@ class KTraceOptions: public TraceOptions
     unsigned long long sc_sampling_interval;
     unsigned long long sc_minimum_burst_time;
 
-    char *types;
+    char *accum_types;
+    char *count_types;
     char *types_kept;
 
   //  KTraceOptions( const KernelConnection *whichKernel, char *xmldocname );
@@ -470,11 +470,6 @@ class KTraceOptions: public TraceOptions
       sc_global_counters = whichSCGlobalCounters;
     }
 
-    inline void set_sc_acumm_counters( bool whichSCAcummCounters ) override
-    {
-      sc_acumm_counters = whichSCAcummCounters;
-    }
-
     inline void set_sc_summarize_states( bool whichSCSummarizeStates ) override
     {
       sc_summarize_states = whichSCSummarizeStates;
@@ -490,9 +485,14 @@ class KTraceOptions: public TraceOptions
       sc_remove_states = whichSCRemoveStates;
     }
 
-    inline void set_sc_types( char *whichTypes ) override
+    inline void set_sc_accum_types( char *whichTypes ) override
     {
-      types = whichTypes;
+      accum_types = whichTypes;
+    }
+
+    inline void set_sc_count_types( char *whichTypes ) override
+    {
+      count_types = whichTypes;
     }
 
     inline void set_sc_types_kept( char *whichTypesKept ) override
@@ -520,11 +520,6 @@ class KTraceOptions: public TraceOptions
       return sc_global_counters;
     }
 
-    inline bool get_sc_acumm_counters() const override
-    {
-      return sc_acumm_counters;
-    }
-
     inline bool get_sc_summarize_states() const override
     {
       return sc_summarize_states;
@@ -540,9 +535,14 @@ class KTraceOptions: public TraceOptions
       return sc_remove_states;
     }
 
-    inline char *get_sc_types() const override
+    inline char *get_sc_accum_types() const override
     {
-      return strdup( types );
+      return strdup( accum_types );
+    }
+
+    inline char *get_sc_count_types() const override
+    {
+      return strdup( count_types );
     }
 
     inline char *get_sc_types_kept() const override
