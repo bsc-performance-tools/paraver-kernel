@@ -363,7 +363,7 @@ void KTraceSoftwareCounters::findIncrementCounter( std::vector<counter>& whichCo
 
     if ( itCounter == whichCounters.end() )
     {
-      whichCounters.emplace_back( type, value, value, false );
+      whichCounters.emplace_back( type, value, amount, false );
     }
   }
 }
@@ -661,14 +661,14 @@ void KTraceSoftwareCounters::put_counters_on_state( LastStateEndTimeContainer::i
 {
   auto& tmpThreadInfo = threadsInfo( itLastState->second.appl, itLastState->second.task, itLastState->second.thread );
 
-  auto dumpAllCountersFor = [ this ]( const auto& whichThread, std::vector<counter>& whichCounters, auto generateTypeMask )
+  auto dumpAllCountersFor = [ this, &itLastState ]( const auto& whichThread, std::vector<counter>& whichCounters, auto generateTypeMask )
   {
     for ( auto itCounter = whichCounters.begin(); itCounter != whichCounters.end(); ++itCounter )
     {
       dump_fields( outfile, "2:0", whichThread.appl,
                                    whichThread.task,
                                    whichThread.thread,
-                                   last_time,
+                                   itLastState->second.end_time,
                                    generateTypeMask( itCounter->type, itCounter->value ),
                                    itCounter->num );
       outfile << "\n";
