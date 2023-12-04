@@ -333,6 +333,7 @@ Timeline *TimelineProxy::clone( bool recursiveClone )
 
   clonedWindow->myCodeColor = myCodeColor;
   clonedWindow->myGradientColor = myGradientColor;
+  clonedWindow->myAltGradientColor = myAltGradientColor;
   clonedWindow->colorMode = colorMode;
   clonedWindow->punctualColorWindow = punctualColorWindow;
   clonedWindow->semanticScaleMinAtZero = semanticScaleMinAtZero;
