@@ -272,18 +272,71 @@ struct hashrgb
 {
   size_t operator()( rgb color ) const
   {
-    return color.red + ( color.blue * 256 ) + (color.green * 65536 );
+    return color.red + ( color.blue * 256 ) + ( color.green * 65536 );
   }
 };
 
+constexpr bool findProperColor( const CodeColor& whichCodeColor, unordered_set<rgb, hashrgb, eqrgb>& insertedColors, rgb& whichColor )
+{
+  return false;
+}
+
+template< typename TComponent, typename ...TArgs >
+bool findProperColor( const CodeColor& whichCodeColor, unordered_set<rgb, hashrgb, eqrgb>& insertedColors, rgb& whichColor, TComponent& currentComponent, TArgs& ...restComponents )
+{
+  if( !findProperColor( whichCodeColor, insertedColors, whichColor, restComponents... ) )
+  {
+    TComponent firstValue = currentComponent++;
+
+    while( currentComponent != firstValue )
+    {
+      if( !whichCodeColor.isColorSimilarToBackground( whichColor ) )
+      {
+        bool colorInserted = false;
+        tie( ignore, colorInserted ) = insertedColors.insert( whichColor );
+
+        if( colorInserted )
+          return true;
+      }
+
+      if( findProperColor( whichCodeColor, insertedColors, whichColor, restComponents... ) )
+        return true;
+
+      ++currentComponent;
+    }
+    return false;
+  }
+  return true;
+}
 
 void CodeColor::expandColors()
 {
   unsigned int iterations = MAX_COLORS / colors.size() / 3;
   unsigned int numBaseColors = colors.size();
   unordered_set<rgb, hashrgb, eqrgb> insertedColors;
+  vector< decltype( colors.size() ) > conflictColorsIndex;
 
   insertedColors.insert( colors.begin(), colors.end() );
+
+  auto expandComponent = [&]( unsigned int baseColor, auto incrementComponent )
+  {
+    for( unsigned int iBaseColor = baseColor; iBaseColor < baseColor + numBaseColors; ++iBaseColor )
+    {
+      if( iBaseColor > colors.size() - 1 )
+        break;
+      rgb tmpColor = colors[ iBaseColor ];
+      incrementComponent( tmpColor );
+
+      bool colorInserted = false;
+      tie( ignore, colorInserted ) = insertedColors.insert( tmpColor );
+
+      if( colorInserted && isColorSimilarToBackground( tmpColor ) )
+        conflictColorsIndex.push_back( colors.size() );
+
+      if( colorInserted )
+        colors.push_back( tmpColor );
+    }
+  };
 
   unsigned int baseColor = 1;
   for( unsigned int i = 0; i < iterations; ++i )
@@ -291,30 +344,19 @@ void CodeColor::expandColors()
     if ( baseColor > colors.size() - 1 )
       baseColor = colors.size() - 1;
 
-    auto expandComponent = [&]( auto incrementComponent )
-    {
-      for( unsigned int iBaseColor = baseColor; iBaseColor < baseColor + numBaseColors; ++iBaseColor )
-      {
-        if( iBaseColor > colors.size() - 1 )
-          break;
-        rgb tmpColor = colors[ iBaseColor ];
-        incrementComponent( tmpColor );
-
-        if( !isColorSimilarToBackground( tmpColor ) )
-        {
-          pair<unordered_set<rgb, hashrgb, eqrgb>::iterator, bool > result = insertedColors.insert( tmpColor );
-
-          if( result.second )
-            colors.push_back( tmpColor );
-        }
-      }
-    };
-
-    expandComponent( []( rgb& c ){ ++c.red; } );
-    expandComponent( []( rgb& c ){ ++c.green; } );
-    expandComponent( []( rgb& c ){ ++c.blue; } );
+    expandComponent( baseColor, []( rgb& c ){ ++c.red; } );
+    expandComponent( baseColor, []( rgb& c ){ ++c.green; } );
+    expandComponent( baseColor, []( rgb& c ){ ++c.blue; } );
 
     baseColor += numBaseColors;
+  }
+
+  for( auto colorIndex : conflictColorsIndex )
+  {
+    rgb& currentColor = colors[ colorIndex ];
+
+    if( !findProperColor( *this, insertedColors, currentColor, currentColor.red, currentColor.green, currentColor.blue ) )
+      throw std::length_error( "Impossible to find enough palette colors." );
   }
 }
 

@@ -115,6 +115,7 @@ class CodeColor: public SemanticColor
                    TSemanticValue minimum,
                    TSemanticValue maximum,
                    bool useCustomPalette ) const override;
+    bool isColorSimilarToBackground( rgb whichColor ) const;
 
   private:
     std::vector<rgb> colors;
@@ -123,7 +124,6 @@ class CodeColor: public SemanticColor
     inline rgb getColor( PRV_UINT32 pos ) const;
     void expandColors();
 
-    bool isColorSimilarToBackground( rgb whichColor ) const;
 
     static const int MAX_COLORS;
 };
