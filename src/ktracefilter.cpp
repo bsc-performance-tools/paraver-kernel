@@ -375,6 +375,8 @@ void KTraceFilter::execute( char *trace_in, char *trace_out, ProgressController 
   inFile = TraceStream::openFile( trace_in );
   outfile.open( trace_out, ios_base::out );
 
+  is_zip_filter = inFile->isCompressed();
+
   initFilterProgressBar( traceIn, progress);
 
   /* Symbol loading of the .pcf file */

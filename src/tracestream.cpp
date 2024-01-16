@@ -133,17 +133,22 @@ int NotCompressed::peek()
   return file.peek();
 }
 
+bool NotCompressed::isCompressed() const
+{
+  return false;
+}
+
 TTraceSize NotCompressed::getTraceFileSize( const string& filename )
 {
   FILE *traceFile;
   TTraceSize tmpSize;
 
 #if defined (__FreeBSD__) || defined(__APPLE__)
-	if ( (traceFile = fopen (filename.c_str(), "r" ) ) == nullptr )
-	{
-		printf ( "Error Opening File %s\n", filename.c_str() );
-		return 0;
-	}
+  if ( (traceFile = fopen (filename.c_str(), "r" ) ) == nullptr )
+  {
+    printf ( "Error Opening File %s\n", filename.c_str() );
+    return 0;
+  }
 
 #elif defined(_WIN32)
   if ( fopen_s( &traceFile, filename.c_str(), "r" ) != 0 )
@@ -250,6 +255,11 @@ void Compressed::clear()
 int Compressed::peek()
 {
   return gzgetc( file );
+}
+
+bool Compressed::isCompressed() const
+{
+  return true;
 }
 
 TTraceSize Compressed::getTraceFileSize( const string& filename )

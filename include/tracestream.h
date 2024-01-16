@@ -56,6 +56,7 @@ class TraceStream
     virtual bool good() const = 0;
     virtual void clear() = 0;
     virtual int peek() = 0;
+    virtual bool isCompressed() const = 0;
 
     static TraceStream *openFile( const std::string& filename );
 
@@ -93,6 +94,7 @@ class NotCompressed: public TraceStream
     virtual bool good() const override;
     virtual void clear() override;
     virtual int peek() override;
+    virtual bool isCompressed() const override;
 
     static TTraceSize getTraceFileSize( const std::string& filename );
 
@@ -125,6 +127,7 @@ class Compressed: public TraceStream
     virtual bool good() const override;
     virtual void clear() override;
     virtual int peek() override;
+    virtual bool isCompressed() const override;
 
     static TTraceSize getTraceFileSize( const std::string& filename );
 
