@@ -34,6 +34,7 @@
 #include "semanticinfo.h"
 
 class KTimeline;
+class KHistogram;
 
 class SemanticFunction
 {
@@ -81,7 +82,11 @@ class SemanticFunction
 
     virtual TSemanticValue execute( const SemanticInfo *info ) = 0;
 
-    virtual void init( KTimeline *whichWindow ) = 0;
+    virtual void init( KTimeline *whichWindow )
+    {}
+
+    virtual void init( KHistogram *whichWindow )
+    {}
 
     virtual std::string getName() = 0;
 
