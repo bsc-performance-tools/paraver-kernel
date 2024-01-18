@@ -4638,9 +4638,7 @@ void Analyzer2DParameters::printLine( ofstream& cfgFile,
 {
   cfgFile << OLDCFG_TAG_AN2D_PARAMETERS << " 4 ";
   cfgFile << ( *it )->getDataMin() << " ";
-  cfgFile << ( *it )->getDataMax() << " ";
-  cfgFile << ( *it )->getBurstMin() << " ";
-  cfgFile << ( *it )->getBurstMax();
+  cfgFile << ( *it )->getDataMax();
   cfgFile << endl;
 }
 

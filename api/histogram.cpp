@@ -368,35 +368,6 @@ TSemanticValue HistogramProxy::getDataMax() const
   return myHisto->getDataMax();
 }
 
-TRecordTime HistogramProxy::getBurstMin() const
-{
-  return myHisto->getBurstMin();
-}
-
-TRecordTime HistogramProxy::getBurstMax() const
-{
-  return myHisto->getBurstMax();
-}
-
-TCommSize HistogramProxy::getCommSizeMin() const
-{
-  return myHisto->getCommSizeMin();
-}
-
-TCommSize HistogramProxy::getCommSizeMax() const
-{
-  return myHisto->getCommSizeMax();
-}
-
-TCommTag HistogramProxy::getCommTagMin() const
-{
-  return myHisto->getCommTagMin();
-}
-
-TCommTag HistogramProxy::getCommTagMax() const
-{
-  return myHisto->getCommTagMax();
-}
 
 bool HistogramProxy::getInclusiveEnabled() const
 {

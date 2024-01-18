@@ -95,12 +95,6 @@ class Histogram
     virtual THistogramLimit getExtraControlDelta() const = 0;
     virtual TSemanticValue getDataMin() const = 0;
     virtual TSemanticValue getDataMax() const = 0;
-    virtual TRecordTime getBurstMin() const = 0;
-    virtual TRecordTime getBurstMax() const = 0;
-    virtual TCommSize getCommSizeMin() const = 0;
-    virtual TCommSize getCommSizeMax() const = 0;
-    virtual TCommTag getCommTagMin() const = 0;
-    virtual TCommTag getCommTagMax() const = 0;
 
     virtual bool getInclusiveEnabled() const = 0;
     virtual void setInclusive( bool newValue ) = 0;
@@ -132,8 +126,8 @@ class Histogram
                                   PRV_UINT32 whichPlane = 0 ) const = 0;
 
     virtual TSemanticValue getCommCurrentValue( PRV_UINT32 col,
-        PRV_UINT16 idStat,
-        PRV_UINT32 plane = 0 ) const = 0;
+                                                PRV_UINT16 idStat,
+                                                PRV_UINT32 plane = 0 ) const = 0;
     virtual PRV_UINT32 getCommCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const = 0;
     virtual void setCommNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) = 0;
     virtual void setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) = 0;
@@ -704,12 +698,6 @@ class HistogramProxy : public Histogram
     virtual THistogramLimit getExtraControlDelta() const override;
     virtual THistogramLimit getDataMin() const override;
     virtual THistogramLimit getDataMax() const override;
-    virtual TRecordTime getBurstMin() const override;
-    virtual TRecordTime getBurstMax() const override;
-    virtual TCommSize getCommSizeMin() const override;
-    virtual TCommSize getCommSizeMax() const override;
-    virtual TCommTag getCommTagMin() const override;
-    virtual TCommTag getCommTagMax() const override;
 
     virtual bool getInclusiveEnabled() const override;
     virtual void setInclusive( bool newValue ) override;
