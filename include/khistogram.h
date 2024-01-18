@@ -33,9 +33,29 @@
 #include "recordlist.h"
 #include "histogramstatistic.h"
 
-#ifdef PARALLEL_ENABLED
+// #ifdef PARALLEL_ENABLED
 #include "cubebuffer.h"
-#endif
+// #endif
+
+using TColumnsMergeMode = uint16_t;
+
+// Related to min - max
+constexpr TColumnsMergeMode MERGE_MIN_MAX           = 0x0001;
+constexpr TColumnsMergeMode KEEP_MIN_MAX_AS_PARENT1 = 0x0002;
+
+// Related to delta
+//constexpr TColumnsMergeMode DELTA_1                 = 0x0010; //?
+constexpr TColumnsMergeMode RECOMPUTE_DELTA_PARENT2 = 0x0010; //?
+constexpr TColumnsMergeMode KEEP_DELTA_AS_PARENT1   = 0x0020;
+
+// Maybe not necessary
+//constexpr TColumnsMergeMode KEEP_COLUMNS_AS_PARENT1 = 0x0100;
+//constexpr TColumnsMergeMode RECOMPUTE_COLUMNS       = 0x0200;
+
+constexpr TColumnsMergeMode DISCRETE_MAXIMUM_EXPANSION = MERGE_MIN_MAX + KEEP_DELTA_AS_PARENT1;
+// constexpr TColumnsMergeMode AS_PARENT1                 = KEEP_MIN_MAX_AS_PARENT1 + KEEP_DELTA_AS_PARENT1;
+constexpr TColumnsMergeMode CONTINUOUS_FIXED_PARENT1   = MERGE_MIN_MAX + RECOMPUTE_DELTA_PARENT2;
+
 
 class KHistogramTotals;
 class KTimeline;
@@ -75,9 +95,9 @@ class RowsTranslator
     TObjectOrder globalTranslate( PRV_UINT16 winIndex,
                                   TObjectOrder rowIndex ) const;
     void getRowChildren( PRV_UINT16 winIndex,
-                       TObjectOrder rowIndex,
-                       TObjectOrder& iniRow,
-                       TObjectOrder& endRow ) const;
+                         TObjectOrder rowIndex,
+                         TObjectOrder& iniRow,
+                         TObjectOrder& endRow ) const;
     TObjectOrder totalRows() const;
 
   protected:
@@ -264,7 +284,25 @@ class KHistogram : public Histogram
 
     Timeline *getClonedWindow( Timeline *whichWindow ) const;
 
+    bool isDerivedHistogram() const override;
+
+    ColumnTranslator *getColumnTranslator() const;
+    ColumnTranslator *getPlaneTranslator() const;
+
   protected:
+    KHistogramTotals *totals;
+    KHistogramTotals *rowTotals;
+    KHistogramTotals *commTotals;
+    KHistogramTotals *rowCommTotals;
+
+    Statistics statistics;
+
+    //Selection of rows
+    SelectionManagement< TObjectOrder, TWindowLevel > rowSelection;
+    std::vector<KTimeline *> orderedWindows;
+
+    void initTranslators();
+    void initTotals();
 
   private:
     KTimeline *controlWindow;
@@ -302,9 +340,6 @@ class KHistogram : public Histogram
 
     bool inclusive;
 
-    Statistics statistics;
-
-    std::vector<KTimeline *> orderedWindows;
     RowsTranslator *rowsTranslator;
     ColumnTranslator *columnTranslator;
     ColumnTranslator *planeTranslator;
@@ -319,24 +354,18 @@ class KHistogram : public Histogram
     CubeBuffer<NUM_COMM_STATS> *commBuffer;
 #endif
 
-    KHistogramTotals *totals;
-    KHistogramTotals *rowTotals;
-    KHistogramTotals *commTotals;
-    KHistogramTotals *rowCommTotals;
 
     TTimeUnit myTimeUnit;
 
     WindowCloneManager windowCloneManager;
-    
-    //Selection of rows
-    SelectionManagement< TObjectOrder, TWindowLevel > rowSelection;
+   
 
     void orderWindows();
     bool createComms() const;
-    void initTranslators();
+    // void initTranslators();
     void initMatrix( THistogramColumn planes, THistogramColumn cols,
                      TObjectOrder rows );
-    void initTotals();
+    //void initTotals();
     void initSemantic( TRecordTime beginTime );
     void initStatistics();
     void initTmpBuffers( THistogramColumn planes, TObjectOrder rows );
@@ -376,20 +405,211 @@ class KHistogram : public Histogram
 /***************************************************************
 ***                     KDerivedHistogram                    ***
 ****************************************************************/
-class KDerivedHistogram : public Histogram
+// class KDerivedHistogram : public Histogram
+// {
+//   public:
+//     KDerivedHistogram(  Histogram *whichParent1, Histogram *whichParent2 );
+//     ~KDerivedHistogram();
+
+//     bool getThreeDimensions() const override;
+
+//     TRecordTime getBeginTime() const override;
+//     TRecordTime getEndTime() const override;
+
+//     Timeline *getControlWindow() const override;
+//     Timeline *getDataWindow() const override;
+//     Timeline *getExtraControlWindow() const override;
+//     void setControlWindow( Timeline *whichWindow ) override;
+//     void setDataWindow( Timeline *whichWindow ) override;
+//     void setExtraControlWindow( Timeline *whichWindow ) override;
+//     void clearControlWindow() override;
+//     void clearDataWindow() override;
+//     void clearExtraControlWindow() override;
+
+//     void setUseFixedDelta( bool whichValue ) override;
+//     void setControlMin( THistogramLimit whichMin ) override;
+//     void setControlMax( THistogramLimit whichMax ) override;
+//     void setControlDelta( THistogramLimit whichDelta ) override;
+//     void setExtraControlMin( THistogramLimit whichMin ) override;
+//     void setExtraControlMax( THistogramLimit whichMax ) override;
+//     void setExtraControlDelta( THistogramLimit whichDelta ) override;
+//     void setDataMin( TSemanticValue whichMin ) override;
+//     void setDataMax( TSemanticValue whichMax ) override;
+//     void setBurstMin( TRecordTime whichTime ) override;
+//     void setBurstMax( TRecordTime whichTime ) override;
+//     void setCommSizeMin( TCommSize whichSize ) override;
+//     void setCommSizeMax( TCommSize whichSize ) override;
+//     void setCommTagMin( TCommTag whichTag ) override;
+//     void setCommTagMax( TCommTag whichTag ) override;
+
+
+//     bool getUseFixedDelta() const override;
+//     THistogramLimit getControlMin() const override;
+//     THistogramLimit getControlMax() const override;
+//     THistogramLimit getControlDelta() const override;
+//     THistogramLimit getExtraControlMin() const override;
+//     THistogramLimit getExtraControlMax() const override;
+//     THistogramLimit getExtraControlDelta() const override;
+//     TSemanticValue getDataMin() const override;
+//     TSemanticValue getDataMax() const override;
+//     // TRecordTime getBurstMin() const override;
+//     // TRecordTime getBurstMax() const override;
+//     // TCommSize getCommSizeMin() const override;
+//     // TCommSize getCommSizeMax() const override;
+//     // TCommTag getCommTagMin() const override;
+//     // TCommTag getCommTagMax() const override;
+
+//     bool getInclusiveEnabled() const override;
+//     void setInclusive( bool newValue ) override;
+//     bool getInclusive() const override;
+
+//     void setNumColumns( THistogramColumn whichNumColumns ) override;
+
+//     THistogramColumn getNumPlanes() const override;
+//     THistogramColumn getNumColumns() const override;
+//     THistogramColumn getCommNumColumns() const override;
+
+//     TObjectOrder getNumRows() const override;
+
+//     TSemanticValue getCurrentValue( PRV_UINT32 col,
+//                                     PRV_UINT16 idStat,
+//                                     PRV_UINT32 plane = 0 ) const override;
+//     PRV_UINT32 getCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const override;
+//     void setNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+//     void setFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+//     bool endCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+//     bool planeWithValues( PRV_UINT32 plane = 0 ) const override;
+//     bool getCellValue( TSemanticValue& semVal,
+//                        PRV_UINT32 whichRow,
+//                        PRV_UINT32 whichCol,
+//                        PRV_UINT16 idStat,
+//                        PRV_UINT32 whichPlane = 0 ) const override;
+//     bool getNotZeroValue( PRV_UINT32 whichRow,
+//                           PRV_UINT32 whichCol,
+//                           PRV_UINT16 idStat,
+//                           PRV_UINT32 whichPlane = 0 ) const override;
+
+//     TSemanticValue getCommCurrentValue( PRV_UINT32 col,
+//                                         PRV_UINT16 idStat,
+//                                         PRV_UINT32 plane = 0 ) const override;
+//     PRV_UINT32 getCommCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const override;
+//     void setCommNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+//     void setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+//     bool endCommCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+//     bool planeCommWithValues( PRV_UINT32 plane = 0 ) const override;
+//     bool getCommCellValue( TSemanticValue& semVal,
+//                            PRV_UINT32 whichRow,
+//                            PRV_UINT32 whichCol,
+//                            PRV_UINT16 idStat,
+//                            PRV_UINT32 whichPlane = 0 ) const override;
+
+//     HistogramTotals *getColumnTotals() const override;
+//     HistogramTotals *getCommColumnTotals() const override;
+//     HistogramTotals *getRowTotals() const override;
+//     HistogramTotals *getCommRowTotals() const override;
+
+//     void clearStatistics() override;
+//     void pushbackStatistic( const std::string& whichStatistic ) override;
+
+//     bool isCommunicationStat( const std::string& whichStat ) const override;
+
+//     bool isNotZeroStat( const std::string& whichStat ) const override;
+
+//     std::string getUnitsLabel( const std::string& whichStat ) const override;
+
+//     void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
+//                   std::vector<TObjectOrder>& selectedRows, ProgressController *progress ) override;
+
+//     void getGroupsLabels( std::vector<std::string>& onVector ) const override;
+//     void getStatisticsLabels( std::vector<std::string>& onVector,
+//                               PRV_UINT32 whichGroup,
+//                               bool dummy ) const override;
+//     std::string getFirstStatistic() const override;
+//     std::string getFirstCommStatistic() const override;
+
+//     bool getControlOutOfLimits() const override;
+//     bool getExtraOutOfLimits() const override;
+
+//     TTimeUnit getTimeUnit() const override;
+
+//     virtual KHistogram *clone() override;
+
+//     bool isDerivedHistogram() const override;
+
+//     // TODO: Put in the api
+//     bool setColumnsMergeMode( TColumnsMergeMode whichMode );
+//     TColumnsMergeMode getColumnsMergeMode() const;  
+    
+//   protected:
+//     void initTranslators();
+
+//   private:
+//     Histogram *parent1;
+//     Histogram *parent2;
+
+//     TObjectOrder numRows;
+//     THistogramColumn numCols;
+//     THistogramColumn numPlanes;
+
+//     THistogramLimit controlMin;
+//     THistogramLimit controlMax;
+//     THistogramLimit controlDelta;
+//     THistogramLimit xtraControlMin;
+//     THistogramLimit xtraControlMax;
+//     THistogramLimit xtraControlDelta;
+
+//     //std::unordered_map< PRV_UINT32, PRV_UINT32 > currentRow;
+
+//     CubeBuffer<NUM_SEMANTIC_STATS> *cube;
+//     CubeBuffer<NUM_COMM_STATS> *commCube;
+//     // Cube<TSemanticValue, NUM_SEMANTIC_STATS> *cube;
+//     // Matrix<TSemanticValue, NUM_SEMANTIC_STATS> *matrix;
+//     // Cube<TSemanticValue, NUM_COMM_STATS> *commCube;
+//     // Matrix<TSemanticValue, NUM_COMM_STATS> *commMatrix;
+
+//     KHistogramTotals *totals;
+//     KHistogramTotals *rowTotals;
+//     KHistogramTotals *commTotals;
+//     KHistogramTotals *rowCommTotals;
+
+//     //Selection of rows
+//     SelectionManagement< TObjectOrder, TWindowLevel > rowSelection;
+
+//     RowsTranslator *rowsTranslator;
+//     ColumnTranslator *columnTranslator;
+//     ColumnTranslator *planeTranslator;
+
+//     Statistics statistics;
+//     bool useFixedDelta;
+//     std::vector<KTimeline *> orderedWindows;
+
+
+//     TColumnsMergeMode columnsMergeMode = DISCRETE_MAXIMUM_EXPANSION;
+
+//     void combineHistograms();
+
+//     void orderWindows();
+//     void initMatrix( THistogramColumn planes, THistogramColumn cols, TObjectOrder rows );
+//     void initStatistics();
+
+//     void mergeColumns( TRecordTime whichBeginTime, TRecordTime whichEndTime,
+//                        std::vector<TObjectOrder>& selectedRows, ProgressController *progress);
+// };
+
+class KDerivedHistogramX : public KHistogram
 {
   public:
-    KDerivedHistogram();
-    ~KDerivedHistogram();
+    KDerivedHistogramX(  KHistogram *whichParent1, KHistogram *whichParent2 );
+    ~KDerivedHistogramX();
 
-    bool getThreeDimensions() const override;
+    // bool getThreeDimensions() const override;
 
-    TRecordTime getBeginTime() const override;
-    TRecordTime getEndTime() const override;
+    // TRecordTime getBeginTime() const override;
+    // TRecordTime getEndTime() const override;
 
-    Timeline *getControlWindow() const override;
-    Timeline *getDataWindow() const override;
-    Timeline *getExtraControlWindow() const override;
+    // // Timeline *getControlWindow() const override;
+    // // Timeline *getDataWindow() const override;
+    // Timeline *getExtraControlWindow() const override;
     void setControlWindow( Timeline *whichWindow ) override;
     void setDataWindow( Timeline *whichWindow ) override;
     void setExtraControlWindow( Timeline *whichWindow ) override;
@@ -414,27 +634,27 @@ class KDerivedHistogram : public Histogram
     void setCommTagMax( TCommTag whichTag ) override;
 
 
-    bool getUseFixedDelta() const override;
-    THistogramLimit getControlMin() const override;
-    THistogramLimit getControlMax() const override;
-    THistogramLimit getControlDelta() const override;
-    THistogramLimit getExtraControlMin() const override;
-    THistogramLimit getExtraControlMax() const override;
-    THistogramLimit getExtraControlDelta() const override;
+    // bool getUseFixedDelta() const override;
+    // THistogramLimit getControlMin() const override;
+    // THistogramLimit getControlMax() const override;
+    // THistogramLimit getControlDelta() const override;
+    // THistogramLimit getExtraControlMin() const override;
+    // THistogramLimit getExtraControlMax() const override;
+    // THistogramLimit getExtraControlDelta() const override;
     TSemanticValue getDataMin() const override;
     TSemanticValue getDataMax() const override;
 
-    bool getInclusiveEnabled() const override;
+    // bool getInclusiveEnabled() const override;
     void setInclusive( bool newValue ) override;
-    bool getInclusive() const override;
+    // bool getInclusive() const override;
 
     void setNumColumns( THistogramColumn whichNumColumns ) override;
 
-    THistogramColumn getNumPlanes() const override;
-    THistogramColumn getNumColumns() const override;
-    THistogramColumn getCommNumColumns() const override;
+    // THistogramColumn getNumPlanes() const override;
+    // THistogramColumn getNumColumns() const override;
+    // THistogramColumn getCommNumColumns() const override;
 
-    TObjectOrder getNumRows() const override;
+    // TObjectOrder getNumRows() const override;
 
     TSemanticValue getCurrentValue( PRV_UINT32 col,
                                     PRV_UINT16 idStat,
@@ -499,25 +719,66 @@ class KDerivedHistogram : public Histogram
 
     virtual KHistogram *clone() override;
 
+    bool isDerivedHistogram() const override;
+
+    // TODO: Put in the api
+    bool setColumnsMergeMode( TColumnsMergeMode whichMode );
+    TColumnsMergeMode getColumnsMergeMode() const;  
+
+
   protected:
 
   private:
+    Histogram *parent1;
+    Histogram *parent2;
+
     TObjectOrder numRows;
     THistogramColumn numCols;
     THistogramColumn numPlanes;
 
-    Cube<TSemanticValue, NUM_SEMANTIC_STATS> *cube;
-    Matrix<TSemanticValue, NUM_SEMANTIC_STATS> *matrix;
-    Cube<TSemanticValue, NUM_COMM_STATS> *commCube;
-    Matrix<TSemanticValue, NUM_COMM_STATS> *commMatrix;
+    // THistogramLimit controlMin;
+    // THistogramLimit controlMax;
+    // THistogramLimit controlDelta;
+    // THistogramLimit xtraControlMin;
+    // THistogramLimit xtraControlMax;
+    // THistogramLimit xtraControlDelta;
 
-    KHistogramTotals *totals;
-    KHistogramTotals *rowTotals;
-    KHistogramTotals *commTotals;
-    KHistogramTotals *rowCommTotals;
+    //std::unordered_map< PRV_UINT32, PRV_UINT32 > currentRow;
+
+    CubeBuffer<NUM_SEMANTIC_STATS> *cube;
+    CubeBuffer<NUM_COMM_STATS> *commCube;
+    // Cube<TSemanticValue, NUM_SEMANTIC_STATS> *cube;
+    // Matrix<TSemanticValue, NUM_SEMANTIC_STATS> *matrix;
+    // Cube<TSemanticValue, NUM_COMM_STATS> *commCube;
+    // Matrix<TSemanticValue, NUM_COMM_STATS> *commMatrix;
+
+    // KHistogramTotals *totals;
+    // KHistogramTotals *rowTotals;
+    // KHistogramTotals *commTotals;
+    // KHistogramTotals *rowCommTotals;
 
     //Selection of rows
-    SelectionManagement< TObjectOrder, TWindowLevel > rowSelection;
+    //SelectionManagement< TObjectOrder, TWindowLevel > rowSelection;
+
+    // RowsTranslator *rowsTranslator;
+    // ColumnTranslator *columnTranslator;
+    // ColumnTranslator *planeTranslator;
+
+    Statistics statistics; // TODO: es heredado
+    // bool useFixedDelta;
+    // std::vector<KTimeline *> orderedWindows;
+
+
+    TColumnsMergeMode columnsMergeMode = DISCRETE_MAXIMUM_EXPANSION;
+
+    void combineHistograms();
+
+    void orderWindows();
+    void initMatrix( THistogramColumn planes, THistogramColumn cols, TObjectOrder rows );
+    void initStatistics();
+
+    void mergeColumns( TRecordTime whichBeginTime, TRecordTime whichEndTime,
+                       std::vector<TObjectOrder>& selectedRows, ProgressController *progress );
+
+
 };
-
-
