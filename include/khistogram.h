@@ -186,12 +186,6 @@ class KHistogram : public Histogram
     THistogramLimit getExtraControlDelta() const override;
     TSemanticValue getDataMin() const override;
     TSemanticValue getDataMax() const override;
-    TRecordTime getBurstMin() const override;
-    TRecordTime getBurstMax() const override;
-    TCommSize getCommSizeMin() const override;
-    TCommSize getCommSizeMax() const override;
-    TCommTag getCommTagMin() const override;
-    TCommTag getCommTagMax() const override;
 
     bool getInclusiveEnabled() const override;
     void setInclusive( bool newValue ) override;
@@ -429,12 +423,6 @@ class KDerivedHistogram : public Histogram
     THistogramLimit getExtraControlDelta() const override;
     TSemanticValue getDataMin() const override;
     TSemanticValue getDataMax() const override;
-    TRecordTime getBurstMin() const override;
-    TRecordTime getBurstMax() const override;
-    TCommSize getCommSizeMin() const override;
-    TCommSize getCommSizeMax() const override;
-    TCommTag getCommTagMin() const override;
-    TCommTag getCommTagMax() const override;
 
     bool getInclusiveEnabled() const override;
     void setInclusive( bool newValue ) override;

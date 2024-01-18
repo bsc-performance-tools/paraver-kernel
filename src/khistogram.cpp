@@ -549,42 +549,6 @@ inline TSemanticValue KHistogram::getDataMax() const
 }
 
 
-inline TRecordTime KHistogram::getBurstMin() const
-{
-  return burstMin;
-}
-
-
-inline TRecordTime KHistogram::getBurstMax() const
-{
-  return burstMax;
-}
-
-
-inline TCommSize KHistogram::getCommSizeMin() const
-{
-  return commSizeMin;
-}
-
-
-inline TCommSize KHistogram::getCommSizeMax() const
-{
-  return commSizeMax;
-}
-
-
-inline TCommTag KHistogram::getCommTagMin() const
-{
-  return commTagMin;
-}
-
-
-inline TCommTag KHistogram::getCommTagMax() const
-{
-  return commTagMax;
-}
-
-
 inline bool KHistogram::getInclusiveEnabled() const
 {
   if ( controlWindow != nullptr
@@ -2117,36 +2081,6 @@ TSemanticValue KDerivedHistogram::getDataMin() const
 }
 
 TSemanticValue KDerivedHistogram::getDataMax() const
-{
-  return {};
-}
-
-TRecordTime KDerivedHistogram::getBurstMin() const
-{
-  return {};
-}
-
-TRecordTime KDerivedHistogram::getBurstMax() const
-{
-  return {};
-}
-
-TCommSize KDerivedHistogram::getCommSizeMin() const
-{
-  return {};
-}
-
-TCommSize KDerivedHistogram::getCommSizeMax() const
-{
-  return {};
-}
-
-TCommTag KDerivedHistogram::getCommTagMin() const
-{
-  return {};
-}
-
-TCommTag KDerivedHistogram::getCommTagMax() const
 {
   return {};
 }
