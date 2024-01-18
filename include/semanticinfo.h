@@ -51,4 +51,9 @@ struct SemanticHighInfo: public SemanticInfo
   bool newControlBurst;
 };
 
+struct DerivedHistogramFunctionInfo
+{
+  std::vector<TSemanticValue> values; // Intermediate common struct?
+};
+
 
