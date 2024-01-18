@@ -1,6 +1,7 @@
 
 pkglib_LTLIBRARIES = libparaver-kernel.la
 libparaver_kernel_la_SOURCES = \
+    derivedhistogrammanagement.cpp \
     filtermanagement.cpp \
     histogramexception.cpp \
     histogramstatistic.cpp \
