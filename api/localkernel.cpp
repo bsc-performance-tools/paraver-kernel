@@ -53,6 +53,7 @@
 #include "filtermanagement.h"
 #include "statisticmanagement.h"
 #include "functionmanagement.h"
+#include "derivedhistogrammanagement.h"
 #include "krecordlist.h"
 #include "kprogresscontroller.h"
 #include "labelconstructor.h"
@@ -82,7 +83,8 @@ void LocalKernel::init()
   createFilter();
   createSemantic();
   createStatistic();
-
+  createDerivedHistogramFunctions();
+  
   LabelConstructor::init();
 
 #ifdef TRACING_ENABLED
@@ -284,6 +286,11 @@ Histogram *LocalKernel::newHistogram() const
   return new KHistogram();
 }
 
+Histogram *LocalKernel::newDerivedHistogram( Histogram *histogram1, Histogram *histogram2 ) const
+{
+  return new KDerivedHistogramX( ( KHistogram * )histogram1->getConcrete(),
+                                ( KHistogram * )histogram2->getConcrete() );
+}
 
 /*RecordList *LocalKernel::newRecordList() const
 {

@@ -51,9 +51,19 @@ Histogram *Histogram::create( KernelConnection *whichKernel )
 Histogram::Histogram( KernelConnection *whichKernel ) : myKernel( whichKernel )
 {}
 
+
+Histogram *Histogram::create( KernelConnection *whichKernel, Histogram *parent1, Histogram *parent2 )
+{
+  return new HistogramProxy( whichKernel, parent1, parent2 );
+}
+
+
 HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   Histogram( whichKernel )
 {
+  parent1 = nullptr;
+  parent2 = nullptr;
+
   destroy = false;
 
   name = Histogram::getName();
@@ -123,6 +133,25 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   globalIndexLink = 0;
 }
 
+
+HistogramProxy::HistogramProxy( KernelConnection *whichKernel, Histogram *whichParent1, Histogram *whichParent2 )
+  : HistogramProxy( whichKernel )
+{
+  parent1 = whichParent1;
+  parent2 = whichParent2;
+
+  //controlWindow = whichParent1->getControlWindow();
+  //dataWindow = whichParent1->getDataWindow();
+  // myTrace = whichParent1->getTrace();
+  setControlWindow( whichParent1->getControlWindow() );
+  setDataWindow( whichParent1->getDataWindow() );
+
+  // todo: solve this
+  delete myHisto;
+  myHisto = whichKernel->newDerivedHistogram( whichParent1, whichParent2 );
+}
+
+
 HistogramProxy::~HistogramProxy()
 {
   if( controlWindow != nullptr )
@@ -175,6 +204,8 @@ Trace *HistogramProxy::getTrace() const
 
 Timeline *HistogramProxy::getControlWindow() const
 {
+  // std::cout << "PROXY parent1->getControlWindow(): " << controlWindow << std::endl;
+
   return controlWindow;
 }
 
@@ -2005,4 +2036,14 @@ void HistogramProxy::setCurrentSemanticSort( const vector<int>& whichSort )
   customSemanticSort = whichSort;
 
   sortSemanticColumns = true;
+}
+
+bool HistogramProxy::isDerivedHistogram() const
+{
+  return parent1 == nullptr;
+}
+
+Histogram *HistogramProxy::getConcrete() const
+{
+  return myHisto;
 }

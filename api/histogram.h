@@ -47,6 +47,7 @@ class Histogram
 {
   public:
     static Histogram *create( KernelConnection *whichKernel );
+    static Histogram *create( KernelConnection *whichKernel, Histogram *parent1, Histogram *parent2 );
 
     Histogram() {};
     Histogram( KernelConnection *whichKernel );
@@ -59,6 +60,14 @@ class Histogram
 
     virtual TRecordTime getBeginTime() const = 0;
     virtual TRecordTime getEndTime() const = 0;
+
+    // Specific functions for HistogramProxy
+    virtual Histogram *getConcrete() const
+    {
+      return nullptr;
+    }
+    
+    virtual bool isDerivedHistogram() const = 0;
 
     virtual Timeline *getControlWindow() const = 0;
     virtual Timeline *getDataWindow() const = 0;
@@ -663,6 +672,11 @@ class HistogramProxy : public Histogram
     virtual TRecordTime getBeginTime() const override;
     virtual TRecordTime getEndTime() const override;
     virtual Trace *getTrace() const override;
+
+    Histogram *getConcrete() const;
+
+    virtual bool isDerivedHistogram() const override;
+
     virtual Timeline *getControlWindow() const override;
     virtual Timeline *getDataWindow() const override;
     virtual Timeline *getExtraControlWindow() const override;
@@ -1029,6 +1043,8 @@ class HistogramProxy : public Histogram
     GradientColor myAltGradientColor{ std::vector<rgb>{ {0,255,0}, {255,255,0}, {255,0,0} } };
 
     Histogram *myHisto;
+    Histogram *parent1;
+    Histogram *parent2;
 
     int number_of_clones;
 
@@ -1044,10 +1060,12 @@ class HistogramProxy : public Histogram
     SelectionManagement< TObjectOrder, TTraceLevel > rowSelection;
 
     HistogramProxy( KernelConnection *whichKernel );
+    HistogramProxy( KernelConnection *whichKernel, Histogram *whichParent1, Histogram *whichParent2 );
 
     void fillSemanticSort();
 
     friend Histogram *Histogram::create( KernelConnection * );
+    friend Histogram *Histogram::create( KernelConnection *whichKernel, Histogram *parent1, Histogram *parent2 );
 };
 
 
