@@ -135,15 +135,17 @@ RowFileParser<dummy>::RowFileParser( const std::string& filename )
     while ( !rowFile.eof() && i < size )
     {
       getline( rowFile, strLine );
-      if( strLine[ strLine.length() - 1 ] == '\r' )
+
+      if( !strLine.empty() && strLine[ strLine.length() - 1 ] == '\r' )
         strLine.resize( strLine.length() - 1 );
-      std::get<2>( currentLevelLabels->second ).push_back( strLine );
+
+      std::get< LEVEL_LABELS >( currentLevelLabels->second ).push_back( strLine );
 
       currentLength = strLine.length();
 
       // By level
-      if ( std::get<1>( currentLevelLabels->second ) < currentLength )
-        std::get<1>( currentLevelLabels->second ) = currentLength;
+      if ( std::get< LEVEL_MAXLENGTH >( currentLevelLabels->second ) < currentLength )
+        std::get< LEVEL_MAXLENGTH >( currentLevelLabels->second ) = currentLength;
 
       // Global
       if ( globalMaxLength < currentLength )
@@ -189,9 +191,9 @@ void RowFileParser<dummy>::dumpLevel( const std::tuple< std::string, size_t, std
 {
   if( !std::get<2>( whichLevel ).empty() )
   {
-    whichFile << "LEVEL " << std::get<0>( whichLevel ) << " SIZE " << std::get<2>( whichLevel ).size() << std::endl;
+    whichFile << "LEVEL " << std::get< LEVEL_NAME >( whichLevel ) << " SIZE " << std::get< LEVEL_LABELS >( whichLevel ).size() << std::endl;
 
-    std::copy( std::get<2>( whichLevel ).begin(), std::get<2>( whichLevel ).end(), std::ostream_iterator<std::string>( whichFile, "\n" ) );
+    std::copy( std::get< LEVEL_LABELS >( whichLevel ).begin(), std::get< LEVEL_LABELS >( whichLevel ).end(), std::ostream_iterator<std::string>( whichFile, "\n" ) );
 
     whichFile << std::endl;
   }
@@ -205,7 +207,7 @@ std::string RowFileParser<dummy>::getRowLabel( TTraceLevel whichLevel, TObjectOr
   if( ( currentLevelLabels = levelLabels.find( whichLevel ) ) == levelLabels.end() )
     return "";
 
-  const std::vector<std::string>& vectorLabels = std::get<2>( currentLevelLabels->second );
+  const std::vector<std::string>& vectorLabels = std::get< LEVEL_LABELS >( currentLevelLabels->second );
   if( vectorLabels.empty() || vectorLabels.size() <= whichRow )
     return "";
 
@@ -223,10 +225,10 @@ void RowFileParser<dummy>::pushBack( TTraceLevel whichLevel, const std::string& 
     std::tie( currentLevelLabels, std::ignore ) = levelLabels.insert( std::make_pair( whichLevel, tmpCurrentLevel ) );
   }
 
-  std::get<2>( currentLevelLabels->second ).push_back( rowLabel );
+  std::get< LEVEL_LABELS >( currentLevelLabels->second ).push_back( rowLabel );
 
-  if( std::get<1>( currentLevelLabels->second ) < rowLabel.length() )
-    std::get<1>( currentLevelLabels->second ) = rowLabel.length();
+  if( std::get< LEVEL_MAXLENGTH >( currentLevelLabels->second ) < rowLabel.length() )
+    std::get< LEVEL_MAXLENGTH >( currentLevelLabels->second ) = rowLabel.length();
 
   if( globalMaxLength < rowLabel.length() )
     globalMaxLength = rowLabel.length();
@@ -244,5 +246,5 @@ size_t RowFileParser<dummy>::getMaxLength( TTraceLevel whichLevel ) const
   if( ( currentLevelLabels = levelLabels.find( whichLevel ) ) == levelLabels.end() )
     return 0;
 
-  return std::get<1>( currentLevelLabels->second );
+  return std::get< LEVEL_MAXLENGTH >( currentLevelLabels->second );
 }
