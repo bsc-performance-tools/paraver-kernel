@@ -27,7 +27,7 @@ class SortIndex
       return v[i1] < v[i2];
     }
 
-    std::vector<int>& sort()
+    const std::vector<int>& sort()
     {
       pos.clear();
       for( unsigned int i = 0; i < v.size(); i++ )
@@ -36,7 +36,7 @@ class SortIndex
       return pos;
     }
 
-    std::vector<int>& getSorted()
+    const std::vector<int>& getSorted() const
     {
       return pos;
     }

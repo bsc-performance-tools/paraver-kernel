@@ -88,38 +88,38 @@ void HistogramTotalsProxy::getAll( vector<TSemanticValue>& where,
   myTotals->getAll( where, idStat, whichColumn, whichPlane );
 }
 
-vector<int>& HistogramTotalsProxy::sortByTotal( PRV_UINT16 idStat,
-    THistogramColumn whichPlane )
+const vector<int>& HistogramTotalsProxy::sortByTotal( PRV_UINT16 idStat,
+                                                      THistogramColumn whichPlane )
 {
   return myTotals->sortByTotal( idStat, whichPlane );
 }
 
-vector<int>& HistogramTotalsProxy::sortByAverage( PRV_UINT16 idStat,
-    THistogramColumn whichPlane )
+const vector<int>& HistogramTotalsProxy::sortByAverage( PRV_UINT16 idStat,
+                                                        THistogramColumn whichPlane )
 {
   return myTotals->sortByAverage( idStat, whichPlane );
 }
 
-vector<int>& HistogramTotalsProxy::sortByMaximum( PRV_UINT16 idStat,
-    THistogramColumn whichPlane )
+const vector<int>& HistogramTotalsProxy::sortByMaximum( PRV_UINT16 idStat,
+                                                        THistogramColumn whichPlane )
 {
   return myTotals->sortByMaximum( idStat, whichPlane );
 }
 
-vector<int>& HistogramTotalsProxy::sortByMinimum( PRV_UINT16 idStat,
-    THistogramColumn whichPlane )
+const vector<int>& HistogramTotalsProxy::sortByMinimum( PRV_UINT16 idStat,
+                                                        THistogramColumn whichPlane )
 {
   return myTotals->sortByMinimum( idStat, whichPlane );
 }
 
-vector<int>& HistogramTotalsProxy::sortByStdev( PRV_UINT16 idStat,
-    THistogramColumn whichPlane )
+const vector<int>& HistogramTotalsProxy::sortByStdev( PRV_UINT16 idStat,
+                                                      THistogramColumn whichPlane )
 {
   return myTotals->sortByStdev( idStat, whichPlane );
 }
 
-vector<int>& HistogramTotalsProxy::sortByAvgDivMax( PRV_UINT16 idStat,
-    THistogramColumn whichPlane )
+const vector<int>& HistogramTotalsProxy::sortByAvgDivMax( PRV_UINT16 idStat,
+                                                          THistogramColumn whichPlane )
 {
   return myTotals->sortByAvgDivMax( idStat, whichPlane );
 }
