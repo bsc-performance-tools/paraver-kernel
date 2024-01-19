@@ -33,7 +33,7 @@
 class KHistogramTotals: public HistogramTotals
 {
   public:
-    KHistogramTotals( KHistogramTotals *& source );
+    KHistogramTotals( const KHistogramTotals& source );
 
     KHistogramTotals( PRV_UINT16 numStat, THistogramColumn numColumns,
                       THistogramColumn numPlanes );
