@@ -58,6 +58,8 @@ noinst_HEADERS = \
                           semanticcpu.h\
                           semanticderivedfunctions.h\
                           semanticderived.h\
+                          semanticderivedhistogram.h\
+                          semanticderivedhistogramfunctions.h\
                           semanticexception.h\
                           semanticfunction.h\
                           semantichigh.h\

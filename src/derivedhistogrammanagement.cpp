@@ -22,8 +22,9 @@
 \*****************************************************************************/
 
 #include "derivedhistogrammanagement.h"
+
 #include "functionmanagement.h"
-#include "semanticderivedfunctions.h"
+#include "semanticderivedhistogramfunctions.h"
 
 using namespace std;
 
@@ -41,7 +42,7 @@ void createDerivedHistogramFunctions()
   groups.push_back( "Derived Histogram" );
   functions.push_back( vector<SemanticFunction *>() );
 
-  functions[8].push_back( new DerivedAdd() );
+  functions[0].push_back( new DerivedHistogramAdd() );
   // functions[8].push_back( new DerivedProduct<KHistogram, DerivedHistogramFunctionInfo>() );
   // functions[8].push_back( new DerivedSubstract<KHistogram, DerivedHistogramFunctionInfo>() );
   // functions[8].push_back( new DerivedDivide<KHistogram, DerivedHistogramFunctionInfo>() );

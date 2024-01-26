@@ -80,7 +80,13 @@ class SemanticFunction
       return parametersName[whichParam];
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info ) = 0;
+    virtual TSemanticValue execute( const SemanticInfo *info ) = 0; // TODO: comment difference
+
+    // TODO: possible second version to avoid SemanticInfo empty *callingInterval
+    // virtual TSemanticValue execute( const DerivedHistogramFunctionInfo *info )
+    // {
+    //   return 0;
+    // }
 
     virtual void init( KTimeline *whichWindow )
     {}

@@ -41,6 +41,7 @@ libparaver_kernel_la_SOURCES = \
     semanticcomposefunctions.cpp \
     semanticcpufunctions.cpp \
     semanticderivedfunctions.cpp \
+    semanticderivedhistogramfunctions.cpp \
     semanticexception.cpp \
     semanticmanagement.cpp \
     semanticnotthreadfunctions.cpp \
