@@ -189,13 +189,6 @@ class KHistogram : public Histogram
     void setExtraControlDelta( THistogramLimit whichDelta ) override;
     void setDataMin( TSemanticValue whichMin ) override;
     void setDataMax( TSemanticValue whichMax ) override;
-    void setBurstMin( TRecordTime whichTime ) override;
-    void setBurstMax( TRecordTime whichTime ) override;
-    void setCommSizeMin( TCommSize whichSize ) override;
-    void setCommSizeMax( TCommSize whichSize ) override;
-    void setCommTagMin( TCommTag whichTag ) override;
-    void setCommTagMax( TCommTag whichTag ) override;
-
 
     bool getUseFixedDelta() const override;
     THistogramLimit getControlMin() const override;
@@ -284,7 +277,7 @@ class KHistogram : public Histogram
 
     Timeline *getClonedWindow( Timeline *whichWindow ) const;
 
-    bool isDerivedHistogram() const override;
+    virtual bool isDerivedHistogram() const override;
 
     ColumnTranslator *getColumnTranslator() const;
     ColumnTranslator *getPlaneTranslator() const;
@@ -435,13 +428,6 @@ class KHistogram : public Histogram
 //     void setExtraControlDelta( THistogramLimit whichDelta ) override;
 //     void setDataMin( TSemanticValue whichMin ) override;
 //     void setDataMax( TSemanticValue whichMax ) override;
-//     void setBurstMin( TRecordTime whichTime ) override;
-//     void setBurstMax( TRecordTime whichTime ) override;
-//     void setCommSizeMin( TCommSize whichSize ) override;
-//     void setCommSizeMax( TCommSize whichSize ) override;
-//     void setCommTagMin( TCommTag whichTag ) override;
-//     void setCommTagMax( TCommTag whichTag ) override;
-
 
 //     bool getUseFixedDelta() const override;
 //     THistogramLimit getControlMin() const override;
@@ -452,12 +438,6 @@ class KHistogram : public Histogram
 //     THistogramLimit getExtraControlDelta() const override;
 //     TSemanticValue getDataMin() const override;
 //     TSemanticValue getDataMax() const override;
-//     // TRecordTime getBurstMin() const override;
-//     // TRecordTime getBurstMax() const override;
-//     // TCommSize getCommSizeMin() const override;
-//     // TCommSize getCommSizeMax() const override;
-//     // TCommTag getCommTagMin() const override;
-//     // TCommTag getCommTagMax() const override;
 
 //     bool getInclusiveEnabled() const override;
 //     void setInclusive( bool newValue ) override;
@@ -626,13 +606,6 @@ class KDerivedHistogramX : public KHistogram
     void setExtraControlDelta( THistogramLimit whichDelta ) override;
     void setDataMin( TSemanticValue whichMin ) override;
     void setDataMax( TSemanticValue whichMax ) override;
-    void setBurstMin( TRecordTime whichTime ) override;
-    void setBurstMax( TRecordTime whichTime ) override;
-    void setCommSizeMin( TCommSize whichSize ) override;
-    void setCommSizeMax( TCommSize whichSize ) override;
-    void setCommTagMin( TCommTag whichTag ) override;
-    void setCommTagMax( TCommTag whichTag ) override;
-
 
     // bool getUseFixedDelta() const override;
     // THistogramLimit getControlMin() const override;
@@ -719,7 +692,7 @@ class KDerivedHistogramX : public KHistogram
 
     virtual KHistogram *clone() override;
 
-    bool isDerivedHistogram() const override;
+    virtual bool isDerivedHistogram() const override;
 
     // TODO: Put in the api
     bool setColumnsMergeMode( TColumnsMergeMode whichMode );

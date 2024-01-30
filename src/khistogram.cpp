@@ -460,42 +460,6 @@ inline void KHistogram::setDataMax( TSemanticValue whichMax )
 }
 
 
-inline void KHistogram::setBurstMin( TRecordTime whichTime )
-{
-  burstMin = whichTime;
-}
-
-
-inline void KHistogram::setBurstMax( TRecordTime whichTime )
-{
-  burstMax = whichTime;
-}
-
-
-inline void KHistogram::setCommSizeMin( TCommSize whichSize )
-{
-  commSizeMin = whichSize;
-}
-
-
-inline void KHistogram::setCommSizeMax( TCommSize whichSize )
-{
-  commSizeMax = whichSize;
-}
-
-
-inline void KHistogram::setCommTagMin( TCommTag whichTag )
-{
-  commTagMin = whichTag;
-}
-
-
-inline void KHistogram::setCommTagMax( TCommTag whichTag )
-{
-  commTagMax = whichTag;
-}
-
-
 inline bool KHistogram::getUseFixedDelta() const
 {
   return useFixedDelta;
@@ -2082,39 +2046,6 @@ ColumnTranslator *KHistogram::getPlaneTranslator() const
 //   parent2->setDataMax( whichMax );
 // }
 
-// void KDerivedHistogram::setBurstMin( TRecordTime whichTime )
-// {
-//   parent1->setBurstMin( whichTime );
-//   parent2->setBurstMin( whichTime );
-// }
-
-// void KDerivedHistogram::setBurstMax( TRecordTime whichTime )
-// {
-//   parent1->setBurstMax( whichTime );
-//   parent2->setBurstMax( whichTime );
-// }
-
-// void KDerivedHistogram::setCommSizeMin( TCommSize whichSize )
-// {
-//   parent1->setCommSizeMin( whichSize );
-//   parent2->setCommSizeMin( whichSize );
-// }
-
-// void KDerivedHistogram::setCommSizeMax( TCommSize whichSize )
-// {
-
-// }
-
-// void KDerivedHistogram::setCommTagMin( TCommTag whichTag )
-// {
-
-// }
-
-// void KDerivedHistogram::setCommTagMax( TCommTag whichTag )
-// {
-
-// }
-
 // bool KDerivedHistogram::getUseFixedDelta() const
 // {
 //   return useFixedDelta;
@@ -2163,36 +2094,6 @@ ColumnTranslator *KHistogram::getPlaneTranslator() const
 // {
 //   return parent1->getDataMax() < parent2->getDataMax() ? parent2->getDataMax() : parent1->getDataMax();
 // }
-
-// // TRecordTime KDerivedHistogram::getBurstMin() const
-// // {
-// //   return parent1->getBurstMin();
-// // }
-
-// // TRecordTime KDerivedHistogram::getBurstMax() const
-// // {
-// //   return parent1->getBurstMax();
-// // }
-
-// // TCommSize KDerivedHistogram::getCommSizeMin() const
-// // {
-// //   return {};
-// // }
-
-// // TCommSize KDerivedHistogram::getCommSizeMax() const
-// // {
-// //   return {};
-// // }
-
-// // TCommTag KDerivedHistogram::getCommTagMin() const
-// // {
-// //   return {};
-// // }
-
-// // TCommTag KDerivedHistogram::getCommTagMax() const
-// // {
-// //   return {};
-// // }
 
 // bool KDerivedHistogram::getInclusiveEnabled() const
 // {
@@ -2875,42 +2776,6 @@ void KDerivedHistogramX::setDataMax( TSemanticValue whichMax )
   parent2->setDataMax( whichMax );
 }
 
-void KDerivedHistogramX::setBurstMin( TRecordTime whichTime )
-{
-  parent1->setBurstMin( whichTime );
-  parent2->setBurstMin( whichTime );
-}
-
-void KDerivedHistogramX::setBurstMax( TRecordTime whichTime )
-{
-  parent1->setBurstMax( whichTime );
-  parent2->setBurstMax( whichTime );
-}
-
-void KDerivedHistogramX::setCommSizeMin( TCommSize whichSize )
-{
-  parent1->setCommSizeMin( whichSize );
-  parent2->setCommSizeMin( whichSize );
-}
-
-void KDerivedHistogramX::setCommSizeMax( TCommSize whichSize )
-{
-  parent1->setCommSizeMax( whichSize );
-  parent2->setCommSizeMax( whichSize );
-}
-
-void KDerivedHistogramX::setCommTagMin( TCommTag whichTag )
-{
-  parent1->setCommTagMin( whichTag );
-  parent2->setCommTagMin( whichTag );
-}
-
-void KDerivedHistogramX::setCommTagMax( TCommTag whichTag )
-{
-  parent1->setCommTagMax( whichTag );
-  parent2->setCommTagMax( whichTag );
-}
-
 // bool KDerivedHistogramX::getUseFixedDelta() const
 // {
 //   return useFixedDelta;
@@ -2958,36 +2823,6 @@ TSemanticValue KDerivedHistogramX::getDataMax() const
 {
   return parent1->getDataMax() < parent2->getDataMax() ? parent2->getDataMax() : parent1->getDataMax();
 }
-
-// TRecordTime KDerivedHistogramX::getBurstMin() const
-// {
-//   return parent1->getBurstMin();
-// }
-
-// TRecordTime KDerivedHistogramX::getBurstMax() const
-// {
-//   return parent1->getBurstMax();
-// }
-
-// TCommSize KDerivedHistogramX::getCommSizeMin() const
-// {
-//   return {};
-// }
-
-// TCommSize KDerivedHistogramX::getCommSizeMax() const
-// {
-//   return {};
-// }
-
-// TCommTag KDerivedHistogramX::getCommTagMin() const
-// {
-//   return {};
-// }
-
-// TCommTag KDerivedHistogramX::getCommTagMax() const
-// {
-//   return {};
-// }
 
 // bool KDerivedHistogramX::getInclusiveEnabled() const
 // {

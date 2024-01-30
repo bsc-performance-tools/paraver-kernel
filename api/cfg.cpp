@@ -4611,22 +4611,14 @@ bool Analyzer2DParameters::parseLine( KernelConnection *whichKernel, istringstre
     if ( ii == 0 )
     {
       histograms[ histograms.size() - 1 ]->setDataMin( dataValue );
-      //histograms[ histograms.size() - 1 ]->setCommSizeMin( ( TCommSize ) dataValue );
     }
     else if ( ii == 1 )
     {
       histograms[ histograms.size() - 1 ]->setDataMax( dataValue );
-      //histograms[ histograms.size() - 1 ]->setCommSizeMax( ( TCommSize ) dataValue );
     }
-    else if ( ii == 2 )
+    else // ii == 2 or 3 => old values for setBurst{Min,Max}
     {
-      histograms[ histograms.size() - 1 ]->setBurstMin( dataValue );
-      //histograms[ histograms.size() - 1 ]->setCommTagMin( ( TCommTag ) dataValue );
-    }
-    else if ( ii == 3 )
-    {
-      histograms[ histograms.size() - 1 ]->setBurstMax( dataValue );
-      //histograms[ histograms.size() - 1 ]->setCommTagMax( ( TCommTag ) dataValue );
+      break;
     }
   }
 

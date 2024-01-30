@@ -88,12 +88,6 @@ class Histogram
     virtual void setExtraControlDelta( THistogramLimit whichDelta ) = 0;
     virtual void setDataMin( TSemanticValue whichMin ) = 0;
     virtual void setDataMax( TSemanticValue whichMax ) = 0;
-    virtual void setBurstMin( TRecordTime whichTime ) = 0;
-    virtual void setBurstMax( TRecordTime whichTime ) = 0;
-    virtual void setCommSizeMin( TCommSize whichSize ) = 0;
-    virtual void setCommSizeMax( TCommSize whichSize ) = 0;
-    virtual void setCommTagMin( TCommTag whichTag ) = 0;
-    virtual void setCommTagMax( TCommTag whichTag ) = 0;
 
     virtual bool getUseFixedDelta() const = 0;
     virtual THistogramLimit getControlMin() const = 0;
@@ -696,12 +690,6 @@ class HistogramProxy : public Histogram
     virtual void setExtraControlDelta( THistogramLimit whichDelta ) override;
     virtual void setDataMin( THistogramLimit whichMin ) override;
     virtual void setDataMax( THistogramLimit whichMax ) override;
-    virtual void setBurstMin( TRecordTime whichTime ) override;
-    virtual void setBurstMax( TRecordTime whichTime ) override;
-    virtual void setCommSizeMin( TCommSize whichSize ) override;
-    virtual void setCommSizeMax( TCommSize whichSize ) override;
-    virtual void setCommTagMin( TCommTag whichTag ) override;
-    virtual void setCommTagMax( TCommTag whichTag ) override;
 
     virtual bool getUseFixedDelta() const override;
     virtual THistogramLimit getControlMin() const override;
