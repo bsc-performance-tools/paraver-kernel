@@ -112,9 +112,9 @@ class KTraceOptions: public TraceOptions
     unsigned long long sc_sampling_interval;
     unsigned long long sc_minimum_burst_time;
 
-    char *accum_types;
-    char *count_types;
-    char *types_kept;
+    char *accum_types = nullptr;
+    char *count_types = nullptr;
+    char *types_kept = nullptr;
 
   //  KTraceOptions( const KernelConnection *whichKernel, char *xmldocname );
     KTraceOptions();
@@ -537,17 +537,26 @@ class KTraceOptions: public TraceOptions
 
     inline char *get_sc_accum_types() const override
     {
-      return strdup( accum_types );
+      if ( accum_types != nullptr )
+        return strdup( accum_types );
+      
+      return nullptr;
     }
 
     inline char *get_sc_count_types() const override
     {
-      return strdup( count_types );
+      if ( count_types != nullptr )
+        return strdup( count_types );
+
+      return nullptr;
     }
 
     inline char *get_sc_types_kept() const override
     {
-      return strdup( types_kept );
+      if ( types_kept != nullptr )
+        return strdup( types_kept );
+      
+      return nullptr;
     }
 
     std::vector< std::string > parseDoc( char *docname ) override;
