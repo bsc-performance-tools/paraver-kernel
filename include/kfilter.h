@@ -416,6 +416,26 @@ class KFilter : public Filter
       return physical;
     }
 
+    void setIntraCommsFilter( bool newValue ) override
+    {
+      intraComms = newValue;
+    }
+
+    void setInterCommsFilter( bool newValue ) override
+    {
+      interComms = newValue;
+    }
+
+    bool getIntraCommsFilter() override
+    {
+      return intraComms;
+    }
+
+    bool getInterCommsFilter() override
+    {
+      return interComms;
+    }
+
     void clearCommFrom() override;
     void insertCommFrom( TObjectOrder value ) override;
     void getCommFrom( std::vector<TObjectOrder>& onVector ) const override;
@@ -520,6 +540,10 @@ class KFilter : public Filter
 
     bool logical;
     bool physical;
+
+    // Node intra/inter comms filter
+    bool interComms = true;
+    bool intraComms = true;
 
     bool existCommFrom;
     std::vector<TObjectOrder> commFrom;

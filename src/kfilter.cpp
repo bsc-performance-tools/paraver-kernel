@@ -66,6 +66,24 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
     }
   }
 
+  if( intraComms || interComms )
+  {
+    auto senderCPU = window->getTrace()->getSenderCPU( it->getCommIndex() );
+    auto receiverCPU = window->getTrace()->getReceiverCPU( it->getCommIndex() );
+
+    TNodeOrder senderNode;
+    TNodeOrder receiverNode;
+
+    window->getTrace()->getCPULocation( senderCPU, senderNode, senderCPU );
+    window->getTrace()->getCPULocation( receiverCPU, receiverNode, receiverCPU );
+
+    if( senderNode == receiverNode )
+      if( !intraComms ) return false;
+    else
+      if( !interComms ) return false;
+  }
+
+
   bool tmpResult = functionCommFrom->getDefaultValue();
   if ( existCommFrom )
   {
@@ -594,6 +612,9 @@ KFilter *KFilter::clone( KTimeline *clonedWindow )
   // Copy values and clone FilterFunctions
   clonedKFilter->logical = logical;
   clonedKFilter->physical = physical;
+
+  clonedKFilter->interComms = interComms;
+  clonedKFilter->intraComms = intraComms;
 
   clonedKFilter->existCommFrom = existCommFrom;
   clonedKFilter->commFrom = vector<TObjectOrder>( commFrom );

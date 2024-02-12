@@ -50,6 +50,26 @@ bool FilterProxy::getPhysical()
   return myFilter->getPhysical();
 }
 
+void FilterProxy::setIntraCommsFilter( bool newValue )
+{
+  myFilter->setIntraCommsFilter( newValue );
+}
+
+void FilterProxy::setInterCommsFilter( bool newValue )
+{
+  myFilter->setInterCommsFilter( newValue );
+}
+
+bool FilterProxy::getIntraCommsFilter()
+{
+  return myFilter->getIntraCommsFilter();
+}
+
+bool FilterProxy::getInterCommsFilter()
+{
+  return myFilter->getInterCommsFilter();
+}
+
 void FilterProxy::clearCommFrom()
 {
   myFilter->clearCommFrom();
