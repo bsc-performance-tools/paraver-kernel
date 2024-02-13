@@ -66,10 +66,13 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
     }
   }
 
-  if( intraComms || interComms )
+  if( !intraComms && !interComms )
+    return false;
+
+  if( intraComms ^ interComms )
   {
-    auto senderCPU = window->getTrace()->getSenderCPU( it->getCommIndex() );
-    auto receiverCPU = window->getTrace()->getReceiverCPU( it->getCommIndex() );
+    TCPUOrder senderCPU = window->getTrace()->getSenderCPU( it->getCommIndex() );
+    TCPUOrder receiverCPU = window->getTrace()->getReceiverCPU( it->getCommIndex() );
 
     TNodeOrder senderNode;
     TNodeOrder receiverNode;
@@ -77,12 +80,11 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
     window->getTrace()->getCPULocation( senderCPU, senderNode, senderCPU );
     window->getTrace()->getCPULocation( receiverCPU, receiverNode, receiverCPU );
 
-    if( senderNode == receiverNode )
-      if( !intraComms ) return false;
-    else
-      if( !interComms ) return false;
+    if( senderNode == receiverNode && !intraComms )
+      return false;
+    else if( senderNode != receiverNode && !interComms )
+      return false;
   }
-
 
   bool tmpResult = functionCommFrom->getDefaultValue();
   if ( existCommFrom )
