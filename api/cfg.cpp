@@ -835,6 +835,8 @@ bool CFGLoader::saveCFG( const string& filename,
     {
       WindowFilterLogical::printLine( cfgFile, it );
       WindowFilterPhysical::printLine( cfgFile, it );
+      WindowFilterIntraComms::printLine( cfgFile, it );
+      WindowFilterInterComms::printLine( cfgFile, it );
       WindowFilterBoolOpFromTo::printLine( cfgFile, it );
       WindowFilterBoolOpTagSize::printLine( cfgFile, it );
       WindowFilterBoolOpTypeVal::printLine( cfgFile, it );
@@ -1038,6 +1040,8 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_FILTER_MODULE]       = new WindowFilterModule();
   cfgTagFunctions[OLDCFG_TAG_WNDW_LOGICAL_FILTERED]    = new WindowFilterLogical();
   cfgTagFunctions[OLDCFG_TAG_WNDW_PHYSICAL_FILTERED]   = new WindowFilterPhysical();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_INTRACOMMS_FILTERED] = new WindowFilterIntraComms();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_INTERCOMMS_FILTERED] = new WindowFilterInterComms();
   cfgTagFunctions[OLDCFG_TAG_WNDW_FROMTO]              = new WindowFilterBoolOpFromTo();
   cfgTagFunctions[OLDCFG_TAG_WNDW_COMM_TAGSIZE]        = new WindowFilterBoolOpTagSize();
   cfgTagFunctions[OLDCFG_TAG_WNDW_TYPEVAL]             = new WindowFilterBoolOpTypeVal();
@@ -3430,6 +3434,90 @@ void WindowFilterPhysical::printLine( ofstream& cfgFile,
 {
   cfgFile << OLDCFG_TAG_WNDW_PHYSICAL_FILTERED << " ";
   if ( ( *it )->getFilter()->getPhysical() )
+    cfgFile << OLDCFG_VAL_TRUE;
+  else
+    cfgFile << OLDCFG_VAL_FALSE;
+  cfgFile << endl;
+}
+
+
+string WindowFilterIntraComms::tagCFG = OLDCFG_TAG_WNDW_INTRACOMMS_FILTERED;
+
+bool WindowFilterIntraComms::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                      Trace *whichTrace,
+                                      vector<Timeline *>& windows,
+                                      vector<Histogram *>& histograms )
+{
+  string strBool;
+  Filter *filter;
+
+  if ( windows[ windows.size() - 1 ] == nullptr )
+    return false;
+
+  if ( windows[ windows.size() - 1 ]->isDerivedWindow() )
+    return true;
+
+  getline( line, strBool, ' ' );
+
+  filter = windows[ windows.size() - 1 ]->getFilter();
+
+  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+    filter->setIntraCommsFilter( false );
+  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+    filter->setIntraCommsFilter( true );
+  else
+    return false;
+
+  return true;
+}
+
+void WindowFilterIntraComms::printLine( ofstream& cfgFile,
+                                      const vector<Timeline *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_INTRACOMMS_FILTERED << " ";
+  if ( ( *it )->getFilter()->getIntraCommsFilter() )
+    cfgFile << OLDCFG_VAL_TRUE;
+  else
+    cfgFile << OLDCFG_VAL_FALSE;
+  cfgFile << endl;
+}
+
+
+string WindowFilterInterComms::tagCFG = OLDCFG_TAG_WNDW_INTERCOMMS_FILTERED;
+
+bool WindowFilterInterComms::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                      Trace *whichTrace,
+                                      vector<Timeline *>& windows,
+                                      vector<Histogram *>& histograms )
+{
+  string strBool;
+  Filter *filter;
+
+  if ( windows[ windows.size() - 1 ] == nullptr )
+    return false;
+
+  if ( windows[ windows.size() - 1 ]->isDerivedWindow() )
+    return true;
+
+  getline( line, strBool, ' ' );
+
+  filter = windows[ windows.size() - 1 ]->getFilter();
+
+  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+    filter->setInterCommsFilter( false );
+  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+    filter->setInterCommsFilter( true );
+  else
+    return false;
+
+  return true;
+}
+
+void WindowFilterInterComms::printLine( ofstream& cfgFile,
+                                      const vector<Timeline *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_INTERCOMMS_FILTERED << " ";
+  if ( ( *it )->getFilter()->getInterCommsFilter() )
     cfgFile << OLDCFG_VAL_TRUE;
   else
     cfgFile << OLDCFG_VAL_FALSE;

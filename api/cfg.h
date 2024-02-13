@@ -1211,10 +1211,8 @@ class WindowFilterLogical: public TagFunction
 
     static const std::string &getTagCFG() { return tagCFG; }
 
-
   protected:
     static std::string tagCFG;
-
 };
 
 
@@ -1235,10 +1233,52 @@ class WindowFilterPhysical: public TagFunction
 
     static const std::string &getTagCFG() { return tagCFG; }
 
+  protected:
+    static std::string tagCFG;
+};
+
+
+class WindowFilterIntraComms: public TagFunction
+{
+  public:
+    WindowFilterIntraComms()
+    {}
+
+    virtual ~WindowFilterIntraComms()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Timeline *>& windows,
+                            std::vector<Histogram *>& histograms ) override;
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Timeline *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
 
   protected:
     static std::string tagCFG;
+};
 
+
+class WindowFilterInterComms: public TagFunction
+{
+  public:
+    WindowFilterInterComms()
+    {}
+
+    virtual ~WindowFilterInterComms()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Timeline *>& windows,
+                            std::vector<Histogram *>& histograms ) override;
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Timeline *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+  protected:
+    static std::string tagCFG;
 };
 
 
