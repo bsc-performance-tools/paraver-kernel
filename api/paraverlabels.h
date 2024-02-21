@@ -113,6 +113,7 @@ constexpr char OLDCFG_TAG_WNDW_DRAW_MODE[] = "window_drawmode";
 constexpr char OLDCFG_TAG_WNDW_DRAW_MODE_ROWS[] = "window_drawmode_rows";
 constexpr char OLDCFG_TAG_WNDW_PIXEL_SIZE[] = "window_pixel_size";
 constexpr char OLDCFG_TAG_WNDW_LABELS_TO_DRAW[] = "window_labels_to_draw";
+constexpr char OLDCFG_TAG_WNDW_OBJECT_AXIS_SIZE[] = "window_object_axis_position";
 constexpr char OLDCFG_TAG_WNDW_PUNCTUAL_COLOR_WIN[] = "window_punctual_color_window";
 constexpr char OLDCFG_TAG_WNDW_SYNCHRONIZE[] = "window_synchronize";
 

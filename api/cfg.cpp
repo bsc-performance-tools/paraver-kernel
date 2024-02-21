@@ -859,6 +859,7 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowDrawModeRows::printLine( cfgFile, it );
     WindowPixelSize::printLine( cfgFile, it );
     WindowLabelsToDraw::printLine( cfgFile, it );
+    WindowObjectAxisSize::printLine( cfgFile, it );
     WindowSelectedFunctions::printLine( cfgFile, it );
     WindowComposeFunctions::printLine( cfgFile, it );
     WindowSemanticModule::printLine( cfgFile, it );
@@ -1051,6 +1052,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_DRAW_MODE_ROWS]      = new WindowDrawModeRows();
   cfgTagFunctions[OLDCFG_TAG_WNDW_PIXEL_SIZE]          = new WindowPixelSize();
   cfgTagFunctions[OLDCFG_TAG_WNDW_LABELS_TO_DRAW]      = new WindowLabelsToDraw();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_OBJECT_AXIS_SIZE]    = new WindowObjectAxisSize();
   cfgTagFunctions[OLDCFG_TAG_WNDW_PUNCTUAL_COLOR_WIN]  = new WindowPunctualColorWindow();
   cfgTagFunctions[OLDCFG_TAG_WNDW_SYNCHRONIZE]         = new WindowSynchronize();
 
@@ -3824,6 +3826,37 @@ void WindowLabelsToDraw::printLine( ofstream& cfgFile,
                                  const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_LABELS_TO_DRAW << " " << static_cast< int > ( (*it)->getObjectLabels() ) << endl;
+}
+
+
+string WindowObjectAxisSize::tagCFG = OLDCFG_TAG_WNDW_OBJECT_AXIS_SIZE;
+
+bool WindowObjectAxisSize::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                     Trace *whichTrace,
+                                     vector<Timeline *>& windows,
+                                     vector<Histogram *>& histograms )
+{
+  string strObjectAxisSize;
+
+  if ( windows[ windows.size() - 1 ] == nullptr )
+    return false;
+
+  getline( line, strObjectAxisSize, ' ' );
+  istringstream tmpStream( strObjectAxisSize );
+  PRV_UINT16 objectAxisSize;
+
+  if ( !( tmpStream >> objectAxisSize ) )
+    return false;
+
+  windows[ windows.size() - 1 ]->setObjectAxisSize( ( TObjectAxisSize )objectAxisSize );
+
+  return true;
+}
+
+void WindowObjectAxisSize::printLine( ofstream& cfgFile,
+                                 const vector<Timeline *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_OBJECT_AXIS_SIZE << " " << static_cast< int > ( (*it)->getObjectAxisSize() ) << endl;
 }
 
 
