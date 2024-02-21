@@ -166,7 +166,7 @@ void KTraceOptions::init()
   set_remFirstStates( ParaverConfig::getInstance()->getCutterRemoveFirstStates() );
   set_remLastStates( ParaverConfig::getInstance()->getCutterRemoveLastStates() );
   set_keep_boundary_events( ParaverConfig::getInstance()->getCutterKeepEvents() );
-  set_keep_all_events( false );
+  set_keep_all_events( true );
   set_max_cut_time_to_finish_of_first_appl( false );
 
   // Filter Default Options
