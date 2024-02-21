@@ -1557,11 +1557,33 @@ TSemanticValue RecvNegativeBytes::execute( const SemanticInfo *info )
 }
 
 
-string NumberReceives::name = "Number Of Receives";
-TSemanticValue NumberReceives::execute( const SemanticInfo *info )
+string NumberSends::name = "Number Of Sends";
+TSemanticValue NumberSends::execute( const SemanticInfo *info )
 {
-  TSemanticValue msgs = 0;
+  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
 
+  if ( myInfo->it->getRecordType() == EMPTYREC )
+    return 0;
+
+  KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
+  TCommID id = myInfo->it->getCommIndex();
+
+  TSemanticValue msgs = myInfo->callingInterval->getValue();
+
+  if ( window->getFilter()->getPhysical() &&
+       myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & SEND )
+    ++msgs;
+  else if ( window->getFilter()->getLogical() &&
+            myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & SEND )
+    ++msgs;
+
+  return msgs;
+}
+
+
+string NumberSendBytes::name = "Number Of Send Bytes";
+TSemanticValue NumberSendBytes::execute( const SemanticInfo *info )
+{
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
 
   if ( myInfo->it->getRecordType() == EMPTYREC )
@@ -1571,11 +1593,36 @@ TSemanticValue NumberReceives::execute( const SemanticInfo *info )
   KTrace *trace = ( KTrace* )window->getTrace();
   TCommID id = myInfo->it->getCommIndex();
 
-  msgs = myInfo->callingInterval->getValue();
+  TSemanticValue bytes = myInfo->callingInterval->getValue();
+
+  if ( window->getFilter()->getPhysical() &&
+       myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & SEND )
+    bytes += trace->getCommSize( id );
+  else if ( window->getFilter()->getLogical() &&
+            myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & SEND )
+    bytes += trace->getCommSize( id );
+
+  return bytes;
+}
+
+
+string NumberReceives::name = "Number Of Receives";
+TSemanticValue NumberReceives::execute( const SemanticInfo *info )
+{
+  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+
+  if ( myInfo->it->getRecordType() == EMPTYREC )
+    return 0;
+
+  KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
+  KTrace *trace = ( KTrace* )window->getTrace();
+  TCommID id = myInfo->it->getCommIndex();
+
+  TSemanticValue msgs = myInfo->callingInterval->getValue();
 
   if ( window->getFilter()->getPhysical() &&
        myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV )
-    msgs++;
+    ++msgs;
 
   else if ( window->getFilter()->getLogical() )
   {
@@ -1586,7 +1633,7 @@ TSemanticValue NumberReceives::execute( const SemanticInfo *info )
            trace->getPhysicalReceive( id ) >=
            trace->getLogicalReceive( id ) )
        )
-      msgs++;
+      ++msgs;
   }
 
   return msgs;
@@ -1596,8 +1643,6 @@ TSemanticValue NumberReceives::execute( const SemanticInfo *info )
 string NumberReceiveBytes::name = "Number Of Receive Bytes";
 TSemanticValue NumberReceiveBytes::execute( const SemanticInfo *info )
 {
-  TSemanticValue bytes = 0;
-
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
 
   if ( myInfo->it->getRecordType() == EMPTYREC )
@@ -1607,7 +1652,7 @@ TSemanticValue NumberReceiveBytes::execute( const SemanticInfo *info )
   KTrace *trace = ( KTrace* )window->getTrace();
   TCommID id = myInfo->it->getCommIndex();
 
-  bytes = myInfo->callingInterval->getValue();
+  TSemanticValue bytes = myInfo->callingInterval->getValue();
 
   if ( window->getFilter()->getPhysical() &&
        myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV )

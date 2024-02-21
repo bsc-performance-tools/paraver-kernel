@@ -196,6 +196,8 @@ void createSemantic()
   functions[6].push_back( new RecvBandWidth() );
   functions[6].push_back( new RecvNegativeMessages() );
   functions[6].push_back( new RecvNegativeBytes() );
+  functions[6].push_back( new NumberSends() );
+  functions[6].push_back( new NumberSendBytes() );
   functions[6].push_back( new NumberReceives() );
   functions[6].push_back( new NumberReceiveBytes() );
 

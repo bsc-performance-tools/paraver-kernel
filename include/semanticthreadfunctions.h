@@ -2459,6 +2459,132 @@ class RecvNegativeBytes: public SemanticThread
 };
 
 
+class NumberSends: public SemanticThread
+{
+  public:
+    typedef enum
+    {
+      MAXPARAM = 0
+    } TParam;
+
+    NumberSends()
+    {
+      setDefaultParam();
+    }
+
+    virtual TParamIndex getMaxParam() const override
+    {
+      return MAXPARAM;
+    }
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KTimeline *whichWindow ) override
+    {}
+
+    virtual std::string getName() override
+    {
+      return NumberSends::name;
+    }
+
+    virtual SemanticFunction *clone() override
+    {
+      return new NumberSends( *this );
+    }
+
+
+  protected:
+    virtual const TRecordType getValidateMask() override
+    {
+      return validateMask;
+    }
+    virtual const bool getMyInitFromBegin() override
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+      return ( TParamValue ) 0;
+    }
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+      return "";
+    }
+  private:
+    static const TRecordType  validateMask = COMM + SEND;
+    static const bool         initFromBegin = true;
+    static std::string name;
+
+};
+
+
+class NumberSendBytes: public SemanticThread
+{
+  public:
+    typedef enum
+    {
+      MAXPARAM = 0
+    } TParam;
+
+    NumberSendBytes()
+    {
+      setDefaultParam();
+    }
+
+    virtual TParamIndex getMaxParam() const override
+    {
+      return MAXPARAM;
+    }
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KTimeline *whichWindow ) override
+    {}
+
+    virtual std::string getName() override
+    {
+      return NumberSendBytes::name;
+    }
+
+    virtual SemanticFunction *clone() override
+    {
+      return new NumberSendBytes( *this );
+    }
+
+    virtual SemanticInfoType getSemanticInfoType() const override
+    {
+      return COMMSIZE_TYPE;
+    }
+
+  protected:
+    virtual const TRecordType getValidateMask() override
+    {
+      return validateMask;
+    }
+    virtual const bool getMyInitFromBegin() override
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+      return ( TParamValue ) 0;
+    }
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+      return "";
+    }
+  private:
+    static const TRecordType  validateMask = COMM + SEND;
+    static const bool         initFromBegin = true;
+    static std::string name;
+
+};
+
+
 class NumberReceives: public SemanticThread
 {
   public:
