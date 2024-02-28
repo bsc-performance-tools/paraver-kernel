@@ -563,16 +563,17 @@ void KTraceCutter::update_queue( unsigned int appl, unsigned int task, unsigned 
                                  unsigned long long type,
                                  unsigned long long value )
 {
-  if( notHWCTypesInPCF.find( type ) != notHWCTypesInPCF.end() )
-    return;
-
   if ( threadsInfo.find( appl, task, thread ) == threadsInfo.end() )
   {
     init_useful_tasks = true;
     ++useful_tasks;
     ThreadInfo newThreadInfo( HWCTypesInPCF );
+    newThreadInfo.without_states = true;
     threadsInfo( appl, task, thread ) = newThreadInfo;
   }
+
+  if( notHWCTypesInPCF.find( type ) != notHWCTypesInPCF.end() )
+    return;
 
   ThreadInfo& tmpInfo = threadsInfo( appl, task, thread );
   bool isHWC = HWCTypesInPCF.find( type ) != HWCTypesInPCF.end();
@@ -931,6 +932,8 @@ void KTraceCutter::execute( std::string trace_in,
         {
           if ( threadInfoIt == threadsInfo.end() )
             initThreadInfo( appl, task, thread, cpu );
+
+          threadsInfo( appl - 1, task - 1, thread - 1 ).without_states = false;
 
           threadsInfo( appl - 1, task - 1, thread - 1 ).lastStateEndTime = time_2;
           if( time_1 < time_max && time_2 > time_max && !remLastStates && !break_states && keep_boundary_events )
