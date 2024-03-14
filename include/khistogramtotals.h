@@ -45,35 +45,38 @@ class KHistogramTotals: public HistogramTotals
                    THistogramColumn whichPlane = 0 );
     void finish();
 
+    TSemanticValue getNumCells( PRV_UINT16 idStat,
+                                THistogramColumn whichColumn,
+                                THistogramColumn whichPlane = 0 ) const override;
     TSemanticValue getTotal( PRV_UINT16 idStat,
                              THistogramColumn whichColumn,
-                             THistogramColumn whichPlane = 0 ) const;
+                             THistogramColumn whichPlane = 0 ) const override;
     TSemanticValue getAverage( PRV_UINT16 idStat,
                                THistogramColumn whichColumn,
-                               THistogramColumn whichPlane = 0 ) const;
+                               THistogramColumn whichPlane = 0 ) const override;
     TSemanticValue getMaximum( PRV_UINT16 idStat,
                                THistogramColumn whichColumn,
-                               THistogramColumn whichPlane = 0 ) const;
+                               THistogramColumn whichPlane = 0 ) const override;
     TSemanticValue getMinimum( PRV_UINT16 idStat,
                                THistogramColumn whichColumn,
-                               THistogramColumn whichPlane = 0 ) const;
+                               THistogramColumn whichPlane = 0 ) const override;
     TSemanticValue getStdev( PRV_UINT16 idStat,
                              THistogramColumn whichColumn,
-                             THistogramColumn whichPlane = 0 ) const;
+                             THistogramColumn whichPlane = 0 ) const override;
     TSemanticValue getAvgDivMax( PRV_UINT16 idStat,
                                  THistogramColumn whichColumn,
-                                 THistogramColumn whichPlane = 0 ) const;
+                                 THistogramColumn whichPlane = 0 ) const override;
     void getAll( std::vector<TSemanticValue>& where,
                  PRV_UINT16 idStat,
                  THistogramColumn whichColumn,
-                 THistogramColumn whichPlane = 0 ) const;
+                 THistogramColumn whichPlane = 0 ) const override;
 
-    const std::vector<int>& sortByTotal( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
-    const std::vector<int>& sortByAverage( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
-    const std::vector<int>& sortByMaximum( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
-    const std::vector<int>& sortByMinimum( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
-    const std::vector<int>& sortByStdev( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
-    const std::vector<int>& sortByAvgDivMax( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
+    const std::vector<int>& sortByTotal( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) override;
+    const std::vector<int>& sortByAverage( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) override;
+    const std::vector<int>& sortByMaximum( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) override;
+    const std::vector<int>& sortByMinimum( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) override;
+    const std::vector<int>& sortByStdev( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) override;
+    const std::vector<int>& sortByAvgDivMax( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) override;
 
   protected:
 
@@ -81,6 +84,7 @@ class KHistogramTotals: public HistogramTotals
     THistogramColumn columns;
     PRV_UINT16 stats;
     // planes<stats<columns<value> > >
+    std::vector<std::vector<std::vector<TSemanticValue> > > numCells;
     std::vector<std::vector<std::vector<TSemanticValue> > > total;
     std::vector<std::vector<std::vector<TSemanticValue> > > average;
     std::vector<std::vector<std::vector<TSemanticValue> > > maximum;

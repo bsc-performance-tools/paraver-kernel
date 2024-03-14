@@ -59,6 +59,7 @@ KHistogramTotals::KHistogramTotals( PRV_UINT16 numStat,
   vector<vector<TSemanticValue> > tmpStatsMax( stats, tmpColumnsMax );
   vector<vector<TSemanticValue> > tmpStatsMin( stats, tmpColumnsMin );
 
+  numCells.insert( total.begin(), numPlanes, tmpStats );
   total.insert( total.begin(), numPlanes, tmpStats );
   average.insert( average.begin(), numPlanes, tmpStats );
   maximum.insert( maximum.begin(), numPlanes, tmpStatsMax );
@@ -85,7 +86,7 @@ void KHistogramTotals::newValue( TSemanticValue whichValue,
                                  THistogramColumn whichPlane )
 {
   ( ( total[ whichPlane ] )[ idStat ] )[ whichColumn ] += whichValue;
-  ( ( average[ whichPlane ] )[ idStat ] )[ whichColumn ] += 1;
+  ( ( numCells[ whichPlane ] )[ idStat ] )[ whichColumn ] += 1;
 
   if ( whichValue > ( ( maximum[ whichPlane ] )[ idStat ] )[ whichColumn ] )
     ( ( maximum[ whichPlane ] )[ idStat ] )[ whichColumn ] = whichValue;
@@ -107,10 +108,11 @@ void KHistogramTotals::finish()
     {
       for ( THistogramColumn iColumn = 0; iColumn < columns; iColumn++ )
       {
-        TSemanticValue n = ( ( average[ iPlane ] )[ iStat ] )[ iColumn ];
+        TSemanticValue n = ( ( numCells[ iPlane ] )[ iStat ] )[ iColumn ];
 
         if ( n == 0 )
         {
+          ( ( numCells[ iPlane ] )[ iStat ] )[ iColumn ] = 0.0;
           ( ( total[ iPlane ] )[ iStat ] )[ iColumn ] = 0.0;
           ( ( average[ iPlane ] )[ iStat ] )[ iColumn ] = 0.0;
           ( ( maximum[ iPlane ] )[ iStat ] )[ iColumn ] = 0.0;
@@ -142,6 +144,14 @@ void KHistogramTotals::finish()
       }
     }
   }
+}
+
+
+TSemanticValue KHistogramTotals::getNumCells( PRV_UINT16 idStat,
+    THistogramColumn whichColumn,
+    THistogramColumn whichPlane ) const
+{
+  return ( ( numCells[ whichPlane ] )[ idStat ] )[ whichColumn ];
 }
 
 
@@ -199,6 +209,7 @@ void KHistogramTotals::getAll( vector<TSemanticValue>& where,
                                THistogramColumn whichColumn,
                                THistogramColumn whichPlane ) const
 {
+  where.push_back( ( ( numCells[ whichPlane ] )[ idStat ] ) [ whichColumn ] );
   where.push_back( ( ( total[ whichPlane ] )[ idStat ] ) [ whichColumn ] );
   where.push_back( ( ( average[ whichPlane ] )[ idStat ] ) [ whichColumn ] );
   where.push_back( ( ( maximum[ whichPlane ] )[ idStat ] ) [ whichColumn ] );

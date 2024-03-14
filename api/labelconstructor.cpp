@@ -286,6 +286,8 @@ string LabelConstructor::histoTotalLabel( THistoTotals whichTotal )
 {
   switch ( whichTotal )
   {
+    case NUM_CELLS:
+      return "Num. Cells";
     case TOTAL:
       return "Total";
     case AVERAGE:

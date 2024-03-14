@@ -38,6 +38,13 @@ HistogramTotalsProxy::HistogramTotalsProxy( HistogramTotals *whichTotals )
     : myTotals( whichTotals )
 {}
 
+TSemanticValue HistogramTotalsProxy::getNumCells( PRV_UINT16 idStat,
+    THistogramColumn whichColumn,
+    THistogramColumn whichPlane ) const
+{
+  return myTotals->getNumCells( idStat, whichColumn, whichPlane );
+}
+
 TSemanticValue HistogramTotalsProxy::getTotal( PRV_UINT16 idStat,
     THistogramColumn whichColumn,
     THistogramColumn whichPlane ) const

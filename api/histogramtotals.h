@@ -34,6 +34,9 @@ class HistogramTotals
 
     virtual ~HistogramTotals() {}
 
+    virtual TSemanticValue getNumCells( PRV_UINT16 idStat,
+                                        THistogramColumn whichColumn,
+                                        THistogramColumn whichPlane = 0 ) const = 0;
     virtual TSemanticValue getTotal( PRV_UINT16 idStat,
                                      THistogramColumn whichColumn,
                                      THistogramColumn whichPlane = 0 ) const = 0;
@@ -75,6 +78,9 @@ class HistogramTotalsProxy: public HistogramTotals
   public:
     virtual ~HistogramTotalsProxy() {}
 
+    virtual TSemanticValue getNumCells( PRV_UINT16 idStat,
+                                        THistogramColumn whichColumn,
+                                        THistogramColumn whichPlane = 0 ) const override;
     virtual TSemanticValue getTotal( PRV_UINT16 idStat,
                                      THistogramColumn whichColumn,
                                      THistogramColumn whichPlane = 0 ) const override;
