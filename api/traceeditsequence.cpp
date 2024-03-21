@@ -31,7 +31,6 @@
 std::string TraceEditSequence::dirNameClustering( "clustering" );
 std::string TraceEditSequence::dirNameFolding( "folding" );
 std::string TraceEditSequence::dirNameDimemas( "dimemas" );
-std::string TraceEditSequence::dirNameSpectral( "spectral" ); // ??
 std::string TraceEditSequence::dirNameProfet( "profet" );
 std::string TraceEditSequence::dirNameUserCommand( "usercommand" );
 

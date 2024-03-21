@@ -79,7 +79,6 @@ class TraceEditSequence
     static std::string dirNameClustering;
     static std::string dirNameFolding;
     static std::string dirNameDimemas;
-    static std::string dirNameSpectral;
     static std::string dirNameProfet;
     static std::string dirNameUserCommand;
 
