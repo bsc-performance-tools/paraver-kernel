@@ -3683,20 +3683,26 @@ void WindowOpen::printLine( ofstream& cfgFile,
 {
   cfgFile << OLDCFG_TAG_WNDW_OPEN << " ";
 
-  bool showWindow = ( *it )->getShowWindow() && 
-                    std::find( forcedOpenWindows.begin(), forcedOpenWindows.end(), *it ) != forcedOpenWindows.end();
-
-  if ( showWindow )
-    cfgFile << OLDCFG_VAL_TRUE;
-  else if( !( *it )->getUsedByHistogram() )
-  {
-    if ( ( *it )->getChild() != nullptr )
-      cfgFile << OLDCFG_VAL_FALSE;
-    else
-      cfgFile << OLDCFG_VAL_TRUE;
-  }
-  else
+  if( !( *it )->getShowWindow() )
     cfgFile << OLDCFG_VAL_FALSE;
+  else
+  {
+    if( !( *it )->getUsedByHistogram() )
+    {
+      if ( ( *it )->getChild() != nullptr )
+        cfgFile << OLDCFG_VAL_FALSE;
+      else
+        cfgFile << OLDCFG_VAL_TRUE;
+    }
+    else
+    {
+      if( std::find( forcedOpenWindows.begin(), forcedOpenWindows.end(), *it ) != forcedOpenWindows.end() )
+        cfgFile << OLDCFG_VAL_TRUE;
+      else
+        cfgFile << OLDCFG_VAL_FALSE;
+    }
+  }
+
   cfgFile << endl;
 }
 
