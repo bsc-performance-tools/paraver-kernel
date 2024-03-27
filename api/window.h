@@ -491,6 +491,24 @@ class Timeline
     }
     virtual void setUseCustomPalette( bool newValue ) 
     {}
+    virtual rgb getBackgroundColor() const
+    {
+      return { 0, 0, 0 };
+    }
+    virtual rgb getAxisColor() const
+    {
+      return { 0, 0, 0 };
+    }
+    virtual rgb getZeroColor() const
+    {
+      return { 0, 0, 0 };
+    }
+    virtual void setCustomBackgroundColor( rgb whichColor )
+    {}
+    virtual void setCustomAxisColor( rgb whichColor )
+    {}
+    virtual void setCustomZeroColor( rgb whichColor )
+    {}
     virtual bool getChanged() const
     {
       return false;
@@ -1026,6 +1044,12 @@ class TimelineProxy: public Timeline
     virtual bool isColorOutlier( rgb whichColor ) const override;
     virtual bool getUseCustomPalette() const override;
     virtual void setUseCustomPalette( bool newValue ) override;
+    virtual rgb getBackgroundColor() const override;
+    virtual rgb getAxisColor() const override;
+    virtual rgb getZeroColor() const override;
+    virtual void setCustomBackgroundColor( rgb whichColor ) override;
+    virtual void setCustomAxisColor( rgb whichColor ) override;
+    virtual void setCustomZeroColor( rgb whichColor ) override;
     virtual bool getChanged() const override;
     virtual void setChanged( bool newValue ) override;
     virtual bool getRedraw() const override;
@@ -1243,10 +1267,15 @@ class TimelineProxy: public Timeline
 
     // GUI related attributes
     std::string name;
+
     CodeColor myCodeColor;
     GradientColor myGradientColor;
     GradientColor myAltGradientColor{ std::vector<rgb>{ {0,255,0}, {255,255,0}, {255,0,0} } };
     bool useCustomPalette;
+    rgb customBackgroundColor;
+    rgb customAxisColor;
+    rgb customZeroColor;
+
     DrawModeMethod drawModeObject;
     DrawModeMethod drawModeTime;
     TColorFunction colorMode;

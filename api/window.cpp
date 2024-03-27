@@ -136,6 +136,7 @@ void TimelineProxy::init()
   minimumY = Timeline::getMinimumY();
   existSemanticZero = Timeline::getExistSemanticZero();
   semanticScaleMinAtZero = ParaverConfig::getInstance()->getTimelineSemanticScaleMinAtZero();
+
   colorMode = ParaverConfig::getInstance()->getTimelineColor();
   useCustomPalette = Timeline::getUseCustomPalette();
   if( colorMode == TColorFunction::GRADIENT )
@@ -144,6 +145,10 @@ void TimelineProxy::init()
     myGradientColor.allowOutOfScale( false );
   myGradientColor.setGradientFunction( ParaverConfig::getInstance()->getTimelineGradientFunction() );
   myAltGradientColor.setGradientFunction( ParaverConfig::getInstance()->getTimelineGradientFunction() );
+  customBackgroundColor = ParaverConfig::getInstance()->getColorsTimelineBackground();
+  customAxisColor = ParaverConfig::getInstance()->getColorsTimelineAxis();
+  customZeroColor = ParaverConfig::getInstance()->getColorsTimelineColorZero();
+
   drawModeObject = ParaverConfig::getInstance()->getTimelineDrawmodeObjects();
   drawModeTime = ParaverConfig::getInstance()->getTimelineDrawmodeTime();
   if( ParaverConfig::getInstance()->getTimelinePixelSize() <= 3 )
@@ -1327,6 +1332,45 @@ bool TimelineProxy::getUseCustomPalette() const
 void TimelineProxy::setUseCustomPalette( bool newValue ) 
 {
   useCustomPalette = newValue;
+}
+
+rgb TimelineProxy::getBackgroundColor() const
+{
+  if( useCustomPalette )
+    return customBackgroundColor;
+  
+  return ParaverConfig::getInstance()->getColorsTimelineBackground();
+}
+
+rgb TimelineProxy::getAxisColor() const
+{
+  if( useCustomPalette )
+    return customAxisColor;
+  
+  return ParaverConfig::getInstance()->getColorsTimelineAxis();
+}
+
+rgb TimelineProxy::getZeroColor() const
+{
+  if( useCustomPalette )
+    return customZeroColor;
+  
+  return ParaverConfig::getInstance()->getColorsTimelineColorZero();
+}
+
+void TimelineProxy::setCustomBackgroundColor( rgb whichColor )
+{
+  customBackgroundColor = whichColor;
+}
+
+void TimelineProxy::setCustomAxisColor( rgb whichColor )
+{
+  customAxisColor = whichColor;
+}
+
+void TimelineProxy::setCustomZeroColor( rgb whichColor )
+{
+  customZeroColor = whichColor;
 }
 
 bool TimelineProxy::getChanged() const
