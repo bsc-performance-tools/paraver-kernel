@@ -1334,6 +1334,13 @@ void TimelineProxy::setUseCustomPalette( bool newValue )
   useCustomPalette = newValue;
 }
 
+bool TimelineProxy::existCustomColors() const
+{
+  return myCodeColor.existCustomColors() ||
+         customBackgroundColor != ParaverConfig::getInstance()->getColorsTimelineBackground() ||
+         customAxisColor != ParaverConfig::getInstance()->getColorsTimelineAxis();
+}
+
 rgb TimelineProxy::getBackgroundColor() const
 {
   if( useCustomPalette )

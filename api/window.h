@@ -491,6 +491,10 @@ class Timeline
     }
     virtual void setUseCustomPalette( bool newValue ) 
     {}
+    virtual bool existCustomColors() const
+    {
+      return false;
+    }
     virtual rgb getBackgroundColor() const
     {
       return { 0, 0, 0 };
@@ -1044,6 +1048,7 @@ class TimelineProxy: public Timeline
     virtual bool isColorOutlier( rgb whichColor ) const override;
     virtual bool getUseCustomPalette() const override;
     virtual void setUseCustomPalette( bool newValue ) override;
+    virtual bool existCustomColors() const override;
     virtual rgb getBackgroundColor() const override;
     virtual rgb getAxisColor() const override;
     virtual rgb getZeroColor() const override;
