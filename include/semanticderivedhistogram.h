@@ -26,7 +26,6 @@
 
 #include "semanticfunction.h"
 
-
 class SemanticDerivedHistogram: public SemanticFunction
 {
   public:
@@ -35,10 +34,16 @@ class SemanticDerivedHistogram: public SemanticFunction
     ~SemanticDerivedHistogram()
     {}
 
-    virtual TSemanticValue execute( const SemanticInfo *info ) override
-    {
-      return 0;
-    }
+    // virtual TSemanticValue execute( const SemanticInfo *info ) override
+    // {
+    //   return 0;
+    // }
+
+    // virtual SemanticFunction *clone() override
+    // {
+    //   return nullptr;
+    // }
+
 
   protected:
 
