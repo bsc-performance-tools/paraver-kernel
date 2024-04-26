@@ -25,8 +25,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-
 #include <time.h>
 #include <sys/stat.h>
 #ifdef _WIN32
@@ -66,7 +64,9 @@
 #include "ktraceshifter.h"
 #include "keventdrivencutter.h"
 #include "keventtranslator.h"
+#include "semanticderivedhistogramfunctions.h"
 #include "tracestream.h"
+
 #include <string.h>
 
 #ifdef TRACING_ENABLED
@@ -288,7 +288,7 @@ Histogram *LocalKernel::newHistogram() const
 
 Histogram *LocalKernel::newDerivedHistogram( Histogram *histogram1, Histogram *histogram2 ) const
 {
-  return new KDerivedHistogramX( ( KHistogram * )histogram1->getConcrete(),
+  return new KDerivedHistogram( ( KHistogram * )histogram1->getConcrete(),
                                 ( KHistogram * )histogram2->getConcrete() );
 }
 
@@ -446,18 +446,21 @@ void LocalKernel::getAllStatistics( vector<string>& onVector ) const
 }
 
 
-
 void LocalKernel::getAllFilterFunctions( vector<string>& onVector ) const
 {
   FunctionManagement<FilterFunction>::getInstance()->getAll( onVector );
 }
 
 
-void LocalKernel::getAllSemanticFunctions( TSemanticGroup whichGroup,
-    vector<string>& onVector ) const
+void LocalKernel::getAllSemanticFunctions( TSemanticGroup whichGroup, vector<string>& onVector ) const
 {
-  FunctionManagement<SemanticFunction>::getInstance()->getAll( onVector,
-      whichGroup );
+  FunctionManagement<SemanticFunction>::getInstance()->getAll( onVector, whichGroup );
+}
+
+
+void LocalKernel::getAllHistogramDerivedOperations( vector<string>& onVector ) const
+{
+  FunctionManagement<SemanticDerivedHistogram>::getInstance()->getAll( onVector );
 }
 
 

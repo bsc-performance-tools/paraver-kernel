@@ -92,6 +92,7 @@ class LocalKernel: public KernelConnection
     virtual void getAllFilterFunctions( std::vector<std::string>& onVector ) const override;
     virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
                                           std::vector<std::string>& onVector ) const override;
+    virtual void getAllHistogramDerivedOperations( std::vector<std::string>& onVector ) const override;
 
     virtual bool userMessage( UserMessageID messageID ) const override;
 
