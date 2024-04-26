@@ -544,6 +544,7 @@ enum THistogramProperties
   HISTOGRAM_3DMAXIMUM,
   HISTOGRAM_3DDELTA,
   HISTOGRAM_3DPLANE,
+  HISTOGRAM_DERIVED_OP,
 
   TOTAL_HISTOGRAM_PROPERTIES,
   HISTOGRAM_NULL
@@ -569,6 +570,7 @@ static const std::string HistogramPropertyLabels[ TOTAL_HISTOGRAM_PROPERTIES ] =
   "3D.Maximum",
   "3D.Delta",
   "3D.Plane",
+  "Derived"
 };
 
 // DIMEMAS
