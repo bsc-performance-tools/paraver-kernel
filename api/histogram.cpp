@@ -58,7 +58,7 @@ Histogram *Histogram::create( KernelConnection *whichKernel, Histogram *parent1,
 }
 
 
-HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
+HistogramProxy::HistogramProxy( KernelConnection *whichKernel, bool createHistogram, bool isDerivedHistogram ):
   Histogram( whichKernel )
 {
   parent1 = nullptr;
@@ -73,7 +73,10 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   controlWindow = nullptr;
   dataWindow = nullptr;
   extraControlWindow = nullptr;
-  myHisto = myKernel->newHistogram();
+
+  derivedHistogram = isDerivedHistogram;
+  if ( !derivedHistogram || createHistogram )
+    myHisto = myKernel->newHistogram();
 
   width = Histogram::getWidth();
   height = Histogram::getHeight();
@@ -112,7 +115,8 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   onlyTotals = Histogram::getOnlyTotals();
   shortLabels = Histogram::getShortLabels();
 
-  setCalculateAll( Histogram::getCalculateAll() );
+  if ( !derivedHistogram || createHistogram )
+    setCalculateAll( Histogram::getCalculateAll() );
   currentStat = Histogram::getCurrentStat();
 
   showWindow = true;
@@ -135,20 +139,21 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
 
 
 HistogramProxy::HistogramProxy( KernelConnection *whichKernel, Histogram *whichParent1, Histogram *whichParent2 )
-  : HistogramProxy( whichKernel )
+  : HistogramProxy( whichKernel, false, true )
 {
-  parent1 = whichParent1;
-  parent2 = whichParent2;
+  parent1 = whichParent1->clone();
+  parent2 = whichParent2->clone();
 
-  //controlWindow = whichParent1->getControlWindow();
-  //dataWindow = whichParent1->getDataWindow();
-  // myTrace = whichParent1->getTrace();
-  setControlWindow( whichParent1->getControlWindow() );
-  setDataWindow( whichParent1->getDataWindow() );
+  myHisto = whichKernel->newDerivedHistogram( parent1, parent2 );
 
-  // todo: solve this
-  delete myHisto;
-  myHisto = whichKernel->newDerivedHistogram( whichParent1, whichParent2 );
+  myTrace = parent1->getTrace(); // Only for further queries, may not be necessary
+
+  setControlWindow( parent1->getControlWindow() );
+  setDataWindow( parent1->getDataWindow() );
+  if ( parent1->getExtraControlWindow() != nullptr )
+    setExtraControlWindow( parent1->getExtraControlWindow() );
+
+  setCalculateAll( Histogram::getCalculateAll() );
 }
 
 
@@ -204,8 +209,6 @@ Trace *HistogramProxy::getTrace() const
 
 Timeline *HistogramProxy::getControlWindow() const
 {
-  // std::cout << "PROXY parent1->getControlWindow(): " << controlWindow << std::endl;
-
   return controlWindow;
 }
 
@@ -1299,6 +1302,7 @@ string HistogramProxy::getName() const
 void HistogramProxy::setCalculateAll( bool status )
 {
   calculateAll = status;
+
   clearStatistics();
   if ( status )
   {
@@ -1309,6 +1313,12 @@ void HistogramProxy::setCalculateAll( bool status )
   }
   else
     pushbackStatistic( currentStat );
+
+  if ( isDerivedHistogram() )
+  {
+    parent1->setCalculateAll( status );
+    parent2->setCalculateAll( status );
+  }
 }
 
 bool HistogramProxy::getCalculateAll() const
@@ -1364,9 +1374,9 @@ string HistogramProxy::getUnitsLabel( const string& whichStat ) const
 
 Histogram *HistogramProxy::clone()
 {
-  HistogramProxy *clonedHistogramProxy = new HistogramProxy( myKernel );
-
-  delete clonedHistogramProxy->myHisto;
+  bool createHistogram = false;
+  HistogramProxy *clonedHistogramProxy = new HistogramProxy( myKernel, createHistogram );
+  //delete clonedHistogramProxy->myHisto;
   clonedHistogramProxy->myHisto = myHisto->clone();
 
   std::ostringstream tmp;
@@ -1442,7 +1452,9 @@ Histogram *HistogramProxy::clone()
     }
   }
 
-  clonedHistogramProxy->calculateAll = calculateAll;
+  //clonedHistogramProxy->calculateAll = calculateAll;
+  clonedHistogramProxy->setCalculateAll( calculateAll );
+
   clonedHistogramProxy->currentStat = currentStat;
   clonedHistogramProxy->calcStat = vector<string>( calcStat );
   clonedHistogramProxy->commCalcStat = vector<string>( commCalcStat );
@@ -2009,10 +2021,59 @@ void HistogramProxy::setCurrentSemanticSort( const vector<int>& whichSort )
 
 bool HistogramProxy::isDerivedHistogram() const
 {
-  return parent1 == nullptr;
+  return derivedHistogram;
 }
 
 Histogram *HistogramProxy::getConcrete() const
 {
   return myHisto;
+}
+
+std::string HistogramProxy::getNameDerivedHistogramFirstParent() const
+{
+  return parent1->getName();
+}
+
+std::string HistogramProxy::getNameDerivedHistogramSecondParent() const
+{
+  return parent2->getName();
+}
+
+std::string HistogramProxy::getDerivedOperation() const
+{
+  return myHisto->getDerivedOperation();
+}
+
+void HistogramProxy::setDerivedOperation( const std::string& whichOperation )
+{
+  myHisto->setDerivedOperation( whichOperation );
+}
+
+void HistogramProxy::getDerivedOperationGroupsLabels( vector<string>& onVector ) const
+{
+  myHisto->getDerivedOperationGroupsLabels( onVector );
+}
+
+void HistogramProxy::getDerivedOperationLabels( vector<string>& onVector,
+                                                PRV_UINT32 whichGroup,
+                                                bool getOriginalList = true ) const
+{
+  if ( getOriginalList )
+  {
+    myHisto->getDerivedOperationLabels( onVector, whichGroup, getOriginalList );
+  }
+  else
+  {
+    // TODO: decide if derived operation can be renamed in CFG4D
+    // vector< string > fullList;
+    // myHisto->getDerivedOperationLabels( fullList, whichGroup );
+    // map< string, string >::const_iterator itStat;
+
+    // for( vector< string >::iterator it = fullList.begin(); it != fullList.end(); ++it )
+    // {
+    //   itStat = histogramDerivedOperationAliasCFG4D.find( *it );
+    //   if ( itStat != histogramDerivedOperationAliasCFG4D.end() )
+    //   onVector.push_back( itStat->second );
+    // }
+  }
 }

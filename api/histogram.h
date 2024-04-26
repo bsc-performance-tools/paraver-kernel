@@ -68,6 +68,27 @@ class Histogram
     }
     
     virtual bool isDerivedHistogram() const = 0;
+    virtual std::string getNameDerivedHistogramFirstParent() const
+    {
+      return {};
+    };
+    virtual std::string getNameDerivedHistogramSecondParent() const
+    {
+      return {};
+    };
+    virtual std::string getDerivedOperation() const
+    {
+      return {};
+    }
+    virtual void setDerivedOperation( const std::string& whichOperation )
+    {}
+    virtual void getDerivedOperationGroupsLabels( std::vector<std::string>& onVector ) const
+    {}
+    virtual void getDerivedOperationLabels( std::vector<std::string>& onVector,
+                                            PRV_UINT32 whichGroup,
+                                            bool getOriginalList ) const
+    {}
+
 
     virtual Timeline *getControlWindow() const = 0;
     virtual Timeline *getDataWindow() const = 0;
@@ -670,6 +691,14 @@ class HistogramProxy : public Histogram
     Histogram *getConcrete() const;
 
     virtual bool isDerivedHistogram() const override;
+    virtual std::string getNameDerivedHistogramFirstParent() const override;
+    virtual std::string getNameDerivedHistogramSecondParent() const override;
+    virtual std::string getDerivedOperation() const override;
+    virtual void setDerivedOperation( const std::string& whichOperation ) override;
+    virtual void getDerivedOperationGroupsLabels( std::vector<std::string>& onVector ) const override;
+    virtual void getDerivedOperationLabels( std::vector<std::string>& onVector,
+                                            PRV_UINT32 whichGroup,
+                                            bool getOriginalList ) const override;
 
     virtual Timeline *getControlWindow() const override;
     virtual Timeline *getDataWindow() const override;
@@ -717,9 +746,10 @@ class HistogramProxy : public Histogram
                                             PRV_UINT16 idStat,
                                             PRV_UINT32 plane = 0 ) const override;
     virtual PRV_UINT32 getCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const override;
-    virtual void setNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
     virtual void setFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    virtual void setNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
     virtual bool endCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+
     virtual bool planeWithValues( PRV_UINT32 plane = 0 ) const override;
     virtual bool getCellValue( TSemanticValue& semVal,
                                PRV_UINT32 whichRow,
@@ -732,8 +762,8 @@ class HistogramProxy : public Histogram
                                   PRV_UINT32 whichPlane = 0 ) const override;
 
     virtual TSemanticValue getCommCurrentValue( PRV_UINT32 col,
-        PRV_UINT16 idStat,
-        PRV_UINT32 plane = 0 ) const override;
+                                                PRV_UINT16 idStat,
+                                                PRV_UINT32 plane = 0 ) const override;
     virtual PRV_UINT32 getCommCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const override;
     virtual void setCommNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
     virtual void setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
@@ -1031,10 +1061,13 @@ class HistogramProxy : public Histogram
     GradientColor myAltGradientColor{ std::vector<rgb>{ {0,255,0}, {255,255,0}, {255,0,0} } };
 
     Histogram *myHisto;
-    Histogram *parent1;
-    Histogram *parent2;
 
     int number_of_clones;
+
+    // Derived Histogram
+    bool derivedHistogram;
+    Histogram *parent1;
+    Histogram *parent2;
 
     // CFG4D
     bool isCFG4DEnabled;
@@ -1047,7 +1080,7 @@ class HistogramProxy : public Histogram
     //Selection of rows
     SelectionManagement< TObjectOrder, TTraceLevel > rowSelection;
 
-    HistogramProxy( KernelConnection *whichKernel );
+    HistogramProxy( KernelConnection *whichKernel, bool createHistogram = true, bool isDerivedHistogram = false );
     HistogramProxy( KernelConnection *whichKernel, Histogram *whichParent1, Histogram *whichParent2 );
 
     void fillSemanticSort();
