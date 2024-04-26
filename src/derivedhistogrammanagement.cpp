@@ -34,21 +34,22 @@ void createDerivedHistogramFunctions()
 {
   vector<string> groups;
   vector<string> names;
-  vector<vector<SemanticFunction *> > functions;
+  vector<vector<SemanticDerivedHistogram *> > functions;
 
   /*****************************
   ** Histogram Derived functions
   ******************************/
   groups.push_back( "Derived Histogram" );
-  functions.push_back( vector<SemanticFunction *>() );
+  functions.push_back( vector<SemanticDerivedHistogram *>() );
 
   functions[0].push_back( new DerivedHistogramAdd() );
-  // functions[8].push_back( new DerivedProduct<KHistogram, DerivedHistogramFunctionInfo>() );
-  // functions[8].push_back( new DerivedSubstract<KHistogram, DerivedHistogramFunctionInfo>() );
-  // functions[8].push_back( new DerivedDivide<KHistogram, DerivedHistogramFunctionInfo>() );
-  // functions[8].push_back( new DerivedMaximum(<KHistogram, DerivedHistogramFunctionInfo>) );
-  // functions[8].push_back( new DerivedMinimum(<KHistogram, DerivedHistogramFunctionInfo>) );
-  // functions[8].push_back( new DerivedDifferent<KHistogram, DerivedHistogramFunctionInfo>() );
+  functions[0].push_back( new DerivedHistogramProduct() );
+  functions[0].push_back( new DerivedHistogramSubstract() );
+  functions[0].push_back( new DerivedHistogramDivide() );
+  functions[0].push_back( new DerivedHistogramMaximum() );
+  functions[0].push_back( new DerivedHistogramMinimum() );
+  functions[0].push_back( new DerivedHistogramDifferent() );
+  //functions[0].push_back( new DerivedDifferent<KHistogram, DerivedHistogramFunctionInfo>() );
 
   for ( PRV_UINT16 iGroup = 0; iGroup < functions.size(); iGroup++ )
   {
@@ -56,5 +57,5 @@ void createDerivedHistogramFunctions()
       names.push_back( functions[ iGroup ][ iFunction ]->getName() );
   }
 
-  FunctionManagement<SemanticFunction>::getInstance( groups, names, functions );
+  FunctionManagement<SemanticDerivedHistogram>::getInstance( groups, names, functions );
 }

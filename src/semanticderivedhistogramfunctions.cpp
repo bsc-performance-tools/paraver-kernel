@@ -25,8 +25,7 @@
 
 using namespace std;
 
-string DerivedHistogramAdd::name = "add"; // TODO: collision with semanticderived add?
-//TSemanticValue DerivedHistogramAdd::execute( const DerivedHistogramFunctionInfo *info )
+string DerivedHistogramAdd::name = "add";
 TSemanticValue DerivedHistogramAdd::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -38,82 +37,82 @@ TSemanticValue DerivedHistogramAdd::execute( const SemanticInfo *info )
 }
 
 
-// string DerivedHistogramProduct::name = "product";
-// TSemanticValue DerivedHistogramProduct::execute( const SemanticInfo *info )
-// {
-//   TSemanticValue tmp = 0;
-//   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+string DerivedHistogramProduct::name = "product";
+TSemanticValue DerivedHistogramProduct::execute( const SemanticInfo *info )
+{
+  TSemanticValue tmp = 0;
+  const DerivedHistogramFunctionInfo *myInfo = ( const DerivedHistogramFunctionInfo * ) info;
 
-//   tmp = myInfo->values[ 0 ] * myInfo->values[ 1 ];
+  tmp = myInfo->values[ 0 ] * myInfo->values[ 1 ];
 
-//   return tmp;
-// }
-
-
-// string DerivedHistogramSubstract::name = "substract";
-// TSemanticValue DerivedHistogramSubstract::execute( const SemanticInfo *info )
-// {
-//   TSemanticValue tmp = 0;
-//   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
-
-//   tmp = myInfo->values[ 0 ] - myInfo->values[ 1 ];
-
-//   return tmp;
-// }
+  return tmp;
+}
 
 
-// string DerivedHistogramDivide::name = "divide";
-// TSemanticValue DerivedHistogramDivide::execute( const SemanticInfo *info )
-// {
-//   TSemanticValue tmp = 0.0;
-//   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+string DerivedHistogramSubstract::name = "substract";
+TSemanticValue DerivedHistogramSubstract::execute( const SemanticInfo *info )
+{
+  TSemanticValue tmp = 0;
+  const DerivedHistogramFunctionInfo *myInfo = ( const DerivedHistogramFunctionInfo * ) info;
 
-//   if( myInfo->values[ 1 ] == 0 )
-//     return 0.0;
+  tmp = myInfo->values[ 0 ] - myInfo->values[ 1 ];
 
-//   tmp = myInfo->values[ 0 ] / myInfo->values[ 1 ];
-
-//   return tmp;
-// }
+  return tmp;
+}
 
 
-// string DerivedHistogramMaximum::name = "maximum";
-// TSemanticValue DerivedHistogramMaximum::execute( const SemanticInfo *info )
-// {
-//   TSemanticValue tmp = 0;
-//   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+string DerivedHistogramDivide::name = "divide";
+TSemanticValue DerivedHistogramDivide::execute( const SemanticInfo *info )
+{
+  TSemanticValue tmp = 0.0;
+  const DerivedHistogramFunctionInfo *myInfo = ( const DerivedHistogramFunctionInfo * ) info;
 
-//   tmp = myInfo->values[ 0 ] > myInfo->values[ 1 ] ?
-//         myInfo->values[ 0 ] :
-//         myInfo->values[ 1 ];
+  if( myInfo->values[ 1 ] == 0 )
+    return 0.0;
 
-//   return tmp;
-// }
+  tmp = myInfo->values[ 0 ] / myInfo->values[ 1 ];
 
-
-// string DerivedHistogramMinimum::name = "minimum";
-// TSemanticValue DerivedHistogramMinimum::execute( const SemanticInfo *info )
-// {
-//   TSemanticValue tmp = 0;
-//   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
-
-//   tmp = myInfo->values[ 0 ] < myInfo->values[ 1 ] ?
-//         myInfo->values[ 0 ] :
-//         myInfo->values[ 1 ];
-
-//   return tmp;
-// }
+  return tmp;
+}
 
 
-// string DerivedHistogramDifferent::name = "different";
-// TSemanticValue DerivedHistogramDifferent::execute( const SemanticInfo *info )
-// {
-//   TSemanticValue tmp = 0;
-//   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+string DerivedHistogramMaximum::name = "maximum";
+TSemanticValue DerivedHistogramMaximum::execute( const SemanticInfo *info )
+{
+  TSemanticValue tmp = 0;
+  const DerivedHistogramFunctionInfo *myInfo = ( const DerivedHistogramFunctionInfo * ) info;
 
-//   tmp = myInfo->values[ 0 ] != myInfo->values[ 1 ] ?
-//         1 :
-//         0;
+  tmp = myInfo->values[ 0 ] > myInfo->values[ 1 ] ?
+        myInfo->values[ 0 ] :
+        myInfo->values[ 1 ];
 
-//   return tmp;
-// }
+  return tmp;
+}
+
+
+string DerivedHistogramMinimum::name = "minimum";
+TSemanticValue DerivedHistogramMinimum::execute( const SemanticInfo *info )
+{
+  TSemanticValue tmp = 0;
+  const DerivedHistogramFunctionInfo *myInfo = ( const DerivedHistogramFunctionInfo * ) info;
+
+  tmp = myInfo->values[ 0 ] < myInfo->values[ 1 ] ?
+        myInfo->values[ 0 ] :
+        myInfo->values[ 1 ];
+
+  return tmp;
+}
+
+
+string DerivedHistogramDifferent::name = "different";
+TSemanticValue DerivedHistogramDifferent::execute( const SemanticInfo *info )
+{
+  TSemanticValue tmp = 0;
+  const DerivedHistogramFunctionInfo *myInfo = ( const DerivedHistogramFunctionInfo * ) info;
+
+  tmp = myInfo->values[ 0 ] != myInfo->values[ 1 ] ?
+        1 :
+        0;
+
+  return tmp;
+}
