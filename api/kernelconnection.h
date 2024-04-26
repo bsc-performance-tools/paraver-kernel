@@ -118,9 +118,11 @@ class KernelConnection
                                                  ProgressController *progress = nullptr ) const = 0;
 
     virtual void getAllStatistics( std::vector<std::string>& onVector ) const = 0;
+
     virtual void getAllFilterFunctions( std::vector<std::string>& onVector ) const = 0;
     virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
                                           std::vector<std::string>& onVector ) const = 0;
+    virtual void getAllHistogramDerivedOperations( std::vector<std::string>& onVector ) const = 0;
 
     virtual bool userMessage( UserMessageID messageID ) const = 0;
 
