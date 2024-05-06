@@ -46,6 +46,8 @@ struct SemanticHighInfo: public SemanticInfo
 {
   std::vector<TSemanticValue> values;
   TObjectOrder lastChanged;
+  TRecordTime controlBeginTime;
+  TRecordTime controlEndTime;
   TRecordTime dataBeginTime;
   TRecordTime dataEndTime;
   bool newControlBurst;
