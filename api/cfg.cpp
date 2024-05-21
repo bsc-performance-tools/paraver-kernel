@@ -753,6 +753,34 @@ void CFGLoader::pushbackAllWindows( const vector<Timeline *>& selectedWindows,
   }
 }
 
+
+void CFGLoader::pushbackHistogram( Histogram *whichHistogram, vector<Histogram *>& allHistograms )
+{
+  if ( whichHistogram->isDerivedHistogram() )
+  {
+    for ( PRV_UINT16 i = 1; i >= 0; --i )
+    {
+      //std::cout << i << std::endl;
+      pushbackHistogram( whichHistogram->getParent( i ), allHistograms );
+      if ( i == 0 )
+        break;
+    }
+  }
+
+  if ( find( allHistograms.begin(), allHistograms.end(), whichHistogram ) == allHistograms.end() )
+  {
+    allHistograms.push_back( whichHistogram );
+  }
+}
+
+
+void CFGLoader::pushbackAllHistograms( const vector<Histogram *>& selectedHistos, vector<Histogram *>& allHistograms )
+{
+  for ( std::vector<Histogram *>::const_iterator it = selectedHistos.begin(); it != selectedHistos.end(); ++it )
+    pushbackHistogram( (*it), allHistograms );
+}
+
+
 bool CFGLoader::saveCFG( const string& filename,
                          const SaveOptions& options,
                          const vector<Timeline *>& windows,
@@ -760,6 +788,7 @@ bool CFGLoader::saveCFG( const string& filename,
                          const vector<CFGS4DLinkedPropertiesManager>& linkedProperties )
 {
   vector<Timeline *> allWindows;
+  vector<Histogram *> allHistograms;
 
   ofstream cfgFile( filename.c_str() );
   if ( !cfgFile )
@@ -770,7 +799,8 @@ bool CFGLoader::saveCFG( const string& filename,
 
   initDrawModeTags();
 
-  pushbackAllWindows( windows, histograms, allWindows );
+  pushbackAllHistograms( histograms, allHistograms );
+  pushbackAllWindows( windows, allHistograms, allWindows );
 
   cfgFile << fixed;
   cfgFile.precision( 12 );
@@ -792,8 +822,7 @@ bool CFGLoader::saveCFG( const string& filename,
 
   int id = 1;
 
-  for ( vector<Timeline *>::const_iterator it = allWindows.begin();
-        it != allWindows.end(); ++it )
+  for ( vector<Timeline *>::const_iterator it = allWindows.begin(); it != allWindows.end(); ++it )
   {
     cfgFile << "################################################################################" << endl;
     cfgFile << "< NEW DISPLAYING WINDOW " << ( *it )->getName() << " >" << endl;
@@ -867,10 +896,14 @@ bool CFGLoader::saveCFG( const string& filename,
     ++id;
   }
 
-  for ( vector<Histogram *>::const_iterator it = histograms.begin();
-        it != histograms.end(); ++it )
+  for ( vector<Histogram *>::const_iterator it = allHistograms.begin();  it != allHistograms.end(); ++it )
   {
     Analyzer2DCreate::printLine( cfgFile, it );
+    Analyzer2DType::printLine( cfgFile, it );
+    if ( ( *it )->isDerivedHistogram() )
+    {
+      Analyzer2DIdentifiers::printLine( cfgFile, allHistograms, it );
+    }
     Analyzer2DName::printLine( cfgFile, it );
     Analyzer2DX::printLine( cfgFile, it );
     Analyzer2DY::printLine( cfgFile, it );
@@ -938,8 +971,9 @@ bool CFGLoader::saveCFG( const string& filename,
   return true;
 }
 
-int CFGLoader::findWindow( const Timeline *whichWindow,
-                           const vector<Timeline *>& allWindows )
+template <class WindowType>
+int CFGLoader::findWindow( const WindowType *whichWindow,
+                           const vector<WindowType *>& allWindows )
 {
   unsigned int i = 0;
 
@@ -959,10 +993,10 @@ int CFGLoader::findWindow( const Timeline *whichWindow,
   return i;
 }
 
-
-int CFGLoader::findWindowBackwards( const Timeline *whichWindow,
-                                    const vector<Timeline *>& allWindows,
-                                    const vector<Timeline *>::const_iterator it )
+template <class WindowType>
+int CFGLoader::findWindowBackwards( const WindowType *whichWindow,
+                                    const vector<WindowType *>& allWindows,
+                                    const typename vector<WindowType *>::const_iterator it )
 {
   int i = std::distance( allWindows.begin(), it );
 
@@ -1043,6 +1077,8 @@ void CFGLoader::loadMap()
   // Histogram options
 
   cfgTagFunctions[OLDCFG_TAG_AN2D_NEW]                 = new Analyzer2DCreate();
+  cfgTagFunctions[CFG_TAG_AN2D_TYPE]                   = new Analyzer2DType();
+  cfgTagFunctions[CFG_TAG_AN2D_IDENTIFIERS]            = new Analyzer2DIdentifiers();
   cfgTagFunctions[OLDCFG_TAG_AN2D_NAME]                = new Analyzer2DName();
   cfgTagFunctions[OLDCFG_TAG_AN2D_X]                   = new Analyzer2DX();
   cfgTagFunctions[OLDCFG_TAG_AN2D_Y]                   = new Analyzer2DY();
@@ -3838,6 +3874,99 @@ void Analyzer2DCreate::printLine( ofstream& cfgFile,
                                   const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_NEW << endl;
+}
+
+string Analyzer2DType::tagCFG = CFG_TAG_AN2D_TYPE;
+
+bool Analyzer2DType::parseLine( KernelConnection *whichKernel,
+                                istringstream& line,
+                                Trace *whichTrace,
+                                vector<Timeline *>& windows,
+                                vector<Histogram *>& histograms )
+{
+  string type;
+
+  getline( line, type );
+  if ( type.compare( CFG_VAL_AN2D_TYPE_SINGLE ) == 0 )
+    return true; 
+
+  if ( type.compare( CFG_VAL_AN2D_TYPE_COMPOSED ) != 0 )
+    return false;
+
+  // if ( histograms[ histograms.size() - 1 ] == nullptr )
+  // {
+  //   histograms[ histograms.size() - 1 ] = Histogram::create( whichKernel, nullptr, nullptr );
+  // }
+  // else
+  // {
+  histograms.pop_back();
+  histograms.push_back( Histogram::create( whichKernel, nullptr, nullptr ) );
+  // }
+
+  histograms[ histograms.size() - 1 ]->setCFG4DMode( false );
+
+  return true;
+}
+
+void Analyzer2DType::printLine( ofstream& cfgFile,
+                                const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << Analyzer2DType::tagCFG << " ";
+  if ( ( *it )->isDerivedHistogram() )
+    cfgFile << CFG_VAL_AN2D_TYPE_COMPOSED << endl;
+  else
+    cfgFile << CFG_VAL_AN2D_TYPE_SINGLE << endl;
+}
+
+
+string Analyzer2DIdentifiers::tagCFG = CFG_TAG_AN2D_IDENTIFIERS;
+
+bool Analyzer2DIdentifiers::parseLine( KernelConnection *whichKernel,
+                                       istringstream& line,
+                                       Trace *whichTrace,
+                                       vector<Timeline *>& windows,
+                                       vector<Histogram *>& histograms )
+{
+  string strID;
+  PRV_UINT16 id;
+
+  std::vector< Histogram * > parents;
+
+  if ( ( windows[ windows.size() - 1 ] == nullptr ) ||
+       ( histograms[ histograms.size() - 1 ] == nullptr ) ||
+       ( !histograms[ histograms.size() - 1 ]->isDerivedHistogram() ) )
+    return false;
+
+  while ( !line.eof() )
+  {
+    getline( line, strID, ' ' );
+    istringstream tmpStream( strID );
+    if ( !( tmpStream >> id ) )
+      return false;
+
+    if ( ( id < 1 ) || ( id > histograms.size() - 1 ) )
+      return false;
+
+    if ( histograms[ id - 1 ] == nullptr )
+      return false;
+
+    parents.push_back( histograms[ id - 1 ] );
+  }
+
+  if ( !histograms[ histograms.size() - 1 ]->setParents( parents ) )
+    return false;
+
+  return true;
+}
+
+void Analyzer2DIdentifiers::printLine( ofstream& cfgFile,
+                                       const vector<Histogram *>& histograms,
+                                       const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << CFG_TAG_AN2D_IDENTIFIERS << " ";
+  cfgFile << CFGLoader::findWindowBackwards( ( *it )->getParent( 0 ), histograms, it ) + 1 << " ";
+  cfgFile << CFGLoader::findWindowBackwards( ( *it )->getParent( 1 ), histograms, it ) + 1;
+  cfgFile << endl;
 }
 
 
