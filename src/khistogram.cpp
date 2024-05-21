@@ -791,6 +791,8 @@ inline void KHistogram::pushbackStatistic( const string& whichStatistic )
 void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
                           vector<TObjectOrder>& selectedRows, ProgressController *progress )
 {
+  // std::cout << "KH::execute" << std::endl;
+
   if ( controlWindow == nullptr )
     throw HistogramException( THistogramErrorCode::noControlWindow );
 
@@ -1969,7 +1971,7 @@ void KDerivedHistogram::clearExtraControlWindow()
 
 void KDerivedHistogram::setUseFixedDelta( bool whichValue )
 {
-  setUseFixedDelta( whichValue );
+  KHistogram::setUseFixedDelta( whichValue );
   parent1->setUseFixedDelta( whichValue );
   parent2->setUseFixedDelta( whichValue );
 }
@@ -2116,12 +2118,12 @@ TSemanticValue KDerivedHistogram::getCurrentValue( PRV_UINT32 col,
                                                    PRV_UINT16 idStat,
                                                    PRV_UINT32 plane ) const
 {
-  //return cube[col][idStat][plane];
+  return cube->getCurrentValue( plane, col, idStat );
 }
 
 PRV_UINT32 KDerivedHistogram::getCurrentRow( PRV_UINT32 col, PRV_UINT32 plane ) const
 {
-  return {};
+  return cube->getCurrentRow( plane, col );
 }
 
 // inline ColumnTranslator *KDerivedHistogram::getColumnTranslator() const
@@ -2289,12 +2291,10 @@ void KDerivedHistogram::combineHistograms()
 {
   assert( parent1->getControlDelta() == parent2->getControlDelta() );
 
-  PRV_UINT32 currentPlane = 0;
-  TSemanticValue semVal1;
-  TSemanticValue semVal2;
-
   std::array< TSemanticValue, NUM_SEMANTIC_STATS > wholeSemVals;
 
+//  PRV_UINT32 currentPlane = 0;
+  THistogramColumn tmpNumPlanes = getNumPlanes();
   // THistogramColumn tmpNumCols = getNumColumns();
   THistogramColumn tmpNumCols = getColumnTranslator()->totalColumns();
   TObjectOrder tmpNumRows = getNumRows();
@@ -2314,33 +2314,88 @@ void KDerivedHistogram::combineHistograms()
   SemanticDerivedHistogram *op = FunctionManagement<SemanticDerivedHistogram>::getInstance()->getFunction( getDerivedOperation() );
   DerivedHistogramFunctionInfo tmpValues;
   THistogramCorrespondenceInfo::const_iterator secondHistogramIndex;
-
-  for ( THistogramColumn iCol = 0; iCol < tmpNumCols; ++iCol )
+  for ( THistogramColumn iPlane = 0; iPlane < tmpNumPlanes; ++iPlane )
   {
-    for ( THistogramColumn iRow = 0; iRow < tmpNumRows; ++iRow )
+    for ( THistogramColumn iCol = 0; iCol < tmpNumCols; ++iCol )
     {
-      if ( getCellCorrespondence( currentPlane, iRow, iCol, secondHistogramIndex ) )
+      for ( THistogramColumn iRow = 0; iRow < tmpNumRows; ++iRow )
       {
-        THistogramColumn i2Plane = secondHistogramIndex->second.plane; // TODO: think about not combining all the cube
-        TObjectOrder i2Row = secondHistogramIndex->second.row;
-        THistogramColumn i2Col = secondHistogramIndex->second.column;
-        for ( size_t currentStat = 0; currentStat < NUM_SEMANTIC_STATS; ++currentStat )
-        {
-          bool foundVal1 = parent1->getCellValue( semVal1, iRow, iCol, currentStat );
-          bool foundVal2 = parent2->getCellValue( semVal2, i2Row, i2Col, currentStat );
 
-          // SELECTED DERIVED OPERATION
-          tmpValues.values = { semVal1, semVal2 };
-          TSemanticValue result = op->execute( &tmpValues );
-          // wholeSemVals[ currentStat ] = op->execute( &tmpValues );
-          wholeSemVals[ currentStat ] = result;
-          //std::cout << "(v1,v2) = (" << semVal1 << "," << semVal2 << ") = "<< result << std::endl;
-    
-          totals->newValue( wholeSemVals[ currentStat ], currentStat, iCol, currentPlane );
-          rowTotals->newValue( wholeSemVals[ currentStat ], currentStat, iRow, currentPlane );
+        auto combineValues = [this, &tmpValues, &op, &wholeSemVals /*, &totals, &rowTotals */]
+                            ( THistogramColumn iPlane, THistogramColumn iCol, THistogramColumn iRow, 
+                              THistogramColumn i2Plane = 0, THistogramColumn i2Col = 0, THistogramColumn i2Row = 0, bool existCorrespondence = false )
+                            {
+                              TSemanticValue semVal1 = 0.0;
+                              TSemanticValue semVal2 = 0.0;
+
+                              // TODO: hay una llamada que recibe el vector
+                              for ( size_t currentStat = 0; currentStat < NUM_SEMANTIC_STATS; ++currentStat )
+                              {
+                                bool foundVal1 = parent1->getCellValue( semVal1, iRow, iCol, currentStat, iPlane );
+                                if ( existCorrespondence )
+                                  bool foundVal2 = parent2->getCellValue( semVal2, i2Row, i2Col, currentStat, i2Plane );
+
+                                // SELECTED DERIVED OPERATION
+                                tmpValues.values = { semVal1, semVal2 };
+                                TSemanticValue result = op->execute( &tmpValues );
+                                // wholeSemVals[ currentStat ] = op->execute( &tmpValues );
+                                wholeSemVals[ currentStat ] = result;
+                                //std::cout << "(v1,v2) = (" << semVal1 << "," << semVal2 << ") = "<< result << std::endl;
+                          
+                                totals->newValue( wholeSemVals[ currentStat ], currentStat, iCol, iPlane );
+                                rowTotals->newValue( wholeSemVals[ currentStat ], currentStat, iRow, iPlane );
+                              }
+                            };
+
+        
+
+        if ( getCellCorrespondence( iPlane, iCol, iRow, secondHistogramIndex ) )
+        {
+          THistogramColumn i2Plane = secondHistogramIndex->second.plane;
+          TObjectOrder i2Row = secondHistogramIndex->second.row;
+          THistogramColumn i2Col = secondHistogramIndex->second.column;
+
+          combineValues( iPlane, iCol, iRow, i2Plane, i2Col, i2Row, true );
+
+          // for ( size_t currentStat = 0; currentStat < NUM_SEMANTIC_STATS; ++currentStat )
+          // {
+          //   bool foundVal1 = parent1->getCellValue( semVal1, iRow, iCol, currentStat );
+          //   bool foundVal2 = parent2->getCellValue( semVal2, i2Row, i2Col, currentStat );
+
+          //   // SELECTED DERIVED OPERATION
+          //   tmpValues.values = { semVal1, semVal2 };
+          //   TSemanticValue result = op->execute( &tmpValues );
+          //   // wholeSemVals[ currentStat ] = op->execute( &tmpValues );
+          //   wholeSemVals[ currentStat ] = result;
+          //   //std::cout << "(v1,v2) = (" << semVal1 << "," << semVal2 << ") = "<< result << std::endl;
+      
+          //   totals->newValue( wholeSemVals[ currentStat ], currentStat, iCol, currentPlane );
+          //   rowTotals->newValue( wholeSemVals[ currentStat ], currentStat, iRow, currentPlane );
+          // }
+        }
+        else
+        {
+          combineValues( iPlane, iCol, iRow );
+
+          // semVal2 = 0.0;
+
+          // for ( size_t currentStat = 0; currentStat < NUM_SEMANTIC_STATS; ++currentStat )
+          // {
+          //   bool foundVal1 = parent1->getCellValue( semVal1, iRow, iCol, currentStat );
+
+          //   // SELECTED DERIVED OPERATION
+          //   tmpValues.values = { semVal1, semVal2 };
+          //   // wholeSemVals[ currentStat ] = op->execute( &tmpValues );
+          //   TSemanticValue result = op->execute( &tmpValues );
+          //   wholeSemVals[ currentStat ] = result;
+          //   //std::cout << "(v1,v2) = (" << semVal1 << "," << semVal2 << ") = "<< result << std::endl;
+      
+          //   totals->newValue( wholeSemVals[ currentStat ], currentStat, iCol, currentPlane );
+          //   rowTotals->newValue( wholeSemVals[ currentStat ], currentStat, iRow, currentPlane );
+          // }
         }
 
-        cube->setValue( currentPlane, iRow, iCol, wholeSemVals );
+        cube->setValue( iPlane, iRow, iCol, wholeSemVals );
       }
     }
   }
@@ -2350,6 +2405,8 @@ void KDerivedHistogram::combineHistograms()
 void KDerivedHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
                                  std::vector<TObjectOrder>& selectedRows, ProgressController *progress )
 {
+// std::cout << "KDH::execute" << std::endl;
+
   // Not checking if parents should be also executed
   orderWindows();
 
@@ -2357,6 +2414,7 @@ void KDerivedHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEn
 
   initTranslators();
 
+// std::cout << "SR =" <<selectedRows.size() <<std::endl;
   numRows = selectedRows.size();
 
   if( getUseFixedDelta() )
@@ -2369,7 +2427,10 @@ void KDerivedHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEn
   else
     numPlanes = 1;
 
-  
+  std::cout << "numCols: " << numCols << std::endl;
+  std::cout << "numRows: " << numRows << std::endl;
+
+
   if( progress != nullptr )
   {
     if( numRows > 1 )
@@ -2583,7 +2644,7 @@ void KDerivedHistogram::fillCellCorrespondence()
 }
 
 bool KDerivedHistogram::getCellCorrespondence( THistogramColumn whichPlane, TObjectOrder whichRow, THistogramColumn whichColumn,
-                                                THistogramCorrespondenceInfo::iterator& whichIt )
+                                               THistogramCorrespondenceInfo::iterator& whichIt )
 {
   bool found;
 
