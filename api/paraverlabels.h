@@ -116,6 +116,7 @@ constexpr char OLDCFG_TAG_WNDW_SYNCHRONIZE[] = "window_synchronize";
 
 // HISTOGRAM CFGs TAGS
 constexpr char OLDCFG_TAG_AN2D_NEW[] = "< NEW ANALYZER2D >";
+constexpr char CFG_TAG_AN2D_TYPE[] = "Analyzer2D.Type:";
 constexpr char OLDCFG_TAG_AN2D_NAME[] = "Analyzer2D.Name:";
 constexpr char OLDCFG_TAG_AN2D_X[] = "Analyzer2D.X:";
 constexpr char OLDCFG_TAG_AN2D_Y[] = "Analyzer2D.Y:";
@@ -123,6 +124,7 @@ constexpr char OLDCFG_TAG_AN2D_WIDTH[] = "Analyzer2D.Width:";
 constexpr char OLDCFG_TAG_AN2D_HEIGHT[] = "Analyzer2D.Height:";
 constexpr char OLDCFG_TAG_AN2D_CONTROL_WINDOW[] = "Analyzer2D.ControlWindow:";
 constexpr char OLDCFG_TAG_AN2D_DATA_WINDOW[] = "Analyzer2D.DataWindow:";
+constexpr char CFG_TAG_AN2D_IDENTIFIERS[] = "Analyzer2D.Identifiers:";
 constexpr char OLDCFG_TAG_AN2D_STATISTIC[] = "Analyzer2D.Statistic:";
 constexpr char OLDCFG_TAG_AN2D_CALCULATE_ALL[] = "Analyzer2D.CalculateAll:";
 constexpr char OLDCFG_TAG_AN2D_NUM_COLUMNS[] = "Analyzer2D.num_columns:";
@@ -245,6 +247,9 @@ constexpr char CFG_TAG_AN2D_COMPUTEYSCALE_ZERO[] = "Analyzer2D.ComputeYScaleZero
 constexpr char CFG_TAG_AN2D_NUMCOLUMNS[] = "Analyzer2D.NumColumns:";
 constexpr char CFG_TAG_AN2D_USE_CUSTOM_DELTA[] = "Analyzer2D.UseCustomDelta:";
 constexpr char CFG_TAG_AN2D_USE_FIXED_DELTA[] = "Analyzer2D.UseFixedDelta:";
+
+constexpr char CFG_VAL_AN2D_TYPE_SINGLE[] = "single";
+constexpr char CFG_VAL_AN2D_TYPE_COMPOSED[] = "composed";
 
 static const std::string LABEL_TIMEUNIT[ DAY + 1 ] =
 {
