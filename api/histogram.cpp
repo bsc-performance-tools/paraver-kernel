@@ -54,6 +54,13 @@ Histogram::Histogram( KernelConnection *whichKernel ) : myKernel( whichKernel )
 
 Histogram *Histogram::create( KernelConnection *whichKernel, Histogram *parent1, Histogram *parent2 )
 {
+  // if ( parent1 == nullptr )
+  // {
+  //   bool createHistogram = false;
+  //   bool isDerived = true;
+  //   return new HistogramProxy( whichKernel, createHistogram, isDerived );
+  // }
+
   return new HistogramProxy( whichKernel, parent1, parent2 );
 }
 
@@ -137,16 +144,22 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel, bool createHistog
   globalIndexLink = 0;
 }
 
-
-HistogramProxy::HistogramProxy( KernelConnection *whichKernel, Histogram *whichParent1, Histogram *whichParent2 )
-  : HistogramProxy( whichKernel, false, true )
+bool HistogramProxy::setParents( std::vector< Histogram * >& whichParents )
 {
-  parent1 = whichParent1->clone();
-  parent2 = whichParent2->clone();
+  if ( whichParents.size() != 2 )
+    return false;
 
-  myHisto = whichKernel->newDerivedHistogram( parent1, parent2 );
+  // Clone parents
+  //for( PRV_UINT16 i = 0; i < whichParents.size() - 2; ++i )
+  // parent1 = whichParents[0]->clone();
+  // parent2 = whichParents[1]->clone();
+  parent1 = whichParents[0];
+  parent2 = whichParents[1];
 
+  // Parents related info
   myTrace = parent1->getTrace(); // Only for further queries, may not be necessary
+
+  myHisto = myKernel->newDerivedHistogram( parent1, parent2 );
 
   setControlWindow( parent1->getControlWindow() );
   setDataWindow( parent1->getDataWindow() );
@@ -154,6 +167,22 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel, Histogram *whichP
     setExtraControlWindow( parent1->getExtraControlWindow() );
 
   setCalculateAll( Histogram::getCalculateAll() );
+
+  return true;
+}
+
+HistogramProxy::HistogramProxy( KernelConnection *whichKernel, Histogram *whichParent1, Histogram *whichParent2 )
+  : HistogramProxy( whichKernel, false, true )
+{
+  if ( whichParent1 != nullptr )
+  {
+    // bool createHistogram = false;
+    // bool isDerived = true;
+    // return new HistogramProxy( whichKernel, createHistogram, isDerived );
+    std::vector< Histogram * > tmpHistograms = { whichParent1, whichParent2 };
+
+    setParents( tmpHistograms );
+  }
 }
 
 
@@ -1383,6 +1412,18 @@ Histogram *HistogramProxy::clone()
   tmp << ++number_of_clones;
   clonedHistogramProxy->name = name + ".c" + tmp.str();
 
+  clonedHistogramProxy->derivedHistogram = derivedHistogram;
+  if ( derivedHistogram )
+  {
+    clonedHistogramProxy->parent1 = parent1->clone();
+    clonedHistogramProxy->parent2 = parent2->clone();
+  }
+  else
+  {
+    clonedHistogramProxy->parent1 = nullptr;
+    clonedHistogramProxy->parent2 = nullptr;
+  }
+
   clonedHistogramProxy->posX = posX;
   clonedHistogramProxy->posY = posY;
   clonedHistogramProxy->width = width;
@@ -2029,14 +2070,16 @@ Histogram *HistogramProxy::getConcrete() const
   return myHisto;
 }
 
-std::string HistogramProxy::getNameDerivedHistogramFirstParent() const
+Histogram *HistogramProxy::getParent( PRV_UINT16 whichParent ) const
 {
-  return parent1->getName();
-}
+  // TODO: change to vector
+  if ( whichParent == 0 )
+    return parent1;
 
-std::string HistogramProxy::getNameDerivedHistogramSecondParent() const
-{
-  return parent2->getName();
+  if ( whichParent == 1 )
+    return parent2;
+
+  return nullptr;
 }
 
 std::string HistogramProxy::getDerivedOperation() const

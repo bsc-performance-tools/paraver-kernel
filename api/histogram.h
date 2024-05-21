@@ -67,15 +67,19 @@ class Histogram
       return nullptr;
     }
     
+    // Specific methods for Derived Histograms
     virtual bool isDerivedHistogram() const = 0;
-    virtual std::string getNameDerivedHistogramFirstParent() const
+    virtual bool setParents( std::vector< Histogram * >& whichParents )
     {
-      return {};
-    };
-    virtual std::string getNameDerivedHistogramSecondParent() const
+      return true;
+    }
+
+    virtual Histogram *getParent( PRV_UINT16 whichParent ) const
     {
-      return {};
-    };
+      //std::cout << "HISTOGRAM::GETPARENT"<< std::endl;
+      return nullptr;
+    }
+
     virtual std::string getDerivedOperation() const
     {
       return {};
@@ -691,8 +695,8 @@ class HistogramProxy : public Histogram
     Histogram *getConcrete() const;
 
     virtual bool isDerivedHistogram() const override;
-    virtual std::string getNameDerivedHistogramFirstParent() const override;
-    virtual std::string getNameDerivedHistogramSecondParent() const override;
+    virtual bool setParents( std::vector< Histogram * >& whichParents ) override;
+    virtual Histogram *getParent( PRV_UINT16 whichParent ) const override;
     virtual std::string getDerivedOperation() const override;
     virtual void setDerivedOperation( const std::string& whichOperation ) override;
     virtual void getDerivedOperationGroupsLabels( std::vector<std::string>& onVector ) const override;
