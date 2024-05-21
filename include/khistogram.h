@@ -284,6 +284,10 @@ class KHistogram : public Histogram
     ColumnTranslator *getPlaneTranslator() const;
 
   protected:
+    TObjectOrder numRows = 0;
+    THistogramColumn numCols = 0;
+    THistogramColumn numPlanes = 0;
+
     KHistogramTotals *totals;
     KHistogramTotals *rowTotals;
     KHistogramTotals *commTotals;
@@ -305,10 +309,6 @@ class KHistogram : public Histogram
 
     TRecordTime beginTime;
     TRecordTime endTime;
-
-    TObjectOrder numRows;
-    THistogramColumn numCols;
-    THistogramColumn numPlanes;
 
     bool useFixedDelta;
 
@@ -521,6 +521,7 @@ class KDerivedHistogram : public KHistogram
 
     
     // Derived histogram specific methods
+    //virtual Histogram *getParent( PRV_UINT16 whichParent ) const override;
     virtual bool isDerivedHistogram() const override;
 
     virtual void setDerivedOperation( const std::string& whichOperation ) override;
@@ -538,14 +539,14 @@ class KDerivedHistogram : public KHistogram
   protected:
 
   private:
-    Histogram *parent1;
-    Histogram *parent2;
+    Histogram *parent1 = nullptr;
+    Histogram *parent2 = nullptr;
 
-    THistogramColumn numPlanes;
-    TObjectOrder numRows;
-    THistogramColumn numCols;
+    // THistogramColumn numPlanes = 0;
+    // TObjectOrder numRows = 0;
+    // THistogramColumn numCols = 0;
 
-    std::string currentDerivedOperation;
+    std::string currentDerivedOperation = "add";
 
     // THistogramLimit controlMin;
     // THistogramLimit controlMax;
@@ -556,10 +557,9 @@ class KDerivedHistogram : public KHistogram
 
     //std::unordered_map< PRV_UINT32, PRV_UINT32 > currentRow;
 
-    // CubeBuffer<NUM_SEMANTIC_STATS> *derivedCube;
-    CubeBuffer<NUM_SEMANTIC_STATS> *cube;
-    // CubeBuffer<NUM_COMM_STATS> *derivedCommCube;
-    CubeBuffer<NUM_COMM_STATS> *commCube;
+    // V1
+    CubeBuffer<NUM_SEMANTIC_STATS> *cube = nullptr;
+    CubeBuffer<NUM_COMM_STATS> *commCube = nullptr;
 
     // TODO: Is a better idea thah CubeContainer? May vary columns depending on the plane?
     // std::unordered_map< THistogramColumn, THistogramColumn > planeCorrespondence;
@@ -568,6 +568,7 @@ class KDerivedHistogram : public KHistogram
     using THistogramCorrespondenceInfo = CubeContainer< TPlaneOrder, TObjectOrder, THistogramColumn, TRemoteIndex >;
     THistogramCorrespondenceInfo cellCorrespondence;
 
+    // V0
     // Cube<TSemanticValue, NUM_SEMANTIC_STATS> *cube;
     // Matrix<TSemanticValue, NUM_SEMANTIC_STATS> *matrix;
     // Cube<TSemanticValue, NUM_COMM_STATS> *commCube;
