@@ -100,14 +100,14 @@ class KTraceFilter: public TraceFilter
     int filter_allowed_type( int appl, int task, int thread,
                              unsigned long long time,
                              unsigned long long type,
-                             unsigned long long value );
+                             TEventValue value );
 
     void initFilterProgressBar( const std::string& fileName, ProgressController *progress );
     void show_progress_bar( ProgressController *progress );
 
     void load_pcf( char *pcf_name );
     void dump_buffer();
-    void translateEvent( unsigned long long &type, unsigned long long &value );
+    void translateEvent( unsigned long long& type, TEventValue& value );
 
 };
 
