@@ -908,6 +908,21 @@ void KTraceOptions::saveXMLSoftwareCounters( xmlTextWriterPtr &writer )
 {
   int rc;
 
+  auto writeEvents = [this, &writer, &rc]( auto getEvents, const std::string& tag )
+                     {
+                       char *tmpStr = (this->*getEvents)();
+                       if ( tmpStr != nullptr && !string( tmpStr ).empty() )
+                       {
+                         rc = xmlTextWriterWriteElement( writer, BAD_CAST tag.c_str(), BAD_CAST tmpStr );
+                         free( tmpStr );
+                       }
+                       else
+                       {
+                         rc = xmlTextWriterWriteComment( writer, BAD_CAST string( "empty " + tag + " list" ).c_str() );
+                         rc = xmlTextWriterWriteComment( writer, BAD_CAST string( "<" + tag + "></" + tag + ">" ).c_str() );
+                       }
+                     };
+
   rc = xmlTextWriterWriteComment( writer, BAD_CAST " SOFTWARE COUNTERS OPTIONS " );
   rc = xmlTextWriterStartElement( writer, BAD_CAST "software_counters");
 
@@ -916,8 +931,10 @@ void KTraceOptions::saveXMLSoftwareCounters( xmlTextWriterPtr &writer )
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "by_intervals_vs_by_states", "%d", (int)get_sc_onInterval() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "sampling_interval", "%lld", get_sc_sampling_interval() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "minimum_burst_time", "%lld", get_sc_minimum_burst_time() );
-  rc = xmlTextWriterWriteElement( writer, BAD_CAST "accum_events", BAD_CAST get_sc_accum_types() );
-  rc = xmlTextWriterWriteElement( writer, BAD_CAST "count_events", BAD_CAST get_sc_count_types() );
+  
+
+  writeEvents( &KTraceOptions::get_sc_accum_types, string( "accum_events" ) );
+  writeEvents( &KTraceOptions::get_sc_count_types, string( "count_events" ) );
 
   rc = xmlTextWriterEndElement( writer ); // range
 
@@ -928,15 +945,7 @@ void KTraceOptions::saveXMLSoftwareCounters( xmlTextWriterPtr &writer )
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "global_counters", "%d", (int)get_sc_global_counters() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "only_in_burst_counting", "%d", (int)get_sc_only_in_bursts() );
 
-  if ( string( get_sc_types_kept() ).length() > 0 )
-  {
-    rc = xmlTextWriterWriteElement( writer, BAD_CAST "keep_events", BAD_CAST get_sc_types_kept() );
-  }
-  else
-  {
-    rc = xmlTextWriterWriteComment( writer, BAD_CAST "empty keep_events list" );
-    rc = xmlTextWriterWriteComment( writer, BAD_CAST "<keep_events></keep_events>" );
-  }
+  writeEvents( &KTraceOptions::get_sc_types_kept, string( "keep_events" ) );
 
   rc = xmlTextWriterEndElement( writer ); // algorithm
   rc = xmlTextWriterEndElement( writer ); // software_counters
