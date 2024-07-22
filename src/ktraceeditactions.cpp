@@ -736,14 +736,17 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
           if ( valuesFinal.find( (*itRefValue).second ) != valuesFinal.end() )
           {
             valuesColliding[ (*itRefValue).second ] = valuesFinal[ (*itRefValue).second ];
+            valuesFinal[ (*itRefValue).second ] = itSourceValue.second;
+            translation[ TTypeValuePair( itSourceType, itSourceValue.first ) ] = TTypeValuePair( itSourceType, (*itRefValue).second );
           }
           else
           {
             if ( itSourceValue.first != (*itRefValue).second )
               translation[ TTypeValuePair( itSourceType, itSourceValue.first ) ] = TTypeValuePair( itSourceType, (*itRefValue).second );
+            valuesFinal[ (*itRefValue).second ] = itSourceValue.second;
           }
 
-          valuesFinal[ (*itRefValue).second ] = itSourceValue.second;
+          //valuesFinal[ (*itRefValue).second ] = itSourceValue.second;
         }
         else
         {
@@ -757,7 +760,10 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
       TEventValue maxValue = (--valuesFinal.end())->first;
       for ( auto itCollision : valuesColliding )
       {
-        valuesFinal[ ++maxValue ] = itCollision.second;
+        while( tmpReferenceValues.find( ++maxValue ) != tmpReferenceValues.end() )
+        {}
+
+        valuesFinal[ maxValue ] = itCollision.second;
         if ( itCollision.first != maxValue )
           translation[ TTypeValuePair( itSourceType, itCollision.first ) ] = TTypeValuePair( itSourceType, maxValue );
       }
