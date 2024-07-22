@@ -730,30 +730,67 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
 
       for ( auto itSourceValue : sourceValues )
       {
-        auto itRefValue = referenceValues.find( itSourceValue.second );
+        const TEventValue& srcValue = itSourceValue.first;
+        const std::string& srcValueLabel = itSourceValue.second;
+
+        // Exist in ref?
+        auto itRefValue = referenceValues.find( srcValueLabel );
         if ( itRefValue != referenceValues.end() )
         {
-          if ( valuesFinal.find( (*itRefValue).second ) != valuesFinal.end() )
+          const TEventValue& refValue = (*itRefValue).second;
+
+          // Value in valuesFinal?
+          if ( valuesFinal.find( refValue ) != valuesFinal.end() )
           {
-            valuesColliding[ (*itRefValue).second ] = valuesFinal[ (*itRefValue).second ];
-            valuesFinal[ (*itRefValue).second ] = itSourceValue.second;
-            translation[ TTypeValuePair( itSourceType, itSourceValue.first ) ] = TTypeValuePair( itSourceType, (*itRefValue).second );
+            // collision
+            valuesColliding[ refValue ] = valuesFinal[ refValue ];
           }
           else
           {
-            if ( itSourceValue.first != (*itRefValue).second )
-              translation[ TTypeValuePair( itSourceType, itSourceValue.first ) ] = TTypeValuePair( itSourceType, (*itRefValue).second );
-            valuesFinal[ (*itRefValue).second ] = itSourceValue.second;
+            // save
+            valuesFinal[ refValue ] = srcValueLabel;
+            if ( srcValue != refValue )
+              translation[ TTypeValuePair( itSourceType, srcValue ) ] = TTypeValuePair( itSourceType, refValue );
           }
 
-          //valuesFinal[ (*itRefValue).second ] = itSourceValue.second;
+          //valuesFinal[ refValue ] = srcValueLabel;
         }
         else
         {
-          if ( valuesFinal.find( itSourceValue.first ) != valuesFinal.end() )
-            valuesColliding[ itSourceValue.first ] = itSourceValue.second;
+          // Exist in valuesFinal?
+          if ( valuesFinal.find( srcValue ) != valuesFinal.end() )
+            valuesColliding[ srcValue ] = srcValueLabel;
           else
-            valuesFinal[ itSourceValue.first ] = itSourceValue.second;
+          {
+            // Exist value in ref?
+            if ( tmpReferenceValues.find( srcValue ) == tmpReferenceValues.end() )
+            {
+              // save
+              valuesFinal[ srcValue ] = srcValueLabel;
+            }
+            else
+            {
+              // Exist in ref! --> find new one
+              TEventValue valueAssignable = srcValue;
+              bool foundUnusedValue = false;
+              while ( !foundUnusedValue )
+              {
+                ++valueAssignable;
+
+                if( ( tmpReferenceValues.find( valueAssignable ) == tmpReferenceValues.end() ) &&
+                    ( valuesFinal.find( valueAssignable ) == valuesFinal.end() ) )
+                  foundUnusedValue = true;
+              }
+
+              // save
+              //valuesFinal[ srcValue ] = srcValueLabel;
+              valuesFinal[ valueAssignable ] = srcValueLabel;
+              if ( valueAssignable != srcValue )
+              {
+                translation[ TTypeValuePair( itSourceType, srcValue ) ] = TTypeValuePair( itSourceType, valueAssignable );
+              }
+            }
+          }
         }
       }
 
