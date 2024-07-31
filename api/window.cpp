@@ -148,6 +148,7 @@ void TimelineProxy::init()
   customBackgroundColor = ParaverConfig::getInstance()->getColorsTimelineBackground();
   customAxisColor = ParaverConfig::getInstance()->getColorsTimelineAxis();
   customZeroColor = ParaverConfig::getInstance()->getColorsTimelineColorZero();
+  backgroundAsZero = Timeline::getBackgroundAsZero();
 
   drawModeObject = ParaverConfig::getInstance()->getTimelineDrawmodeObjects();
   drawModeTime = ParaverConfig::getInstance()->getTimelineDrawmodeTime();
@@ -1365,6 +1366,11 @@ rgb TimelineProxy::getZeroColor() const
   return ParaverConfig::getInstance()->getColorsTimelineColorZero();
 }
 
+bool TimelineProxy::getBackgroundAsZero() const
+{
+  return backgroundAsZero;
+}
+
 void TimelineProxy::setCustomBackgroundColor( rgb whichColor )
 {
   customBackgroundColor = whichColor;
@@ -1378,6 +1384,11 @@ void TimelineProxy::setCustomAxisColor( rgb whichColor )
 void TimelineProxy::setCustomZeroColor( rgb whichColor )
 {
   customZeroColor = whichColor;
+}
+
+void TimelineProxy::setBackgroundAsZero( bool newValue )
+{
+  backgroundAsZero = newValue;
 }
 
 bool TimelineProxy::getChanged() const

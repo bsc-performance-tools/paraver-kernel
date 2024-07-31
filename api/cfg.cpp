@@ -831,6 +831,7 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowCustomBackgroundColor::printLine( cfgFile, it );
     WindowCustomAxisColor::printLine( cfgFile, it );
     WindowCustomColorPalette::printLine( cfgFile, it );
+    WindowCustomBackgroundAsZero::printLine( cfgFile, it );
     WindowSemanticScaleMinAtZero::printLine( cfgFile, it );
     WindowPunctualColorWindow::printLine( cfgFile, allWindows, it );
     if ( !( *it )->isDerivedWindow() )
@@ -1015,10 +1016,11 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_COLOR_MODE]          = new WindowColorMode();
   cfgTagFunctions[CFG_TAG_WNDW_GRADIENT_FUNCTION]      = new WindowGradientFunction();
   // Color palette
-  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED]    = new WindowCustomColorEnabled();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_COLOR] = new WindowCustomBackgroundColor();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_AXIS_COLOR]       = new WindowCustomAxisColor();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_COLOR_PALETTE]    = new WindowCustomColorPalette();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED]         = new WindowCustomColorEnabled();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_COLOR]      = new WindowCustomBackgroundColor();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_AXIS_COLOR]            = new WindowCustomAxisColor();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_COLOR_PALETTE]         = new WindowCustomColorPalette();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_AS_ZERO]    = new WindowCustomBackgroundAsZero();
 
   cfgTagFunctions[OLDCFG_TAG_WNDW_SEMANTIC_SCALE_MIN_AT_ZERO] = new WindowSemanticScaleMinAtZero();
 
@@ -1858,6 +1860,38 @@ void WindowCustomColorPalette::printLine( ofstream& cfgFile,
     
     cfgFile << endl;
   }
+}
+
+
+string WindowCustomBackgroundAsZero::tagCFG = OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_AS_ZERO;
+
+bool WindowCustomBackgroundAsZero::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                 Trace *whichTrace,
+                                 vector<Timeline *>& windows,
+                                 vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == nullptr )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+    windows[ windows.size() - 1 ]->setBackgroundAsZero( false );
+  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+    windows[ windows.size() - 1 ]->setBackgroundAsZero( true );
+  else
+    return false;
+
+  return true;
+}
+
+void WindowCustomBackgroundAsZero::printLine( ofstream& cfgFile,
+                                 const vector<Timeline *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_AS_ZERO << " " << ( ( *it )->getBackgroundAsZero() ?
+      OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
 }
 
 

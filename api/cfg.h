@@ -730,6 +730,29 @@ class WindowCustomColorPalette: public TagFunction
 
 };
 
+class WindowCustomBackgroundAsZero: public TagFunction
+{
+  public:
+    WindowCustomBackgroundAsZero()
+    {}
+
+    virtual ~WindowCustomBackgroundAsZero()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Timeline *>& windows,
+                            std::vector<Histogram *>& histograms ) override;
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Timeline *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
+
 class WindowSemanticScaleMinAtZero: public TagFunction
 {
   public:

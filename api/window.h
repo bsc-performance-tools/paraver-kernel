@@ -507,11 +507,17 @@ class Timeline
     {
       return { 0, 0, 0 };
     }
+    virtual bool getBackgroundAsZero() const
+    {
+      return true;
+    }
     virtual void setCustomBackgroundColor( rgb whichColor )
     {}
     virtual void setCustomAxisColor( rgb whichColor )
     {}
     virtual void setCustomZeroColor( rgb whichColor )
+    {}
+    virtual void setBackgroundAsZero( bool newValue )
     {}
     virtual bool getChanged() const
     {
@@ -1052,9 +1058,11 @@ class TimelineProxy: public Timeline
     virtual rgb getBackgroundColor() const override;
     virtual rgb getAxisColor() const override;
     virtual rgb getZeroColor() const override;
+    virtual bool getBackgroundAsZero() const override;
     virtual void setCustomBackgroundColor( rgb whichColor ) override;
     virtual void setCustomAxisColor( rgb whichColor ) override;
     virtual void setCustomZeroColor( rgb whichColor ) override;
+    virtual void setBackgroundAsZero( bool newValue ) override;
     virtual bool getChanged() const override;
     virtual void setChanged( bool newValue ) override;
     virtual bool getRedraw() const override;
@@ -1280,6 +1288,7 @@ class TimelineProxy: public Timeline
     rgb customBackgroundColor;
     rgb customAxisColor;
     rgb customZeroColor;
+    bool backgroundAsZero = true;
 
     DrawModeMethod drawModeObject;
     DrawModeMethod drawModeTime;
