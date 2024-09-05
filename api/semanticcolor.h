@@ -33,7 +33,7 @@ class Timeline;
 
 enum class TColorFunction
 {
-  COLOR = 0,
+  CODE_COLOR = 0,
   GRADIENT,
   NOT_NULL_GRADIENT,
   FUNCTION_LINE,
@@ -42,9 +42,19 @@ enum class TColorFunction
   ALTERNATIVE_GRADIENT
 };
 
+enum class TGradientFunction
+{
+  LINEAR = 0,
+  STEPS,
+  LOGARITHMIC,
+  EXPONENTIAL
+};
+
 class SemanticColor
 {
   public:
+    using TRangeFunctions = std::map< double, std::function< rgb( TSemanticValue )> >;
+
     static rgb BACKGROUND;
     static rgb FOREGROUND;
     static rgb ZERO_AXIS;
@@ -59,15 +69,8 @@ class SemanticColor
     static rgb DEFAULT_ABOVE_OUTLIER_COLOR;
     static rgb DEFAULT_BELOW_OUTLIER_COLOR;
 
-    static PRV_UINT32 getNumColors();
-    static rgb* getCodeColors();
-
-    static rgb getBeginGradientColor();
-    static rgb getEndGradientColor();
-    static rgb getNegativeBeginGradientColor();
-    static rgb getNegativeEndGradientColor();
-    static rgb getAboveOutlierColor();
-    static rgb getBelowOutlierColor();
+    static PRV_UINT32 getFixedNumColors();
+    static rgb* getFixedCodeColors();
 
     template<typename C>
     static int getLuminance( C red, C green, C blue )
@@ -77,75 +80,55 @@ class SemanticColor
              ( blue  * 11 ) / 100;
     }
 
-    virtual ~SemanticColor()
-    {};
+    // NO initialization, nor expand of code colors is done.
+    SemanticColor() {}
 
-    virtual rgb calcColor( TSemanticValue whichValue,
-                           TSemanticValue minimum,
-                           TSemanticValue maximum,
-                           bool useCustomPalette ) const = 0;
+    // All initializations and expand of code colors.
+    // For performance reasons (expand code colors), it should be called in few locations, like trace loading
+    // and then the SemanticColor object copied to othes, like Timelines.
+    SemanticColor( const std::vector< rgb >& whichAlternativeGradientColors );
 
-  private:
-    static PRV_UINT32 numColors;
-    static rgb codeColor[];
+    rgb calcColor( TSemanticValue whichValue,
+                   TSemanticValue minimum,
+                   TSemanticValue maximum ) const;
 
-    static rgb beginGradientColor;
-    static rgb endGradientColor;
-    static rgb negativeBeginGradientColor;
-    static rgb negativeEndGradientColor;
-    static rgb aboveOutlierColor;
-    static rgb belowOutlierColor;
-};
+    void setColorMode( TColorFunction whichMode );
+    TColorFunction getColorMode() const;
 
-class CodeColor: public SemanticColor
-{
-  public:
-    CodeColor();
-    CodeColor( Timeline *dummy )
-    {}
-    ~CodeColor();
+    void setCodeColorMode();
+    void setGradientColorMode();
+    void setAlternativeGradientColorMode();
+    void setNotNullGradientColorMode();
+    void setFunctionLineColorMode();
+    void setFusedLinesColorMode();
+    void setPunctualColorMode();
+    bool isCodeColorSet() const;
+    bool isGradientColorSet() const;
+    bool isNotNullGradientColorSet() const;
+    bool isAlternativeGradientColorSet() const;
+    bool isFunctionLineColorSet() const;
+    bool isFusedLinesColorSet() const;
+    bool isPunctualColorSet() const;
 
+    // Code Color methods
     PRV_UINT32 getNumColors() const;
     void setColor( PRV_UINT32 pos, rgb color );
     void setCustomColor( TSemanticValue whichValue, rgb color );
     bool existCustomColors() const;
     const std::map<TSemanticValue, rgb>& getCustomPalette() const;
     void setCustomPalette( const std::map<TSemanticValue, rgb>& whichPalette );
-    rgb calcColor( TSemanticValue whichValue,
-                   TSemanticValue minimum,
-                   TSemanticValue maximum,
-                   bool useCustomPalette ) const override;
+    bool getUseCustomPalette() const;
+    void setUseCustomPalette( bool newValue );
     bool isColorSimilarToBackground( rgb whichColor ) const;
 
-  private:
-    std::vector<rgb> colors;
-    std::map<TSemanticValue, rgb> customPalette;
+    void setCustomBackgroundColor( rgb whichColor );
+    void setCustomAxisColor( rgb whichColor );
+    void setCustomZeroColor( rgb whichColor );
+    rgb getCustomBackgroundColor() const;
+    rgb getCustomAxisColor() const;
+    rgb getCustomZeroColor() const;
 
-    inline rgb getColor( PRV_UINT32 pos ) const;
-    void expandColors();
-
-
-    static const int MAX_COLORS;
-};
-
-
-enum class TGradientFunction
-{
-  LINEAR = 0,
-  STEPS,
-  LOGARITHMIC,
-  EXPONENTIAL
-};
-
-class GradientColor: public SemanticColor
-{
-  public:
-    using TRangeFunctions = std::map< double, std::function< rgb( TSemanticValue )> >;
-
-    GradientColor();
-    GradientColor(  const std::vector< rgb >& whichStopColors );
-    ~GradientColor();
-
+    // Gradient Color methods
     void setBeginGradientColor( rgb color );
     rgb getBeginGradientColor() const;
 
@@ -172,22 +155,32 @@ class GradientColor: public SemanticColor
     TGradientFunction getGradientFunction() const;
     void setGradientFunction( TGradientFunction whichFunction );
 
-    rgb calcColor( TSemanticValue whichValue,
-                   TSemanticValue minimum,
-                   TSemanticValue maximum,
-                   bool useCustomPalette = false ) const override;
     bool isColorOutlier( rgb whichColor ) const;
 
-    void copy( GradientColor &destiny );
-
   private:
+    static PRV_UINT32 numFixedCodeColors;
+    static rgb fixedCodeColor[];
+
+    static const int MAX_COLORS;
+
+    TColorFunction colorMode;
+
+    std::vector<rgb> colors;
+    std::map<TSemanticValue, rgb> customPalette;
+    bool useCustomPalette = false;
+    rgb customBackgroundColor;
+    rgb customAxisColor;
+    rgb customZeroColor;
+
     bool drawOutlier;
     bool drawOutOfScale;
     
     TRangeFunctions rangeFunctions;
     TRangeFunctions negativeRangeFunctions;
-    std::vector< rgb > stopColors;
-    std::vector< rgb > negativeStopColors;
+    TRangeFunctions alternativeRangeFunctions;
+    std::array< rgb, 2 > stopColors;
+    std::array< rgb, 2 > negativeStopColors;
+    std::vector< rgb > alternativeStopColors;
     rgb aboveOutlierColor;
     rgb belowOutlierColor;
 
@@ -201,8 +194,20 @@ class GradientColor: public SemanticColor
 
     TGradientFunction function;
 
-    void initCommon();
+    void initGradient();
     void recalcSteps();
+
+    inline rgb getColor( PRV_UINT32 pos ) const;
+    void expandColors();
+
+    rgb calcCodeColor( TSemanticValue whichValue,
+                       TSemanticValue minimum,
+                       TSemanticValue maximum ) const;
+
+    rgb calcGradientColor( TSemanticValue whichValue,
+                           TSemanticValue minimum,
+                           TSemanticValue maximum ) const;
+
 };
 
 

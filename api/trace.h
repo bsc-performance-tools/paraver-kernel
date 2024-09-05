@@ -178,9 +178,9 @@ class Trace
       return "";
     }
     virtual void setInstanceNumber( PRV_UINT32 whichInstanceNumber ) {}
-    virtual const CodeColor& getCodeColor() const
+    virtual const SemanticColor& getSemanticColor() const
     {
-      CodeColor *tmp = nullptr;
+      SemanticColor *tmp = nullptr;
       return *tmp;
     }
     virtual const EventLabels& getEventLabels() const
@@ -314,7 +314,7 @@ class TraceProxy: public Trace
     virtual bool getUnload() const override;
     virtual void setUnload( bool newValue ) override;
     virtual Trace *getConcrete() const override;
-    virtual const CodeColor& getCodeColor() const override;
+    virtual const SemanticColor& getSemanticColor() const override;
     virtual const EventLabels& getEventLabels() const override;
     virtual const StateLabels& getStateLabels() const override;
     virtual std::string getRowLabel( TTraceLevel whichLevel, TObjectOrder whichRow ) const override;
@@ -364,7 +364,7 @@ class TraceProxy: public Trace
     bool unload;
     PRV_UINT32 instanceNumber;
 
-    CodeColor myCodeColor;
+    SemanticColor mySemanticColor{ std::vector<rgb>{ {0,255,0}, {255,255,0}, {255,0,0} } };
 
     EventLabels myEventLabels;
     StateLabels myStateLabels;

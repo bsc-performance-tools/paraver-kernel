@@ -1605,13 +1605,13 @@ bool WindowGradientFunction::parseLine( KernelConnection *whichKernel, istringst
   getline( line, strFunction );
 
   if ( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_LINEAR ) == 0 )
-    windows[ windows.size() - 1 ]->getGradientColor().setGradientFunction( TGradientFunction::LINEAR );
+    windows[ windows.size() - 1 ]->getSemanticColor().setGradientFunction( TGradientFunction::LINEAR );
   else if ( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_STEPS ) == 0 )
-    windows[ windows.size() - 1 ]->getGradientColor().setGradientFunction( TGradientFunction::STEPS );
+    windows[ windows.size() - 1 ]->getSemanticColor().setGradientFunction( TGradientFunction::STEPS );
   else if ( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_LOG ) == 0 )
-    windows[ windows.size() - 1 ]->getGradientColor().setGradientFunction( TGradientFunction::LOGARITHMIC );
+    windows[ windows.size() - 1 ]->getSemanticColor().setGradientFunction( TGradientFunction::LOGARITHMIC );
   else if( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_EXP ) == 0 )
-    windows[ windows.size() - 1 ]->getGradientColor().setGradientFunction( TGradientFunction::EXPONENTIAL );
+    windows[ windows.size() - 1 ]->getSemanticColor().setGradientFunction( TGradientFunction::EXPONENTIAL );
   else
     return false;
 
@@ -1621,7 +1621,7 @@ bool WindowGradientFunction::parseLine( KernelConnection *whichKernel, istringst
 void WindowGradientFunction::printLine( ofstream& cfgFile,
                                         const vector<Timeline *>::const_iterator it )
 {
-  auto currentGradientFunction = ( *it )->getGradientColor().getGradientFunction();
+  auto currentGradientFunction = ( *it )->getSemanticColor().getGradientFunction();
 
   if( ( *it )->isFunctionLineColorSet() ||
       ( *it )->isPunctualColorSet() ||
@@ -1835,7 +1835,7 @@ bool WindowCustomColorPalette::parseLine( KernelConnection *whichKernel, istring
       return false;
     tmpRGB.blue = tmpComponent;
 
-    windows[ windows.size() - 1 ]->getCodeColor().setCustomColor( tmpValue, tmpRGB );
+    windows[ windows.size() - 1 ]->getSemanticColor().setCustomColor( tmpValue, tmpRGB );
   }
 
   return true;
@@ -1844,7 +1844,7 @@ bool WindowCustomColorPalette::parseLine( KernelConnection *whichKernel, istring
 void WindowCustomColorPalette::printLine( ofstream& cfgFile,
                                  const vector<Timeline *>::const_iterator it )
 {
-  const CodeColor& tmpCodeColor = ( *it )->getCodeColor();
+  const SemanticColor& tmpCodeColor = ( *it )->getSemanticColor();
 
   if( tmpCodeColor.existCustomColors() )
   {
@@ -5598,7 +5598,7 @@ void Analyzer2DCodeColor::printLine( ofstream& cfgFile,
                                      const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_CODE_COLOR << " ";
-  if ( ( *it )->getCodeColor() )
+  if ( ( *it )->isCodeColorSet() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
@@ -5624,7 +5624,7 @@ bool Analyzer2DColorMode::parseLine( KernelConnection *whichKernel, istringstrea
   getline( line, strBool, ' ' );
 
   if ( strBool.compare( OLDCFG_VAL_COLOR_MODE_CODE ) == 0 )
-    histograms[ histograms.size() - 1 ]->setColorMode( TColorFunction::COLOR );
+    histograms[ histograms.size() - 1 ]->setColorMode( TColorFunction::CODE_COLOR );
   else if ( strBool.compare( OLDCFG_VAL_COLOR_MODE_GRADIENT ) == 0 )
     histograms[ histograms.size() - 1 ]->setColorMode( TColorFunction::GRADIENT );
   else if ( strBool.compare( OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT ) == 0 )
@@ -5641,7 +5641,7 @@ void Analyzer2DColorMode::printLine( ofstream& cfgFile,
                                      const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_COLOR_MODE << " ";
-  if ( ( *it )->getColorMode() == TColorFunction::COLOR )
+  if ( ( *it )->getColorMode() == TColorFunction::CODE_COLOR )
     cfgFile << OLDCFG_VAL_COLOR_MODE_CODE;
   else if( ( *it )->getColorMode() == TColorFunction::GRADIENT )
     cfgFile << OLDCFG_VAL_COLOR_MODE_GRADIENT;

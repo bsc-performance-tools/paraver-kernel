@@ -387,14 +387,9 @@ class Timeline
     {
       return DrawModeMethod::DRAW_MAXIMUM;
     }
-    virtual CodeColor& getCodeColor()
+    virtual SemanticColor& getSemanticColor()
     {
-      CodeColor *tmp = nullptr;
-      return *tmp;
-    }
-    virtual GradientColor& getGradientColor()
-    {
-      GradientColor *tmp = nullptr;
+      SemanticColor *tmp = nullptr;
       return *tmp;
     }
     virtual bool getSemanticScaleMinAtZero()
@@ -1020,8 +1015,7 @@ class TimelineProxy: public Timeline
     virtual DrawModeMethod getDrawModeObject() const override;
     virtual void setDrawModeTime( DrawModeMethod method ) override;
     virtual DrawModeMethod getDrawModeTime() const override;
-    virtual CodeColor& getCodeColor() override;
-    virtual GradientColor& getGradientColor() override;
+    virtual SemanticColor& getSemanticColor() override;
     virtual bool getSemanticScaleMinAtZero() override;
     virtual bool getShowWindow() const override;
     virtual void setShowWindow( bool newValue ) override;
@@ -1281,18 +1275,11 @@ class TimelineProxy: public Timeline
     // GUI related attributes
     std::string name;
 
-    CodeColor myCodeColor;
-    GradientColor myGradientColor;
-    GradientColor myAltGradientColor{ std::vector<rgb>{ {0,255,0}, {255,255,0}, {255,0,0} } };
-    bool useCustomPalette;
-    rgb customBackgroundColor;
-    rgb customAxisColor;
-    rgb customZeroColor;
+    SemanticColor mySemanticColor;
     bool backgroundAsZero = true;
 
     DrawModeMethod drawModeObject;
     DrawModeMethod drawModeTime;
-    TColorFunction colorMode;
     bool semanticScaleMinAtZero;
     bool showWindow;
     bool raise;

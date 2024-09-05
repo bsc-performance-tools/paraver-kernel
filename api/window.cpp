@@ -75,8 +75,7 @@ bool Timeline::compatibleLevels( Timeline *window1, Timeline *window2 )
 Timeline::Timeline( KernelConnection *whichKernel ) : myKernel( whichKernel )
 {}
 
-TimelineProxy::TimelineProxy():
-  myCodeColor( this )
+TimelineProxy::TimelineProxy()
 {
   parent1 = nullptr;
   parent2 = nullptr;
@@ -86,7 +85,7 @@ TimelineProxy::TimelineProxy():
 }
 
 TimelineProxy::TimelineProxy( KernelConnection *whichKernel, Trace *whichTrace ):
-  Timeline( whichKernel ), myTrace( whichTrace ), myCodeColor( this )
+  Timeline( whichKernel ), myTrace( whichTrace )
 {
   parent1 = nullptr;
   parent2 = nullptr;
@@ -95,9 +94,10 @@ TimelineProxy::TimelineProxy( KernelConnection *whichKernel, Trace *whichTrace )
   init();
 }
 
-TimelineProxy::TimelineProxy( KernelConnection *whichKernel, Timeline *whichParent1,
-                          Timeline *whichParent2 ):
-  Timeline( whichKernel ), myCodeColor( this )
+TimelineProxy::TimelineProxy( KernelConnection *whichKernel,
+                              Timeline *whichParent1,
+                              Timeline *whichParent2 ):
+  Timeline( whichKernel )
 {
   parent1 = whichParent1;
   parent1->setChild( this );
@@ -115,7 +115,7 @@ TimelineProxy::TimelineProxy( KernelConnection *whichKernel, Timeline *whichPare
 }
 
 TimelineProxy::TimelineProxy( KernelConnection *whichKernel ):
-  Timeline( whichKernel ), myTrace( nullptr ), myCodeColor( this )
+  Timeline( whichKernel ), myTrace( nullptr )
 {
   parent1 = nullptr;
   parent2 = nullptr;
@@ -137,17 +137,13 @@ void TimelineProxy::init()
   existSemanticZero = Timeline::getExistSemanticZero();
   semanticScaleMinAtZero = ParaverConfig::getInstance()->getTimelineSemanticScaleMinAtZero();
 
-  colorMode = ParaverConfig::getInstance()->getTimelineColor();
-  useCustomPalette = Timeline::getUseCustomPalette();
-  if( colorMode == TColorFunction::GRADIENT )
-    myGradientColor.allowOutOfScale( true );
-  else if( colorMode == TColorFunction::NOT_NULL_GRADIENT )
-    myGradientColor.allowOutOfScale( false );
-  myGradientColor.setGradientFunction( ParaverConfig::getInstance()->getTimelineGradientFunction() );
-  myAltGradientColor.setGradientFunction( ParaverConfig::getInstance()->getTimelineGradientFunction() );
-  customBackgroundColor = ParaverConfig::getInstance()->getColorsTimelineBackground();
-  customAxisColor = ParaverConfig::getInstance()->getColorsTimelineAxis();
-  customZeroColor = ParaverConfig::getInstance()->getColorsTimelineColorZero();
+  if( myTrace != nullptr )
+    mySemanticColor = myTrace->getSemanticColor();
+  mySemanticColor.setColorMode( ParaverConfig::getInstance()->getTimelineColor() );
+  mySemanticColor.setGradientFunction( ParaverConfig::getInstance()->getTimelineGradientFunction() );
+  mySemanticColor.setCustomBackgroundColor( ParaverConfig::getInstance()->getColorsTimelineBackground() );
+  mySemanticColor.setCustomAxisColor( ParaverConfig::getInstance()->getColorsTimelineAxis() );
+  mySemanticColor.setCustomZeroColor( ParaverConfig::getInstance()->getColorsTimelineColorZero() );
   backgroundAsZero = Timeline::getBackgroundAsZero();
 
   drawModeObject = ParaverConfig::getInstance()->getTimelineDrawmodeObjects();
@@ -173,7 +169,6 @@ void TimelineProxy::init()
   if( myTrace != nullptr )
   {
     winEndTime = myTrace->getEndTime();
-    myCodeColor = myTrace->getCodeColor();
     selectedRow.init( getTrace() );
     zoomHistory.addZoom( 0, winEndTime, 0, getWindowLevelObjects() - 1 );
   }
@@ -337,10 +332,7 @@ Timeline *TimelineProxy::clone( bool recursiveClone )
   tmp << ++number_of_clones;
   clonedWindow->name = name + ".c" + tmp.str();
 
-  clonedWindow->myCodeColor = myCodeColor;
-  clonedWindow->myGradientColor = myGradientColor;
-  clonedWindow->myAltGradientColor = myAltGradientColor;
-  clonedWindow->colorMode = colorMode;
+  clonedWindow->mySemanticColor = mySemanticColor;
   clonedWindow->punctualColorWindow = punctualColorWindow;
   clonedWindow->semanticScaleMinAtZero = semanticScaleMinAtZero;
   clonedWindow->drawModeObject = drawModeObject;
@@ -1150,17 +1142,9 @@ DrawModeMethod TimelineProxy::getDrawModeTime() const
   return drawModeTime;
 }
 
-CodeColor& TimelineProxy::getCodeColor()
+SemanticColor& TimelineProxy::getSemanticColor()
 {
-  return myCodeColor;
-}
-
-GradientColor& TimelineProxy::getGradientColor()
-{
-  if ( isAlternativeGradientColorSet() )
-    return myAltGradientColor;
-    
-  return myGradientColor;
+  return mySemanticColor;
 }
 
 bool TimelineProxy::getSemanticScaleMinAtZero()
@@ -1202,75 +1186,72 @@ void TimelineProxy::setRaiseWindow( bool newValue )
 
 void TimelineProxy::setCodeColorMode()
 {
-  colorMode = TColorFunction::COLOR;
+  mySemanticColor.setCodeColorMode();
 }
 
 void TimelineProxy::setGradientColorMode()
 {
-  colorMode = TColorFunction::GRADIENT;
-  myGradientColor.allowOutOfScale( true );
+  mySemanticColor.setGradientColorMode();
 }
 
 void TimelineProxy::setNotNullGradientColorMode()
 {
-  colorMode = TColorFunction::NOT_NULL_GRADIENT;
-  myGradientColor.allowOutOfScale( false );
+  mySemanticColor.setNotNullGradientColorMode();
 }
 
 void TimelineProxy::setAlternativeGradientColorMode()
 {
-  colorMode = TColorFunction::ALTERNATIVE_GRADIENT;
-  myAltGradientColor.allowOutOfScale( false );
+  mySemanticColor.setAlternativeGradientColorMode();
 }
 
 void TimelineProxy::setFunctionLineColorMode()
 {
-  colorMode = TColorFunction::FUNCTION_LINE;
+  mySemanticColor.setFunctionLineColorMode();
 }
 
 void TimelineProxy::setFusedLinesColorMode()
 {
-  colorMode = TColorFunction::FUSED_LINES;
+  mySemanticColor.setFusedLinesColorMode();
 }
 
 void TimelineProxy::setPunctualColorMode()
 {
-  colorMode = TColorFunction::PUNCTUAL;
+  mySemanticColor.setPunctualColorMode();
 }
 
 bool TimelineProxy::isCodeColorSet() const
 {
-  return colorMode == TColorFunction::COLOR;
+  return mySemanticColor.isCodeColorSet();
 }
 
 bool TimelineProxy::isGradientColorSet() const
 {
-  return colorMode == TColorFunction::GRADIENT;
+  return mySemanticColor.isGradientColorSet();
 }
 
 bool TimelineProxy::isNotNullGradientColorSet() const
 {
-  return colorMode == TColorFunction::NOT_NULL_GRADIENT;
+  return mySemanticColor.isNotNullGradientColorSet();
 }
 
 bool TimelineProxy::isAlternativeGradientColorSet() const
 {
-  return colorMode == TColorFunction::ALTERNATIVE_GRADIENT;
+  return mySemanticColor.isAlternativeGradientColorSet();
 }
 
 bool TimelineProxy::isFunctionLineColorSet() const
 {
-  return colorMode == TColorFunction::FUNCTION_LINE;
+  return mySemanticColor.isFunctionLineColorSet();
 }
 
 bool TimelineProxy::isFusedLinesColorSet() const
 {
-  return colorMode == TColorFunction::FUSED_LINES;
+  return mySemanticColor.isFusedLinesColorSet();
 }
 
 bool TimelineProxy::isPunctualColorSet() const
 {
-  return colorMode == TColorFunction::PUNCTUAL;
+  return mySemanticColor.isPunctualColorSet();
 }
 
 PRV_UINT16 TimelineProxy::getPixelSize() const
@@ -1300,68 +1281,59 @@ void  TimelineProxy::setSemanticScaleMinAtZero( bool newValue )
 
 void TimelineProxy::allowOutOfScale( bool activate )
 {
-  myGradientColor.allowOutOfScale( activate );
+  mySemanticColor.allowOutOfScale( activate );
 }
 
 void TimelineProxy::allowOutliers( bool activate )
 {
-  myGradientColor.allowOutliers( activate );
+  mySemanticColor.allowOutliers( activate );
 }
 
 rgb TimelineProxy::calcColor( TSemanticValue whichValue, Timeline& whichWindow )
 {
-  if ( colorMode == TColorFunction::COLOR )
-    return myCodeColor.calcColor( whichValue, minimumY, maximumY, useCustomPalette );
-  else if ( colorMode == TColorFunction::ALTERNATIVE_GRADIENT )
-    return myAltGradientColor.calcColor( whichValue, minimumY, maximumY );
-
-  return myGradientColor.calcColor( whichValue, minimumY, maximumY );
+  return mySemanticColor.calcColor( whichValue, minimumY, maximumY );
 }
 
 bool TimelineProxy::isColorOutlier( rgb whichColor ) const
 {
-  if( colorMode != TColorFunction::GRADIENT )
-    return false;
-  return myGradientColor.isColorOutlier( whichColor );
+  return mySemanticColor.isColorOutlier( whichColor );
 }
 
 bool TimelineProxy::getUseCustomPalette() const
 {
-  return useCustomPalette;
+  return mySemanticColor.getUseCustomPalette();
 }
 
-void TimelineProxy::setUseCustomPalette( bool newValue ) 
+void TimelineProxy::setUseCustomPalette( bool newValue )
 {
-  useCustomPalette = newValue;
+  mySemanticColor.setUseCustomPalette( newValue );
 }
 
 bool TimelineProxy::existCustomColors() const
 {
-  return myCodeColor.existCustomColors() ||
-         customBackgroundColor != ParaverConfig::getInstance()->getColorsTimelineBackground() ||
-         customAxisColor != ParaverConfig::getInstance()->getColorsTimelineAxis();
+  return mySemanticColor.existCustomColors();
 }
 
 rgb TimelineProxy::getBackgroundColor() const
 {
-  if( useCustomPalette )
-    return customBackgroundColor;
+  if( mySemanticColor.getUseCustomPalette() )
+    return mySemanticColor.getCustomBackgroundColor();
   
   return ParaverConfig::getInstance()->getColorsTimelineBackground();
 }
 
 rgb TimelineProxy::getAxisColor() const
 {
-  if( useCustomPalette )
-    return customAxisColor;
+  if( mySemanticColor.getUseCustomPalette() )
+    return mySemanticColor.getCustomAxisColor();
   
   return ParaverConfig::getInstance()->getColorsTimelineAxis();
 }
 
 rgb TimelineProxy::getZeroColor() const
 {
-  if( useCustomPalette )
-    return customZeroColor;
+  if( mySemanticColor.getUseCustomPalette() )
+    return mySemanticColor.getCustomZeroColor();
   
   return ParaverConfig::getInstance()->getColorsTimelineColorZero();
 }
@@ -1373,17 +1345,17 @@ bool TimelineProxy::getBackgroundAsZero() const
 
 void TimelineProxy::setCustomBackgroundColor( rgb whichColor )
 {
-  customBackgroundColor = whichColor;
+  mySemanticColor.setCustomBackgroundColor( whichColor );
 }
 
 void TimelineProxy::setCustomAxisColor( rgb whichColor )
 {
-  customAxisColor = whichColor;
+  mySemanticColor.setCustomAxisColor( whichColor );
 }
 
 void TimelineProxy::setCustomZeroColor( rgb whichColor )
 {
-  customZeroColor = whichColor;
+  mySemanticColor.setCustomZeroColor( whichColor );
 }
 
 void TimelineProxy::setBackgroundAsZero( bool newValue )

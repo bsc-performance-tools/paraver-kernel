@@ -179,7 +179,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlTimeline.viewCommunicationsLines = true;
   //DEPRECATED
   xmlTimeline.viewFunctionAsColor = true;
-  xmlTimeline.color = TColorFunction::COLOR;
+  xmlTimeline.color = TColorFunction::CODE_COLOR;
   xmlTimeline.drawmodeTime = DrawModeMethod::DRAW_MAXIMUM;
   xmlTimeline.drawmodeObjects = DrawModeMethod::DRAW_MAXIMUM;
   xmlTimeline.gradientFunction = TGradientFunction::LINEAR;

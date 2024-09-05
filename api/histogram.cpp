@@ -92,8 +92,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   commSelectedPlane = 0;
   drawModeObjects = Histogram::getDrawModeObjects();
   drawModeColumns = Histogram::getDrawModeColumns();
-  myGradientColor.setGradientFunction( ParaverConfig::getInstance()->getHistogramGradientFunction() );
-  myAltGradientColor.setGradientFunction( ParaverConfig::getInstance()->getHistogramGradientFunction() );
+  mySemanticColor.setGradientFunction( ParaverConfig::getInstance()->getHistogramGradientFunction() );
   if( ParaverConfig::getInstance()->getHistogramPixelSize() >= 0 &&
       ParaverConfig::getInstance()->getHistogramPixelSize() <= 3 )
     pixelSize = (PRV_UINT16)pow( float(2), (int)ParaverConfig::getInstance()->getHistogramPixelSize() );
@@ -916,18 +915,12 @@ bool HistogramProxy::getShowColor() const
 
 rgb HistogramProxy::calcGradientColor( TSemanticValue whichValue ) const
 {
-  if ( getColorMode() == TColorFunction::ALTERNATIVE_GRADIENT )
-    return myAltGradientColor.calcColor( whichValue, minGradient, maxGradient );
-
-  return myGradientColor.calcColor( whichValue, minGradient, maxGradient );
+  return mySemanticColor.calcColor( whichValue, minGradient, maxGradient );
 }
 
-GradientColor& HistogramProxy::getGradientColor()
+SemanticColor& HistogramProxy::getSemanticColor()
 {
-  if ( getColorMode() == TColorFunction::ALTERNATIVE_GRADIENT )
-    return myAltGradientColor;
-    
-  return myGradientColor;
+  return mySemanticColor;
 }
 
 void HistogramProxy::recalcGradientLimits()
@@ -1476,9 +1469,6 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->calcStat = vector<string>( calcStat );
   clonedHistogramProxy->commCalcStat = vector<string>( commCalcStat );
 
-  myGradientColor.copy( clonedHistogramProxy->myGradientColor );
-  myAltGradientColor.copy( clonedHistogramProxy->myAltGradientColor );
-
   if ( ParaverConfig::getInstance()->getHistogramKeepSyncGroupClone() )
   {
     clonedHistogramProxy->sync = sync;
@@ -1678,23 +1668,23 @@ bool HistogramProxy::getNumColumnsInitialized() const
 
 
 // DEPRECATED
-bool HistogramProxy::getCodeColor() const
+bool HistogramProxy::isCodeColorSet() const
 {
-  return colorMode == TColorFunction::COLOR;
+  return colorMode == TColorFunction::CODE_COLOR;
 }
 
 // DEPRECATED
 void HistogramProxy::setCodeColor( bool newValue )
 {
   if( newValue )
-    colorMode = TColorFunction::COLOR;
+    colorMode = TColorFunction::CODE_COLOR;
   else
     colorMode = TColorFunction::GRADIENT;
 }
 
 TColorFunction HistogramProxy::getColorMode() const
 {
-  return colorMode;
+  return mySemanticColor.getColorMode();
 }
 
 void HistogramProxy::setColorMode( TColorFunction whichMode )
