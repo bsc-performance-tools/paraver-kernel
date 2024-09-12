@@ -123,10 +123,8 @@ class SemanticColor
 
     void setCustomBackgroundColor( rgb whichColor );
     void setCustomAxisColor( rgb whichColor );
-    void setCustomZeroColor( rgb whichColor );
     rgb getCustomBackgroundColor() const;
     rgb getCustomAxisColor() const;
-    rgb getCustomZeroColor() const;
 
     // Gradient Color methods
     void setBeginGradientColor( rgb color );
@@ -170,7 +168,6 @@ class SemanticColor
     bool useCustomPalette = false;
     rgb customBackgroundColor;
     rgb customAxisColor;
-    rgb customZeroColor;
 
     bool drawOutlier;
     bool drawOutOfScale;

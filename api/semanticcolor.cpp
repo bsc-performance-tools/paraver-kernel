@@ -356,11 +356,6 @@ void SemanticColor::setCustomAxisColor( rgb whichColor )
   customAxisColor = whichColor;
 }
 
-void SemanticColor::setCustomZeroColor( rgb whichColor )
-{
-  customZeroColor = whichColor;
-}
-
 rgb SemanticColor::getCustomBackgroundColor() const
 {
   return customBackgroundColor;
@@ -369,11 +364,6 @@ rgb SemanticColor::getCustomBackgroundColor() const
 rgb SemanticColor::getCustomAxisColor() const
 {
   return customAxisColor;
-}
-
-rgb SemanticColor::getCustomZeroColor() const
-{
-  return customZeroColor;
 }
 
 struct eqrgb
@@ -607,7 +597,9 @@ rgb SemanticColor::calcGradientColor( TSemanticValue whichValue,
 {
   if ( whichValue == 0 && !drawOutOfScale )
   {
-    if( ParaverConfig::getInstance()->getColorsTimelineUseZero() )
+    if( useCustomPalette )
+      return customPalette.at( 0.0 );
+    else if( ParaverConfig::getInstance()->getColorsTimelineUseZero() )
       return ParaverConfig::getInstance()->getColorsTimelineColorZero();
     else
       return ParaverConfig::getInstance()->getColorsTimelineBackground();

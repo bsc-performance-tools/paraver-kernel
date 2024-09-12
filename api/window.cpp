@@ -143,7 +143,6 @@ void TimelineProxy::init()
   mySemanticColor.setGradientFunction( ParaverConfig::getInstance()->getTimelineGradientFunction() );
   mySemanticColor.setCustomBackgroundColor( ParaverConfig::getInstance()->getColorsTimelineBackground() );
   mySemanticColor.setCustomAxisColor( ParaverConfig::getInstance()->getColorsTimelineAxis() );
-  mySemanticColor.setCustomZeroColor( ParaverConfig::getInstance()->getColorsTimelineColorZero() );
   backgroundAsZero = Timeline::getBackgroundAsZero();
 
   drawModeObject = ParaverConfig::getInstance()->getTimelineDrawmodeObjects();
@@ -1330,14 +1329,6 @@ rgb TimelineProxy::getAxisColor() const
   return ParaverConfig::getInstance()->getColorsTimelineAxis();
 }
 
-rgb TimelineProxy::getZeroColor() const
-{
-  if( mySemanticColor.getUseCustomPalette() )
-    return mySemanticColor.getCustomZeroColor();
-  
-  return ParaverConfig::getInstance()->getColorsTimelineColorZero();
-}
-
 bool TimelineProxy::getBackgroundAsZero() const
 {
   return backgroundAsZero;
@@ -1351,11 +1342,6 @@ void TimelineProxy::setCustomBackgroundColor( rgb whichColor )
 void TimelineProxy::setCustomAxisColor( rgb whichColor )
 {
   mySemanticColor.setCustomAxisColor( whichColor );
-}
-
-void TimelineProxy::setCustomZeroColor( rgb whichColor )
-{
-  mySemanticColor.setCustomZeroColor( whichColor );
 }
 
 void TimelineProxy::setBackgroundAsZero( bool newValue )
