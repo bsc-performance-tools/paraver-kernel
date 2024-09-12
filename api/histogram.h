@@ -1011,7 +1011,6 @@ class HistogramProxy : public Histogram
     bool recalc;
     bool forceRecalc;
     bool numColumnsInitialized = false;
-    TColorFunction colorMode;
     PRV_UINT16 pixelSize;
     bool onlyTotals;
     bool shortLabels;
