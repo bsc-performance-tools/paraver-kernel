@@ -609,7 +609,7 @@ rgb SemanticColor::calcGradientColor( TSemanticValue whichValue,
     else
       return ParaverConfig::getInstance()->getColorsTimelineBackground();
   }
-#warning "stopcolors used everywhere. Maybe have to decide between them and alternativeStopColors?"
+
   if ( whichValue < minimum )
   {
     if ( drawOutlier && colorMode != TColorFunction::ALTERNATIVE_GRADIENT )
