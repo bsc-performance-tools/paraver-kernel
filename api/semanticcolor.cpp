@@ -598,8 +598,13 @@ rgb SemanticColor::calcGradientColor( TSemanticValue whichValue,
   if ( whichValue == 0 && !drawOutOfScale )
   {
     if( useCustomPalette )
-      return customPalette.at( 0.0 );
-    else if( ParaverConfig::getInstance()->getColorsTimelineUseZero() )
+    {
+      auto itColorZero = customPalette.find( 0.0 );
+      if( itColorZero != customPalette.end() )
+        return itColorZero->second;
+    }
+
+    if( ParaverConfig::getInstance()->getColorsTimelineUseZero() )
       return ParaverConfig::getInstance()->getColorsTimelineColorZero();
     else
       return ParaverConfig::getInstance()->getColorsTimelineBackground();
