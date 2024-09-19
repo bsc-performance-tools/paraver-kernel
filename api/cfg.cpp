@@ -830,6 +830,7 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowCustomColorEnabled::printLine( cfgFile, it );
     WindowCustomBackgroundColor::printLine( cfgFile, it );
     WindowCustomAxisColor::printLine( cfgFile, it );
+    WindowCustomPunctualColor::printLine( cfgFile, it );
     WindowCustomColorPalette::printLine( cfgFile, it );
     WindowCustomBackgroundAsZero::printLine( cfgFile, it );
     WindowSemanticScaleMinAtZero::printLine( cfgFile, it );
@@ -1019,6 +1020,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED]         = new WindowCustomColorEnabled();
   cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_COLOR]      = new WindowCustomBackgroundColor();
   cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_AXIS_COLOR]            = new WindowCustomAxisColor();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_PUNCTUAL_COLOR]        = new WindowCustomPunctualColor();
   cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_COLOR_PALETTE]         = new WindowCustomColorPalette();
   cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_AS_ZERO]    = new WindowCustomBackgroundAsZero();
 
@@ -1776,6 +1778,60 @@ void WindowCustomAxisColor::printLine( ofstream& cfgFile,
   if( tmprgb != ParaverConfig::getInstance()->getColorsTimelineAxis() )
   {
     cfgFile << OLDCFG_TAG_WNDW_CUSTOM_AXIS_COLOR << " ";
+    cfgFile << "{ " << (int)tmprgb.red << ", " << (int)tmprgb.green << ", " << (int)tmprgb.blue << " }" << endl;
+  }
+}
+
+
+string WindowCustomPunctualColor::tagCFG = OLDCFG_TAG_WNDW_CUSTOM_PUNCTUAL_COLOR;
+
+bool WindowCustomPunctualColor::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                           Trace *whichTrace,
+                                           vector<Timeline *>& windows,
+                                           vector<Histogram *>& histograms )
+{
+  if ( windows[ windows.size() - 1 ] == nullptr )
+    return false;
+
+  istringstream sstrTmp;
+  string strComponent;
+  int tmpComponent;
+  rgb tmpRGB;
+
+  getline( line, strComponent, '{' ); // get '{'
+
+  getline( line, strComponent, ',' );
+  sstrTmp.str( strComponent );
+  if ( !( sstrTmp >> tmpComponent ) ) 
+    return false;
+  tmpRGB.red = tmpComponent;
+
+  getline( line, strComponent, ',' );
+  sstrTmp.clear();
+  sstrTmp.str( strComponent );
+  if ( !( sstrTmp >> tmpComponent ) ) 
+    return false;
+  tmpRGB.green = tmpComponent;
+
+  getline( line, strComponent, '}' );
+  sstrTmp.clear();
+  sstrTmp.str( strComponent );
+  if ( !( sstrTmp >> tmpComponent ) ) 
+    return false;
+  tmpRGB.blue = tmpComponent;
+
+  windows[ windows.size() - 1 ]->setCustomPunctualColor( tmpRGB );
+
+  return true;
+}
+
+void WindowCustomPunctualColor::printLine( ofstream& cfgFile,
+                                             const vector<Timeline *>::const_iterator it )
+{
+  rgb tmprgb = ( *it )->getPunctualColor();
+  if( tmprgb != ParaverConfig::getInstance()->getColorsTimelinePunctual() )
+  {
+    cfgFile << OLDCFG_TAG_WNDW_CUSTOM_PUNCTUAL_COLOR << " ";
     cfgFile << "{ " << (int)tmprgb.red << ", " << (int)tmprgb.green << ", " << (int)tmprgb.blue << " }" << endl;
   }
 }

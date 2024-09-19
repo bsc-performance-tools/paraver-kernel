@@ -82,6 +82,7 @@ constexpr char CFG_TAG_WNDW_GRADIENT_FUNCTION[] =  "window_gradient_function";
 constexpr char OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED[] =  "window_custom_color_enabled";
 constexpr char OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_COLOR[] =  "window_custom_background_color";
 constexpr char OLDCFG_TAG_WNDW_CUSTOM_AXIS_COLOR[] =  "window_custom_axis_color";
+constexpr char OLDCFG_TAG_WNDW_CUSTOM_PUNCTUAL_COLOR[] =  "window_custom_punctual_color";
 constexpr char OLDCFG_TAG_WNDW_CUSTOM_COLOR_PALETTE[] =  "window_custom_color_palette";
 constexpr char OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_AS_ZERO[] =  "window_custom_background_as_zero";
 constexpr char OLDCFG_TAG_WNDW_SEMANTIC_SCALE_MIN_AT_ZERO[] =  "window_semantic_scale_min_at_zero";

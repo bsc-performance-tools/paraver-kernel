@@ -323,7 +323,8 @@ bool SemanticColor::existCustomColors() const
 {
   return !customPalette.empty() ||
          customBackgroundColor != ParaverConfig::getInstance()->getColorsTimelineBackground() ||
-         customAxisColor != ParaverConfig::getInstance()->getColorsTimelineAxis();
+         customAxisColor != ParaverConfig::getInstance()->getColorsTimelineAxis() ||
+         customPunctualColor != ParaverConfig::getInstance()->getColorsTimelinePunctual();
 }
 
 const std::map<TSemanticValue, rgb>& SemanticColor::getCustomPalette() const
@@ -356,6 +357,11 @@ void SemanticColor::setCustomAxisColor( rgb whichColor )
   customAxisColor = whichColor;
 }
 
+void SemanticColor::setCustomPunctualColor( rgb whichColor )
+{
+  customPunctualColor = whichColor;
+}
+
 rgb SemanticColor::getCustomBackgroundColor() const
 {
   return customBackgroundColor;
@@ -364,6 +370,11 @@ rgb SemanticColor::getCustomBackgroundColor() const
 rgb SemanticColor::getCustomAxisColor() const
 {
   return customAxisColor;
+}
+
+rgb SemanticColor::getCustomPunctualColor() const
+{
+  return customPunctualColor;
 }
 
 struct eqrgb
