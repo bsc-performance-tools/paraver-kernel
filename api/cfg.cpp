@@ -1675,6 +1675,37 @@ void WindowCustomColorEnabled::printLine( ofstream& cfgFile,
 }
 
 
+bool parseColorComponents( istringstream& line, rgb& onColor )
+{
+  istringstream sstrTmp;
+  string strComponent;
+  int tmpComponent;
+
+  getline( line, strComponent, '{' ); // get '{'
+
+  getline( line, strComponent, ',' );
+  sstrTmp.str( strComponent );
+  if ( !( sstrTmp >> tmpComponent ) ) 
+    return false;
+  onColor.red = tmpComponent;
+
+  getline( line, strComponent, ',' );
+  sstrTmp.clear();
+  sstrTmp.str( strComponent );
+  if ( !( sstrTmp >> tmpComponent ) ) 
+    return false;
+  onColor.green = tmpComponent;
+
+  getline( line, strComponent, '}' );
+  sstrTmp.clear();
+  sstrTmp.str( strComponent );
+  if ( !( sstrTmp >> tmpComponent ) ) 
+    return false;
+  onColor.blue = tmpComponent;
+
+  return true;
+}
+
 string WindowCustomBackgroundColor::tagCFG = OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_COLOR;
 
 bool WindowCustomBackgroundColor::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -1685,32 +1716,10 @@ bool WindowCustomBackgroundColor::parseLine( KernelConnection *whichKernel, istr
   if ( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
-  istringstream sstrTmp;
-  string strComponent;
-  int tmpComponent;
   rgb tmpRGB;
 
-  getline( line, strComponent, '{' ); // get '{'
-
-  getline( line, strComponent, ',' );
-  sstrTmp.str( strComponent );
-  if ( !( sstrTmp >> tmpComponent ) ) 
+  if ( !parseColorComponents( line, tmpRGB ) )
     return false;
-  tmpRGB.red = tmpComponent;
-
-  getline( line, strComponent, ',' );
-  sstrTmp.clear();
-  sstrTmp.str( strComponent );
-  if ( !( sstrTmp >> tmpComponent ) ) 
-    return false;
-  tmpRGB.green = tmpComponent;
-
-  getline( line, strComponent, '}' );
-  sstrTmp.clear();
-  sstrTmp.str( strComponent );
-  if ( !( sstrTmp >> tmpComponent ) ) 
-    return false;
-  tmpRGB.blue = tmpComponent;
 
   windows[ windows.size() - 1 ]->setCustomBackgroundColor( tmpRGB );
 
@@ -1739,32 +1748,10 @@ bool WindowCustomAxisColor::parseLine( KernelConnection *whichKernel, istringstr
   if ( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
-  istringstream sstrTmp;
-  string strComponent;
-  int tmpComponent;
   rgb tmpRGB;
 
-  getline( line, strComponent, '{' ); // get '{'
-
-  getline( line, strComponent, ',' );
-  sstrTmp.str( strComponent );
-  if ( !( sstrTmp >> tmpComponent ) ) 
+  if ( !parseColorComponents( line, tmpRGB ) )
     return false;
-  tmpRGB.red = tmpComponent;
-
-  getline( line, strComponent, ',' );
-  sstrTmp.clear();
-  sstrTmp.str( strComponent );
-  if ( !( sstrTmp >> tmpComponent ) ) 
-    return false;
-  tmpRGB.green = tmpComponent;
-
-  getline( line, strComponent, '}' );
-  sstrTmp.clear();
-  sstrTmp.str( strComponent );
-  if ( !( sstrTmp >> tmpComponent ) ) 
-    return false;
-  tmpRGB.blue = tmpComponent;
 
   windows[ windows.size() - 1 ]->setCustomAxisColor( tmpRGB );
 
@@ -1793,32 +1780,10 @@ bool WindowCustomPunctualColor::parseLine( KernelConnection *whichKernel, istrin
   if ( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
-  istringstream sstrTmp;
-  string strComponent;
-  int tmpComponent;
   rgb tmpRGB;
 
-  getline( line, strComponent, '{' ); // get '{'
-
-  getline( line, strComponent, ',' );
-  sstrTmp.str( strComponent );
-  if ( !( sstrTmp >> tmpComponent ) ) 
+  if ( !parseColorComponents( line, tmpRGB ) )
     return false;
-  tmpRGB.red = tmpComponent;
-
-  getline( line, strComponent, ',' );
-  sstrTmp.clear();
-  sstrTmp.str( strComponent );
-  if ( !( sstrTmp >> tmpComponent ) ) 
-    return false;
-  tmpRGB.green = tmpComponent;
-
-  getline( line, strComponent, '}' );
-  sstrTmp.clear();
-  sstrTmp.str( strComponent );
-  if ( !( sstrTmp >> tmpComponent ) ) 
-    return false;
-  tmpRGB.blue = tmpComponent;
 
   windows[ windows.size() - 1 ]->setCustomPunctualColor( tmpRGB );
 
