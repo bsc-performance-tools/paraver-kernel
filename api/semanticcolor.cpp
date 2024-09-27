@@ -494,7 +494,7 @@ rgb SemanticColor::calcCodeColor( TSemanticValue whichValue,
   if ( whichValue < 0.0 ||
        whichValue < minimum ||
        whichValue > maximum )
-    return getColor( 0 ); // IDLE!
+    whichValue = 0.0;
 
   if( useCustomPalette )
   {
