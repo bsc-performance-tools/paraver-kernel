@@ -89,8 +89,8 @@ rgb SemanticColor::DEFAULT_PUNCTUAL = { 255, 128, 128 };
 rgb SemanticColor::DEFAULT_LOGICAL_COMMUNICATIONS = { 255, 255, 0 };
 rgb SemanticColor::DEFAULT_PHYSICAL_COMMUNICATIONS = { 255, 0, 0 };
 
-PRV_UINT32 SemanticColor::numColors = 49;
-rgb SemanticColor::codeColor[ ] =
+PRV_UINT32 SemanticColor::numFixedCodeColors = 49;
+rgb SemanticColor::fixedCodeColor[ ] =
 {
   { 117, 195, 255 }, //  0 - Idle
   {   0,   0, 255 }, //  1 - Running
@@ -151,74 +151,148 @@ rgb SemanticColor::DEFAULT_NEGATIVE_END_GRADIENT_COLOR   = { 160, 160, 255 };
 rgb SemanticColor::DEFAULT_ABOVE_OUTLIER_COLOR           = { 255, 146,  24 };
 rgb SemanticColor::DEFAULT_BELOW_OUTLIER_COLOR           = { 207, 207,  68 };
 
-// Preferences may change these
-rgb SemanticColor::beginGradientColor         = SemanticColor::DEFAULT_BEGIN_GRADIENT_COLOR;
-rgb SemanticColor::endGradientColor           = SemanticColor::DEFAULT_END_GRADIENT_COLOR;
-rgb SemanticColor::negativeBeginGradientColor = SemanticColor::DEFAULT_NEGATIVE_BEGIN_GRADIENT_COLOR;
-rgb SemanticColor::negativeEndGradientColor   = SemanticColor::DEFAULT_NEGATIVE_END_GRADIENT_COLOR;
-rgb SemanticColor::aboveOutlierColor          = SemanticColor::DEFAULT_ABOVE_OUTLIER_COLOR;
-rgb SemanticColor::belowOutlierColor          = SemanticColor::DEFAULT_BELOW_OUTLIER_COLOR;
 
-PRV_UINT32 SemanticColor::getNumColors()
+PRV_UINT32 SemanticColor::getFixedNumColors()
 {
-  return numColors;
+  return numFixedCodeColors;
 }
 
-rgb* SemanticColor::getCodeColors()
+rgb* SemanticColor::getFixedCodeColors()
 {
-  return codeColor;
+  return fixedCodeColor;
 }
 
-rgb SemanticColor::getBeginGradientColor()
+SemanticColor::SemanticColor( const std::vector< rgb >& whichAlternativeGradientColors ) : alternativeStopColors( whichAlternativeGradientColors )
 {
-  return ParaverConfig::getInstance()->getColorsBeginGradient();
+  if ( whichAlternativeGradientColors.size() < 2 )
+    throw std::logic_error( "SemanticColor: Too few stop colors." );
+
+  rgb* codeColor = SemanticColor::getFixedCodeColors();
+  for ( PRV_UINT32 i = 0; i < SemanticColor::getFixedNumColors(); i++ )
+    colors.push_back( codeColor[ i ] );
+  expandColors();
+
+  initGradient();
 }
 
-rgb SemanticColor::getEndGradientColor()
+void SemanticColor::setColorMode( TColorFunction whichMode )
 {
-  return ParaverConfig::getInstance()->getColorsEndGradient();
+  colorMode = whichMode;
+  if( colorMode == TColorFunction::GRADIENT )
+    allowOutOfScale( true );
+  else if( colorMode == TColorFunction::NOT_NULL_GRADIENT )
+    allowOutOfScale( false );
 }
 
-rgb SemanticColor::getNegativeBeginGradientColor()
+TColorFunction SemanticColor::getColorMode() const
 {
-  return ParaverConfig::getInstance()->getColorsBeginNegativeGradient();
+  return colorMode;
 }
 
-rgb SemanticColor::getNegativeEndGradientColor()
+void SemanticColor::setCodeColorMode()
 {
-  return ParaverConfig::getInstance()->getColorsEndNegativeGradient();
+  colorMode = TColorFunction::CODE_COLOR;
 }
 
-rgb SemanticColor::getAboveOutlierColor()
+void SemanticColor::setGradientColorMode()
 {
-  return ParaverConfig::getInstance()->getColorsTopGradient();
+  colorMode = TColorFunction::GRADIENT;
+  allowOutOfScale( true );
 }
 
-rgb SemanticColor::getBelowOutlierColor()
+void SemanticColor::setNotNullGradientColorMode()
 {
-  return ParaverConfig::getInstance()->getColorsLowGradient();
+  colorMode = TColorFunction::NOT_NULL_GRADIENT;
+  allowOutOfScale( false );
+}
+
+void SemanticColor::setAlternativeGradientColorMode()
+{
+  colorMode = TColorFunction::ALTERNATIVE_GRADIENT;
+  allowOutOfScale( false );
+}
+
+void SemanticColor::setFunctionLineColorMode()
+{
+  colorMode = TColorFunction::FUNCTION_LINE;
+}
+
+void SemanticColor::setFusedLinesColorMode()
+{
+  colorMode = TColorFunction::FUSED_LINES;
+}
+
+void SemanticColor::setPunctualColorMode()
+{
+  colorMode = TColorFunction::PUNCTUAL;
+}
+
+bool SemanticColor::isCodeColorSet() const
+{
+  return colorMode == TColorFunction::CODE_COLOR;
+}
+
+bool SemanticColor::isGradientColorSet() const
+{
+  return colorMode == TColorFunction::GRADIENT;
+}
+
+bool SemanticColor::isNotNullGradientColorSet() const
+{
+  return colorMode == TColorFunction::NOT_NULL_GRADIENT;
+}
+
+bool SemanticColor::isAlternativeGradientColorSet() const
+{
+  return colorMode == TColorFunction::ALTERNATIVE_GRADIENT;
+}
+
+bool SemanticColor::isFunctionLineColorSet() const
+{
+  return colorMode == TColorFunction::FUNCTION_LINE;
+}
+
+bool SemanticColor::isFusedLinesColorSet() const
+{
+  return colorMode == TColorFunction::FUSED_LINES;
+}
+
+bool SemanticColor::isPunctualColorSet() const
+{
+  return colorMode == TColorFunction::PUNCTUAL;
+}
+
+rgb SemanticColor::calcColor( TSemanticValue whichValue,
+                              TSemanticValue minimum,
+                              TSemanticValue maximum ) const
+{
+  switch( colorMode )
+  {
+    case TColorFunction::CODE_COLOR:
+    case TColorFunction::FUSED_LINES:
+      return calcCodeColor( whichValue, minimum, maximum );
+      break;
+    case TColorFunction::GRADIENT:
+    case TColorFunction::NOT_NULL_GRADIENT:
+    case TColorFunction::ALTERNATIVE_GRADIENT:
+    default:
+      return calcGradientColor( whichValue, minimum, maximum );
+      break;
+  }
+
+  return { 0, 0, 0 };
 }
 
 // CODECOLOR METHODS
-const int CodeColor::MAX_COLORS = 32000;
+const int SemanticColor::MAX_COLORS = 32000;
 
-CodeColor::CodeColor( )
-{
-  rgb* codeColor = SemanticColor::getCodeColors();
-  for ( PRV_UINT32 i = 0; i < SemanticColor::getNumColors(); i++ )
-    colors.push_back( codeColor[ i ] );
-  expandColors();
-}
 
-CodeColor::~CodeColor()
-{}
-
-PRV_UINT32 CodeColor::getNumColors() const
+PRV_UINT32 SemanticColor::getNumColors() const
 {
   return colors.size();
 }
 
-rgb CodeColor::getColor( PRV_UINT32 pos ) const
+rgb SemanticColor::getColor( PRV_UINT32 pos ) const
 {
   if( pos == 0 && ParaverConfig::getInstance()->getColorsTimelineUseZero() )
     return ParaverConfig::getInstance()->getColorsTimelineColorZero();
@@ -226,7 +300,7 @@ rgb CodeColor::getColor( PRV_UINT32 pos ) const
   return colors[ pos ];
 }
 
-void CodeColor::setColor( PRV_UINT32 whichPos, rgb whichColor )
+void SemanticColor::setColor( PRV_UINT32 whichPos, rgb whichColor )
 {
   if ( whichPos >= colors.size() )
   {
@@ -240,24 +314,67 @@ void CodeColor::setColor( PRV_UINT32 whichPos, rgb whichColor )
   colors[ whichPos ] = whichColor;
 }
 
-void CodeColor::setCustomColor( TSemanticValue whichValue, rgb color ) 
+void SemanticColor::setCustomColor( TSemanticValue whichValue, rgb color ) 
 {
   customPalette[ whichValue ] = color;
 }
 
-bool CodeColor::existCustomColors() const
+bool SemanticColor::existCustomColors() const
 {
-  return !customPalette.empty();
+  return !customPalette.empty() ||
+         customBackgroundColor != ParaverConfig::getInstance()->getColorsTimelineBackground() ||
+         customAxisColor != ParaverConfig::getInstance()->getColorsTimelineAxis() ||
+         customPunctualColor != ParaverConfig::getInstance()->getColorsTimelinePunctual();
 }
 
-const std::map<TSemanticValue, rgb>& CodeColor::getCustomPalette() const
+const std::map<TSemanticValue, rgb>& SemanticColor::getCustomPalette() const
 {
   return customPalette;
 }
 
-void CodeColor::setCustomPalette( const std::map<TSemanticValue, rgb>& whichPalette )
+void SemanticColor::setCustomPalette( const std::map<TSemanticValue, rgb>& whichPalette )
 {
   customPalette = whichPalette;
+}
+
+bool SemanticColor::getUseCustomPalette() const
+{
+  return useCustomPalette;
+}
+
+void SemanticColor::setUseCustomPalette( bool newValue )
+{
+  useCustomPalette = newValue;
+}
+
+void SemanticColor::setCustomBackgroundColor( rgb whichColor )
+{
+  customBackgroundColor = whichColor;
+}
+
+void SemanticColor::setCustomAxisColor( rgb whichColor )
+{
+  customAxisColor = whichColor;
+}
+
+void SemanticColor::setCustomPunctualColor( rgb whichColor )
+{
+  customPunctualColor = whichColor;
+}
+
+rgb SemanticColor::getCustomBackgroundColor() const
+{
+  return customBackgroundColor;
+}
+
+rgb SemanticColor::getCustomAxisColor() const
+{
+  return customAxisColor;
+}
+
+rgb SemanticColor::getCustomPunctualColor() const
+{
+  return customPunctualColor;
 }
 
 struct eqrgb
@@ -276,13 +393,13 @@ struct hashrgb
   }
 };
 
-constexpr bool findProperColor( const CodeColor& whichCodeColor, unordered_set<rgb, hashrgb, eqrgb>& insertedColors, rgb& whichColor )
+constexpr bool findProperColor( const SemanticColor& whichCodeColor, unordered_set<rgb, hashrgb, eqrgb>& insertedColors, rgb& whichColor )
 {
   return false;
 }
 
 template< typename TComponent, typename ...TArgs >
-bool findProperColor( const CodeColor& whichCodeColor, unordered_set<rgb, hashrgb, eqrgb>& insertedColors, rgb& whichColor, TComponent& currentComponent, TArgs& ...restComponents )
+bool findProperColor( const SemanticColor& whichCodeColor, unordered_set<rgb, hashrgb, eqrgb>& insertedColors, rgb& whichColor, TComponent& currentComponent, TArgs& ...restComponents )
 {
   if( !findProperColor( whichCodeColor, insertedColors, whichColor, restComponents... ) )
   {
@@ -309,7 +426,7 @@ bool findProperColor( const CodeColor& whichCodeColor, unordered_set<rgb, hashrg
   return true;
 }
 
-void CodeColor::expandColors()
+void SemanticColor::expandColors()
 {
   unsigned int iterations = MAX_COLORS / colors.size() / 3;
   unsigned int numBaseColors = colors.size();
@@ -360,7 +477,7 @@ void CodeColor::expandColors()
   }
 }
 
-bool CodeColor::isColorSimilarToBackground( rgb whichColor ) const
+bool SemanticColor::isColorSimilarToBackground( rgb whichColor ) const
 {
   rgb background = ParaverConfig::getInstance()->getColorsTimelineBackground();
 
@@ -370,15 +487,14 @@ bool CodeColor::isColorSimilarToBackground( rgb whichColor ) const
   return std::abs( luminanceBackground - luminanceColor ) < 42;
 }
 
-rgb CodeColor::calcColor( TSemanticValue whichValue,
-                          TSemanticValue minimum,
-                          TSemanticValue maximum,
-                          bool useCustomPalette ) const
+rgb SemanticColor::calcCodeColor( TSemanticValue whichValue,
+                                  TSemanticValue minimum,
+                                  TSemanticValue maximum ) const
 {
   if ( whichValue < 0.0 ||
        whichValue < minimum ||
        whichValue > maximum )
-    return getColor( 0 ); // IDLE!
+    whichValue = 0.0;
 
   if( useCustomPalette )
   {
@@ -392,130 +508,113 @@ rgb CodeColor::calcColor( TSemanticValue whichValue,
 
 
 // GRADIENTCOLOR METHODS
-GradientColor::GradientColor()
-{
-  stopColors.push_back( SemanticColor::getBeginGradientColor() );
-  stopColors.push_back( SemanticColor::getEndGradientColor() );
-  negativeStopColors.push_back( SemanticColor::getNegativeBeginGradientColor() ); 
-  negativeStopColors.push_back( SemanticColor::getNegativeEndGradientColor() ); 
-
-  initCommon();
-  drawOutlier = true;
-}
-
-GradientColor::GradientColor( const std::vector< rgb >& whichStopColors ): stopColors( whichStopColors )
-{
-  if ( whichStopColors.size() < 2 )
-    throw std::logic_error( "GradientColor: Too few stop colors." );
-  initCommon();
-  drawOutlier = false;
-}
-
-
-GradientColor::~GradientColor()
-{}
-
-void GradientColor::setBeginGradientColor( rgb color )
+void SemanticColor::setBeginGradientColor( rgb color )
 {
   stopColors[ 0 ] = color;
   recalcSteps();
 }
 
-rgb GradientColor::getBeginGradientColor() const
+rgb SemanticColor::getBeginGradientColor() const
 {
   return stopColors.front();
 }
 
-void GradientColor::setEndGradientColor( rgb color )
+void SemanticColor::setEndGradientColor( rgb color )
 {
   stopColors[ 1 ] = color;
   recalcSteps();
 }
 
-rgb GradientColor::getEndGradientColor() const
+rgb SemanticColor::getEndGradientColor() const
 {
   return stopColors.back();
 }
 
-void GradientColor::setNegativeBeginGradientColor( rgb color )
+void SemanticColor::setNegativeBeginGradientColor( rgb color )
 {
   negativeStopColors[ 0 ] = color;
   recalcSteps();
 }
 
-rgb GradientColor::getNegativeBeginGradientColor() const
+rgb SemanticColor::getNegativeBeginGradientColor() const
 {
   return negativeStopColors[ 0 ];
 }
 
-void GradientColor::setNegativeEndGradientColor( rgb color )
+void SemanticColor::setNegativeEndGradientColor( rgb color )
 {
   negativeStopColors[ 1 ] = color;
   recalcSteps();
 }
 
-inline rgb GradientColor::getNegativeEndGradientColor() const
+inline rgb SemanticColor::getNegativeEndGradientColor() const
 {
   return negativeStopColors[ 1 ];
 }
 
-void GradientColor::setAboveOutlierColor( rgb color )
+void SemanticColor::setAboveOutlierColor( rgb color )
 {
   aboveOutlierColor = color;
 }
 
-rgb GradientColor::getAboveOutlierColor() const
+rgb SemanticColor::getAboveOutlierColor() const
 {
   return aboveOutlierColor;
 }
 
-void GradientColor::setBelowOutlierColor( rgb color )
+void SemanticColor::setBelowOutlierColor( rgb color )
 {
   belowOutlierColor = color;
 }
 
-rgb GradientColor::getBelowOutlierColor() const
+rgb SemanticColor::getBelowOutlierColor() const
 {
   return belowOutlierColor;
 }
 
-void GradientColor::allowOutliers( bool activate )
+void SemanticColor::allowOutliers( bool activate )
 {
   drawOutlier = activate;
 }
 
-bool GradientColor::getAllowOutliers() const
+bool SemanticColor::getAllowOutliers() const
 {
   return drawOutlier;
 }
 
-void GradientColor::allowOutOfScale( bool activate )
+void SemanticColor::allowOutOfScale( bool activate )
 {
   drawOutOfScale = activate;
 }
 
-bool GradientColor::getAllowOutOfScale() const
+bool SemanticColor::getAllowOutOfScale() const
 {
   return drawOutOfScale;
 }
 
-TGradientFunction GradientColor::getGradientFunction() const
+TGradientFunction SemanticColor::getGradientFunction() const
 {
   return function;
 }
 
-void GradientColor::setGradientFunction( TGradientFunction whichFunction )
+void SemanticColor::setGradientFunction( TGradientFunction whichFunction )
 {
   function = whichFunction;
 }
 
-rgb GradientColor::calcColor( TSemanticValue whichValue,
-                              TSemanticValue minimum,
-                              TSemanticValue maximum,
-                              bool useCustomPalette ) const
+rgb SemanticColor::calcGradientColor( TSemanticValue whichValue,
+                                      TSemanticValue minimum,
+                                      TSemanticValue maximum ) const
 {
   if ( whichValue == 0 && !drawOutOfScale )
   {
+    if( useCustomPalette )
+    {
+      auto itColorZero = customPalette.find( 0.0 );
+      if( itColorZero != customPalette.end() )
+        return itColorZero->second;
+    }
+
     if( ParaverConfig::getInstance()->getColorsTimelineUseZero() )
       return ParaverConfig::getInstance()->getColorsTimelineColorZero();
     else
@@ -524,7 +623,7 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
 
   if ( whichValue < minimum )
   {
-    if ( drawOutlier )
+    if ( drawOutlier && colorMode != TColorFunction::ALTERNATIVE_GRADIENT )
       return belowOutlierColor;
     if ( drawOutOfScale )
       return stopColors[ 0 ];
@@ -533,7 +632,7 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
 
   if ( whichValue > maximum )
   {
-    if ( drawOutlier )
+    if ( drawOutlier && colorMode != TColorFunction::ALTERNATIVE_GRADIENT )
       return aboveOutlierColor;
     if ( drawOutOfScale )
       return stopColors[ 1 ];
@@ -545,7 +644,9 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
 
   std::reference_wrapper<const TRangeFunctions> tmpRangeFunctions = rangeFunctions;
   bool minimumAsBase = true;
-  if( whichValue < 0.0 && !negativeRangeFunctions.empty() )
+  if( colorMode == TColorFunction::ALTERNATIVE_GRADIENT )
+    tmpRangeFunctions = alternativeRangeFunctions;
+  else if( whichValue < 0.0 && !negativeRangeFunctions.empty() )
   {
     tmpRangeFunctions = negativeRangeFunctions;
     minimumAsBase = false;
@@ -560,28 +661,34 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
 }
 
 
-bool GradientColor::isColorOutlier( rgb whichColor ) const
+bool SemanticColor::isColorOutlier( rgb whichColor ) const
 {
+  if( colorMode != TColorFunction::GRADIENT )
+    return false;
   return ( whichColor == belowOutlierColor || whichColor == aboveOutlierColor );
 }
 
 
-void GradientColor::initCommon()
+void SemanticColor::initGradient()
 {
-  bool blackNotNull = ParaverConfig::getInstance()->getTimelineColor() != TColorFunction::NOT_NULL_GRADIENT;
+  stopColors[ 0 ] = ParaverConfig::getInstance()->getColorsBeginGradient();
+  stopColors[ 1 ] = ParaverConfig::getInstance()->getColorsEndGradient();
+  negativeStopColors[ 0 ] = ParaverConfig::getInstance()->getColorsBeginNegativeGradient();
+  negativeStopColors[ 1 ] = ParaverConfig::getInstance()->getColorsEndNegativeGradient();
 
-  drawOutOfScale = blackNotNull;
+  drawOutOfScale = ParaverConfig::getInstance()->getTimelineColor() != TColorFunction::NOT_NULL_GRADIENT;
+  drawOutlier = true;
 
-  aboveOutlierColor = SemanticColor::getAboveOutlierColor();
-  belowOutlierColor = SemanticColor::getBelowOutlierColor();
+  aboveOutlierColor = SemanticColor::DEFAULT_ABOVE_OUTLIER_COLOR;
+  belowOutlierColor = SemanticColor::DEFAULT_BELOW_OUTLIER_COLOR;
 
   function = TGradientFunction::STEPS;
 
   recalcSteps();
 }
 
-
-void fillRangeFunctions( GradientColor::TRangeFunctions& whichRangeFunctions, const std::vector< rgb >& whichColors )
+template< typename Container >
+void fillRangeFunctions( SemanticColor::TRangeFunctions& whichRangeFunctions, const Container& whichColors )
 {
   whichRangeFunctions.clear();
   double index = 0.0;
@@ -608,28 +715,11 @@ void fillRangeFunctions( GradientColor::TRangeFunctions& whichRangeFunctions, co
   }
 }
 
-void GradientColor::recalcSteps()
+void SemanticColor::recalcSteps()
 {
   fillRangeFunctions( rangeFunctions, stopColors );
   if( !negativeStopColors.empty() )
     fillRangeFunctions( negativeRangeFunctions, negativeStopColors );
+
+  fillRangeFunctions( alternativeRangeFunctions, alternativeStopColors );
 }
-
-void GradientColor::copy( GradientColor &destiny )
-{
-  destiny.drawOutlier = drawOutlier;
-  destiny.drawOutOfScale = drawOutOfScale;
-
-  destiny.stopColors = stopColors;
-  destiny.negativeStopColors = negativeStopColors;
-  destiny.aboveOutlierColor = aboveOutlierColor;
-  destiny.belowOutlierColor = belowOutlierColor;
-
-  destiny.redStep   = redStep;
-  destiny.greenStep = greenStep;
-  destiny.blueStep  = blueStep;
-  destiny.negativeRedStep   = negativeRedStep;
-  destiny.negativeGreenStep = negativeGreenStep;
-  destiny.negativeBlueStep   = negativeBlueStep;
-}
-

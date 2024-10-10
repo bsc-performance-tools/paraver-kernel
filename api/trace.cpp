@@ -464,7 +464,7 @@ void TraceProxy::parsePCF( const string& whichFile )
   for ( auto it : semanticColors )
   {
     std::tie( tmpColor.red, tmpColor.green, tmpColor.blue ) = it.second;
-    myCodeColor.setColor( it.first, tmpColor );
+    mySemanticColor.setColor( it.first, tmpColor );
   }
 
   myEventLabels = EventLabels( pcfParser );
@@ -483,9 +483,9 @@ void TraceProxy::parseROW( const string& whichFile )
   myRowLabels = RowFileParser<>( whichFile );
 }
 
-const CodeColor& TraceProxy::getCodeColor() const
+const SemanticColor& TraceProxy::getSemanticColor() const
 {
-  return myCodeColor;
+  return mySemanticColor;
 }
 
 const EventLabels& TraceProxy::getEventLabels() const

@@ -661,6 +661,75 @@ class WindowCustomColorEnabled: public TagFunction
 
 };
 
+class WindowCustomBackgroundColor: public TagFunction
+{
+  public:
+    WindowCustomBackgroundColor()
+    {}
+
+    virtual ~WindowCustomBackgroundColor()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Timeline *>& windows,
+                            std::vector<Histogram *>& histograms ) override;
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Timeline *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
+
+class WindowCustomAxisColor: public TagFunction
+{
+  public:
+    WindowCustomAxisColor()
+    {}
+
+    virtual ~WindowCustomAxisColor()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Timeline *>& windows,
+                            std::vector<Histogram *>& histograms ) override;
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Timeline *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
+
+class WindowCustomPunctualColor: public TagFunction
+{
+  public:
+    WindowCustomPunctualColor()
+    {}
+
+    virtual ~WindowCustomPunctualColor()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Timeline *>& windows,
+                            std::vector<Histogram *>& histograms ) override;
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Timeline *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
+
 class WindowCustomColorPalette: public TagFunction
 {
   public:
@@ -668,6 +737,29 @@ class WindowCustomColorPalette: public TagFunction
     {}
 
     virtual ~WindowCustomColorPalette()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Timeline *>& windows,
+                            std::vector<Histogram *>& histograms ) override;
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Timeline *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
+
+class WindowCustomBackgroundAsZero: public TagFunction
+{
+  public:
+    WindowCustomBackgroundAsZero()
+    {}
+
+    virtual ~WindowCustomBackgroundAsZero()
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,

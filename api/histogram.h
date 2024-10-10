@@ -320,9 +320,9 @@ class Histogram
       rgb tmp = SemanticColor::BACKGROUND;
       return tmp;
     }
-    virtual GradientColor& getGradientColor()
+    virtual SemanticColor& getSemanticColor()
     {
-      GradientColor *tmp = nullptr;
+      SemanticColor *tmp = nullptr;
       return *tmp;
     }
     virtual void recalcGradientLimits() {}
@@ -508,7 +508,7 @@ class Histogram
     virtual void setForceRecalc( bool newValue )
     {}
     // DEPRECATED
-    virtual bool getCodeColor() const
+    virtual bool isCodeColorSet() const
     {
       return false;
     }
@@ -805,7 +805,7 @@ class HistogramProxy : public Histogram
     virtual void setShowColor( bool newValue ) override;
     virtual bool getShowColor() const override;
     virtual rgb calcGradientColor( TSemanticValue whichValue ) const override;
-    virtual GradientColor& getGradientColor() override;
+    virtual SemanticColor& getSemanticColor() override;
     virtual void recalcGradientLimits() override;
     virtual void setZoom( bool newValue ) override;
     virtual bool getZoom() const override;
@@ -909,7 +909,7 @@ class HistogramProxy : public Histogram
     virtual void setForceRecalc( bool newValue ) override;
     virtual bool getNumColumnsInitialized() const override;
     // DEPRECATED
-    virtual bool getCodeColor() const override;
+    virtual bool isCodeColorSet() const override;
     // DEPRECATED
     virtual TColorFunction getColorMode() const override;
     virtual void setColorMode( TColorFunction whichMode ) override;
@@ -1011,7 +1011,6 @@ class HistogramProxy : public Histogram
     bool recalc;
     bool forceRecalc;
     bool numColumnsInitialized = false;
-    TColorFunction colorMode;
     PRV_UINT16 pixelSize;
     bool onlyTotals;
     bool shortLabels;
@@ -1037,8 +1036,7 @@ class HistogramProxy : public Histogram
     std::vector<std::string> calcStat;
     std::vector<std::string> commCalcStat;
 
-    GradientColor myGradientColor;
-    GradientColor myAltGradientColor{ std::vector<rgb>{ {0,255,0}, {255,255,0}, {255,0,0} } };
+    SemanticColor mySemanticColor{ std::vector<rgb>{ {0,255,0}, {255,255,0}, {255,0,0} } };
 
     Histogram *myHisto;
 

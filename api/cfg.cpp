@@ -828,7 +828,11 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowColorMode::printLine( cfgFile, it );
     WindowGradientFunction::printLine( cfgFile, it );
     WindowCustomColorEnabled::printLine( cfgFile, it );
+    WindowCustomBackgroundColor::printLine( cfgFile, it );
+    WindowCustomAxisColor::printLine( cfgFile, it );
+    WindowCustomPunctualColor::printLine( cfgFile, it );
     WindowCustomColorPalette::printLine( cfgFile, it );
+    WindowCustomBackgroundAsZero::printLine( cfgFile, it );
     WindowSemanticScaleMinAtZero::printLine( cfgFile, it );
     WindowPunctualColorWindow::printLine( cfgFile, allWindows, it );
     if ( !( *it )->isDerivedWindow() )
@@ -1013,18 +1017,24 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_COLOR_MODE]          = new WindowColorMode();
   cfgTagFunctions[CFG_TAG_WNDW_GRADIENT_FUNCTION]      = new WindowGradientFunction();
   // Color palette
-  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED] = new WindowCustomColorEnabled();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_COLOR_PALETTE] = new WindowCustomColorPalette();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED]         = new WindowCustomColorEnabled();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_COLOR]      = new WindowCustomBackgroundColor();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_AXIS_COLOR]            = new WindowCustomAxisColor();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_PUNCTUAL_COLOR]        = new WindowCustomPunctualColor();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_COLOR_PALETTE]         = new WindowCustomColorPalette();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_AS_ZERO]    = new WindowCustomBackgroundAsZero();
+
   cfgTagFunctions[OLDCFG_TAG_WNDW_SEMANTIC_SCALE_MIN_AT_ZERO] = new WindowSemanticScaleMinAtZero();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_OPERATION]           = new WindowOperation();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_MAXIMUM_Y]           = new WindowMaximumY();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_MINIMUM_Y]           = new WindowMinimumY();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_COMPUTE_Y_MAX]       = new WindowComputeYMax();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_LEVEL]               = new WindowLevel();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_SCALE_RELATIVE]      = new WindowScaleRelative();
-  cfgTagFunctions[CFG_TAG_WNDW_END_TIME_RELATIVE]      = new WindowEndTimeRelative();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_OBJECT]              = new WindowObject();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_IDENTIFIERS]         = new WindowIdentifiers();
+
+  cfgTagFunctions[OLDCFG_TAG_WNDW_OPERATION]               = new WindowOperation();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_MAXIMUM_Y]               = new WindowMaximumY();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_MINIMUM_Y]               = new WindowMinimumY();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_COMPUTE_Y_MAX]           = new WindowComputeYMax();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_LEVEL]                   = new WindowLevel();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_SCALE_RELATIVE]          = new WindowScaleRelative();
+  cfgTagFunctions[CFG_TAG_WNDW_END_TIME_RELATIVE]          = new WindowEndTimeRelative();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_OBJECT]                  = new WindowObject();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_IDENTIFIERS]             = new WindowIdentifiers();
 
   cfgTagFunctions[OLDCFG_TAG_WNDW_ZOOM_OBJECTS]        = new WindowZoomObjects();
   cfgTagFunctions[OLDCFG_TAG_WNDW_BEGIN_TIME]          = new WindowBeginTime();
@@ -1597,13 +1607,13 @@ bool WindowGradientFunction::parseLine( KernelConnection *whichKernel, istringst
   getline( line, strFunction );
 
   if ( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_LINEAR ) == 0 )
-    windows[ windows.size() - 1 ]->getGradientColor().setGradientFunction( TGradientFunction::LINEAR );
+    windows[ windows.size() - 1 ]->getSemanticColor().setGradientFunction( TGradientFunction::LINEAR );
   else if ( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_STEPS ) == 0 )
-    windows[ windows.size() - 1 ]->getGradientColor().setGradientFunction( TGradientFunction::STEPS );
+    windows[ windows.size() - 1 ]->getSemanticColor().setGradientFunction( TGradientFunction::STEPS );
   else if ( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_LOG ) == 0 )
-    windows[ windows.size() - 1 ]->getGradientColor().setGradientFunction( TGradientFunction::LOGARITHMIC );
+    windows[ windows.size() - 1 ]->getSemanticColor().setGradientFunction( TGradientFunction::LOGARITHMIC );
   else if( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_EXP ) == 0 )
-    windows[ windows.size() - 1 ]->getGradientColor().setGradientFunction( TGradientFunction::EXPONENTIAL );
+    windows[ windows.size() - 1 ]->getSemanticColor().setGradientFunction( TGradientFunction::EXPONENTIAL );
   else
     return false;
 
@@ -1613,7 +1623,7 @@ bool WindowGradientFunction::parseLine( KernelConnection *whichKernel, istringst
 void WindowGradientFunction::printLine( ofstream& cfgFile,
                                         const vector<Timeline *>::const_iterator it )
 {
-  auto currentGradientFunction = ( *it )->getGradientColor().getGradientFunction();
+  auto currentGradientFunction = ( *it )->getSemanticColor().getGradientFunction();
 
   if( ( *it )->isFunctionLineColorSet() ||
       ( *it )->isPunctualColorSet() ||
@@ -1662,6 +1672,133 @@ void WindowCustomColorEnabled::printLine( ofstream& cfgFile,
 {
   cfgFile << OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED << " " << ( ( *it )->getUseCustomPalette() ?
       OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
+}
+
+
+bool parseColorComponents( istringstream& line, rgb& onColor )
+{
+  istringstream sstrTmp;
+  string strComponent;
+  int tmpComponent;
+
+  getline( line, strComponent, '{' ); // get '{'
+
+  getline( line, strComponent, ',' );
+  sstrTmp.str( strComponent );
+  if ( !( sstrTmp >> tmpComponent ) ) 
+    return false;
+  onColor.red = tmpComponent;
+
+  getline( line, strComponent, ',' );
+  sstrTmp.clear();
+  sstrTmp.str( strComponent );
+  if ( !( sstrTmp >> tmpComponent ) ) 
+    return false;
+  onColor.green = tmpComponent;
+
+  getline( line, strComponent, '}' );
+  sstrTmp.clear();
+  sstrTmp.str( strComponent );
+  if ( !( sstrTmp >> tmpComponent ) ) 
+    return false;
+  onColor.blue = tmpComponent;
+
+  return true;
+}
+
+string WindowCustomBackgroundColor::tagCFG = OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_COLOR;
+
+bool WindowCustomBackgroundColor::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                             Trace *whichTrace,
+                                             vector<Timeline *>& windows,
+                                             vector<Histogram *>& histograms )
+{
+  if ( windows[ windows.size() - 1 ] == nullptr )
+    return false;
+
+  rgb tmpRGB;
+
+  if ( !parseColorComponents( line, tmpRGB ) )
+    return false;
+
+  windows[ windows.size() - 1 ]->setCustomBackgroundColor( tmpRGB );
+
+  return true;
+}
+
+void WindowCustomBackgroundColor::printLine( ofstream& cfgFile,
+                                             const vector<Timeline *>::const_iterator it )
+{
+  rgb tmprgb = ( *it )->getBackgroundColor();
+  if( tmprgb != ParaverConfig::getInstance()->getColorsTimelineBackground() )
+  {
+    cfgFile << OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_COLOR << " ";
+    cfgFile << "{ " << (int)tmprgb.red << ", " << (int)tmprgb.green << ", " << (int)tmprgb.blue << " }" << endl;
+  }
+}
+
+
+string WindowCustomAxisColor::tagCFG = OLDCFG_TAG_WNDW_CUSTOM_AXIS_COLOR;
+
+bool WindowCustomAxisColor::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                             Trace *whichTrace,
+                                             vector<Timeline *>& windows,
+                                             vector<Histogram *>& histograms )
+{
+  if ( windows[ windows.size() - 1 ] == nullptr )
+    return false;
+
+  rgb tmpRGB;
+
+  if ( !parseColorComponents( line, tmpRGB ) )
+    return false;
+
+  windows[ windows.size() - 1 ]->setCustomAxisColor( tmpRGB );
+
+  return true;
+}
+
+void WindowCustomAxisColor::printLine( ofstream& cfgFile,
+                                             const vector<Timeline *>::const_iterator it )
+{
+  rgb tmprgb = ( *it )->getAxisColor();
+  if( tmprgb != ParaverConfig::getInstance()->getColorsTimelineAxis() )
+  {
+    cfgFile << OLDCFG_TAG_WNDW_CUSTOM_AXIS_COLOR << " ";
+    cfgFile << "{ " << (int)tmprgb.red << ", " << (int)tmprgb.green << ", " << (int)tmprgb.blue << " }" << endl;
+  }
+}
+
+
+string WindowCustomPunctualColor::tagCFG = OLDCFG_TAG_WNDW_CUSTOM_PUNCTUAL_COLOR;
+
+bool WindowCustomPunctualColor::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                           Trace *whichTrace,
+                                           vector<Timeline *>& windows,
+                                           vector<Histogram *>& histograms )
+{
+  if ( windows[ windows.size() - 1 ] == nullptr )
+    return false;
+
+  rgb tmpRGB;
+
+  if ( !parseColorComponents( line, tmpRGB ) )
+    return false;
+
+  windows[ windows.size() - 1 ]->setCustomPunctualColor( tmpRGB );
+
+  return true;
+}
+
+void WindowCustomPunctualColor::printLine( ofstream& cfgFile,
+                                             const vector<Timeline *>::const_iterator it )
+{
+  rgb tmprgb = ( *it )->getPunctualColor();
+  if( tmprgb != ParaverConfig::getInstance()->getColorsTimelinePunctual() )
+  {
+    cfgFile << OLDCFG_TAG_WNDW_CUSTOM_PUNCTUAL_COLOR << " ";
+    cfgFile << "{ " << (int)tmprgb.red << ", " << (int)tmprgb.green << ", " << (int)tmprgb.blue << " }" << endl;
+  }
 }
 
 
@@ -1719,7 +1856,7 @@ bool WindowCustomColorPalette::parseLine( KernelConnection *whichKernel, istring
       return false;
     tmpRGB.blue = tmpComponent;
 
-    windows[ windows.size() - 1 ]->getCodeColor().setCustomColor( tmpValue, tmpRGB );
+    windows[ windows.size() - 1 ]->getSemanticColor().setCustomColor( tmpValue, tmpRGB );
   }
 
   return true;
@@ -1728,7 +1865,7 @@ bool WindowCustomColorPalette::parseLine( KernelConnection *whichKernel, istring
 void WindowCustomColorPalette::printLine( ofstream& cfgFile,
                                  const vector<Timeline *>::const_iterator it )
 {
-  const CodeColor& tmpCodeColor = ( *it )->getCodeColor();
+  const SemanticColor& tmpCodeColor = ( *it )->getSemanticColor();
 
   if( tmpCodeColor.existCustomColors() )
   {
@@ -1744,6 +1881,38 @@ void WindowCustomColorPalette::printLine( ofstream& cfgFile,
     
     cfgFile << endl;
   }
+}
+
+
+string WindowCustomBackgroundAsZero::tagCFG = OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_AS_ZERO;
+
+bool WindowCustomBackgroundAsZero::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                 Trace *whichTrace,
+                                 vector<Timeline *>& windows,
+                                 vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == nullptr )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+    windows[ windows.size() - 1 ]->setBackgroundAsZero( false );
+  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+    windows[ windows.size() - 1 ]->setBackgroundAsZero( true );
+  else
+    return false;
+
+  return true;
+}
+
+void WindowCustomBackgroundAsZero::printLine( ofstream& cfgFile,
+                                 const vector<Timeline *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_AS_ZERO << " " << ( ( *it )->getBackgroundAsZero() ?
+      OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
 }
 
 
@@ -5450,7 +5619,7 @@ void Analyzer2DCodeColor::printLine( ofstream& cfgFile,
                                      const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_CODE_COLOR << " ";
-  if ( ( *it )->getCodeColor() )
+  if ( ( *it )->isCodeColorSet() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
@@ -5476,7 +5645,7 @@ bool Analyzer2DColorMode::parseLine( KernelConnection *whichKernel, istringstrea
   getline( line, strBool, ' ' );
 
   if ( strBool.compare( OLDCFG_VAL_COLOR_MODE_CODE ) == 0 )
-    histograms[ histograms.size() - 1 ]->setColorMode( TColorFunction::COLOR );
+    histograms[ histograms.size() - 1 ]->setColorMode( TColorFunction::CODE_COLOR );
   else if ( strBool.compare( OLDCFG_VAL_COLOR_MODE_GRADIENT ) == 0 )
     histograms[ histograms.size() - 1 ]->setColorMode( TColorFunction::GRADIENT );
   else if ( strBool.compare( OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT ) == 0 )
@@ -5493,7 +5662,7 @@ void Analyzer2DColorMode::printLine( ofstream& cfgFile,
                                      const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_COLOR_MODE << " ";
-  if ( ( *it )->getColorMode() == TColorFunction::COLOR )
+  if ( ( *it )->getColorMode() == TColorFunction::CODE_COLOR )
     cfgFile << OLDCFG_VAL_COLOR_MODE_CODE;
   else if( ( *it )->getColorMode() == TColorFunction::GRADIENT )
     cfgFile << OLDCFG_VAL_COLOR_MODE_GRADIENT;
