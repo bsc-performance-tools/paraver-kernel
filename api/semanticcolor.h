@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <array>
 #include <functional>
 #include <map>
 #include "paravertypes.h"
