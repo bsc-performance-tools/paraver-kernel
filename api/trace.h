@@ -216,6 +216,14 @@ class Trace
       return true;
     }
 
+    virtual std::vector< bool > getSuitableApps() const
+    {
+      return {};
+    }
+
+    virtual void setSuitableApps( const std::vector< bool >& whichApps )
+    {}
+
     /*
         virtual bool getFillStateGaps() const
         {
@@ -358,6 +366,9 @@ class TraceProxy: public Trace
     virtual void   setEventTypePrecision( TEventType whichType, double whichPrecision ) override;
     virtual double getEventTypePrecision( TEventType whichType ) const override;
 
+    virtual std::vector< bool > getSuitableApps() const override;
+    virtual void setSuitableApps( const std::vector< bool >& whichApps ) override;
+
   private:
     Trace *myTrace;
 
@@ -371,6 +382,8 @@ class TraceProxy: public Trace
     RowFileParser<> myRowLabels;
 
     bool showProgressBar;
+
+    std::vector< bool > suitableApps;
 
 //    std::string myDefaultTaskSemanticFunc;
 //    std::string myDefaultThreadSemanticFunc;

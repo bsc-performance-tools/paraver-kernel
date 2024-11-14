@@ -657,3 +657,12 @@ double TraceProxy::getEventTypePrecision( TEventType whichType ) const
   return myTrace->getEventTypePrecision( whichType );
 }
 
+std::vector< bool > TraceProxy::getSuitableApps() const
+{
+  return suitableApps;
+}
+
+void TraceProxy::setSuitableApps( const std::vector< bool >& whichApps )
+{
+  suitableApps = whichApps;
+}
