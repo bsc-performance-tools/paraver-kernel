@@ -104,10 +104,10 @@ KTraceSoftwareCounters::~KTraceSoftwareCounters()
 
 void KTraceSoftwareCounters::parse_types( char* whichTypes, std::vector<type_values>& onTypes )
 {
-  char *words[16], *word_type, *word_values, *word_value;;
+  char *words[16], *word_type, *word_values, *word_value;
   int i, k;
 
-  if ( strlen( whichTypes ) > 0 )
+  if ( whichTypes != nullptr && strlen( whichTypes ) > 0 )
   {
     all_types = false;
     words[0] = strtok( whichTypes, ";" );
