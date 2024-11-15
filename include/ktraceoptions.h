@@ -25,6 +25,8 @@
 #pragma once
 
 
+//#include <functional>
+#include <iostream> // cout borrame
 #include <string.h>
 
 #include <libxml/xmlmemory.h>
@@ -569,6 +571,17 @@ class KTraceOptions: public TraceOptions
                      xmlNodePtr cur,
                      struct TraceOptions::allowed_types *types,
                      int &last_type );
+
+    template<typename T, typename Functor>
+    bool parseContentImpl( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag,
+                             Functor whichFunction,
+                             T& whichReturnValue );
+
+    bool parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, bool& whichReturnValue );
+    bool parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, int& whichReturnValue );
+    bool parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, unsigned long long& whichReturnValue );
+    bool parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, char*& whichReturnValue );
+
     void parse_filter_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cur );
@@ -581,3 +594,24 @@ class KTraceOptions: public TraceOptions
 };
 
 
+template<typename T, typename Functor>
+bool KTraceOptions::parseContentImpl( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag,
+                                        Functor whichFunction,
+                                        T& whichReturnValue )
+{
+  bool done = false;
+
+  if ( !xmlStrcmp( whichNode->name, ( const xmlChar * )whichTag.c_str() ) )
+  {
+    xmlChar *word = xmlNodeListGetString( whichDoc, whichNode->xmlChildrenNode, 1 );
+    done = ( word != nullptr );
+    if ( done )
+    {
+      whichReturnValue = whichFunction( ( char * )word );
+std::cout << whichTag << " " << whichReturnValue << std::endl;
+    }
+    xmlFree( word );
+  }
+
+  return done;
+}

@@ -22,12 +22,12 @@
 \*****************************************************************************/
 
 #include <iostream>
-#include <string.h>
+
 #include <ctype.h>
 #include <stdlib.h>
+#include <string.h>
 
-#include <iostream>
-using namespace std;
+#include <libxml/encoding.h>
 
 #include "ktraceoptions.h"
 #include "paraverconfig.h"
@@ -35,8 +35,7 @@ using namespace std;
 #include "tracefilter.h"
 #include "tracesoftwarecounters.h"
 
-#include <libxml/encoding.h>
-
+using namespace std;
 
 #ifdef _WIN32
 #define atoll _atoi64
@@ -260,6 +259,36 @@ void KTraceOptions::parse_type( xmlDocPtr doc,
 }
 
 
+bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, bool& whichValue  )
+{
+  return ( parseContentImpl( whichDoc, whichNode, whichTag,
+                               [](const std::string& tmpStr){ return (bool)std::stoi(tmpStr); },
+                               whichValue ) );
+}
+
+
+bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, int& whichValue )
+{
+  return ( parseContentImpl( whichDoc, whichNode, whichTag,
+                               [](const std::string& tmpStr){ return std::stoi(tmpStr); },
+                               whichValue ) );
+}
+
+
+bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, unsigned long long& whichValue )
+{
+  return ( parseContentImpl( whichDoc, whichNode, whichTag,
+                               [](const std::string& tmpStr){ return std::stoull(tmpStr); },
+                               whichValue ) );
+}
+
+
+bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, char*& whichValue )
+{
+  return ( parseContentImpl( whichDoc, whichNode, whichTag, strdup, whichValue ) );
+}
+
+
 void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
 {
   xmlNodePtr child;
@@ -379,38 +408,45 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
 
       if ( child != nullptr )
       {
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"min_state_time" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          min_state_time = atoll( ( char * )word );
-          xmlFree( word );
-        }
+        // if ( !xmlStrcmp( child->name, ( const xmlChar * )"min_state_time" ) )
+        // {
+        //   word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+        //   min_state_time = atoll( ( char * )word );
+        //   xmlFree( word );
+        // }
+        parseContent( doc, child, "min_state_time", min_state_time ); 
       }
     }
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"discard_states" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      discardStates = atoi( ( char * )word );
-      xmlFree( word );
+    // if ( !xmlStrcmp( cur->name, ( const xmlChar * )"discard_states" ) )
+    // {
+    //   word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+    //   discardStates = atoi( ( char * )word );
+    //   xmlFree( word );
+    //   foundDiscardStatesTag = true;
+    // }
+    if ( parseContent( doc, child, "discard_states", discardStates ) )
       foundDiscardStatesTag = true;
-    }
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"discard_events" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      discardEvents = atoi( ( char * )word );
-      xmlFree( word );
+    // if ( !xmlStrcmp( cur->name, ( const xmlChar * )"discard_events" ) )
+    // {
+    //   word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+    //   discardEvents = atoi( ( char * )word );
+    //   xmlFree( word );
+    //   foundDiscardEventsTag = true;
+    // }
+    if ( parseContent( doc, child, "discard_events", discardEvents ) )
       foundDiscardEventsTag = true;
-    }
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"discard_communications" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      discardCommunications = atoi( ( char * )word );
-      xmlFree( word );
+    // if ( !xmlStrcmp( cur->name, ( const xmlChar * )"discard_communications" ) )
+    // {
+    //   word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+    //   discardCommunications = atoi( ( char * )word );
+    //   xmlFree( word );
+    //   foundDiscardCommunicationsTag = true;
+    // }
+    if ( parseContent( doc, child, "discard_communications", discardCommunications ) )
       foundDiscardCommunicationsTag = true;
-    }
 
     cur = cur->next;
   }
@@ -444,12 +480,13 @@ void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
       xmlFree( word );
     }
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"original_time" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      original_time = (bool)atoi( ( char * )word );
-      xmlFree( word );
-    }
+    // if ( !xmlStrcmp( cur->name, ( const xmlChar * )"original_time" ) )
+    // {
+    //   word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+    //   original_time = (bool)atoi( ( char * )word );
+    //   xmlFree( word );
+    // }
+    parseContent( doc, cur, "original_time", original_time ); 
 
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"max_trace_size" ) )
     {
@@ -458,72 +495,82 @@ void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
       //max_trace_size = atoi( ( char * )word );
       xmlFree( word );
     }
+    // bool dummy = parseContent( doc, child, "", ); // mismatch int + atoll ?
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"by_time" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      by_time = (bool)atoi( ( char * )word );
-      xmlFree( word );
-    }
+    // if ( !xmlStrcmp( cur->name, ( const xmlChar * )"by_time" ) )
+    // {
+    //   word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+    //   by_time = (bool)atoi( ( char * )word );
+    //   xmlFree( word );
+    // }
+    parseContent( doc, cur, "by_time", by_time ); 
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"minimum_time" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-//      auxStr.str( "");
-//      auxStr << (char *)word;
-      //min_cutting_time = atoi( ( char * )word );
-      min_cutting_time = atoll( ( char * )word );
-      xmlFree( word );
-    }
+//     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"minimum_time" ) )
+//     {
+//       word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+// //      auxStr.str( "");
+// //      auxStr << (char *)word;
+//       //min_cutting_time = atoi( ( char * )word );
+//       min_cutting_time = atoll( ( char * )word );
+//       xmlFree( word );
+//     }
+    parseContent( doc, cur, "minimum_time", min_cutting_time ); 
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"maximum_time" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      max_cutting_time = atoll( ( char * )word );
-      xmlFree( word );
-    }
+    // if ( !xmlStrcmp( cur->name, ( const xmlChar * )"maximum_time" ) )
+    // {
+    //   word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+    //   max_cutting_time = atoll( ( char * )word );
+    //   xmlFree( word );
+    // }
+    parseContent( doc, cur, "maximum_time", max_cutting_time ); 
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"minimum_time_percentage" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      min_percentage = atoi( ( char * )word );
-      xmlFree( word );
-    }
+    // if ( !xmlStrcmp( cur->name, ( const xmlChar * )"minimum_time_percentage" ) )
+    // {
+    //   word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+    //   min_percentage = atoi( ( char * )word );
+    //   xmlFree( word );
+    // }
+    parseContent( doc, cur, "minimum_time_percentage", min_percentage ); 
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"maximum_time_percentage" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      max_percentage = atoi( ( char * )word );
-      xmlFree( word );
-    }
+    // if ( !xmlStrcmp( cur->name, ( const xmlChar * )"maximum_time_percentage" ) )
+    // {
+    //   word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+    //   max_percentage = atoi( ( char * )word );
+    //   xmlFree( word );
+    // }
+    parseContent( doc, cur, "maximum_time_percentage", max_percentage ); 
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"break_states" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      break_states = (bool)atoi( ( char * )word );
-      xmlFree( word );
-    }
+    // if ( !xmlStrcmp( cur->name, ( const xmlChar * )"break_states" ) )
+    // {
+    //   word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+    //   break_states = (bool)atoi( ( char * )word );
+    //   xmlFree( word );
+    // }
+    parseContent( doc, cur, "break_states", break_states ); 
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"remove_first_states" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      remFirstStates = (bool)atoi( ( char * )word );
-      xmlFree( word );
-    }
+    // if ( !xmlStrcmp( cur->name, ( const xmlChar * )"remove_first_states" ) )
+    // {
+    //   word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+    //   remFirstStates = (bool)atoi( ( char * )word );
+    //   xmlFree( word );
+    // }
+    parseContent( doc, cur, "remove_first_states", remFirstStates ); 
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"remove_last_states" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      remLastStates = (bool)atoi( ( char * )word );
-      xmlFree( word );
-    }
+    // if ( !xmlStrcmp( cur->name, ( const xmlChar * )"remove_last_states" ) )
+    // {
+    //   word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+    //   remLastStates = (bool)atoi( ( char * )word );
+    //   xmlFree( word );
+    // }
+    parseContent( doc, cur, "remove_last_states", remLastStates ); 
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"keep_events" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      keep_boundary_events = (bool)atoi( ( char * )word );
-      xmlFree( word );
-    }
+    // if ( !xmlStrcmp( cur->name, ( const xmlChar * )"keep_events" ) )
+    // {
+    //   word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+    //   keep_boundary_events = (bool)atoi( ( char * )word );
+    //   xmlFree( word );
+    // }
+    parseContent( doc, cur, "keep_events", keep_boundary_events ); 
 
     cur = cur->next;
   }
@@ -533,7 +580,6 @@ void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
 void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cur )
 {
   xmlNodePtr child;
-  xmlChar *word;
 
   // Compatibility variables with previous versions of XML
   char *tmp_compat_types = nullptr;
@@ -549,47 +595,54 @@ void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cu
 
       while ( child != nullptr )
       {
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"by_intervals_vs_by_states" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          sc_onInterval = (bool)atoi( ( char * )word );
-          xmlFree( word );
-        }
+        // if ( !xmlStrcmp( child->name, ( const xmlChar * )"by_intervals_vs_by_states" ) )
+        // {
+        //   word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+        //   sc_onInterval = (bool)atoi( ( char * )word );
+        //   xmlFree( word );
+        // }
+        parseContent( doc, child, "by_intervals_vs_by_states", sc_onInterval );
 
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"sampling_interval" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          sc_sampling_interval = atoll( ( char * )word );
-          xmlFree( word );
-        }
+        // if ( !xmlStrcmp( child->name, ( const xmlChar * )"sampling_interval" ) )
+        // {
+        //   word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+        //   sc_sampling_interval = atoll( ( char * )word );
+        //   xmlFree( word );
+        // }
+        parseContent( doc, child, "sampling_interval", sc_sampling_interval );
 
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"minimum_burst_time" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          sc_minimum_burst_time = atoll( ( char * )word );
-          xmlFree( word );
-        }
 
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"events" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          tmp_compat_types = strdup( (char *)word );
-          xmlFree( word );
-        }
+        // if ( !xmlStrcmp( child->name, ( const xmlChar * )"minimum_burst_time" ) )
+        // {
+        //   word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+        //   sc_minimum_burst_time = atoll( ( char * )word );
+        //   xmlFree( word );
+        // }
+        parseContent( doc, child, "minimum_burst_time", sc_minimum_burst_time ); 
 
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"accum_events" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          accum_types = strdup( (char *)word );
-          xmlFree( word );
-        }
+        // if ( !xmlStrcmp( child->name, ( const xmlChar * )"events" ) )
+        // {
+        //   word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+        //   tmp_compat_types = strdup( (char *)word );
+        //   xmlFree( word );
+        // }
+        parseContent( doc, child, "events", tmp_compat_types ); 
 
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"count_events" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          count_types = strdup( (char *)word );
-          xmlFree( word );
-        }
+        // if ( !xmlStrcmp( child->name, ( const xmlChar * )"accum_events" ) )
+        // {
+        //   word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+        //   accum_types = strdup( (char *)word );
+        //   xmlFree( word );
+        // }
+        parseContent( doc, child, "accum_events", accum_types ); 
+
+        // if ( !xmlStrcmp( child->name, ( const xmlChar * )"count_events" ) )
+        // {
+        //   word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+        //   count_types = strdup( (char *)word );
+        //   xmlFree( word );
+        // }
+        parseContent( doc, child, "count_events", count_types ); 
 
         child = child->next;
       }
@@ -603,47 +656,53 @@ void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cu
 
       while ( child != nullptr )
       {
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"count_events_vs_accumulate_values" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          tmp_compat_accum_counters = (bool)atoi( ( char * )word );
-          xmlFree( word );
-        }
+        // if ( !xmlStrcmp( child->name, ( const xmlChar * )"count_events_vs_accumulate_values" ) )
+        // {
+        //   word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+        //   tmp_compat_accum_counters = (bool)atoi( ( char * )word );
+        //   xmlFree( word );
+        // }
+        parseContent( doc, child, "count_events_vs_accumulate_values", tmp_compat_accum_counters ); 
 
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"remove_states" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          sc_remove_states = (bool)atoi( ( char * )word );
-          xmlFree( word );
-        }
+        // if ( !xmlStrcmp( child->name, ( const xmlChar * )"remove_states" ) )
+        // {
+        //   word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+        //   sc_remove_states = (bool)atoi( ( char * )word );
+        //   xmlFree( word );
+        // }
+        parseContent( doc, child, "remove_states", sc_remove_states ); 
 
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"summarize_useful_states" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          sc_summarize_states = (bool)atoi( ( char * )word );
-          xmlFree( word );
-        }
+        // if ( !xmlStrcmp( child->name, ( const xmlChar * )"summarize_useful_states" ) )
+        // {
+        //   word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+        //   sc_summarize_states = (bool)atoi( ( char * )word );
+        //   xmlFree( word );
+        // }
+        parseContent( doc, child, "summarize_useful_states", sc_summarize_states ); 
 
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"global_counters" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          sc_global_counters = (bool)atoi( ( char * )word );
-          xmlFree( word );
-        }
+        // if ( !xmlStrcmp( child->name, ( const xmlChar * )"global_counters" ) )
+        // {
+        //   word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+        //   sc_global_counters = (bool)atoi( ( char * )word );
+        //   xmlFree( word );
+        // }
+        parseContent( doc, child, "global_counters", sc_global_counters ); 
 
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"only_in_burst_counting" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          sc_only_in_bursts = (bool)atoi( ( char * )word );
-          xmlFree( word );
-        }
+        // if ( !xmlStrcmp( child->name, ( const xmlChar * )"only_in_burst_counting" ) )
+        // {
+        //   word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+        //   sc_only_in_bursts = (bool)atoi( ( char * )word );
+        //   xmlFree( word );
+        // }
+        parseContent( doc, child, "only_in_burst_counting", sc_only_in_bursts ); 
 
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"keep_events" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          types_kept = strdup ( (char *)word );
-          xmlFree( word );
-        }
+        // if ( !xmlStrcmp( child->name, ( const xmlChar * )"keep_events" ) )
+        // {
+        //   word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+        //   types_kept = strdup ( (char *)word );
+        //   xmlFree( word );
+        // }
+        parseContent( doc, child, "keep_events", types_kept ); 
 
         child = child->next;
       }
