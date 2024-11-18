@@ -25,10 +25,8 @@
 #pragma once
 
 
-//#include <functional>
-#include <iostream> // cout borrame
 #include <sstream>
-#include <type_traits> // is_same
+#include <type_traits>
 #include <string.h>
 
 #include <libxml/xmlmemory.h>
@@ -576,20 +574,10 @@ class KTraceOptions: public TraceOptions
                      struct TraceOptions::allowed_types *types,
                      int &last_type );
 
-    // template<typename T>
-    // bool parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, T& whichReturnValue );
-    template<typename T,
-         typename std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr >
+    template<typename T, typename std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr >
     bool parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, T& whichReturnValue );
-    template<typename T,
-         typename std::enable_if_t<std::is_same<T, char *>::value>* = nullptr >
+    template<typename T, typename std::enable_if_t<std::is_same<T, char *>::value>* = nullptr >
     bool parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, T& whichReturnValue );
-
-
-    // bool parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, bool& whichReturnValue );
-    // bool parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, int& whichReturnValue );
-    // bool parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, unsigned long long& whichReturnValue );
-    // bool parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, char*& whichReturnValue );
 
     void parse_filter_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur );
@@ -616,11 +604,10 @@ bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, cons
     if ( done )
     {
       bufferElement.clear();
-      bufferElement.str( (char *)word ); // sin cast?
+      bufferElement.str( (char *)word );
 
       if ( !( bufferElement >> whichReturnValue ) )
         done = false;
-std::cout << whichTag << " A: " << whichReturnValue << std::endl;
     }
     xmlFree( word );
   }
@@ -639,10 +626,8 @@ bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, cons
     xmlChar *word = xmlNodeListGetString( whichDoc, whichNode->xmlChildrenNode, 1 );
     done = ( word != nullptr );
     if ( done )
-    {
       whichReturnValue = strdup( ( char *)word );
-std::cout << whichTag << " S: " << whichReturnValue << std::endl;
-    }
+
     xmlFree( word );
   }
 
