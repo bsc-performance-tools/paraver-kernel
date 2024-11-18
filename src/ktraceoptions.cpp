@@ -43,6 +43,8 @@ using namespace std;
 
 constexpr char FILTER_XML_ENCODING[] = "UTF-8";
 
+stringstream KTraceOptions::bufferElement;
+
 KTraceOptions::KTraceOptions()
 {
   init();
@@ -259,34 +261,35 @@ void KTraceOptions::parse_type( xmlDocPtr doc,
 }
 
 
-bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, bool& whichValue  )
-{
-  return ( parseContentImpl( whichDoc, whichNode, whichTag,
-                               [](const std::string& tmpStr){ return (bool)std::stoi(tmpStr); },
-                               whichValue ) );
-}
+// bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, bool& whichValue  )
+// {
+//   return ( parseContentImpl( whichDoc, whichNode, whichTag,
+//                              [](const std::string& tmpStr){ return (bool)std::stoi(tmpStr); },
+//                              whichValue ) );
+// }
+// #include <functional>
+
+// bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, int& whichValue )
+// {
+//   return ( parseContentImpl( whichDoc, whichNode, whichTag,
+//                            //  [](const std::string& tmpStr){ return std::stoi(tmpStr); },
+//                              static_cast< std::function<int(const std::string&, std::size_t*, int) > >(std::stoi),
+//                              whichValue ) );
+// }
 
 
-bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, int& whichValue )
-{
-  return ( parseContentImpl( whichDoc, whichNode, whichTag,
-                               [](const std::string& tmpStr){ return std::stoi(tmpStr); },
-                               whichValue ) );
-}
+// bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, unsigned long long& whichValue )
+// {
+//   return ( parseContentImpl( whichDoc, whichNode, whichTag,
+//                              [](const std::string& tmpStr){ return std::stoull(tmpStr); },
+//                              whichValue ) );
+// }
 
 
-bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, unsigned long long& whichValue )
-{
-  return ( parseContentImpl( whichDoc, whichNode, whichTag,
-                               [](const std::string& tmpStr){ return std::stoull(tmpStr); },
-                               whichValue ) );
-}
-
-
-bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, char*& whichValue )
-{
-  return ( parseContentImpl( whichDoc, whichNode, whichTag, strdup, whichValue ) );
-}
+// bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, char*& whichValue )
+// {
+//   return ( parseContentImpl( whichDoc, whichNode, whichTag, strdup, whichValue ) );
+// }
 
 
 void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
