@@ -413,13 +413,13 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
       }
     }
 
-    if ( parseContent( doc, child, "discard_states", discardStates ) )
+    if ( parseContent( doc, cur, "discard_states", discardStates ) )
       foundDiscardStatesTag = true;
 
-    if ( parseContent( doc, child, "discard_events", discardEvents ) )
+    if ( parseContent( doc, cur, "discard_events", discardEvents ) )
       foundDiscardEventsTag = true;
 
-    if ( parseContent( doc, child, "discard_communications", discardCommunications ) )
+    if ( parseContent( doc, cur, "discard_communications", discardCommunications ) )
       foundDiscardCommunicationsTag = true;
 
     cur = cur->next;
