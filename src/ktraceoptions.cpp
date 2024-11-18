@@ -490,7 +490,7 @@ void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cu
       {
         parseContent( doc, child, "by_intervals_vs_by_states", sc_onInterval );
         parseContent( doc, child, "sampling_interval", sc_sampling_interval );
-        parseContent( doc, child, "minimum_burst_time", sc_minimum_burst_time ); 
+        parseContent( doc, child, "minimum_burst_time", sc_minimum_burst_time );
         parseContent( doc, child, "events", tmp_compat_types ); 
         parseContent( doc, child, "accum_events", accum_types ); 
         parseContent( doc, child, "count_events", count_types ); 
@@ -507,7 +507,9 @@ void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cu
 
       while ( child != nullptr )
       {
-        parseContent( doc, child, "count_events_vs_accumulate_values", tmp_compat_accum_counters ); 
+        // Deprecated element - kept for retrocompatibility
+        parseContent( doc, child, "count_events_vs_acummulate_values", tmp_compat_accum_counters );
+
         parseContent( doc, child, "remove_states", sc_remove_states ); 
         parseContent( doc, child, "summarize_useful_states", sc_summarize_states ); 
         parseContent( doc, child, "global_counters", sc_global_counters ); 
