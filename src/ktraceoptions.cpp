@@ -454,16 +454,7 @@ void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
     }
 
     parseContent( doc, cur, "original_time", original_time ); 
-
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"max_trace_size" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      max_trace_size = atoll( ( char * )word );
-      //max_trace_size = atoi( ( char * )word );
-      xmlFree( word );
-    }
-    // bool dummy = parseContent( doc, child, "", ); // mismatch int + atoll ?
-
+    parseContent( doc, cur, "max_trace_size", max_trace_size );
     parseContent( doc, cur, "by_time", by_time ); 
     parseContent( doc, cur, "minimum_time", min_cutting_time ); 
     parseContent( doc, cur, "maximum_time", max_cutting_time ); 
