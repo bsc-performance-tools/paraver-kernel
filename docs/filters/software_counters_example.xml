@@ -14,39 +14,38 @@
   <software_counters>
     <!-- === Range section ================================================= -->
     <!-- Use this section to select which and when software counters will be -->
-    <!--   written.                                                          -->
+    <!-- written.                                                            -->
     <!--                                                                     -->
-    <!--  To select which type of events (separated by ";") or pairs of      -->
-    <!--    (event type:value1, value2,...) will be counted, use "<events>"  -->
-    <!--    tag, like:                                                       -->
-    <!--      <events>50000001;50000003:3,10;50000004</events>               -->
+    <!-- To select between counting or accumulating for a software counter,  -->
+    <!-- place them under <accum_events> or <count_events> element.          -->
+    <!-- I.e: to select which type of events (separated by ";") or pairs of  -->
+    <!-- event types (event_type:value1, value2,...) will be counted, use    -->
+    <!-- <count_events> tag, like:                                           -->
+    <!--    <count_events>50000001;50000003:3,10;50000004</count_events>     -->
     <!--                                                                     -->
-    <!--    Only one "<events>" tag is allowed.                              -->
-    <!--    If "<events>" tag isn't specified, every type and value will be  -->
-    <!--    counted.                                                         -->
+    <!-- Only one <count_events> or <accum_events> tag is allowed.           -->
+    <!-- If the list is empty, every type and value will be counter or       -->
+    <!-- accumulated.                                                        -->
     <!--                                                                     -->
-    <!--  To select when to write, use "<by_intervals_vs_by_states>" tag:    -->
-    <!--    1 => After every fixed time interval.                            -->
-    <!--    0 => After every running burst of at least a fixed duration.     -->
-    <!--  If intervals mode is selected, only "<sampling_interval>" will be  -->
-    <!--  used. Otherwise, only "<minimum_burst_time>" will be used. Both    -->
-    <!--  parameters are in nanoseconds.                                     -->
+    <!-- To select when to write, use "<by_intervals_vs_by_states>" tag:     -->
+    <!--   1 => After every fixed time interval.                             -->
+    <!--   0 => After every running burst of at least a fixed duration.      -->
+    <!-- If intervals mode is selected, only "<sampling_interval>" will be   -->
+    <!-- used. Otherwise, only "<minimum_burst_time>" will be used. Both     -->
+    <!-- parameters are in nanoseconds.                                      -->
     <!--                                                                     -->
     <!-- =================================================================== -->  
     <range>
       <by_intervals_vs_by_states>0</by_intervals_vs_by_states>
       <sampling_interval>100000</sampling_interval>
       <minimum_burst_time>1000000</minimum_burst_time>
-      
-      <events>50000001;50000003:3,10;50000004</events>
+      <accum_events>50000001;50000003:3,10;50000004</accum_events>
+      <!--empty count_events list-->
+      <!--<count_events></count_events>-->
     </range>
 
     <!-- === Algorithm section ============================================= -->
     <!-- Use this section to select the final behaviour of the algorithm.    -->
-    <!--                                                                     -->
-    <!--  To select between count events or acummulate values:               -->
-    <!--    1 => Count events                                                -->
-    <!--    0 => Acummulate values                                           -->
     <!--                                                                     -->
     <!--  Use "<remove_states>" to:                                          -->
     <!--    1 => Remove states                                               -->
@@ -63,7 +62,7 @@
     <!--    1 => Accummulate events of the same type in one counter.         -->
     <!--    0 => Accummulate events of the same type by its different values.-->
     <!--    Overriden when <by_intervals_vs_by_states> is 0 (by states).     -->
-    <!--    Overriden when <count_events_vs_acummulate_values> is 0.         -->
+    <!--    Overriden when events in <count_events>.                         -->
     <!--                                                                     -->
     <!--  Use "<only_in_burst_counting>" to:                                 -->
     <!--    1 => Summarize only events that appear inside running bursts.    -->
@@ -76,14 +75,11 @@
     <!--  Only event types allowed (no values).                              -->
     <!-- =================================================================== -->  
     <algorithm>
-      <count_events_vs_acummulate_values>1</count_events_vs_acummulate_values>
       <remove_states>1</remove_states>
       <summarize_useful_states>1</summarize_useful_states>
       <global_counters>1</global_counters>
       <only_in_burst_counting>0</only_in_burst_counting>
-    
       <keep_events>40000001;40000003;40000006;40000010</keep_events>
-      
     </algorithm>
       
   </software_counters>
