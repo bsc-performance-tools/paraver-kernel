@@ -592,7 +592,7 @@ class KTraceOptions: public TraceOptions
 
 
 template<typename T,
-         typename std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr >
+         typename std::enable_if_t<std::is_arithmetic<T>::value>* >
 bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, T& whichReturnValue )
 {
   bool done = false;
@@ -616,7 +616,7 @@ bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, cons
 }
 
 template<typename T,
-         typename std::enable_if_t<std::is_same<T, char *>::value>* = nullptr >
+         typename std::enable_if_t<std::is_same<T, char *>::value>* >
 bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, T& whichReturnValue )
 {
   bool done = false;
