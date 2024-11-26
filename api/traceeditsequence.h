@@ -56,6 +56,7 @@ enum class TSequenceStates
   eventTranslationTableState,
   copyAdditionalFilesState,
   onlyFilterState,
+  acceptableAppsState,
   numStates
 };
 

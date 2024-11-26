@@ -168,27 +168,28 @@ class DerivedTraceEditStateTEventType : public BaseTraceEditState< SeqT >
 
 #include "traceeditstates_impl.h"
 
-typedef BaseTraceEditState< TraceEditSequence * > TraceEditState;
+using TraceEditState = BaseTraceEditState< TraceEditSequence * >;
 
-typedef DerivedTraceEditState< TraceEditSequence *, TextOutput > CSVOutputState;
-typedef DerivedTraceEditState< TraceEditSequence *, TraceOptions * > TraceOptionsState;
-typedef DerivedTraceEditState< TraceEditSequence *, Timeline * > SourceTimelineState;
-typedef DerivedTraceEditState< TraceEditSequence *, std::vector< TTime > * > ShiftTimesState;
-typedef DerivedTraceEditState< TraceEditSequence *, std::map< TTypeValuePair, TTypeValuePair > > EventTranslationTableState;
+using CSVOutputState = DerivedTraceEditState< TraceEditSequence *, TextOutput >;
+using TraceOptionsState = DerivedTraceEditState< TraceEditSequence *, TraceOptions * >;
+using SourceTimelineState = DerivedTraceEditState< TraceEditSequence *, Timeline * >;
+using ShiftTimesState = DerivedTraceEditState< TraceEditSequence *, std::vector< TTime > * >;
+using EventTranslationTableState = DerivedTraceEditState< TraceEditSequence *, std::map< TTypeValuePair, TTypeValuePair > >;
+using AcceptableAppsState = DerivedTraceEditState< TraceEditSequence *, std::vector< bool > >;
 
-typedef DerivedTraceEditStateBool< TraceEditSequence * > EOFParsedState;
-typedef DerivedTraceEditStateBool< TraceEditSequence * > CopyAdditionalFilesState;
-typedef DerivedTraceEditStateBool< TraceEditSequence * > OnlyFilterState;
+using EOFParsedState = DerivedTraceEditStateBool< TraceEditSequence * >;
+using CopyAdditionalFilesState = DerivedTraceEditStateBool< TraceEditSequence * >;
+using OnlyFilterState = DerivedTraceEditStateBool< TraceEditSequence * >;
 
-typedef DerivedTraceEditStateInt< TraceEditSequence * > TestState;
+using TestState = DerivedTraceEditStateInt< TraceEditSequence * >;
 
-typedef DerivedTraceEditStateString< TraceEditSequence * > CSVFileNameState;
-typedef DerivedTraceEditStateString< TraceEditSequence * > OutputDirSuffixState;
-typedef DerivedTraceEditStateString<TraceEditSequence * > OutputTraceFileNameState;
-typedef DerivedTraceEditStateString<TraceEditSequence * > PCFMergerReferenceState;
+using CSVFileNameState = DerivedTraceEditStateString< TraceEditSequence * >;
+using OutputDirSuffixState = DerivedTraceEditStateString< TraceEditSequence * >;
+using OutputTraceFileNameState = DerivedTraceEditStateString<TraceEditSequence * >;
+using PCFMergerReferenceState = DerivedTraceEditStateString<TraceEditSequence * >;
 
-typedef DerivedTraceEditStateTTime< TraceEditSequence * > MaxTraceTimeState;
-typedef DerivedTraceEditStateTWindowLevel< TraceEditSequence * > ShiftLevelState;
-typedef DerivedTraceEditStateTEventType< TraceEditSequence * > OnEventCutter;
+using MaxTraceTimeState = DerivedTraceEditStateTTime< TraceEditSequence * >;
+using ShiftLevelState = DerivedTraceEditStateTWindowLevel< TraceEditSequence * >;
+using OnEventCutter = DerivedTraceEditStateTEventType< TraceEditSequence * >;
 
 
