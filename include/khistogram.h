@@ -544,52 +544,16 @@ class KDerivedHistogram : public KHistogram
     Histogram *parent1 = nullptr;
     Histogram *parent2 = nullptr;
 
-    // THistogramColumn numPlanes = 0;
-    // TObjectOrder numRows = 0;
-    // THistogramColumn numCols = 0;
-
     std::string currentDerivedOperation = "add";
 
-    // THistogramLimit controlMin;
-    // THistogramLimit controlMax;
-    // THistogramLimit controlDelta;
-    // THistogramLimit xtraControlMin;
-    // THistogramLimit xtraControlMax;
-    // THistogramLimit xtraControlDelta;
-
     //std::unordered_map< PRV_UINT32, PRV_UINT32 > currentRow;
-
-    // V1
-    CubeBuffer<NUM_SEMANTIC_STATS> *cube = nullptr;
-    CubeBuffer<NUM_COMM_STATS> *commCube = nullptr;
-
+    
     // TODO: Is a better idea thah CubeContainer? May vary columns depending on the plane?
     // std::unordered_map< THistogramColumn, THistogramColumn > planeCorrespondence;
     // std::unordered_map< TObjectOrder, TObjectOrder > rowCorrespondence;
     // std::unordered_map< THistogramColumn, THistogramColumn > colCorrespondence;
     using THistogramCorrespondenceInfo = CubeContainer< TPlaneOrder, TObjectOrder, THistogramColumn, TRemoteIndex >;
     THistogramCorrespondenceInfo cellCorrespondence;
-
-    // V0
-    // Cube<TSemanticValue, NUM_SEMANTIC_STATS> *cube;
-    // Matrix<TSemanticValue, NUM_SEMANTIC_STATS> *matrix;
-    // Cube<TSemanticValue, NUM_COMM_STATS> *commCube;
-    // Matrix<TSemanticValue, NUM_COMM_STATS> *commMatrix;
-
-    // KHistogramTotals *totals;
-    // KHistogramTotals *rowTotals;
-    // KHistogramTotals *commTotals;
-    // KHistogramTotals *rowCommTotals;
-
-    //Selection of rows
-    //SelectionManagement< TObjectOrder, TWindowLevel > rowSelection;
-
-    // RowsTranslator *rowsTranslator;
-    // ColumnTranslator *columnTranslator;
-    // ColumnTranslator *planeTranslator;
-
-    // bool useFixedDelta;
-    // std::vector<KTimeline *> orderedWindows;
 
 
     void fillCellCorrespondence();
