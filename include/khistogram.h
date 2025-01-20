@@ -298,10 +298,10 @@ class KHistogram : public Histogram
     CubeBuffer<NUM_COMM_STATS> *commBuffer = nullptr;
 #endif
 
-    KHistogramTotals *totals;
-    KHistogramTotals *rowTotals;
-    KHistogramTotals *commTotals;
-    KHistogramTotals *rowCommTotals;
+    KHistogramTotals *totals = nullptr;
+    KHistogramTotals *rowTotals = nullptr;
+    KHistogramTotals *commTotals = nullptr;
+    KHistogramTotals *rowCommTotals = nullptr;
 
     Statistics statistics;
 
