@@ -1808,9 +1808,7 @@ KHistogram *KHistogram::clone()
 
   clonedKHistogram->controlWindow = nullptr;
   clonedKHistogram->dataWindow = nullptr;
-  if ( clonedKHistogram->xtraControlWindow != nullptr )
-    clonedKHistogram->xtraControlWindow = nullptr;
-
+  clonedKHistogram->xtraControlWindow = nullptr;
 
   clonedKHistogram->beginTime = beginTime;
   clonedKHistogram->endTime = endTime;
