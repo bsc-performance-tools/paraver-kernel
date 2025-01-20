@@ -309,8 +309,10 @@ class KHistogram : public Histogram
     SelectionManagement< TObjectOrder, TWindowLevel > rowSelection;
     std::vector<KTimeline *> orderedWindows;
 
+    bool createComms() const;
     void initTranslators();
     void initTotals();
+    void initMatrix( THistogramColumn planes, THistogramColumn cols, TObjectOrder rows );
 
   private:
     KTimeline *controlWindow;
@@ -357,11 +359,6 @@ class KHistogram : public Histogram
 
     void orderWindows();
     void clearTranslators();
-    bool createComms() const;
-    // void initTranslators();
-    void initMatrix( THistogramColumn planes, THistogramColumn cols,
-                     TObjectOrder rows );
-    //void initTotals();
     void initSemantic( TRecordTime beginTime );
     void initStatistics();
     void initTmpBuffers( THistogramColumn planes, TObjectOrder rows );
