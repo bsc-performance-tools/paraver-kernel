@@ -2413,11 +2413,10 @@ void KDerivedHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEn
   // Not checking if parents should be also executed
   orderWindows();
 
-  mergeColumns( whichBeginTime, whichEndTime, selectedRows, progress );
-
   initTranslators();
 
-// std::cout << "SR =" <<selectedRows.size() <<std::endl;
+  mergeColumns( whichBeginTime, whichEndTime, selectedRows, progress );
+
   numRows = selectedRows.size();
 
   if( getUseFixedDelta() )
@@ -2452,17 +2451,22 @@ void KDerivedHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEn
   fillCellCorrespondence();
 
   initTotals();
-  if ( totals != nullptr )
-    delete totals;
-  if ( rowTotals != nullptr )
-    delete rowTotals;
-
-  totals    = new KHistogramTotals( NUM_SEMANTIC_STATS, numCols, 1 );
-  rowTotals = new KHistogramTotals( NUM_SEMANTIC_STATS, numRows, 1 );
 
   combineHistograms();
 
-  // finish totals
+  if ( getThreeDimensions() )
+  {
+    cube->finish();
+    if ( createComms() )
+      commCube->finish();
+  }
+  else
+  {
+    matrix->finish();
+    if ( createComms() )
+      commMatrix->finish();
+  }
+
   if ( totals != nullptr )
     totals->finish();
   if ( rowTotals != nullptr )
