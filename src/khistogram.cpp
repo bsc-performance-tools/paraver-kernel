@@ -2507,11 +2507,20 @@ KHistogram *KDerivedHistogram::clone()
   clonedKDerivedHistogram->setExtraControlMax( getExtraControlMax() );
   clonedKDerivedHistogram->setExtraControlDelta( getExtraControlDelta() );
 
+  // if ( cube != nullptr )
+  //  clonedKDerivedHistogram->cube = new CubeBuffer<NUM_SEMANTIC_STATS>( *cube );
+  // if ( commCube != nullptr )
+  //  clonedKDerivedHistogram->commCube = new CubeBuffer<NUM_COMM_STATS>( *commCube );
+  
   if ( cube != nullptr )
-    clonedKDerivedHistogram->cube = new CubeBuffer<NUM_SEMANTIC_STATS>( *cube );
+    clonedKDerivedHistogram->cube = new Cube<TSemanticValue, NUM_SEMANTIC_STATS>( *cube );
+  if ( matrix != nullptr )
+    clonedKDerivedHistogram->matrix = new Matrix<TSemanticValue, NUM_SEMANTIC_STATS>( *matrix );
   if ( commCube != nullptr )
-    clonedKDerivedHistogram->commCube = new CubeBuffer<NUM_COMM_STATS>( *commCube );
- 
+    clonedKDerivedHistogram->commCube = new Cube<TSemanticValue, NUM_COMM_STATS>( *commCube );
+  if ( commMatrix != nullptr )
+    clonedKDerivedHistogram->commMatrix = new Matrix<TSemanticValue, NUM_COMM_STATS>( *commMatrix );
+
   clonedKDerivedHistogram->totals = new KHistogramTotals( totals );
   clonedKDerivedHistogram->rowTotals = new KHistogramTotals( rowTotals );
   clonedKDerivedHistogram->commTotals = new KHistogramTotals( commTotals );
