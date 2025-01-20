@@ -1846,17 +1846,12 @@ KHistogram *KHistogram::clone()
   clonedKHistogram->rowsTranslator = new RowsTranslator( *rowsTranslator );
   clonedKHistogram->columnTranslator = new ColumnTranslator( *columnTranslator );
 
-  if ( clonedKHistogram->planeTranslator != nullptr )
-    clonedKHistogram->planeTranslator = new ColumnTranslator( *planeTranslator );
+  clonedKHistogram->planeTranslator = ( planeTranslator != nullptr )? new ColumnTranslator( *planeTranslator ) : nullptr;
 
-  if ( cube != nullptr )
-    clonedKHistogram->cube = new Cube<TSemanticValue, NUM_SEMANTIC_STATS>( *cube );
-  if ( matrix != nullptr )
-    clonedKHistogram->matrix = new Matrix<TSemanticValue, NUM_SEMANTIC_STATS>( *matrix );
-  if ( commCube != nullptr )
-    clonedKHistogram->commCube = new Cube<TSemanticValue, NUM_COMM_STATS>( *commCube );
-  if ( commMatrix != nullptr )
-    clonedKHistogram->commMatrix = new Matrix<TSemanticValue, NUM_COMM_STATS>( *commMatrix );
+  clonedKHistogram->cube = ( cube != nullptr )? new Cube<TSemanticValue, NUM_SEMANTIC_STATS>( *cube ) : nullptr;  
+  clonedKHistogram->matrix = ( matrix != nullptr )? new Matrix<TSemanticValue, NUM_SEMANTIC_STATS>( *matrix ) : nullptr;
+  clonedKHistogram->commCube = ( commCube != nullptr )? new Cube<TSemanticValue, NUM_COMM_STATS>( *commCube ) : nullptr;
+  clonedKHistogram->commMatrix = ( commMatrix != nullptr )? new Matrix<TSemanticValue, NUM_COMM_STATS>( *commMatrix ) : nullptr;
 
   clonedKHistogram->totals = new KHistogramTotals( totals );
   clonedKHistogram->rowTotals = new KHistogramTotals( rowTotals );
