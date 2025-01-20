@@ -931,25 +931,39 @@ bool KHistogram::createComms() const
   return true;
 }
 
-
-void KHistogram::initTranslators()
+void KHistogram::clearTranslators()
 {
   if ( rowsTranslator != nullptr )
+  {
     delete rowsTranslator;
-  rowsTranslator = new RowsTranslator( orderedWindows );
+    rowsTranslator = nullptr;
+  }
 
   if ( columnTranslator != nullptr )
+  {
     delete columnTranslator;
-  if( useFixedDelta )
-    columnTranslator = new ColumnTranslator( controlMin, controlMax, controlDelta );
-  else
-    columnTranslator = new ColumnTranslator( controlMin, controlMax, numCols );
+    columnTranslator = nullptr;
+  }
 
   if ( planeTranslator != nullptr )
   {
     delete planeTranslator;
     planeTranslator = nullptr;
   }
+}
+
+
+void KHistogram::initTranslators()
+{
+  clearTranslators();
+
+  rowsTranslator = new RowsTranslator( orderedWindows );
+
+  if( useFixedDelta )
+    columnTranslator = new ColumnTranslator( controlMin, controlMax, controlDelta );
+  else
+    columnTranslator = new ColumnTranslator( controlMin, controlMax, numCols );
+
   if ( getThreeDimensions() )
     planeTranslator = new ColumnTranslator( xtraControlMin, xtraControlMax, xtraControlDelta );
 }

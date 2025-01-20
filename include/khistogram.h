@@ -355,6 +355,7 @@ class KHistogram : public Histogram
    
 
     void orderWindows();
+    void clearTranslators();
     bool createComms() const;
     // void initTranslators();
     void initMatrix( THistogramColumn planes, THistogramColumn cols,
