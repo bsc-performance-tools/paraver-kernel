@@ -288,6 +288,16 @@ class KHistogram : public Histogram
     THistogramColumn numCols = 0;
     THistogramColumn numPlanes = 0;
 
+    Cube<TSemanticValue, NUM_SEMANTIC_STATS> *cube = nullptr;
+    Matrix<TSemanticValue, NUM_SEMANTIC_STATS> *matrix = nullptr;
+    Cube<TSemanticValue, NUM_COMM_STATS> *commCube = nullptr;
+    Matrix<TSemanticValue, NUM_COMM_STATS> *commMatrix = nullptr;
+
+#ifdef PARALLEL_ENABLED
+    CubeBuffer<NUM_SEMANTIC_STATS> *semanticBuffer = nullptr;
+    CubeBuffer<NUM_COMM_STATS> *commBuffer = nullptr;
+#endif
+
     KHistogramTotals *totals;
     KHistogramTotals *rowTotals;
     KHistogramTotals *commTotals;
@@ -338,15 +348,6 @@ class KHistogram : public Histogram
     ColumnTranslator *columnTranslator;
     ColumnTranslator *planeTranslator;
 
-    Cube<TSemanticValue, NUM_SEMANTIC_STATS> *cube;
-    Matrix<TSemanticValue, NUM_SEMANTIC_STATS> *matrix;
-    Cube<TSemanticValue, NUM_COMM_STATS> *commCube;
-    Matrix<TSemanticValue, NUM_COMM_STATS> *commMatrix;
-
-#ifdef PARALLEL_ENABLED
-    CubeBuffer<NUM_SEMANTIC_STATS> *semanticBuffer;
-    CubeBuffer<NUM_COMM_STATS> *commBuffer;
-#endif
 
 
     TTimeUnit myTimeUnit;
