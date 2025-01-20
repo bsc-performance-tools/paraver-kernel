@@ -1025,10 +1025,8 @@ void KHistogram::initTotals()
     rowTotals = new KHistogramTotals( NUM_SEMANTIC_STATS, numRows, numPlanes );
     if ( createComms() )
     {
-      commTotals = new KHistogramTotals( NUM_COMM_STATS,
-                                         rowsTranslator->totalRows(), numPlanes );
-      rowCommTotals = new KHistogramTotals( NUM_COMM_STATS,
-                                            numRows, numPlanes );
+      commTotals = new KHistogramTotals( NUM_COMM_STATS, rowsTranslator->totalRows(), numPlanes );
+      rowCommTotals = new KHistogramTotals( NUM_COMM_STATS, numRows, numPlanes );
     }
   }
   else
@@ -1037,10 +1035,8 @@ void KHistogram::initTotals()
     rowTotals = new KHistogramTotals( NUM_SEMANTIC_STATS, numRows, 1 );
     if ( createComms() )
     {
-      commTotals = new KHistogramTotals( NUM_COMM_STATS,
-                                         rowsTranslator->totalRows(), 1 );
-      rowCommTotals = new KHistogramTotals( NUM_COMM_STATS,
-                                            numRows, 1 );
+      commTotals = new KHistogramTotals( NUM_COMM_STATS, rowsTranslator->totalRows(), 1 );
+      rowCommTotals = new KHistogramTotals( NUM_COMM_STATS, numRows, 1 );
     }
   }
 }
