@@ -456,9 +456,9 @@ class KDerivedHistogram : public KHistogram
 
     void setNumColumns( THistogramColumn whichNumColumns ) override;
 
-    // THistogramColumn getNumPlanes() const override;
-    // THistogramColumn getNumColumns() const override;
-    // THistogramColumn getCommNumColumns() const override;
+    THistogramColumn getNumPlanes() const override;
+    THistogramColumn getNumColumns() const override;
+    THistogramColumn getCommNumColumns() const override;
 
     // TObjectOrder getNumRows() const override;
 

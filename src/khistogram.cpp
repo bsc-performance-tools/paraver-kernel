@@ -2099,20 +2099,20 @@ void KDerivedHistogram::setNumColumns( THistogramColumn whichNumColumns )
   parent2->setNumColumns( whichNumColumns );
 }
 
-// THistogramColumn KDerivedHistogram::getNumPlanes() const
-// {
-//   return parent1->getNumPlanes();
-// }
+THistogramColumn KDerivedHistogram::getNumPlanes() const
+{
+  return parent1->getNumPlanes();
+}
 
-// THistogramColumn KDerivedHistogram::getNumColumns() const
-// {
-//   return std::min( parent1->getNumColumns(), parent2->getNumColumns() );
-// }
+THistogramColumn KDerivedHistogram::getNumColumns() const
+{
+  return parent1->getNumColumns();
+}
 
-// THistogramColumn KDerivedHistogram::getCommNumColumns() const
-// {
-//   return parent1->getCommNumColumns();
-// }
+THistogramColumn KDerivedHistogram::getCommNumColumns() const
+{
+  return parent1->getCommNumColumns();
+}
 
 // TObjectOrder KDerivedHistogram::getNumRows() const
 // {
