@@ -2255,15 +2255,15 @@ void KDerivedHistogram::pushbackStatistic( const std::string& whichStatistic )
 
 }
 
-bool KDerivedHistogram::isCommunicationStat( const std::string& whichStat ) const
-{
-  return parent1->isCommunicationStat( whichStat ) && parent2->isCommunicationStat( whichStat );
-}
+// bool KDerivedHistogram::isCommunicationStat( const std::string& whichStat ) const
+// {
+//   return parent1->isCommunicationStat( whichStat ) && parent2->isCommunicationStat( whichStat );
+// }
 
-bool KDerivedHistogram::isNotZeroStat( const std::string& whichStat ) const
-{
-  return parent1->isNotZeroStat( whichStat ) && parent2->isNotZeroStat( whichStat );
-}
+// bool KDerivedHistogram::isNotZeroStat( const std::string& whichStat ) const
+// {
+//   return parent1->isNotZeroStat( whichStat ) && parent2->isNotZeroStat( whichStat );
+// }
 
 std::string KDerivedHistogram::getUnitsLabel( const std::string& whichStat ) const
 {

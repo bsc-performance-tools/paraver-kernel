@@ -502,9 +502,9 @@ class KDerivedHistogram : public KHistogram
     void clearStatistics() override;
     void pushbackStatistic( const std::string& whichStatistic ) override;
 
-    bool isCommunicationStat( const std::string& whichStat ) const override;
+    // bool isCommunicationStat( const std::string& whichStat ) const override;
 
-    bool isNotZeroStat( const std::string& whichStat ) const override;
+    // bool isNotZeroStat( const std::string& whichStat ) const override;
 
     std::string getUnitsLabel( const std::string& whichStat ) const override;
 
