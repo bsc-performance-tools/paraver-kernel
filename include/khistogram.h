@@ -462,37 +462,37 @@ class KDerivedHistogram : public KHistogram
 
     // TObjectOrder getNumRows() const override;
 
-    TSemanticValue getCurrentValue( PRV_UINT32 col,
-                                    PRV_UINT16 idStat,
-                                    PRV_UINT32 plane = 0 ) const override;
-    PRV_UINT32 getCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const override;
-    void setNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
-    void setFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
-    bool endCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
-    bool planeWithValues( PRV_UINT32 plane = 0 ) const override;
-    bool getCellValue( TSemanticValue& semVal,
-                       PRV_UINT32 whichRow,
-                       PRV_UINT32 whichCol,
-                       PRV_UINT16 idStat,
-                       PRV_UINT32 whichPlane = 0 ) const override;
-    bool getNotZeroValue( PRV_UINT32 whichRow,
-                          PRV_UINT32 whichCol,
-                          PRV_UINT16 idStat,
-                          PRV_UINT32 whichPlane = 0 ) const override;
+    // TSemanticValue getCurrentValue( PRV_UINT32 col,
+    //                                 PRV_UINT16 idStat,
+    //                                 PRV_UINT32 plane = 0 ) const override;
+    // PRV_UINT32 getCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const override;
+    // void setNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    // void setFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    // bool endCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    // bool planeWithValues( PRV_UINT32 plane = 0 ) const override;
+    // bool getCellValue( TSemanticValue& semVal,
+    //                    PRV_UINT32 whichRow,
+    //                    PRV_UINT32 whichCol,
+    //                    PRV_UINT16 idStat,
+    //                    PRV_UINT32 whichPlane = 0 ) const override;
+    // bool getNotZeroValue( PRV_UINT32 whichRow,
+    //                       PRV_UINT32 whichCol,
+    //                       PRV_UINT16 idStat,
+    //                       PRV_UINT32 whichPlane = 0 ) const override;
 
-    TSemanticValue getCommCurrentValue( PRV_UINT32 col,
-                                        PRV_UINT16 idStat,
-                                        PRV_UINT32 plane = 0 ) const override;
-    PRV_UINT32 getCommCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const override;
-    void setCommNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
-    void setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
-    bool endCommCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
-    bool planeCommWithValues( PRV_UINT32 plane = 0 ) const override;
-    bool getCommCellValue( TSemanticValue& semVal,
-                           PRV_UINT32 whichRow,
-                           PRV_UINT32 whichCol,
-                           PRV_UINT16 idStat,
-                           PRV_UINT32 whichPlane = 0 ) const override;
+    // TSemanticValue getCommCurrentValue( PRV_UINT32 col,
+    //                                     PRV_UINT16 idStat,
+    //                                     PRV_UINT32 plane = 0 ) const override;
+    // PRV_UINT32 getCommCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const override;
+    // void setCommNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    // void setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    // bool endCommCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    // bool planeCommWithValues( PRV_UINT32 plane = 0 ) const override;
+    // bool getCommCellValue( TSemanticValue& semVal,
+    //                        PRV_UINT32 whichRow,
+    //                        PRV_UINT32 whichCol,
+    //                        PRV_UINT16 idStat,
+    //                        PRV_UINT32 whichPlane = 0 ) const override;
 
     // HistogramTotals *getColumnTotals() const override;
     // HistogramTotals *getCommColumnTotals() const override;

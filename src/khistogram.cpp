@@ -2117,17 +2117,17 @@ void KDerivedHistogram::setNumColumns( THistogramColumn whichNumColumns )
 //   return std::min( parent1->getNumRows(), parent2->getNumRows() );
 // }
 
-TSemanticValue KDerivedHistogram::getCurrentValue( PRV_UINT32 col,
-                                                   PRV_UINT16 idStat,
-                                                   PRV_UINT32 plane ) const
-{
-  return cube->getCurrentValue( plane, col, idStat );
-}
+// TSemanticValue KDerivedHistogram::getCurrentValue( PRV_UINT32 col,
+//                                                    PRV_UINT16 idStat,
+//                                                    PRV_UINT32 plane ) const
+// {
+//   return cube->getCurrentValue( plane, col, idStat );
+// }
 
-PRV_UINT32 KDerivedHistogram::getCurrentRow( PRV_UINT32 col, PRV_UINT32 plane ) const
-{
-  return cube->getCurrentRow( plane, col );
-}
+// PRV_UINT32 KDerivedHistogram::getCurrentRow( PRV_UINT32 col, PRV_UINT32 plane ) const
+// {
+//   return cube->getCurrentRow( plane, col );
+// }
 
 // inline ColumnTranslator *KDerivedHistogram::getColumnTranslator() const
 // {
@@ -2135,95 +2135,95 @@ PRV_UINT32 KDerivedHistogram::getCurrentRow( PRV_UINT32 col, PRV_UINT32 plane ) 
 // }
 
 
-void KDerivedHistogram::setNextCell( PRV_UINT32 col, PRV_UINT32 plane )
-{
-  cube->setNextCell( col, plane );
-}
+// void KDerivedHistogram::setNextCell( PRV_UINT32 col, PRV_UINT32 plane )
+// {
+//   cube->setNextCell( col, plane );
+// }
 
-void KDerivedHistogram::setFirstCell( PRV_UINT32 col, PRV_UINT32 plane )
-{
-  cube->setFirstCell( col, plane );
-}
+// void KDerivedHistogram::setFirstCell( PRV_UINT32 col, PRV_UINT32 plane )
+// {
+//   cube->setFirstCell( col, plane );
+// }
 
-bool KDerivedHistogram::endCell( PRV_UINT32 col, PRV_UINT32 plane )
-{
-  return cube->endCell( col, plane );
-}
+// bool KDerivedHistogram::endCell( PRV_UINT32 col, PRV_UINT32 plane )
+// {
+//   return cube->endCell( col, plane );
+// }
 
-bool KDerivedHistogram::planeWithValues( PRV_UINT32 plane ) const
-{
-  return cube->planeWithValues( plane ); 
-}
+// bool KDerivedHistogram::planeWithValues( PRV_UINT32 plane ) const
+// {
+//   return cube->planeWithValues( plane ); 
+// }
 
-bool KDerivedHistogram::getCellValue( TSemanticValue& semVal,
-                                      PRV_UINT32 whichRow,
-                                      PRV_UINT32 whichCol,
-                                      PRV_UINT16 idStat,
-                                      PRV_UINT32 whichPlane ) const
-{
-  std::array< TSemanticValue, NUM_SEMANTIC_STATS > tmpSemval;
+// bool KDerivedHistogram::getCellValue( TSemanticValue& semVal,
+//                                       PRV_UINT32 whichRow,
+//                                       PRV_UINT32 whichCol,
+//                                       PRV_UINT16 idStat,
+//                                       PRV_UINT32 whichPlane ) const
+// {
+//   std::array< TSemanticValue, NUM_SEMANTIC_STATS > tmpSemval;
   
-  bool found = cube->getCellValue( tmpSemval, whichPlane, whichRow, whichCol );
-  if ( found )
-    semVal = tmpSemval[ idStat ];
+//   bool found = cube->getCellValue( tmpSemval, whichPlane, whichRow, whichCol );
+//   if ( found )
+//     semVal = tmpSemval[ idStat ];
   
-  return found; 
-}
+//   return found; 
+// }
 
-bool KDerivedHistogram::getNotZeroValue( PRV_UINT32 whichRow,
-                                         PRV_UINT32 whichCol,
-                                         PRV_UINT16 idStat,
-                                         PRV_UINT32 whichPlane ) const
-{
-  bool retNotZeroVal = true;
+// bool KDerivedHistogram::getNotZeroValue( PRV_UINT32 whichRow,
+//                                          PRV_UINT32 whichCol,
+//                                          PRV_UINT16 idStat,
+//                                          PRV_UINT32 whichPlane ) const
+// {
+//   bool retNotZeroVal = true;
 
-  auto tmpZeroValAllCols = cube->getNotZeroValue( whichPlane, whichRow );
-  if ( tmpZeroValAllCols.find( whichCol ) != tmpZeroValAllCols.end() )
-    retNotZeroVal = tmpZeroValAllCols[ whichCol ];
+//   auto tmpZeroValAllCols = cube->getNotZeroValue( whichPlane, whichRow );
+//   if ( tmpZeroValAllCols.find( whichCol ) != tmpZeroValAllCols.end() )
+//     retNotZeroVal = tmpZeroValAllCols[ whichCol ];
 
-  return retNotZeroVal;
-}
+//   return retNotZeroVal;
+// }
 
-TSemanticValue KDerivedHistogram::getCommCurrentValue( PRV_UINT32 col,
-                                                       PRV_UINT16 idStat,
-                                                       PRV_UINT32 plane ) const
-{
-  return {};
-}
+// TSemanticValue KDerivedHistogram::getCommCurrentValue( PRV_UINT32 col,
+//                                                        PRV_UINT16 idStat,
+//                                                        PRV_UINT32 plane ) const
+// {
+//   return {};
+// }
 
-PRV_UINT32 KDerivedHistogram::getCommCurrentRow( PRV_UINT32 col, PRV_UINT32 plane ) const
-{
-  return {};
-}
+// PRV_UINT32 KDerivedHistogram::getCommCurrentRow( PRV_UINT32 col, PRV_UINT32 plane ) const
+// {
+//   return {};
+// }
 
-void KDerivedHistogram::setCommNextCell( PRV_UINT32 col, PRV_UINT32 plane )
-{
+// void KDerivedHistogram::setCommNextCell( PRV_UINT32 col, PRV_UINT32 plane )
+// {
 
-}
+// }
 
-void KDerivedHistogram::setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane )
-{
+// void KDerivedHistogram::setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane )
+// {
 
-}
+// }
 
-bool KDerivedHistogram::endCommCell( PRV_UINT32 col, PRV_UINT32 plane )
-{
-  return {};
-}
+// bool KDerivedHistogram::endCommCell( PRV_UINT32 col, PRV_UINT32 plane )
+// {
+//   return {};
+// }
 
-bool KDerivedHistogram::planeCommWithValues( PRV_UINT32 plane ) const
-{
-  return {};
-}
+// bool KDerivedHistogram::planeCommWithValues( PRV_UINT32 plane ) const
+// {
+//   return {};
+// }
 
-bool KDerivedHistogram::getCommCellValue( TSemanticValue& semVal,
-                                          PRV_UINT32 whichRow,
-                                          PRV_UINT32 whichCol,
-                                          PRV_UINT16 idStat,
-                                          PRV_UINT32 whichPlane ) const
-{
-  return {}; 
-}
+// bool KDerivedHistogram::getCommCellValue( TSemanticValue& semVal,
+//                                           PRV_UINT32 whichRow,
+//                                           PRV_UINT32 whichCol,
+//                                           PRV_UINT16 idStat,
+//                                           PRV_UINT32 whichPlane ) const
+// {
+//   return {}; 
+// }
 
 // HistogramTotals *KDerivedHistogram::getColumnTotals() const
 // {
@@ -2564,7 +2564,6 @@ void KDerivedHistogram::getDerivedOperationLabels( vector<std::string>& onVector
   FunctionManagement<SemanticDerivedHistogram>::getInstance()->getAll( onVector, whichGroup );
 }
 
-
 bool KDerivedHistogram::setColumnsMergeMode( TColumnsMergeMode whichMode )
 {
   columnsMergeMode = whichMode;
@@ -2574,6 +2573,7 @@ TColumnsMergeMode KDerivedHistogram::getColumnsMergeMode() const
 {
   return columnsMergeMode;
 }
+
 
 void KDerivedHistogram::orderWindows()
 {
