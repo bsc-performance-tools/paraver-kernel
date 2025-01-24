@@ -1881,27 +1881,8 @@ ColumnTranslator *KHistogram::getPlaneTranslator() const
 /***************************************************************
 ***                     KDerivedHistogram                    ***
 ****************************************************************/
-// KDerived has not statistics. If selected it communicates to parent histograms
-// KDerivedHistogram::KDerivedHistogram( KHistogram *whichParent1, KHistogram *whichParent2 ) : KHistogram( *whichParent1 ), statistics( *static_cast<KHistogram *>( this ) )
-// 
-KDerivedHistogram::KDerivedHistogram( KHistogram *whichParent1, KHistogram *whichParent2 ) : KHistogram( *whichParent1 ) // default constr. for at least rowSelection
-                                                                                                
+KDerivedHistogram::KDerivedHistogram( KHistogram *whichParent1, KHistogram *whichParent2 )                                                                                                
 {
-  //cube = nullptr;
-  //commCube = nullptr;
-  
-  // rowsTranslator = nullptr;
-  // columnTranslator = nullptr;
-  // planeTranslator = nullptr;
-
-  //useFixedDelta = false;
-
-  // totals = nullptr;
-  // rowTotals = nullptr;
-  // commTotals = nullptr;
-  // rowCommTotals = nullptr;
-  
-//std::cout << "parent1: " << whichParent1 << std::endl;
   parent1 = whichParent1;
   parent2 = whichParent2;
 
@@ -1910,6 +1891,14 @@ KDerivedHistogram::KDerivedHistogram( KHistogram *whichParent1, KHistogram *whic
   numPlanes = 0;
 
   currentDerivedOperation = "add";
+
+  numCols = parent1->getNumColumns();
+  //numCommCols = parent1->getCommNumColumns();
+
+  KHistogram::setControlMin( parent1->getControlMin() );
+  KHistogram::setControlMax( parent1->getControlMax() );
+  KHistogram::setControlDelta( parent1->getControlDelta() );
+  KHistogram::setExtraControlDelta( parent1->getExtraControlDelta() );
 }
 
 
@@ -1918,7 +1907,7 @@ KDerivedHistogram::~KDerivedHistogram()
 
 inline bool KDerivedHistogram::getThreeDimensions() const
 {
-  return ( parent1->getExtraControlWindow() != nullptr );
+  return ( getExtraControlWindow() != nullptr );
 }
 
 Timeline *KDerivedHistogram::getControlWindow() const
@@ -1975,42 +1964,55 @@ void KDerivedHistogram::clearExtraControlWindow()
 void KDerivedHistogram::setUseFixedDelta( bool whichValue )
 {
   KHistogram::setUseFixedDelta( whichValue );
+
   parent1->setUseFixedDelta( whichValue );
   parent2->setUseFixedDelta( whichValue );
 }
 
 void KDerivedHistogram::setControlMin( THistogramLimit whichMin )
 {
+  KHistogram::setControlMin( whichMin );
+
   parent1->setControlMin( whichMin );
   parent2->setControlMin( whichMin );
 }
 
 void KDerivedHistogram::setControlMax( THistogramLimit whichMax )
 {
+  KHistogram::setControlMax( whichMax );
+
   parent1->setControlMax( whichMax );
   parent2->setControlMax( whichMax );
 }
 
 void KDerivedHistogram::setControlDelta( THistogramLimit whichDelta )
 {
+  KHistogram::setControlDelta( whichDelta );
+
   parent1->setControlDelta( whichDelta );
   parent2->setControlDelta( whichDelta );
 }
 
 void KDerivedHistogram::setExtraControlMin( THistogramLimit whichMin )
 {
+  KHistogram::setExtraControlMin( whichMin );
+
   parent1->setExtraControlMin( whichMin );
   parent2->setExtraControlMin( whichMin );
 }
 
 void KDerivedHistogram::setExtraControlMax( THistogramLimit whichMax )
 {
+  KHistogram::setExtraControlMax( whichMax );
+
   parent1->setExtraControlMax( whichMax );
   parent2->setExtraControlMax( whichMax );
 }
 
 void KDerivedHistogram::setExtraControlDelta( THistogramLimit whichDelta )
 {
+  KHistogram::setExtraControlDelta( whichDelta );
+
   parent1->setExtraControlDelta( whichDelta );
   parent2->setExtraControlDelta( whichDelta );
 }
