@@ -2410,9 +2410,6 @@ void KDerivedHistogram::combineHistograms()
 void KDerivedHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
                                  std::vector<TObjectOrder>& selectedRows, ProgressController *progress )
 {
-// std::cout << "KDH::execute" << std::endl;
-
-  // Not checking if parents should be also executed
   orderWindows();
 
   initTranslators();
@@ -2420,7 +2417,6 @@ void KDerivedHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEn
   mergeColumns( whichBeginTime, whichEndTime, selectedRows, progress );
 
   numRows = selectedRows.size();
-
   if( getUseFixedDelta() )
     numCols = getColumnTranslator()->totalColumns();
   else
@@ -2431,9 +2427,8 @@ void KDerivedHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEn
   else
     numPlanes = 1;
 
-  std::cout << "numCols: " << numCols << std::endl;
-  std::cout << "numRows: " << numRows << std::endl;
-
+  // std::cout << "numCols: " << numCols << std::endl;
+  // std::cout << "numRows: " << numRows << std::endl;
 
   if( progress != nullptr )
   {
@@ -2535,6 +2530,8 @@ KHistogram *KDerivedHistogram::clone()
   clonedKDerivedHistogram->rowSelection = rowSelection;
 
   clonedKDerivedHistogram->currentDerivedOperation = currentDerivedOperation;
+  clonedKDerivedHistogram->cellCorrespondence = cellCorrespondence;
+  clonedKDerivedHistogram->cellCommCorrespondence = cellCommCorrespondence;
 
   return clonedKDerivedHistogram;
 }
@@ -2661,13 +2658,15 @@ void KDerivedHistogram::fillCellCorrespondence()
         cellCorrespondence( iPlane, iRow, iCol ) = TRemoteIndex{ iPlane, iRow, iCol };
 }
 
-bool KDerivedHistogram::getCellCorrespondence( THistogramColumn whichPlane, TObjectOrder whichRow, THistogramColumn whichColumn,
+
+bool KDerivedHistogram::getCellCorrespondence( THistogramCorrespondenceInfo& whichCellCorrespondence,
+                                               THistogramColumn whichPlane, TObjectOrder whichRow, THistogramColumn whichColumn,
                                                THistogramCorrespondenceInfo::iterator& whichIt )
 {
   bool found;
 
-  THistogramCorrespondenceInfo::iterator it = cellCorrespondence.find( whichPlane, whichRow, whichColumn );
-  if ( found = ( it != cellCorrespondence.end() ) )
+  THistogramCorrespondenceInfo::iterator it = whichCellCorrespondence.find( whichPlane, whichRow, whichColumn );
+  if ( found = ( it != whichCellCorrespondence.end() ) )
     whichIt = it;
 
   return found;

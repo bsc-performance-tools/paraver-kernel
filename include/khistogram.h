@@ -551,10 +551,12 @@ class KDerivedHistogram : public KHistogram
     // std::unordered_map< THistogramColumn, THistogramColumn > colCorrespondence;
     using THistogramCorrespondenceInfo = CubeContainer< TPlaneOrder, TObjectOrder, THistogramColumn, TRemoteIndex >;
     THistogramCorrespondenceInfo cellCorrespondence;
+    THistogramCorrespondenceInfo cellCommCorrespondence;
 
 
     void fillCellCorrespondence();
-    bool getCellCorrespondence( THistogramColumn whichPlane, TObjectOrder whichRow, THistogramColumn whichColumn,
+    bool getCellCorrespondence( THistogramCorrespondenceInfo& whichCellCorrespondence,
+                                THistogramColumn whichPlane, TObjectOrder whichRow, THistogramColumn whichColumn,
                                 THistogramCorrespondenceInfo::iterator& whichIt );
 
     TColumnsMergeMode columnsMergeMode = DISCRETE_MAXIMUM_EXPANSION;
