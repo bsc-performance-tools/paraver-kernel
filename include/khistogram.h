@@ -570,6 +570,14 @@ class KDerivedHistogram : public KHistogram
 
     TColumnsMergeMode columnsMergeMode = DISCRETE_MAXIMUM_EXPANSION;
 
+    template <size_t NUM_STATS>
+    void combineValues( std::array< TSemanticValue, NUM_STATS >& wholeSemVals,
+                        KHistogramTotals* whichTotals, KHistogramTotals* whichRowTotals, 
+                        THistogramColumn iPlane, THistogramColumn iCol, THistogramColumn iRow,
+                        bool isCommValue = false,
+                        THistogramColumn i2Plane = 0, THistogramColumn i2Col = 0, THistogramColumn i2Row = 0,
+                        bool existCorrespondence = false );
+
     void combineHistograms();
 
     void orderWindows();
