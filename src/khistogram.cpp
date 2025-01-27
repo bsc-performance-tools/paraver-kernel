@@ -893,6 +893,8 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
   if ( rowCommTotals != nullptr )
     rowCommTotals->finish();
   // - Columns will be ordered if necesary
+
+  setReady( true );
 }
 
 
@@ -1877,6 +1879,18 @@ ColumnTranslator *KHistogram::getPlaneTranslator() const
 {
   return planeTranslator;
 }
+
+void KHistogram::setReady( bool whichReady = true )
+{
+  ready = whichReady;
+}
+
+
+bool KHistogram::isReady() const
+{
+  return ready;
+}
+
 
 /***************************************************************
 ***                     KDerivedHistogram                    ***

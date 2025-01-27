@@ -288,6 +288,9 @@ class KHistogram : public Histogram
     ColumnTranslator *getColumnTranslator() const;
     ColumnTranslator *getPlaneTranslator() const;
 
+    virtual void setReady( bool whichReady ) override;
+    virtual bool isReady() const override;
+
   protected:
     TObjectOrder numRows = 0;
     THistogramColumn numCols = 0;
@@ -361,6 +364,7 @@ class KHistogram : public Histogram
 
     WindowCloneManager windowCloneManager;
    
+    bool ready = false;
 
     void orderWindows();
     void clearTranslators();

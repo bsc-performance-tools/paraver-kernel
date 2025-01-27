@@ -721,6 +721,8 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
   }
 
   fillSemanticSort();
+
+  setReady( true );
 }
 
 void HistogramProxy::setHorizontal( bool newValue )
@@ -1531,6 +1533,8 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->propertiesAliasCFG4D = propertiesAliasCFG4D;
   clonedHistogramProxy->statisticsAliasCFG4D = statisticsAliasCFG4D;
 
+  clonedHistogramProxy->setReady( isReady() );
+
   return clonedHistogramProxy;
 }
 
@@ -1625,6 +1629,8 @@ bool HistogramProxy::getChanged() const
 void HistogramProxy::setChanged( bool newValue )
 {
   changed = newValue;
+  if ( newValue )
+    setReady( false );
 }
 
 void HistogramProxy::getGroupsLabels( vector<string>& onVector ) const
@@ -2141,4 +2147,16 @@ void HistogramProxy::getDerivedOperationLabels( vector<string>& onVector,
     //   onVector.push_back( itStat->second );
     // }
   }
+}
+
+
+void HistogramProxy::setReady( bool whichReady = true )
+{
+  myHisto->setReady( whichReady );
+}
+
+
+bool HistogramProxy::isReady() const
+{
+  return myHisto->isReady();
 }

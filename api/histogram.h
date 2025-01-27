@@ -92,6 +92,13 @@ class Histogram
                                             PRV_UINT32 whichGroup,
                                             bool getOriginalList ) const
     {}
+    
+    virtual void setReady( bool whichReady )
+    {}
+    virtual bool isReady() const
+    {
+      return false;
+    }
 
 
     virtual Timeline *getControlWindow() const = 0;
@@ -711,6 +718,8 @@ class HistogramProxy : public Histogram
     virtual void getDerivedOperationLabels( std::vector<std::string>& onVector,
                                             PRV_UINT32 whichGroup,
                                             bool getOriginalList ) const override;
+    virtual void setReady( bool whichIsReady ) override;
+    virtual bool isReady() const override;
 
     virtual Timeline *getControlWindow() const override;
     virtual Timeline *getDataWindow() const override;
