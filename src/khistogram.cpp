@@ -2652,11 +2652,46 @@ void KDerivedHistogram::fillCellCorrespondence()
   TObjectOrder tmpNumRows = getNumRows();
   THistogramColumn tmpNumCols = getColumnTranslator()->totalColumns();
 
+  // First version: only values of parent1 (assume parent1 == parent2)
   for ( THistogramColumn iPlane = 0; iPlane < tmpNumPlanes; ++iPlane )
-    for ( TObjectOrder iRow = 0; iRow < tmpNumRows; ++iRow )
-      for ( THistogramColumn iCol = 0; iCol < tmpNumCols; ++iCol )
-        // TODO: currently dummy method 1 <--> 1
+  {
+    for ( THistogramColumn iCol = 0; iCol < tmpNumCols; ++iCol )
+    {
+      parent1->setFirstCell( iCol, iPlane );
+
+      bool isEndCell = parent1->endCell( iCol, iPlane );
+      while ( !isEndCell )
+      {
+        TObjectOrder iRow = (TObjectOrder)parent1->getCurrentRow( iCol, iPlane );
+
         cellCorrespondence( iPlane, iRow, iCol ) = TRemoteIndex{ iPlane, iRow, iCol };
+
+        parent1->setNextCell( iCol, iPlane );
+
+        isEndCell = parent1->endCell( iCol, iPlane );
+      }
+    }
+
+    if ( createComms() )
+    {
+      for ( THistogramColumn iCol = 0; iCol < tmpNumRows; ++iCol )
+      {
+        parent1->setCommFirstCell( iCol, iPlane );
+
+        bool isEndCell = parent1->endCommCell( iCol, iPlane );
+        while ( !isEndCell )
+        {
+          TObjectOrder iRow = (TObjectOrder)parent1->getCommCurrentRow( iCol, iPlane );
+
+          cellCommCorrespondence( iPlane, iRow, iCol ) = TRemoteIndex{ iPlane, iRow, iCol };
+
+          parent1->setCommNextCell( iCol, iPlane );
+
+          isEndCell = parent1->endCommCell( iCol, iPlane );
+        }
+      }
+    }
+  }
 }
 
 
