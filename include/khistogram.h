@@ -564,7 +564,6 @@ class KDerivedHistogram : public KHistogram
     void combineHistograms();
 
     void orderWindows();
-    void initMatrix( THistogramColumn planes, THistogramColumn cols, TObjectOrder rows );
     void initStatistics();
 
     void mergeColumns( TRecordTime whichBeginTime, TRecordTime whichEndTime,
