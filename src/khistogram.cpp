@@ -2579,28 +2579,33 @@ void KDerivedHistogram::orderWindows()
 {
   orderedWindows.clear();
 
-  // if ( getThreeDimensions() )
-  // {
-  //   if ( controlWindow == dataWindow )
-  //   {
-  //     orderedWindows.push_back( xtraControlWindow );
-  //     orderedWindows.push_back( controlWindow );
-  //   }
-  //   else if ( controlWindow->getLevel() >= xtraControlWindow->getLevel() )
-  //   {
-  //     orderedWindows.push_back( controlWindow );
-  //     orderedWindows.push_back( xtraControlWindow );
-  //   }
-  //   else
-  //   {
-  //     orderedWindows.push_back( xtraControlWindow );
-  //     orderedWindows.push_back( controlWindow );
-  //   }
-  // }
-  // else
-    orderedWindows.push_back( (KTimeline *)getControlWindow() );
+  KTimeline *tmpControlWindow = (KTimeline *)getControlWindow();
+  KTimeline *tmpDataWindow = (KTimeline *)getDataWindow();
 
-  orderedWindows.push_back( (KTimeline *)getDataWindow() );
+  if ( getThreeDimensions() )
+  {
+    KTimeline *tmpExtraControlWindow = (KTimeline *)getExtraControlWindow();
+
+    if ( tmpControlWindow == tmpDataWindow )
+    {
+      orderedWindows.push_back( tmpExtraControlWindow );
+      orderedWindows.push_back( tmpControlWindow );
+    }
+    else if ( tmpControlWindow->getLevel() >= tmpExtraControlWindow->getLevel() )
+    {
+      orderedWindows.push_back( tmpControlWindow );
+      orderedWindows.push_back( tmpExtraControlWindow );
+    }
+    else
+    {
+      orderedWindows.push_back( tmpExtraControlWindow );
+      orderedWindows.push_back( tmpControlWindow );
+    }
+  }
+  else
+    orderedWindows.push_back( tmpControlWindow );
+
+  orderedWindows.push_back( tmpDataWindow );
 }
 
 void KDerivedHistogram::initMatrix( THistogramColumn planes, THistogramColumn cols, TObjectOrder rows )
