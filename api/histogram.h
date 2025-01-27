@@ -673,6 +673,14 @@ class Histogram
     virtual void setCurrentSemanticSort( const std::vector<int>& whichSort )
     {}
 
+    virtual std::vector<int> getCustomSemanticSort() const
+    {
+      return std::vector<int>();
+    }
+
+    virtual void setCustomSemanticSort( const std::vector<int>& whichSort )
+    {}
+
   protected:
     KernelConnection *myKernel;
 
@@ -989,6 +997,9 @@ class HistogramProxy : public Histogram
     virtual std::vector<int> getCurrentSemanticSort() const override;
     virtual void setCurrentSemanticSort( const std::vector<int>& whichSort ) override;
 
+    virtual std::vector<int> getCustomSemanticSort() const override;
+    virtual void setCustomSemanticSort( const std::vector<int>& whichSort ) override;
+
   private:
     std::string name;
 
@@ -1056,7 +1067,7 @@ class HistogramProxy : public Histogram
     Timeline *extraControlWindow;
     Trace *myTrace;
 
-    bool calculateAll;
+    bool calculateAll = false;
     std::string currentStat;
     std::vector<std::string> calcStat;
     std::vector<std::string> commCalcStat;

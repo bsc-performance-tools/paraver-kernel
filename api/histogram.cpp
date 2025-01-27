@@ -158,6 +158,14 @@ bool HistogramProxy::setParents( std::vector< Histogram * >& whichParents )
 
   // Parents related info
   myTrace = parent1->getTrace(); // Only for further queries, may not be necessary
+  currentStat = parent1->getCurrentStat();
+  
+  sortSemanticColumns = parent1->getSemanticSortColumns();
+  sortSemanticReverse = parent1->getSemanticSortReverse();
+  currentSemanticSort = parent1->getCurrentSemanticSort();
+  customSemanticSort = parent1->getCustomSemanticSort();
+  fixedSemanticSort = parent1->getFixedSemanticSort();
+  setSemanticSortCriteria( parent1->getSemanticSortCriteria() );
 
   myHisto = myKernel->newDerivedHistogram( parent1, parent2 );
 
@@ -182,6 +190,9 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel, Histogram *whichP
     std::vector< Histogram * > tmpHistograms = { whichParent1, whichParent2 };
 
     setParents( tmpHistograms );
+
+    myHisto->setWindowBeginTime( whichParent1->getBeginTime() );
+    myHisto->setWindowEndTime( whichParent1->getEndTime() );
   }
 }
 
@@ -200,6 +211,7 @@ HistogramProxy::~HistogramProxy()
 
   LoadedWindows::getInstance()->eraseHisto( this );
   delete myHisto;
+  myHisto = nullptr;
 }
 
 void HistogramProxy::setWindowBeginTime( TRecordTime whichTime, bool isBroadcast )
@@ -2058,6 +2070,16 @@ void HistogramProxy::setCurrentSemanticSort( const vector<int>& whichSort )
   customSemanticSort = whichSort;
 
   sortSemanticColumns = true;
+}
+
+vector<int> HistogramProxy::getCustomSemanticSort() const
+{
+  return customSemanticSort;
+}
+
+void HistogramProxy::setCustomSemanticSort( const vector<int>& whichSort )
+{
+  customSemanticSort = whichSort;
 }
 
 bool HistogramProxy::isDerivedHistogram() const
