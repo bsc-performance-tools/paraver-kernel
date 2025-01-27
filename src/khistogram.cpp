@@ -2650,37 +2650,6 @@ void KDerivedHistogram::orderWindows()
   orderedWindows.push_back( tmpDataWindow );
 }
 
-void KDerivedHistogram::initMatrix( THistogramColumn planes, THistogramColumn cols, TObjectOrder rows )
-{
-  if ( cube != nullptr )
-  {
-    delete cube;
-    cube = nullptr;
-  }
-  // if ( commCube != nullptr )
-  // {
-  //   delete commCube;
-  //   commCube = nullptr;
-  // }
-  // if ( commMatrix != nullptr )
-  // {
-  //   delete commMatrix;
-  //   commMatrix = nullptr;
-  // }
-
-  if ( getThreeDimensions() )
-  {
-    cube = new CubeBuffer<NUM_SEMANTIC_STATS>( planes, rows );
-    // if ( createComms() )
-    //   commCube = new Cube<TSemanticValue, NUM_COMM_STATS>( planes, rowsTranslator->totalRows() );
-  }
-  else
-  {
-    cube = new CubeBuffer<NUM_SEMANTIC_STATS>( 1, rows );
-    // if ( createComms() )
-    //   commMatrix = new Matrix<TSemanticValue, NUM_COMM_STATS>( rowsTranslator->totalRows() );
-  }
-}
 
 void KDerivedHistogram::initStatistics()
 {
