@@ -2418,7 +2418,8 @@ void KDerivedHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEn
 
   numRows = selectedRows.size();
   if( getUseFixedDelta() )
-    numCols = getColumnTranslator()->totalColumns();
+    // numCols = getColumnTranslator()->totalColumns();
+    numCols = getNumColumns();
   else
     setControlDelta( getColumnTranslator()->getDelta() );
 
