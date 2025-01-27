@@ -29,10 +29,16 @@
 
 #include "cube.h"
 #include "cubecontainer.h"
+#include "functionmanagement.h"
+#include "khistogramtotals.h"
 #include "histogram.h"
+#include "histogramstatistic.h"
 #include "memorytrace.h"
 #include "recordlist.h"
-#include "histogramstatistic.h"
+#include "semanticderivedhistogram.h"
+#include "semanticinfo.h"
+
+
 
 // #ifdef PARALLEL_ENABLED
 #include "cubebuffer.h"
@@ -58,7 +64,6 @@ constexpr TColumnsMergeMode DISCRETE_MAXIMUM_EXPANSION = MERGE_MIN_MAX + KEEP_DE
 constexpr TColumnsMergeMode CONTINUOUS_FIXED_PARENT1   = MERGE_MIN_MAX + RECOMPUTE_DELTA_PARENT2;
 
 
-class KHistogramTotals;
 class KTimeline;
 
 
@@ -568,4 +573,63 @@ class KDerivedHistogram : public KHistogram
 
     void mergeColumns( TRecordTime whichBeginTime, TRecordTime whichEndTime,
                        std::vector<TObjectOrder>& selectedRows, ProgressController *progress );
+};
+
+
+template <size_t NUM_STATS>
+void KDerivedHistogram::combineValues( std::array< TSemanticValue, NUM_STATS >& wholeSemVals,
+                                       KHistogramTotals* whichTotals, KHistogramTotals* whichRowTotals, 
+                                       THistogramColumn iPlane, THistogramColumn iCol, THistogramColumn iRow,
+                                       bool isCommValue,
+                                       THistogramColumn i2Plane, THistogramColumn i2Col, THistogramColumn i2Row,
+                                       bool existCorrespondence )
+{
+  TSemanticValue semVal1 = 0.0;
+  TSemanticValue semVal2 = 0.0;
+
+  DerivedHistogramFunctionInfo tmpValues;
+  SemanticDerivedHistogram *op = FunctionManagement<SemanticDerivedHistogram>::getInstance()->getFunction( getDerivedOperation() );
+
+  // TODO: hay una llamada que recibe el vector
+  for ( size_t currentStat = 0; currentStat < NUM_STATS; ++currentStat )
+  {
+    // TODO: PENDING COMMS
+    bool foundVal1 = false;
+    bool foundVal2 = false;
+    if ( !isCommValue )  // c++17 --> remove isCommValue + if constexpr( NUM_STATS == NUM_SEMANTIC_STATS )
+    {
+      foundVal1 = parent1->getCellValue( semVal1, iRow, iCol, currentStat, iPlane );
+      if ( existCorrespondence )
+        foundVal2 = parent2->getCellValue( semVal2, i2Row, i2Col, currentStat, i2Plane );
+    }
+    else
+    {
+      foundVal1 = parent1->getCommCellValue( semVal1, iRow, iCol, currentStat, iPlane );
+      if ( existCorrespondence )
+        foundVal2 = parent2->getCommCellValue( semVal2, i2Row, i2Col, currentStat, i2Plane );
+    }
+
+    if ( !foundVal1 && !foundVal2 )
+      continue;
+
+    tmpValues.values = { semVal1, semVal2 };
+
+    // wholeSemVals[ currentStat ] = op->execute( &tmpValues );
+    TSemanticValue result = op->execute( &tmpValues );
+    wholeSemVals[ currentStat ] = result;
+    //if (iRow == 0 && currentStat == 0)
+    //  std::cout << "(v1,v2)[ "<<  iPlane <<", " << iCol << ", " << iRow << ", " << currentStat << " ] = (" << semVal1 << "," << semVal2 << ") = "<< result << std::endl;
+
+    // TODO: this is kind of mixing semantic/comm detection with no detection at all --> to unite
+    if ( !isCommValue )
+    {
+      totals->newValue( wholeSemVals[ currentStat ], currentStat, iCol, iPlane );
+      rowTotals->newValue( wholeSemVals[ currentStat ], currentStat, iRow, iPlane );
+    }
+    else
+    {
+      commTotals->newValue( wholeSemVals[ currentStat ], currentStat, iCol, iPlane );
+      rowCommTotals->newValue( wholeSemVals[ currentStat ], currentStat, iRow, iPlane );
+    }
+  }
 };

@@ -2297,110 +2297,152 @@ void KDerivedHistogram::combineHistograms()
   assert( parent1->getControlDelta() == parent2->getControlDelta() );
 
   std::array< TSemanticValue, NUM_SEMANTIC_STATS > wholeSemVals;
+  std::array< TSemanticValue, NUM_COMM_STATS > wholeCommVals;
 
 //  PRV_UINT32 currentPlane = 0;
+  // Size of parents?
   THistogramColumn tmpNumPlanes = getNumPlanes();
-  // THistogramColumn tmpNumCols = getNumColumns();
-  THistogramColumn tmpNumCols = getColumnTranslator()->totalColumns();
+  THistogramColumn tmpNumCols = getNumColumns();
+  //THistogramColumn tmpNumCols = getColumnTranslator()->totalColumns();
+  THistogramColumn tmpCommNumCols = ( createComms() )? getCommNumColumns(): 0;
   TObjectOrder tmpNumRows = getNumRows();
 
-  bool foundParent1Col = false;
-  bool foundParent2Col = false;
-  THistogramColumn parent1Col;
-  THistogramColumn parent2Col;
-  THistogramLimit parent1Value = parent1->getControlMin();
-  THistogramLimit parent2Value = parent2->getControlMin();
+  // bool foundParent1Col = false;
+  // bool foundParent2Col = false;
+  // THistogramColumn parent1Col;
+  // THistogramColumn parent2Col;
+  // THistogramLimit parent1Value = parent1->getControlMin();
+  // THistogramLimit parent2Value = parent2->getControlMin();
 
-  std::cout << "* numCols: " << tmpNumCols << std::endl;
-  std::cout << "* numRows: " << tmpNumRows << std::endl;
 
   // Get derived operation
-  std::cout << "Derived op: " << getDerivedOperation() << std::endl;
-  SemanticDerivedHistogram *op = FunctionManagement<SemanticDerivedHistogram>::getInstance()->getFunction( getDerivedOperation() );
-  DerivedHistogramFunctionInfo tmpValues;
   THistogramCorrespondenceInfo::const_iterator secondHistogramIndex;
   for ( THistogramColumn iPlane = 0; iPlane < tmpNumPlanes; ++iPlane )
   {
-    for ( THistogramColumn iCol = 0; iCol < tmpNumCols; ++iCol )
+    if ( parent1->planeWithValues() || parent2->planeWithValues() ) // ?
     {
-      for ( THistogramColumn iRow = 0; iRow < tmpNumRows; ++iRow )
+      for ( THistogramColumn iCol = 0; iCol < tmpNumCols; ++iCol )
       {
+        // TODO: put in a function "bool firstCellAvailable(parent1, icol, iplane)"
 
-        auto combineValues = [this, &tmpValues, &op, &wholeSemVals /*, &totals, &rowTotals */]
-                            ( THistogramColumn iPlane, THistogramColumn iCol, THistogramColumn iRow, 
-                              THistogramColumn i2Plane = 0, THistogramColumn i2Col = 0, THistogramColumn i2Row = 0, bool existCorrespondence = false )
-                            {
-                              TSemanticValue semVal1 = 0.0;
-                              TSemanticValue semVal2 = 0.0;
+        // First Cell
+        PRV_INT32 iRow = 0;
+        parent1->setFirstCell( iCol, iPlane );
 
-                              // TODO: hay una llamada que recibe el vector
-                              for ( size_t currentStat = 0; currentStat < NUM_SEMANTIC_STATS; ++currentStat )
-                              {
-                                bool foundVal1 = parent1->getCellValue( semVal1, iRow, iCol, currentStat, iPlane );
-                                if ( existCorrespondence )
-                                  bool foundVal2 = parent2->getCellValue( semVal2, i2Row, i2Col, currentStat, i2Plane );
-
-                                // SELECTED DERIVED OPERATION
-                                tmpValues.values = { semVal1, semVal2 };
-                                TSemanticValue result = op->execute( &tmpValues );
-                                // wholeSemVals[ currentStat ] = op->execute( &tmpValues );
-                                wholeSemVals[ currentStat ] = result;
-                                //std::cout << "(v1,v2) = (" << semVal1 << "," << semVal2 << ") = "<< result << std::endl;
-                          
-                                totals->newValue( wholeSemVals[ currentStat ], currentStat, iCol, iPlane );
-                                rowTotals->newValue( wholeSemVals[ currentStat ], currentStat, iRow, iPlane );
-                              }
-                            };
-
-        
-
-        if ( getCellCorrespondence( iPlane, iCol, iRow, secondHistogramIndex ) )
+        bool isEndCell = parent1->endCell( iCol, iPlane );
+        if ( !isEndCell )
         {
-          THistogramColumn i2Plane = secondHistogramIndex->second.plane;
-          TObjectOrder i2Row = secondHistogramIndex->second.row;
-          THistogramColumn i2Col = secondHistogramIndex->second.column;
+          iRow = parent1->getCurrentRow( iCol, iPlane );
 
-          combineValues( iPlane, iCol, iRow, i2Plane, i2Col, i2Row, true );
+          if ( getThreeDimensions() )
+            cube->newRow( iPlane, iCol, iRow );
+          else
+            matrix->newRow( iCol, iRow );
 
-          // for ( size_t currentStat = 0; currentStat < NUM_SEMANTIC_STATS; ++currentStat )
-          // {
-          //   bool foundVal1 = parent1->getCellValue( semVal1, iRow, iCol, currentStat );
-          //   bool foundVal2 = parent2->getCellValue( semVal2, i2Row, i2Col, currentStat );
-
-          //   // SELECTED DERIVED OPERATION
-          //   tmpValues.values = { semVal1, semVal2 };
-          //   TSemanticValue result = op->execute( &tmpValues );
-          //   // wholeSemVals[ currentStat ] = op->execute( &tmpValues );
-          //   wholeSemVals[ currentStat ] = result;
-          //   //std::cout << "(v1,v2) = (" << semVal1 << "," << semVal2 << ") = "<< result << std::endl;
-      
-          //   totals->newValue( wholeSemVals[ currentStat ], currentStat, iCol, currentPlane );
-          //   rowTotals->newValue( wholeSemVals[ currentStat ], currentStat, iRow, currentPlane );
-          // }
-        }
-        else
-        {
-          combineValues( iPlane, iCol, iRow );
-
-          // semVal2 = 0.0;
-
-          // for ( size_t currentStat = 0; currentStat < NUM_SEMANTIC_STATS; ++currentStat )
-          // {
-          //   bool foundVal1 = parent1->getCellValue( semVal1, iRow, iCol, currentStat );
-
-          //   // SELECTED DERIVED OPERATION
-          //   tmpValues.values = { semVal1, semVal2 };
-          //   // wholeSemVals[ currentStat ] = op->execute( &tmpValues );
-          //   TSemanticValue result = op->execute( &tmpValues );
-          //   wholeSemVals[ currentStat ] = result;
-          //   //std::cout << "(v1,v2) = (" << semVal1 << "," << semVal2 << ") = "<< result << std::endl;
-      
-          //   totals->newValue( wholeSemVals[ currentStat ], currentStat, iCol, currentPlane );
-          //   rowTotals->newValue( wholeSemVals[ currentStat ], currentStat, iRow, currentPlane );
-          // }
+          setFirstCell( iCol, iPlane );
+          std::cout << "newRow: " << "( " << iCol << ", " << iRow << ")" << std::endl;
         }
 
-        cube->setValue( iPlane, iRow, iCol, wholeSemVals );
+        while ( !isEndCell ) //  use advanceRow here
+        {
+          // Compute value
+          // TODO: can be simplified with combineValues( whole, coords, corresp, secondHistoIndex)
+          if ( getCellCorrespondence( cellCorrespondence, iPlane, iRow, iCol, secondHistogramIndex ) )
+          {
+            THistogramColumn i2Plane = secondHistogramIndex->second.plane;
+            TObjectOrder i2Row = secondHistogramIndex->second.row;
+            THistogramColumn i2Col = secondHistogramIndex->second.column;
+
+            combineValues( wholeSemVals, totals, rowTotals, iPlane, iCol, iRow, false, i2Plane, i2Col, i2Row, true );
+          }
+          else
+          {
+            combineValues( wholeSemVals, totals, rowTotals, iPlane, iCol, iRow );
+          }
+
+          // Set value
+          if ( getThreeDimensions() )
+            cube->setValue( iPlane, iCol, wholeSemVals );
+          else
+            matrix->setValue( iCol, wholeSemVals );
+
+          // Advance
+          parent1->setNextCell( iCol, iPlane );       
+
+          isEndCell = parent1->endCell( iCol, iPlane );
+          if ( !isEndCell )
+          {
+            iRow = parent1->getCurrentRow( iCol, iPlane );
+            if ( getThreeDimensions() )
+              cube->newRow( iPlane, iCol, iRow );
+            else
+              matrix->newRow( iCol, iRow );
+
+            setNextCell( iCol, iPlane );
+          }
+        }
+      }
+  //-----------
+
+      if ( createComms() )
+      {
+        for ( THistogramColumn iCol = 0; iCol < tmpCommNumCols; ++iCol )
+        {
+          // First Cell
+          PRV_INT32 iRow = 0;
+          parent1->setCommFirstCell( iCol, iPlane );
+          bool isCommEndCell = parent1->endCommCell( iCol, iPlane );
+          if ( !isCommEndCell )
+          {
+            iRow = parent1->getCommCurrentRow( iCol, iPlane );
+
+            if ( getThreeDimensions() )
+              commCube->newRow( iPlane, iCol, iRow );
+            else
+              commMatrix->newRow( iPlane, iCol );
+
+            setCommFirstCell( iCol, iPlane );
+          }
+
+          while ( !isCommEndCell ) //  use advanceRow here
+          {
+            // Compute value
+            // TODO: can be simplified with combineValues( whole, coords, corresp, secondHistoIndex)
+            if ( getCellCorrespondence( cellCommCorrespondence, iPlane, iRow, iCol, secondHistogramIndex ) )
+            {
+              THistogramColumn i2Plane = secondHistogramIndex->second.plane;
+              TObjectOrder i2Row = secondHistogramIndex->second.row;
+              THistogramColumn i2Col = secondHistogramIndex->second.column;
+
+              combineValues( wholeCommVals, commTotals, rowCommTotals, iPlane, iCol, iRow, true, i2Plane, i2Col, i2Row, true );
+            }
+            else
+            {
+              combineValues( wholeCommVals, commTotals, rowCommTotals, iPlane, iCol, iRow, true );
+            }
+
+            // Set value
+            if ( getThreeDimensions() )
+              commCube->setValue( iPlane, iCol, wholeCommVals );
+            else
+              commMatrix->setValue( iCol, wholeCommVals );
+
+            // Advance
+            parent1->setCommNextCell( iCol, iPlane );       
+
+            isCommEndCell = parent1->endCommCell( iCol, iPlane );
+            if ( !isCommEndCell )
+            {
+              iRow = parent1->getCommCurrentRow( iCol, iPlane );
+              if ( getThreeDimensions() )
+                commCube->newRow( iPlane, iCol, iRow );
+              else
+                commMatrix->newRow( iPlane, iCol );
+
+              setCommNextCell( iCol, iPlane );
+            }
+          }
+        }
       }
     }
   }
