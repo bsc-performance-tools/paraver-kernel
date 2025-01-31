@@ -60,7 +60,6 @@ class DerivedHistogramAdd: public SemanticDerivedHistogram
 
     virtual SemanticFunction *clone() override
     {
-      std::cout << "DerivedHistogramAdd::clone" << std::endl;
       return new DerivedHistogramAdd( *this );
     }
 

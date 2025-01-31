@@ -2301,7 +2301,7 @@ void KDerivedHistogram::mergeColumns( TRecordTime whichBeginTime, TRecordTime wh
     setControlDelta( parent1->getControlDelta() );
     // if ( parent2->getControlDelta() != )
     parent2->setControlDelta( parent1->getControlDelta() ); // First version
-std::cout << "KDerivedHistogram::mergeColumns" << std::endl;
+// std::cout << "KDerivedHistogram::mergeColumns" << std::endl;
   }
 }
 
@@ -2354,7 +2354,7 @@ void KDerivedHistogram::combineHistograms()
             matrix->newRow( iCol, iRow );
 
           setFirstCell( iCol, iPlane );
-          std::cout << "newRow: " << "( " << iCol << ", " << iRow << ")" << std::endl;
+          // std::cout << "newRow: " << "( " << iCol << ", " << iRow << ")" << std::endl;
         }
 
         while ( !isEndCell ) //  use advanceRow here
