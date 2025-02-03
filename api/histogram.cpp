@@ -1437,6 +1437,7 @@ Histogram *HistogramProxy::clone()
     clonedHistogramProxy->parent1 = nullptr;
     clonedHistogramProxy->parent2 = nullptr;
   }
+  clonedHistogramProxy->children = children;
 
   clonedHistogramProxy->posX = posX;
   clonedHistogramProxy->posY = posY;
@@ -2108,6 +2109,28 @@ Histogram *HistogramProxy::getParent( PRV_UINT16 whichParent ) const
     return parent2;
 
   return nullptr;
+}
+
+void HistogramProxy::addChild( Histogram *whichHistogram )
+{
+  children.push_back( whichHistogram );
+}
+
+void HistogramProxy::removeChild( Histogram *whichHistogram )
+{
+  std::vector< Histogram * >::iterator itChild = std::find( children.begin(), children.end(), whichHistogram );
+  if ( itChild != children.end() )
+    children.erase( itChild );
+}
+
+bool HistogramProxy::haveChildren() const
+{
+  return children.size() > 0;
+}
+
+std::vector< Histogram * > HistogramProxy::getChildren() const
+{
+  return children;
 }
 
 std::string HistogramProxy::getDerivedOperation() const

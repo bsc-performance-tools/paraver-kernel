@@ -73,13 +73,22 @@ class Histogram
     {
       return true;
     }
-
     virtual Histogram *getParent( PRV_UINT16 whichParent ) const
     {
-      //std::cout << "HISTOGRAM::GETPARENT"<< std::endl;
       return nullptr;
     }
-
+    virtual void addChild( Histogram *whichHistogram )
+    {}
+    virtual void removeChild( Histogram *whichHistogram )
+    {}
+    virtual bool haveChildren() const
+    {
+      return false;
+    }
+    virtual std::vector< Histogram * > getChildren() const
+    {
+      return {};
+    }
     virtual std::string getDerivedOperation() const
     {
       return {};
@@ -712,6 +721,10 @@ class HistogramProxy : public Histogram
     virtual bool isDerivedHistogram() const override;
     virtual bool setParents( std::vector< Histogram * >& whichParents ) override;
     virtual Histogram *getParent( PRV_UINT16 whichParent ) const override;
+    virtual void addChild( Histogram *whichHistogram ) override;
+    virtual void removeChild( Histogram *whichHistogram ) override;
+    virtual bool haveChildren() const override;
+    virtual std::vector< Histogram * > getChildren() const override;
     virtual std::string getDerivedOperation() const override;
     virtual void setDerivedOperation( const std::string& whichOperation ) override;
     virtual void getDerivedOperationGroupsLabels( std::vector<std::string>& onVector ) const override;
@@ -1092,6 +1105,7 @@ class HistogramProxy : public Histogram
     bool derivedHistogram;
     Histogram *parent1;
     Histogram *parent2;
+    std::vector< Histogram * > children;
 
     // CFG4D
     bool isCFG4DEnabled;
