@@ -323,9 +323,9 @@ class KHistogram : public Histogram
     void initMatrix( THistogramColumn planes, THistogramColumn cols, TObjectOrder rows );
 
   private:
-    KTimeline *controlWindow;
-    KTimeline *dataWindow;
-    KTimeline *xtraControlWindow;
+    KTimeline *controlWindow = nullptr;
+    KTimeline *dataWindow = nullptr;
+    KTimeline *xtraControlWindow = nullptr;
 
     TRecordTime beginTime;
     TRecordTime endTime;
@@ -357,8 +357,6 @@ class KHistogram : public Histogram
     RowsTranslator *rowsTranslator;
     ColumnTranslator *columnTranslator;
     ColumnTranslator *planeTranslator;
-
-
 
     TTimeUnit myTimeUnit;
 
