@@ -354,9 +354,9 @@ class KHistogram : public Histogram
 
     bool inclusive;
 
-    RowsTranslator *rowsTranslator;
-    ColumnTranslator *columnTranslator;
-    ColumnTranslator *planeTranslator;
+    RowsTranslator *rowsTranslator = nullptr;
+    ColumnTranslator *columnTranslator = nullptr;
+    ColumnTranslator *planeTranslator = nullptr;
 
     TTimeUnit myTimeUnit;
 
