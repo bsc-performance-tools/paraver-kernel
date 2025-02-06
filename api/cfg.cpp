@@ -758,13 +758,8 @@ void CFGLoader::pushbackHistogram( Histogram *whichHistogram, vector<Histogram *
 {
   if ( whichHistogram->isDerivedHistogram() )
   {
-    for ( PRV_UINT16 i = 1; i >= 0; --i )
-    {
-      //std::cout << i << std::endl;
+    for ( PRV_UINT16 i = 1; i > 0; --i )
       pushbackHistogram( whichHistogram->getParent( i ), allHistograms );
-      if ( i == 0 )
-        break;
-    }
   }
 
   if ( find( allHistograms.begin(), allHistograms.end(), whichHistogram ) == allHistograms.end() )
