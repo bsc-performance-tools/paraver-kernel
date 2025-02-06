@@ -155,6 +155,8 @@ bool HistogramProxy::setParents( std::vector< Histogram * >& whichParents )
   // parent2 = whichParents[1]->clone();
   parent1 = whichParents[0];
   parent2 = whichParents[1];
+  whichParents[0]->addChild( this );
+  whichParents[1]->addChild( this );
 
   // Parents related info
   myTrace = parent1->getTrace(); // Only for further queries, may not be necessary
@@ -189,7 +191,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel, Histogram *whichP
     // return new HistogramProxy( whichKernel, createHistogram, isDerived );
     std::vector< Histogram * > tmpHistograms = { whichParent1, whichParent2 };
 
-    setParents( tmpHistograms );
+    setParents( tmpHistograms );    
 
     myHisto->setWindowBeginTime( whichParent1->getBeginTime() );
     myHisto->setWindowEndTime( whichParent1->getEndTime() );
@@ -205,6 +207,11 @@ HistogramProxy::~HistogramProxy()
     dataWindow->unsetUsedByHistogram( this );
   if( extraControlWindow != nullptr )
     extraControlWindow->unsetUsedByHistogram( this );
+  if( derivedHistogram )
+  {
+    parent1->removeChild( this );
+    parent2->removeChild( this );
+  }
 
   if( sync )
     SyncWindows::getInstance()->removeWindow( this, syncGroup );
@@ -2113,14 +2120,12 @@ Histogram *HistogramProxy::getParent( PRV_UINT16 whichParent ) const
 
 void HistogramProxy::addChild( Histogram *whichHistogram )
 {
-  children.push_back( whichHistogram );
+  children.insert( whichHistogram );
 }
 
 void HistogramProxy::removeChild( Histogram *whichHistogram )
 {
-  std::vector< Histogram * >::iterator itChild = std::find( children.begin(), children.end(), whichHistogram );
-  if ( itChild != children.end() )
-    children.erase( itChild );
+  children.erase( whichHistogram );
 }
 
 bool HistogramProxy::haveChildren() const
@@ -2128,7 +2133,7 @@ bool HistogramProxy::haveChildren() const
   return children.size() > 0;
 }
 
-std::vector< Histogram * > HistogramProxy::getChildren() const
+std::set< Histogram * > HistogramProxy::getChildren() const
 {
   return children;
 }

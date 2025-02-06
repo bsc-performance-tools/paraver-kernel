@@ -3946,6 +3946,7 @@ bool Analyzer2DIdentifiers::parseLine( KernelConnection *whichKernel,
       return false;
 
     parents.push_back( histograms[ id - 1 ] );
+    histograms[ id - 1 ]->addChild( histograms[ histograms.size() - 1 ] );
   }
 
   if ( !histograms[ histograms.size() - 1 ]->setParents( parents ) )
