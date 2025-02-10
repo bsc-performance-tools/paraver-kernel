@@ -1103,8 +1103,8 @@ class HistogramProxy : public Histogram
 
     // Derived Histogram
     bool derivedHistogram;
-    Histogram *parent1;
-    Histogram *parent2;
+    Histogram *parent1 = nullptr;
+    Histogram *parent2 = nullptr;
     std::set< Histogram * > children;
 
     // CFG4D

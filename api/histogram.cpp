@@ -149,10 +149,7 @@ bool HistogramProxy::setParents( std::vector< Histogram * >& whichParents )
   if ( whichParents.size() != 2 )
     return false;
 
-  // Clone parents
-  //for( PRV_UINT16 i = 0; i < whichParents.size() - 2; ++i )
-  // parent1 = whichParents[0]->clone();
-  // parent2 = whichParents[1]->clone();
+  // Link to parents as child
   parent1 = whichParents[0];
   parent2 = whichParents[1];
   whichParents[0]->addChild( this );
@@ -207,10 +204,13 @@ HistogramProxy::~HistogramProxy()
     dataWindow->unsetUsedByHistogram( this );
   if( extraControlWindow != nullptr )
     extraControlWindow->unsetUsedByHistogram( this );
+std::cout <<"HistogramProxy::~HistogramProxy" <<std::endl;
   if( derivedHistogram )
   {
     parent1->removeChild( this );
     parent2->removeChild( this );
+    parent1 = nullptr;
+    parent2 = nullptr;
   }
 
   if( sync )
@@ -1436,15 +1436,13 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->derivedHistogram = derivedHistogram;
   if ( derivedHistogram )
   {
-    clonedHistogramProxy->parent1 = parent1->clone();
-    clonedHistogramProxy->parent2 = parent2->clone();
+    clonedHistogramProxy->parent1 = parent1;
+    clonedHistogramProxy->parent2 = parent2;
+    parent1->addChild( clonedHistogramProxy );
+    parent2->addChild( clonedHistogramProxy );
+
+    // clonedHistogramProxy->children = children; // TODO: not sure; seems copying is wrong
   }
-  else
-  {
-    clonedHistogramProxy->parent1 = nullptr;
-    clonedHistogramProxy->parent2 = nullptr;
-  }
-  clonedHistogramProxy->children = children;
 
   clonedHistogramProxy->posX = posX;
   clonedHistogramProxy->posY = posY;
