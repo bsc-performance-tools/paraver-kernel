@@ -2100,8 +2100,17 @@ bool HistogramProxy::isDerivedHistogram() const
 }
 
 bool HistogramProxy::compatibleForDerivation( Histogram *whichHistogram1, Histogram *whichHistogram2 )
-{
-  return true;
+{ 
+  std::string tmpStat1 = whichHistogram1->getCurrentStat();
+  std::string tmpStat2 = whichHistogram2->getCurrentStat();
+  bool sameStatType = ( !whichHistogram1->isCommunicationStat( tmpStat1 ) && !whichHistogram2->isCommunicationStat( tmpStat2 ) ) ||
+                      (  whichHistogram1->isCommunicationStat( tmpStat1 ) &&  whichHistogram2->isCommunicationStat( tmpStat2 ) );
+
+  // TODO: 3D? only showed plane or whole cube?
+  bool sameRows = whichHistogram1->getNumRows() == whichHistogram2->getNumRows();
+  bool sameColumns = whichHistogram1->getNumColumns() == whichHistogram2->getNumColumns();
+
+  return ( sameStatType && sameRows && sameColumns );
 }
 
 Histogram *HistogramProxy::getConcrete() const
