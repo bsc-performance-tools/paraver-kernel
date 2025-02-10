@@ -2099,6 +2099,11 @@ bool HistogramProxy::isDerivedHistogram() const
   return derivedHistogram;
 }
 
+bool HistogramProxy::compatibleForDerivation( Histogram *whichHistogram1, Histogram *whichHistogram2 )
+{
+  return true;
+}
+
 Histogram *HistogramProxy::getConcrete() const
 {
   return myHisto;

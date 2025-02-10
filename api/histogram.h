@@ -103,7 +103,7 @@ class Histogram
     {}
     virtual void getDerivedOperationLabelsAndSymbols( std::map<std::string, std::string>& onVector,
                                                       PRV_UINT32 whichGroup,
-                                                      bool getOriginalList ) const
+                                                      bool getOriginalList = true ) const
     {}
     
     virtual void setReady( bool whichReady )
@@ -710,6 +710,8 @@ class Histogram
 class HistogramProxy : public Histogram
 {
   public:
+    static bool compatibleForDerivation( Histogram *whichHistogram1, Histogram *whichHistogram2 );
+
     virtual ~HistogramProxy();
 
     virtual void setWindowBeginTime( TRecordTime whichTime, bool isBroadcast = false ) override;
