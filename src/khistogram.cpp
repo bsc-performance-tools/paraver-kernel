@@ -2592,9 +2592,19 @@ void KDerivedHistogram::getDerivedOperationGroupsLabels( vector<std::string>& on
 
 void KDerivedHistogram::getDerivedOperationLabels( vector<std::string>& onVector,
                                                    PRV_UINT32 whichGroup,
-                                                   bool getOriginalList = true ) const
+                                                   bool getOriginalList ) const
 {
   FunctionManagement<SemanticDerivedHistogram>::getInstance()->getAll( onVector, whichGroup );
+}
+
+void KDerivedHistogram::getDerivedOperationLabelsAndSymbols( std::map<std::string, std::string>& onVector,
+                                                             PRV_UINT32 whichGroup,
+                                                             bool getOriginalList ) const
+{
+  vector<SemanticDerivedHistogram *> tmpOps;
+  FunctionManagement<SemanticDerivedHistogram>::getInstance()->getAll( tmpOps, whichGroup );
+  for (auto op: tmpOps )
+    onVector[ op->getName() ] = op->getSymbol();
 }
 
 bool KDerivedHistogram::setColumnsMergeMode( TColumnsMergeMode whichMode )

@@ -58,6 +58,11 @@ class DerivedHistogramAdd: public SemanticDerivedHistogram
       return DerivedHistogramAdd::name;
     }
 
+    virtual std::string getSymbol() const override
+    {
+      return DerivedHistogramAdd::symbol;
+    }
+
     virtual SemanticFunction *clone() override
     {
       return new DerivedHistogramAdd( *this );
@@ -93,6 +98,7 @@ class DerivedHistogramAdd: public SemanticDerivedHistogram
   private:
     static const bool initFromBegin = false;
     static std::string name;
+    static std::string symbol;
 };
 
 
@@ -127,6 +133,10 @@ class DerivedHistogramProduct: public SemanticDerivedHistogram
       return DerivedHistogramProduct::name;
     }
 
+    virtual std::string getSymbol() const override
+    {
+      return DerivedHistogramProduct::symbol;
+    }
     virtual SemanticFunction *clone() override
     {
       return new DerivedHistogramProduct( *this );
@@ -155,7 +165,7 @@ class DerivedHistogramProduct: public SemanticDerivedHistogram
     static const bool initFromBegin = false;
     static const bool controlDerivedHistogram = false;
     static std::string name;
-
+    static std::string symbol;
 };
 
 
@@ -190,6 +200,10 @@ class DerivedHistogramSubstract: public SemanticDerivedHistogram
       return DerivedHistogramSubstract::name;
     }
 
+    virtual std::string getSymbol() const override
+    {
+      return DerivedHistogramSubstract::symbol;
+    }
     virtual SemanticFunction *clone() override
     {
       return new DerivedHistogramSubstract( *this );
@@ -218,7 +232,7 @@ class DerivedHistogramSubstract: public SemanticDerivedHistogram
     static const bool initFromBegin = false;
     static const bool controlDerivedHistogram = false;
     static std::string name;
-
+    static std::string symbol;
 };
 
 
@@ -252,6 +266,11 @@ class DerivedHistogramDivide: public SemanticDerivedHistogram
       return DerivedHistogramDivide::name;
     }
 
+    virtual std::string getSymbol() const override
+    {
+      return DerivedHistogramDivide::symbol;
+    }
+
     virtual SemanticFunction *clone() override
     {
       return new DerivedHistogramDivide( *this );
@@ -280,7 +299,7 @@ class DerivedHistogramDivide: public SemanticDerivedHistogram
     static const bool initFromBegin = false;
     static const bool controlDerivedHistogram = false;
     static std::string name;
-
+    static std::string symbol;
 };
 
 
@@ -314,6 +333,11 @@ class DerivedHistogramMaximum: public SemanticDerivedHistogram
       return DerivedHistogramMaximum::name;
     }
 
+    virtual std::string getSymbol() const override
+    {
+      return DerivedHistogramMaximum::symbol;
+    }
+
     virtual SemanticFunction *clone() override
     {
       return new DerivedHistogramMaximum( *this );
@@ -342,7 +366,7 @@ class DerivedHistogramMaximum: public SemanticDerivedHistogram
     static const bool initFromBegin = false;
     static const bool controlDerivedHistogram = false;
     static std::string name;
-
+    static std::string symbol;
 };
 
 
@@ -376,6 +400,11 @@ class DerivedHistogramMinimum: public SemanticDerivedHistogram
       return DerivedHistogramMinimum::name;
     }
 
+    virtual std::string getSymbol() const override
+    {
+      return DerivedHistogramMinimum::symbol;
+    }
+
     virtual SemanticFunction *clone() override
     {
       return new DerivedHistogramMinimum( *this );
@@ -404,7 +433,7 @@ class DerivedHistogramMinimum: public SemanticDerivedHistogram
     static const bool initFromBegin = false;
     static const bool controlDerivedHistogram = false;
     static std::string name;
-
+    static std::string symbol;
 };
 
 
@@ -438,6 +467,11 @@ class DerivedHistogramDifferent: public SemanticDerivedHistogram
       return DerivedHistogramDifferent::name;
     }
 
+    virtual std::string getSymbol() const override
+    {
+      return DerivedHistogramDifferent::symbol;
+    }
+
     virtual SemanticFunction *clone() override
     {
       return new DerivedHistogramDifferent( *this );
@@ -466,6 +500,6 @@ class DerivedHistogramDifferent: public SemanticDerivedHistogram
     static const bool initFromBegin = false;
     static const bool controlDerivedHistogram = false;
     static std::string name;
-
+    static std::string symbol;
 };
 

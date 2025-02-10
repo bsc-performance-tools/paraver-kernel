@@ -95,6 +95,10 @@ class SemanticFunction
     {}
 
     virtual std::string getName() = 0;
+    virtual std::string getSymbol() const
+    {
+      return "";
+    }
 
     virtual SemanticFunction *clone() = 0;
 

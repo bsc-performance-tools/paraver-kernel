@@ -101,6 +101,10 @@ class Histogram
                                             PRV_UINT32 whichGroup,
                                             bool getOriginalList ) const
     {}
+    virtual void getDerivedOperationLabelsAndSymbols( std::map<std::string, std::string>& onVector,
+                                                      PRV_UINT32 whichGroup,
+                                                      bool getOriginalList ) const
+    {}
     
     virtual void setReady( bool whichReady )
     {}
@@ -730,7 +734,11 @@ class HistogramProxy : public Histogram
     virtual void getDerivedOperationGroupsLabels( std::vector<std::string>& onVector ) const override;
     virtual void getDerivedOperationLabels( std::vector<std::string>& onVector,
                                             PRV_UINT32 whichGroup,
-                                            bool getOriginalList ) const override;
+                                            bool getOriginalList = true ) const override;
+    virtual void getDerivedOperationLabelsAndSymbols( std::map<std::string, std::string>& onVector,
+                                                      PRV_UINT32 whichGroup,
+                                                      bool getOriginalList = true ) const override;
+
     virtual void setReady( bool whichIsReady ) override;
     virtual bool isReady() const override;
 

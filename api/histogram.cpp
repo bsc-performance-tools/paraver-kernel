@@ -2153,7 +2153,7 @@ void HistogramProxy::getDerivedOperationGroupsLabels( vector<string>& onVector )
 
 void HistogramProxy::getDerivedOperationLabels( vector<string>& onVector,
                                                 PRV_UINT32 whichGroup,
-                                                bool getOriginalList = true ) const
+                                                bool getOriginalList ) const
 {
   if ( getOriginalList )
   {
@@ -2175,6 +2175,30 @@ void HistogramProxy::getDerivedOperationLabels( vector<string>& onVector,
   }
 }
 
+void HistogramProxy::getDerivedOperationLabelsAndSymbols( std::map<std::string, std::string>& onVector,
+                                                          PRV_UINT32 whichGroup,
+                                                          bool getOriginalList ) const
+{
+  // TODO check again: cut & paste of previous method
+  if ( getOriginalList )
+  {
+    myHisto->getDerivedOperationLabelsAndSymbols( onVector, whichGroup, getOriginalList );
+  }
+  else
+  {
+    // TODO: decide if derived operation can be renamed in CFG4D
+    // vector< string > fullList;
+    // myHisto->getDerivedOperationLabels( fullList, whichGroup );
+    // map< string, string >::const_iterator itStat;
+
+    // for( vector< string >::iterator it = fullList.begin(); it != fullList.end(); ++it )
+    // {
+    //   itStat = histogramDerivedOperationAliasCFG4D.find( *it );
+    //   if ( itStat != histogramDerivedOperationAliasCFG4D.end() )
+    //   onVector.push_back( itStat->second );
+    // }
+  }
+}
 
 void HistogramProxy::setReady( bool whichReady = true )
 {

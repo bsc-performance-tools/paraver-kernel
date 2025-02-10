@@ -26,6 +26,7 @@
 using namespace std;
 
 string DerivedHistogramAdd::name = "add";
+string DerivedHistogramAdd::symbol = "+";
 TSemanticValue DerivedHistogramAdd::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -38,6 +39,7 @@ TSemanticValue DerivedHistogramAdd::execute( const SemanticInfo *info )
 
 
 string DerivedHistogramProduct::name = "product";
+string DerivedHistogramProduct::symbol = "x";
 TSemanticValue DerivedHistogramProduct::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -50,6 +52,7 @@ TSemanticValue DerivedHistogramProduct::execute( const SemanticInfo *info )
 
 
 string DerivedHistogramSubstract::name = "substract";
+string DerivedHistogramSubstract::symbol = "-";
 TSemanticValue DerivedHistogramSubstract::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -62,6 +65,7 @@ TSemanticValue DerivedHistogramSubstract::execute( const SemanticInfo *info )
 
 
 string DerivedHistogramDivide::name = "divide";
+string DerivedHistogramDivide::symbol = "/";
 TSemanticValue DerivedHistogramDivide::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0.0;
@@ -77,6 +81,7 @@ TSemanticValue DerivedHistogramDivide::execute( const SemanticInfo *info )
 
 
 string DerivedHistogramMaximum::name = "maximum";
+string DerivedHistogramMaximum::symbol = "_MAX_";
 TSemanticValue DerivedHistogramMaximum::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -91,6 +96,7 @@ TSemanticValue DerivedHistogramMaximum::execute( const SemanticInfo *info )
 
 
 string DerivedHistogramMinimum::name = "minimum";
+string DerivedHistogramMinimum::symbol = "_min_";
 TSemanticValue DerivedHistogramMinimum::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -105,6 +111,7 @@ TSemanticValue DerivedHistogramMinimum::execute( const SemanticInfo *info )
 
 
 string DerivedHistogramDifferent::name = "different";
+string DerivedHistogramDifferent::symbol = "!=";
 TSemanticValue DerivedHistogramDifferent::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
