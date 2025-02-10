@@ -1878,11 +1878,7 @@ KDerivedHistogram::KDerivedHistogram( KHistogram *whichParent1, KHistogram *whic
   parent2 = whichParent2;
 
   numRows = 0;
-  numCols = 0;
   numPlanes = 0;
-
-  currentDerivedOperation = "add";
-
   numCols = parent1->getNumColumns();
   //numCommCols = parent1->getCommNumColumns();
 
