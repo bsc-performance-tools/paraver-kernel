@@ -612,12 +612,15 @@ string LabelConstructor::eventValueLabel( Timeline *whichWindow,
 }
 
 
-void LabelConstructor::transformToShort( std::string& onLabel, char beginDelimiter, char endDelimiter )
+std::string LabelConstructor::transformToShort( const std::string& onLabel, char beginDelimiter, char endDelimiter )
 {
-  string::size_type beginPos = onLabel.find_first_of( beginDelimiter );
-  string::size_type endPos = onLabel.find_last_of( endDelimiter );
+  std::string shortLabel{ onLabel };
+  string::size_type beginPos = shortLabel.find_first_of( beginDelimiter );
+  string::size_type endPos = shortLabel.find_last_of( endDelimiter );
   if( beginPos != string::npos && endPos != string::npos )
-    onLabel.erase( beginPos, endPos - beginPos + 1 );
+    shortLabel.erase( beginPos, endPos - beginPos + 1 );
+
+  return shortLabel;
 }
 
 

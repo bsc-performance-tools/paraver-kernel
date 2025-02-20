@@ -26,6 +26,7 @@
 #include <regex>
 
 #include "eventlabels.h"
+#include "labelconstructor.h"
 
 using namespace std;
 
@@ -41,7 +42,9 @@ EventLabels::EventLabels( const PCFFileParser<>& pcfParser )
   for ( auto it : types )
   {
     eventType2Label[ it ] = pcfParser.getEventLabel( it );
-    label2eventType[ pcfParser.getEventLabel( it ) ] = it;
+    auto tmpEventLabel = pcfParser.getEventLabel( it );
+    label2eventType[ tmpEventLabel ] = it;
+    shortLabel2eventType[ LabelConstructor::transformToShort( tmpEventLabel ) ] = it;
     eventValue2Label[ it ] = pcfParser.getEventValues( it );
     for( auto itValue : eventValue2Label[ it ] )
       label2eventValue[ itValue.second ].insert( make_pair( it, itValue.first ) );
@@ -177,7 +180,11 @@ bool EventLabels::getEventType( const string& whichTypeLabel, vector<TEventType>
   {
     map<string, TEventType>::const_iterator it = label2eventType.find( whichTypeLabel );
     if( it == label2eventType.end() )
-      return false;
+    {
+      it = shortLabel2eventType.find( LabelConstructor::transformToShort( whichTypeLabel ) );
+      if( it == shortLabel2eventType.end() )
+        return false;
+    }
 
     onVector.push_back( (*it).second );
     return true;

@@ -58,6 +58,7 @@ class EventLabels
     std::map<TEventType, std::map<TEventValue, std::string> > eventValue2Label;
 
     std::map<std::string, TEventType> label2eventType;
+    std::map<std::string, TEventType> shortLabel2eventType;
     std::map<std::string, std::multimap< TEventType, TEventValue > > label2eventValue;
 };
 

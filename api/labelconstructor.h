@@ -101,7 +101,7 @@ class LabelConstructor
                               PRV_UINT32 precision,
                               TTime& value );
 
-    static void transformToShort( std::string& onLabel, char beginDelimiter = '[', char endDelimiter = ']' );
+    static std::string transformToShort( const std::string& onLabel, char beginDelimiter = '[', char endDelimiter = ']' );
 
     static void getGUIGroupLabels( const TGroupID group, std::vector< std::string > &labels );
 
