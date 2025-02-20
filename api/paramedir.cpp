@@ -76,6 +76,7 @@ enum TOptionID
   SHOW_VERSION,
 
   // FILES
+  ALL_WINDOWS,
   MANY_FILES,
   OUTPUT_NAME,
 
@@ -117,6 +118,7 @@ TOptionParamedir definedOption[] =
   { "-v", "--version", false, 0, "", "", "Show version" },
 
   // FILES
+  { "-a", "--all-windows", false, 0, "", "", "Print all windows in cfg. Output file names have a suffix with window number" },
   { "-m", "--many-files", false, 0, "", "", "Allows to separate cfg output (default in a unique file)" },
   { "-o", "--output-name", false, 1, "", "<tracename>",  "Output trace name (only for processing trace)" },
 
@@ -284,13 +286,13 @@ void printHelp()
 
   std::cout << std::endl;
   std::cout << "  General options:" << std::endl;
-  for ( int i = SHOW_HELP; i < MANY_FILES; ++i )
+  for ( int i = SHOW_HELP; i < ALL_WINDOWS; ++i )
     printOptionHelp( TOptionID( i ) );
 
   std::cout << std::endl;
   std::cout << "  Output file options:" << std::endl;
 
-  for ( int i = MANY_FILES; i < TIMELINE_TRACE_UNITS; ++i )
+  for ( int i = ALL_WINDOWS; i < TIMELINE_TRACE_UNITS; ++i )
     printOptionHelp( TOptionID( i ) );
 
   std::cout << std::endl;
@@ -762,6 +764,7 @@ void loadCFGs( KernelConnection *myKernel )
     vector<Histogram *> histograms;
     SaveOptions options; // P4D: Should options.enabledP4DMode be taken in this context?
 
+    int numWindow = 1;
     currentCFG = it;
     if ( CFGLoader::loadCFG( myKernel, it->first, trace, windows, histograms, options ) )
     {
@@ -769,17 +772,43 @@ void loadCFGs( KernelConnection *myKernel )
       output.setMultipleFiles( option[ MANY_FILES ].active );
       output.setWindowTimeUnits( !option[ TIMELINE_TRACE_UNITS ].active );
 
-      if ( histograms.begin() != histograms.end() &&
-           histograms[ histograms.size() - 1 ] != nullptr )
-        output.dumpHistogram( histograms[ histograms.size() - 1 ],
-                              it->second,
-                              option[ PRINT_PLANE ].active,
-                              option[ EMPTY_COLUMNS ].active,
-                              true,
-                              !option[ PREFERENCES_PRECISION ].active );
-      else if( windows.begin() != windows.end() &&
-               windows[ windows.size() - 1 ] != nullptr )
-        output.dumpWindow( windows[ windows.size() - 1 ], it->second );
+      if( option[ ALL_WINDOWS ].active )
+      {
+        int numWindow = 1;
+        std::string tmpFilename{};
+        for( auto currentWindow : windows )
+        {
+          tmpFilename = it->second + "_" + std::to_string( numWindow );
+          output.dumpWindow( currentWindow, tmpFilename  );
+          ++numWindow;
+        }
+
+        for( auto currentHisto : histograms )
+        {
+          tmpFilename = it->second + "_" + std::to_string( numWindow );
+          output.dumpHistogram( currentHisto,
+                                tmpFilename,
+                                option[ PRINT_PLANE ].active,
+                                option[ EMPTY_COLUMNS ].active,
+                                true,
+                                !option[ PREFERENCES_PRECISION ].active );
+          ++numWindow;
+        }
+      }
+      else
+      {
+        if ( histograms.begin() != histograms.end() &&
+            histograms[ histograms.size() - 1 ] != nullptr )
+          output.dumpHistogram( histograms[ histograms.size() - 1 ],
+                                it->second,
+                                option[ PRINT_PLANE ].active,
+                                option[ EMPTY_COLUMNS ].active,
+                                true,
+                                !option[ PREFERENCES_PRECISION ].active );
+        else if( windows.begin() != windows.end() &&
+                windows[ windows.size() - 1 ] != nullptr )
+          output.dumpWindow( windows[ windows.size() - 1 ], it->second );
+      }
     }
     else
       std::cerr << "  [Warning] Cannot load '" << it->first << "' file." << std::endl;
