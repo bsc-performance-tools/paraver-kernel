@@ -213,6 +213,9 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
   if( recalcHisto )
     whichHisto->execute( whichHisto->getBeginTime(), whichHisto->getEndTime(), selectedRows, progress );
 
+  if( strOutputFile.rfind( string( ".csv" ) ) == string::npos )
+    strOutputFile += ".csv";
+
   outputFile.open( strOutputFile.c_str() );
 
   outputFile << fixed;
