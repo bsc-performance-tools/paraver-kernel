@@ -5,6 +5,7 @@ pkglib_LTLIBRARIES = libparaver-api.la
 libparaver_api_la_SOURCES = \
                     cfg.cpp \
                     cfgs4d.cpp \
+                    csvsymbolsparser.cpp \
                     drawmode.cpp \
                     eventdrivencutter.cpp \
                     eventlabels.cpp \
@@ -45,6 +46,7 @@ include_HEADERS = \
                   cfgs4d.h \
                   ../config_traits.h \
                   ../config_types.h \
+                  csvsymbolsparser.h \
                   cubecontainer.h \
                   cubecontainer_impl.h \
                   customalgorithms.h \

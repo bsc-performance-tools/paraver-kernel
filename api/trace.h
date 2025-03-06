@@ -391,7 +391,8 @@ class TraceProxy: public Trace
     TraceProxy( KernelConnection *whichKernel, const std::string& whichFile,
                 bool noLoad, ProgressController *progress );
 
-    void parsePCF( const std::string& whichFile );
+    void parseSymbolsFile( const std::string& whichFile );
+    template< typename Parser > void fillSymbols( Parser& whichParser );
     void parseROW( const std::string& whichFile );
 
 #ifdef FIXED_LABELS

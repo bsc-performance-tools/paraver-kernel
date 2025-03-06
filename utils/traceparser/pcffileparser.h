@@ -54,6 +54,7 @@ class PCFFileParser
     };
 
     static bool openPCFFileParser( const std::string& filename, PCFFileParser<dummy>& outPCFFile );
+    static void trimAndCleanTabs( std::string& strLine );
 
     PCFFileParser() = default;
     PCFFileParser( const std::string& filename );
@@ -125,7 +126,6 @@ class PCFFileParser
     SectionParser<> *currentParser;
 
     void initSectionParserFactory();
-    void trimAndCleanTabs( std::string& strLine );
 
     template< typename dummyParser > friend class DefaultOptionsParser;
     template< typename dummyParser > friend class DefaultSemanticParser;

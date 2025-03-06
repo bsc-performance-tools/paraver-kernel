@@ -36,6 +36,11 @@ StateLabels::StateLabels( const PCFFileParser<>& pcfParser )
   stateLabel = pcfParser.getStates();
 }
 
+StateLabels::StateLabels( const CSVSymbolsParser& csvParser )
+{
+
+}
+
 StateLabels::~StateLabels()
 {}
 

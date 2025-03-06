@@ -23,6 +23,7 @@
 
 #include <sstream>
 
+#include "csvsymbolsparser.h"
 #include "kernelconnection.h"
 #include "paraverconfig.h"
 #include "progresscontroller.h"
@@ -93,8 +94,8 @@ TraceProxy::TraceProxy( KernelConnection *whichKernel, const string& whichFile,
   showProgressBar = traceSize / 1E6 > 10.0;
 
   myTrace = myKernel->newTrace( whichFile, noLoad, progress, traceSize );
-  string pcfFile = myKernel->getPCFFileLocation( whichFile );
-  parsePCF( pcfFile );
+  string symbolsFilename = myKernel->getSymbolsFileLocation( whichFile );
+  parseSymbolsFile( symbolsFilename );
   string rowFile = myKernel->getROWFileLocation( whichFile );
   parseROW( rowFile );
 
@@ -455,26 +456,39 @@ Trace *TraceProxy::getConcrete() const
   return myTrace;
 }
 
-void TraceProxy::parsePCF( const string& whichFile )
+template< typename Parser >
+void TraceProxy::fillSymbols( Parser& whichParser )
 {
-  PCFFileParser<> pcfParser( whichFile );
-
   rgb tmpColor;
-  const std::map< uint32_t, PCFFileParser<>::rgb >& semanticColors = pcfParser.getSemanticColors();
+  const std::map< uint32_t, typename Parser::rgb >& semanticColors = whichParser.getSemanticColors();
   for ( auto it : semanticColors )
   {
     std::tie( tmpColor.red, tmpColor.green, tmpColor.blue ) = it.second;
     mySemanticColor.setColor( it.first, tmpColor );
   }
-
-  myEventLabels = EventLabels( pcfParser );
-  myStateLabels = StateLabels( pcfParser );
-
+  
+  myEventLabels = EventLabels( whichParser );
+  myStateLabels = StateLabels( whichParser );
+  
   vector< TEventType > types;
-  pcfParser.getEventTypes( types );
+  whichParser.getEventTypes( types );
   for( auto it : types )
   {
-    setEventTypePrecision( it, pow( (double)10, -(double)pcfParser.getEventPrecision( it ) ) );
+    setEventTypePrecision( it, pow( (double)10, -(double)whichParser.getEventPrecision( it ) ) );
+  }
+}
+
+void TraceProxy::parseSymbolsFile( const string& whichFile )
+{
+  if ( whichFile.substr( whichFile.length() - 3 ) == "pcf" )
+  {
+    PCFFileParser<> pcfParser( whichFile );
+    fillSymbols( pcfParser );
+  }
+  else if ( whichFile.substr( whichFile.length() - 3 ) == "csv" )
+  {
+    CSVSymbolsParser csvParser( whichFile );
+    fillSymbols( csvParser );
   }
 }
 
