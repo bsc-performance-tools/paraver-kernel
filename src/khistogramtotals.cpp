@@ -59,7 +59,7 @@ KHistogramTotals::KHistogramTotals( PRV_UINT16 numStat,
   vector<vector<TSemanticValue> > tmpStatsMax( stats, tmpColumnsMax );
   vector<vector<TSemanticValue> > tmpStatsMin( stats, tmpColumnsMin );
 
-  numCells.insert( total.begin(), numPlanes, tmpStats );
+  numCells.insert( numCells.begin(), numPlanes, tmpStats );
   total.insert( total.begin(), numPlanes, tmpStats );
   average.insert( average.begin(), numPlanes, tmpStats );
   maximum.insert( maximum.begin(), numPlanes, tmpStatsMax );
