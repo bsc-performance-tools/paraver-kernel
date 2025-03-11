@@ -26,6 +26,7 @@
 #include "histogram.h"
 #include "labelconstructor.h"
 #include "csvsymbolsparser.h"
+#include "cfg.h"
 
 using namespace std;
 
@@ -65,7 +66,10 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, Progr
     endTime = trace->getEndTime();
 
   if ( !multipleFiles )
+  {
     outputFile.open( strOutputFile.c_str() );
+    dumpMetadata( whichWindow, outputFile );
+  }
 
   maxTime = 0.0;
 
@@ -73,8 +77,6 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, Progr
   std::string previousMessage;
   if( progress != nullptr )
   {
-    //previousMessage = progress->getMessage();
-    //progress->setMessage( strOutputFile );
     if ( whichWindow->getWindowLevelObjects() > 1 )
       progress->setEndLimit( whichWindow->getWindowLevelObjects() - 1 );
     else
@@ -386,6 +388,18 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
   }
 
   outputFile.close();
+}
+
+
+void TextOutput::dumpMetadata( Timeline *whichTimeline, std::ofstream& whichFile ) const
+{
+  whichFile << "#";
+  CFGLoader::dumpTimeUnits( whichTimeline, whichFile );
+  whichFile << std::endl;
+
+  whichFile << "#";
+  CFGLoader::dumpColorMode( whichTimeline, whichFile );
+  whichFile << std::endl;
 }
 
 

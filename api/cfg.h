@@ -192,6 +192,9 @@ class CFGLoader
     static const std::vector< std::string > getTagCFGFullList( Timeline *whichWindow );
     static const std::vector< std::string > getTagCFGFullList( Histogram *whichHistogram );
 
+    static void dumpTimeUnits( Timeline *whichTimeline, std::ofstream& whichFile );
+    static void dumpColorMode( Timeline *whichTimeline, std::ofstream& whichFile );
+    
     static std::string errorLine;
 
     // Returns false if error parsing or no event type in [evenTypesBegin, eventTypesEnd] found in CFG & pass the filter

@@ -77,6 +77,9 @@ class TextOutput:public Output
     TTime minTime;
     TTime maxTime;
 
+    void dumpMetadata( Timeline *whichTimeline,
+                       std::ofstream& whichFile ) const;
+
     void dumpMatrixHorizontal( Histogram *whichHisto,
                                TObjectOrder numRows,
                                THistogramColumn numColumns,

@@ -126,6 +126,12 @@ void TraceBodyIO_csv::read( TraceStream& file,
   if ( line.size() == 0 )
     return;
 
+  if ( line[ 0 ] == '#' )
+  {
+    readTraceInfo( line, traceInfo );
+    return;
+  }
+
   readEvents( whichResourceModel, line, records, states, endTime );
 }
 
@@ -153,6 +159,7 @@ void TraceBodyIO_csv::write( std::fstream& whichStream,
 ***********************/
 inline void TraceBodyIO_csv::readTraceInfo(  const std::string& line, MetadataManager& traceInfo ) const
 {
+  return;
   traceInfo.NewMetadata( line );
   // dummy set also to false if it is a comment
 }
@@ -180,7 +187,7 @@ inline void TraceBodyIO_csv::readEvents( const ResourceModel<>& whichResourceMod
                     strLine, CPU, appl, task, thread, 
                     begintime, time, eventvalue, decimals ) )
   {
-    cerr << "Error reading state record (error in Common)." << endl;
+    cerr << "Error reading record (CSV file)." << endl;
     cerr << line << endl;
     return;
   }

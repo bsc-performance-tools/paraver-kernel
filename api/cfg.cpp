@@ -1000,6 +1000,53 @@ int CFGLoader::findWindowBackwards( const Timeline *whichWindow,
 }
 
 
+void CFGLoader::dumpTimeUnits( Timeline *whichTimeline, std::ofstream& whichFile )
+{
+  whichFile << OLDCFG_TAG_WNDW_UNITS << " ";
+  switch ( whichTimeline->getTimeUnit() )
+  {
+    case NS:
+      whichFile << OLDCFG_VAL_TIMEUNIT_NS;
+      break;
+    case US:
+      whichFile << OLDCFG_VAL_TIMEUNIT_US;
+      break;
+    case MS:
+      whichFile << OLDCFG_VAL_TIMEUNIT_MS;
+      break;
+    case SEC:
+      whichFile << OLDCFG_VAL_TIMEUNIT_S;
+      break;
+    case MIN:
+      whichFile << OLDCFG_VAL_TIMEUNIT_M;
+      break;
+    case HOUR:
+      whichFile << OLDCFG_VAL_TIMEUNIT_H;
+      break;
+    case DAY:
+      whichFile << OLDCFG_VAL_TIMEUNIT_D;
+      break;
+  }
+}
+
+
+void CFGLoader::dumpColorMode( Timeline *whichTimeline, std::ofstream& whichFile )
+{
+  if ( whichTimeline->isCodeColorSet() )
+    whichFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << OLDCFG_VAL_COLOR_MODE_CODE;
+  else if ( whichTimeline->isGradientColorSet() )
+    whichFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << OLDCFG_VAL_COLOR_MODE_GRADIENT;
+  else if ( whichTimeline->isNotNullGradientColorSet() )
+    whichFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT;
+  else if ( whichTimeline->isAlternativeGradientColorSet() )
+    whichFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_ALTERNATIVE_GRADIENT;
+  else if ( whichTimeline->isPunctualColorSet() )
+    whichFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_PUNCTUAL;
+  else if ( whichTimeline->isFusedLinesColorSet() )
+    whichFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_FUSED_LINES;
+}
+
+
 void CFGLoader::loadMap()
 {
   cfgTagFunctions[OLDCFG_TAG_WNDW_NAME]                = new WindowName();
@@ -1562,7 +1609,9 @@ bool WindowColorMode::parseLine( KernelConnection *whichKernel, istringstream& l
   if( windows[ windows.size() - 1 ]->isFunctionLineColorSet() )
     return true;
 
-  if ( strMode.compare( OLDCFG_VAL_COLOR_MODE_GRADIENT ) == 0 )
+  if ( strMode.compare( OLDCFG_VAL_COLOR_MODE_CODE ) == 0 )
+    windows[ windows.size() - 1 ]->setCodeColorMode();
+  else if ( strMode.compare( OLDCFG_VAL_COLOR_MODE_GRADIENT ) == 0 )
     windows[ windows.size() - 1 ]->setGradientColorMode();
   else if ( strMode.compare( OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT ) == 0 )
     windows[ windows.size() - 1 ]->setNotNullGradientColorMode();
@@ -1576,19 +1625,12 @@ bool WindowColorMode::parseLine( KernelConnection *whichKernel, istringstream& l
   return true;
 }
 
+
 void WindowColorMode::printLine( ofstream& cfgFile,
                                  const vector<Timeline *>::const_iterator it )
 {
-  if ( ( *it )->isGradientColorSet() )
-    cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << OLDCFG_VAL_COLOR_MODE_GRADIENT << endl;
-  else if ( ( *it )->isNotNullGradientColorSet() )
-    cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT << endl;
-  else if ( ( *it )->isAlternativeGradientColorSet() )
-    cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_ALTERNATIVE_GRADIENT << endl;
-  else if ( ( *it )->isPunctualColorSet() )
-    cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_PUNCTUAL << endl;
-  else if ( ( *it )->isFusedLinesColorSet() )
-    cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_FUSED_LINES << endl;
+  CFGLoader::dumpColorMode( *it, cfgFile );
+  cfgFile << std::endl;
 }
 
 
@@ -1983,32 +2025,7 @@ bool WindowUnits::parseLine( KernelConnection *whichKernel, istringstream& line,
 void WindowUnits::printLine( ofstream& cfgFile,
                              const vector<Timeline *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_UNITS << " ";
-  switch ( ( *it )->getTimeUnit() )
-  {
-    case NS:
-      cfgFile << OLDCFG_VAL_TIMEUNIT_NS;
-      break;
-    case US:
-      cfgFile << OLDCFG_VAL_TIMEUNIT_US;
-      break;
-    case MS:
-      cfgFile << OLDCFG_VAL_TIMEUNIT_MS;
-      break;
-    case SEC:
-      cfgFile << OLDCFG_VAL_TIMEUNIT_S;
-      break;
-    case MIN:
-      cfgFile << OLDCFG_VAL_TIMEUNIT_M;
-      break;
-    case HOUR:
-      cfgFile << OLDCFG_VAL_TIMEUNIT_H;
-      break;
-    case DAY:
-      cfgFile << OLDCFG_VAL_TIMEUNIT_D;
-      break;
-  }
-
+  CFGLoader::dumpTimeUnits( *it, cfgFile );
   cfgFile << endl;
 }
 
