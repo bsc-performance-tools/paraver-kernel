@@ -184,6 +184,7 @@ using OnlyFilterState = DerivedTraceEditStateBool< TraceEditSequence * >;
 using TestState = DerivedTraceEditStateInt< TraceEditSequence * >;
 
 using CSVFileNameState = DerivedTraceEditStateString< TraceEditSequence * >;
+using CSVLegendFileNameState = DerivedTraceEditStateString< TraceEditSequence * >;
 using OutputDirSuffixState = DerivedTraceEditStateString< TraceEditSequence * >;
 using OutputTraceFileNameState = DerivedTraceEditStateString<TraceEditSequence * >;
 using PCFMergerReferenceState = DerivedTraceEditStateString<TraceEditSequence * >;

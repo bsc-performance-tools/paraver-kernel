@@ -44,6 +44,7 @@ enum class TSequenceStates
   traceOptionsState,
   sourceTimelineState,
   csvFileNameState,
+  csvLegendFileNameState,
   csvOutputState,
   outputDirSuffixState,
   outputTraceFileNameState,

@@ -74,6 +74,10 @@ TraceEditState *KTraceEditSequence::createState( TSequenceStates whichState )
       return new CSVFileNameState( this );
       break;
 
+    case TSequenceStates::csvLegendFileNameState:
+      return new CSVLegendFileNameState( this );
+      break;
+
     case TSequenceStates::csvOutputState:
       return new CSVOutputState( this );
       break;
