@@ -295,14 +295,9 @@ Timeline *TimelineProxy::getParent( PRV_UINT16 whichParent ) const
 }
 
 
-Timeline *TimelineProxy::clone( bool recursiveClone )
+void TimelineProxy::copy( TimelineProxy *clonedWindow )
 {
-  TimelineProxy *clonedWindow = new TimelineProxy();
-  clonedWindow->myKernel = myKernel;
-  clonedWindow->myTrace  = myTrace;
-  clonedWindow->myWindow = myWindow->clone();
-
-  if ( clonedWindow->isDerivedWindow() )
+  if ( isDerivedWindow() )
   {
     clonedWindow->parent1 = parent1->clone();
     clonedWindow->myWindow->setParent( 0, clonedWindow->parent1->getConcrete() );
@@ -371,6 +366,32 @@ Timeline *TimelineProxy::clone( bool recursiveClone )
   clonedWindow->CFG4DMode   = CFG4DMode;
   clonedWindow->propertiesAliasCFG4D = propertiesAliasCFG4D;
   clonedWindow->paramAliasCFG4D = paramAliasCFG4D;
+}
+
+// Makes a copy of 
+Timeline *TimelineProxy::clone( Trace *whichTrace, TTimeUnit whichTimeUnit, bool recursiveClone )
+{
+  TimelineProxy *clonedWindow = new TimelineProxy();
+  clonedWindow->myKernel = myKernel;
+  clonedWindow->myTrace = whichTrace;
+  clonedWindow->myWindow = myWindow->clone();
+  
+  copy( clonedWindow );
+
+  clonedWindow->setTimeUnit( whichTimeUnit );
+
+  return clonedWindow;
+}
+
+
+Timeline *TimelineProxy::clone( bool recursiveClone )
+{
+  TimelineProxy *clonedWindow = new TimelineProxy();
+  clonedWindow->myKernel = myKernel;
+  clonedWindow->myTrace  = myTrace;
+  clonedWindow->myWindow = myWindow->clone();
+
+  copy( clonedWindow );
 
   return clonedWindow;
 }
