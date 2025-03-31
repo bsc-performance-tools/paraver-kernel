@@ -880,14 +880,12 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
     endTime = controlWindow->getTrace()->getEndTime();
 
   orderWindows();
-
+  
   initTranslators();
 
   numRows = selectedRows.size();
-  if( useFixedDelta )
-    numCols = columnTranslator->totalColumns();
-  else
-    controlDelta = columnTranslator->getDelta();
+  numCols = columnTranslator->totalColumns();
+  controlDelta = columnTranslator->getDelta();
 
   if ( getThreeDimensions() )
     numPlanes = planeTranslator->totalColumns();
@@ -1010,10 +1008,20 @@ void KHistogram::initTranslators()
 
   if ( columnTranslator != nullptr )
     delete columnTranslator;
-  if( useFixedDelta )
-    columnTranslator = new ColumnTranslator( controlMin, controlMax, controlDelta );
-  else
+  if( useFixedDelta ) 
+  {
+    if(controlDelta <= 0) 
+    { 
+      throw HistogramException(THistogramErrorCode::invalidValueDelta);
+    }
+    else 
+    {
+      columnTranslator = new ColumnTranslator( controlMin, controlMax, controlDelta );
+    }
+  } else 
+  {
     columnTranslator = new ColumnTranslator( controlMin, controlMax, numCols );
+  }
 
   if ( planeTranslator != nullptr )
   {

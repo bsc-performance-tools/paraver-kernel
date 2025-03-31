@@ -5204,8 +5204,12 @@ bool Analyzer2DDelta::parseLine( KernelConnection *whichKernel, istringstream& l
 
   getline( line, strDelta );
   istringstream tmpValue( strDelta );
+
   if ( !( tmpValue >> dataDelta ) )
     return false;
+  if  ( dataDelta <= 0 )
+    return false;
+
   histograms[ histograms.size() - 1 ]->setControlDelta( dataDelta );
 
   return true;
