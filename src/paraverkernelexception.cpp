@@ -33,7 +33,7 @@ string ParaverKernelException::kernelMessage( "Paraver kernel exception: " );
 
 const char *ParaverKernelException::errorMessage[] =
   {
-    "Undefined error: ",
+    "Undefined error kernel: ",
     "Empty trace not allowed: ",
     "Cannot open trace file: ",
     "Null pointer in operand: ",
@@ -55,9 +55,14 @@ ParaverKernelException::ParaverKernelException( TErrorCode whichCode,
     file( whichFile ),
     line( whichLine )
 {
+  initMessage();
+}
+void ParaverKernelException::initMessage()
+{
+
   ostringstream tmpStream( "" );
 
-  tmpStream << specificErrorMessage() << auxMessage << endl;
+  tmpStream << this->specificErrorMessage() << auxMessage << endl;
 
   if ( file != nullptr )
     tmpStream << file << " " << line << endl;
