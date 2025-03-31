@@ -42,6 +42,31 @@ constexpr void cartesian_product_impl( OutputIt& product,
   }
 }
 
+int calculatePrecision(double value)
+{
+    if (value == 0.0) {
+        return 2;
+    }
+    
+    std::stringstream ss;
+    ss.imbue(std::locale("C")); 
+    ss << std::fixed << value;
+    std::string strValue = ss.str();
+
+    size_t pointPos = strValue.find('.');
+    
+    if (pointPos == std::string::npos) {
+        return 0; 
+    }
+
+    size_t i = strValue.size() - 1;
+    while (i > pointPos && strValue[i] == '0') {
+        --i;
+    }
+
+    return i - pointPos;
+}
+
 template<typename T, class InputIt, class OutputIt, size_t sizeFactors, typename... Targs>
 constexpr void cartesian_product_impl( OutputIt& product,
                                        size_t indexFactor,
