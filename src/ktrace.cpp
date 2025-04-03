@@ -597,7 +597,6 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   string fileType = whichFile.substr( whichFile.find_last_of( '.' ) + 1 );
   if ( fileType == "csv" )
   {
-    // Saved CSV traces are in nanoseconds.
     traceTimeUnit = NS;
     traceEndTime = 0;
     traceProcessModel = ProcessModel<>( );
@@ -720,6 +719,13 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   else
   {
     file->clear();
+  }
+
+  CSVMetadata *tmpCSVMetadata = nullptr;
+  myTraceInfo.getMetadata< MetadataManager::TAppID::CSV >( tmpCSVMetadata );
+  if( tmpCSVMetadata != nullptr )
+  {
+    traceTimeUnit = tmpCSVMetadata->getTimeUnits();
   }
 
   blocks->setFileLoaded( traceEndTime );
