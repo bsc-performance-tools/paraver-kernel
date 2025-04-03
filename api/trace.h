@@ -203,11 +203,6 @@ class Trace
       return 0;
     }
 
-    virtual std::string getDefaultSemanticFunc( TWindowLevel whichLevel ) const
-    {
-      return "";
-    }
-
     virtual void setShowProgressBar( bool whichShow )
     {}
 
@@ -223,15 +218,6 @@ class Trace
 
     virtual void setSuitableApps( const std::vector< bool >& whichApps )
     {}
-
-    /*
-        virtual bool getFillStateGaps() const
-        {
-          return false;
-        }
-
-        void setFillStateGaps( bool fill ) {}
-    */
 
   protected:
     KernelConnection *myKernel;
@@ -328,7 +314,6 @@ class TraceProxy: public Trace
     virtual std::string getRowLabel( TTraceLevel whichLevel, TObjectOrder whichRow ) const override;
     virtual size_t getMaxLengthRow( TTraceLevel whichLevel ) const override;
 
-//    virtual std::string getDefaultSemanticFunc( TWindowLevel whichLevel ) const;
     virtual void setShowProgressBar( bool whichShow ) override;
     virtual bool getShowProgressBar() const override;
 

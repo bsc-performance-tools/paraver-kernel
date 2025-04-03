@@ -535,26 +535,6 @@ bool TraceProxy::getShowProgressBar() const
   return showProgressBar;
 }
 
-/*
- string TraceProxy::getDefaultSemanticFunc( TWindowLevel whichLevel ) const
-{
-  switch ( whichLevel )
-  {
-    case ( TASK ):
-            return myDefaultTaskSemanticFunc;
-      break;
-    case( THREAD ):
-            return myDefaultThreadSemanticFunc;
-      break;
-    default:
-      break;
-  }
-
-  return myDefaultThreadSemanticFunc;
-}
-
-*/
-
 bool TraceProxy::eventLoaded( TEventType whichType ) const
 {
   return myTrace->eventLoaded( whichType );
