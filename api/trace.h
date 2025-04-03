@@ -37,6 +37,7 @@ using boost::posix_time::ptime;
 
 class KernelConnection;
 class ProgressController;
+class MetadataManager;
 
 class Trace
 {
@@ -144,12 +145,11 @@ class Trace
 
     virtual void setFillStateGaps( bool fill ) = 0;
 
-    virtual PRV_UINT64 getCutterOffset() = 0;
     virtual PRV_UINT64 getCutterLastOffset() = 0;
     virtual PRV_UINT64 getCutterLastBeginTime() = 0;
     virtual PRV_UINT64 getCutterLastEndTime() = 0;
-    virtual PRV_UINT64 getCutterBeginTime() = 0;
-    virtual PRV_UINT64 getCutterEndTime() = 0;
+
+    virtual const MetadataManager& getMetadata() const = 0;
 
     virtual void setLogicalSend( TCommID whichComm, TRecordTime whichTime ) = 0;
     virtual void setLogicalReceive( TCommID whichComm, TRecordTime whichTime ) = 0;
@@ -351,12 +351,11 @@ class TraceProxy: public Trace
     virtual bool getFillStateGaps() const override;
     virtual void setFillStateGaps( bool fill ) override;
 
-    virtual PRV_UINT64 getCutterOffset() override;
     virtual PRV_UINT64 getCutterLastOffset() override;
     virtual PRV_UINT64 getCutterLastBeginTime() override;
     virtual PRV_UINT64 getCutterLastEndTime() override;
-    virtual PRV_UINT64 getCutterBeginTime() override;
-    virtual PRV_UINT64 getCutterEndTime() override;
+
+    virtual const MetadataManager& getMetadata() const override;
 
     virtual void setLogicalSend( TCommID whichComm, TRecordTime whichTime ) override;
     virtual void setLogicalReceive( TCommID whichComm, TRecordTime whichTime ) override;

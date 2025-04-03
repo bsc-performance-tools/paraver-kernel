@@ -157,11 +157,9 @@ void TraceBodyIO_csv::write( std::fstream& whichStream,
 /**********************
   Read line functions
 ***********************/
-inline void TraceBodyIO_csv::readTraceInfo(  const std::string& line, MetadataManager& traceInfo ) const
+inline void TraceBodyIO_csv::readTraceInfo( const std::string& line, MetadataManager& traceInfo ) const
 {
-  return;
-  traceInfo.NewMetadata( line );
-  // dummy set also to false if it is a comment
+  traceInfo.newMetadata( line );
 }
 
 

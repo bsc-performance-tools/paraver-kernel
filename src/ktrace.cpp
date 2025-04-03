@@ -855,64 +855,34 @@ void KTrace::setFillStateGaps( bool fill )
 
 PRV_UINT64 KTrace::getCutterLastOffset()
 {
-  return myTraceInfo.GetCutterLastOffset();
+  CutterMetadata *tmpCutterMetadata = nullptr;
+  if( !myTraceInfo.getMetadata< MetadataManager::TAppID::CUTTER >( tmpCutterMetadata ) )
+    return 0;
+  return tmpCutterMetadata->getCutterLastOffset();
 }
 
 
 PRV_UINT64 KTrace::getCutterLastBeginTime()
 {
-  return myTraceInfo.GetCutterLastBeginTime();
+  CutterMetadata *tmpCutterMetadata = nullptr;
+  if( !myTraceInfo.getMetadata< MetadataManager::TAppID::CUTTER >( tmpCutterMetadata ) )
+    return 0;
+  return tmpCutterMetadata->getCutterLastBeginTime();
 }
 
 
 PRV_UINT64 KTrace::getCutterLastEndTime()
 {
-  return myTraceInfo.GetCutterLastEndTime();
+  CutterMetadata *tmpCutterMetadata = nullptr;
+  if( !myTraceInfo.getMetadata< MetadataManager::TAppID::CUTTER >( tmpCutterMetadata ) )
+    return 0;
+  return tmpCutterMetadata->getCutterLastEndTime();
 }
 
 
-PRV_UINT64 KTrace::getCutterOffset()
+const MetadataManager& KTrace::getMetadata() const
 {
-  //return myTraceInfo.cutterOffset;
-  PRV_UINT64 offset = 0;
-
-  vector<CutterMetadata*> cutterData = myTraceInfo.GetCutterMetadata();
-  if( !cutterData.empty() )
-    offset = cutterData[0]->GetOffset();
-
-  return offset;
-}
-
-
-PRV_UINT64 KTrace::getCutterBeginTime()
-{
-  //return myTraceInfo.cutterBeginTime;
-  PRV_UINT64 beginTime = 0;
-
-  if ( !myTraceInfo.GetError() )
-  {
-    vector<CutterMetadata*> cutterData = myTraceInfo.GetCutterMetadata();
-    if( !cutterData.empty() )
-      beginTime = cutterData[0]->GetBeginTime();
-  }
-
-  return beginTime;
-}
-
-
-PRV_UINT64 KTrace::getCutterEndTime()
-{
-  //return myTraceInfo.cutterEndTime;
-  PRV_UINT64 endTime = 0;
-
-  if ( !myTraceInfo.GetError() )
-  {
-    vector<CutterMetadata*> cutterData = myTraceInfo.GetCutterMetadata();
-    if( !cutterData.empty() )
-     endTime = cutterData[0]->GetEndTime();
-  }
-
-  return endTime;
+  return myTraceInfo;
 }
 
 

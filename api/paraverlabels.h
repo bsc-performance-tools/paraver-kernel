@@ -185,6 +185,7 @@ constexpr char OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT[] =     "window_in_null_gradi
 constexpr char CFG_VAL_COLOR_MODE_ALTERNATIVE_GRADIENT[] = "window_in_alternative_gradient_mode";
 constexpr char CFG_VAL_COLOR_MODE_PUNCTUAL[] =             "window_in_punctual_mode";
 constexpr char CFG_VAL_COLOR_MODE_FUSED_LINES[] =          "window_in_fused_lines_mode";
+constexpr char CFG_VAL_COLOR_MODE_FUNCTION_LINE[] =        "window_in_function_line_mode";
 
 constexpr char CFG_VAL_GRADIENT_FUNCTION_LINEAR[] =        "gradient_function_linear";
 constexpr char CFG_VAL_GRADIENT_FUNCTION_STEPS[] =         "gradient_function_steps";

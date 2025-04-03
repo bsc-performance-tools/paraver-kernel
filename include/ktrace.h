@@ -142,9 +142,12 @@ class KTrace: public Trace
 
     inline ptime getTraceTime() const override
     {
+      PRV_UINT64 cutterOffset{ 0 };
+      CutterMetadata *tmpCutterMetadata = nullptr;
+      if( myTraceInfo.getMetadata< MetadataManager::TAppID::CUTTER >( tmpCutterMetadata ) )
+        cutterOffset = tmpCutterMetadata->getCutterTotalOffset();
       return myTraceTime +
-             boost::posix_time::nanoseconds(
-               (long)traceUnitsToCustomUnits( myTraceInfo.GetCutterTotalOffset(), NS ) );
+             boost::posix_time::nanoseconds( (long)traceUnitsToCustomUnits( cutterOffset, NS ) );
     }
 
     inline string getRawTraceTime() const
@@ -190,12 +193,11 @@ class KTrace: public Trace
     virtual bool getFillStateGaps() const override;
     virtual void setFillStateGaps( bool fill ) override;
 
-    virtual PRV_UINT64 getCutterOffset() override;
     virtual PRV_UINT64 getCutterLastOffset() override;
     virtual PRV_UINT64 getCutterLastBeginTime() override;
     virtual PRV_UINT64 getCutterLastEndTime() override;
-    virtual PRV_UINT64 getCutterBeginTime() override;
-    virtual PRV_UINT64 getCutterEndTime() override;
+
+    virtual const MetadataManager& getMetadata() const override;
 
     virtual void setLogicalSend( TCommID whichComm, TRecordTime whichTime ) override;
     virtual void setLogicalReceive( TCommID whichComm, TRecordTime whichTime ) override;

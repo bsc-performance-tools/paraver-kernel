@@ -63,7 +63,7 @@ KTraceCutter::KTraceCutter( TraceOptions *options,
   exec_options = new KTraceOptions( (KTraceOptions *) options );
   HWCTypesInPCF.insert( whichHWCTypes.begin(), whichHWCTypes.end() );
   notHWCTypesInPCF.insert( whichNotHWCTypes.begin(), whichNotHWCTypes.end() );
-  cutterApplicationCaller = CutterMetadata::ORIGINAL_APPLICATION_ID;
+  cutterApplicationCaller = CutterMetadataAction::ORIGINAL_APPLICATION_ID;
   
   // PROFET
   firstApplicationFinished = false;
@@ -215,14 +215,14 @@ void KTraceCutter::writeOffsetLine( T& whichFile,
   if ( originalTime )
     timeOffset = 0;
 
-  CutterMetadata tmpData( MetadataManager::GetCurrentDate(),
-                          cutterApplicationCaller,
-                          string( '"' + string( trace_in_name ) + '"'),
-                          (PRV_UINT64)timeOffset,   // first record of the trace
-                          (PRV_UINT64)timeCutBegin, // first time of the cut
-                          (PRV_UINT64)timeCutEnd ); // last time of the cut
+  CutterMetadataAction tmpData( MetadataManager::getCurrentDate(),
+                                cutterApplicationCaller,
+                                string( '"' + string( trace_in_name ) + '"'),
+                                (PRV_UINT64)timeOffset,   // first record of the trace
+                                (PRV_UINT64)timeCutBegin, // first time of the cut
+                                (PRV_UINT64)timeCutEnd ); // last time of the cut
   ostringstream tmpStream;
-  tmpData.Write( tmpStream );
+  tmpData.write( tmpStream );
   
   writeOffsetLineToFile( whichFile, tmpStream.str() );
 }

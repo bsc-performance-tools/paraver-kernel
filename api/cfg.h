@@ -31,10 +31,12 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+
 #include "cfgs4d.h"
 #include "paraverkerneltypes.h"
 #include "paraverlabels.h"
 #include "eventlabels.h"
+#include "semanticcolor.h"
 
 class KernelConnection;
 class Timeline;
@@ -192,8 +194,11 @@ class CFGLoader
     static const std::vector< std::string > getTagCFGFullList( Timeline *whichWindow );
     static const std::vector< std::string > getTagCFGFullList( Histogram *whichHistogram );
 
-    static void dumpTimeUnits( Timeline *whichTimeline, std::ofstream& whichFile );
-    static void dumpColorMode( Timeline *whichTimeline, std::ofstream& whichFile );
+    static TTimeUnit parseTimeUnit( const std::string& strUnits );
+    static TColorFunction parseColorMode( const std::string& strMode );
+
+    static void dumpTimeUnits( TTimeUnit whichUnit, std::ostream& whichFile );
+    static void dumpColorMode( TColorFunction whichColorMode, std::ostream& whichFile );
     
     static std::string errorLine;
 

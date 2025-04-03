@@ -1000,10 +1000,30 @@ int CFGLoader::findWindowBackwards( const Timeline *whichWindow,
 }
 
 
-void CFGLoader::dumpTimeUnits( Timeline *whichTimeline, std::ofstream& whichFile )
+TTimeUnit CFGLoader::parseTimeUnit( const std::string& strUnits )
 {
-  whichFile << OLDCFG_TAG_WNDW_UNITS << " ";
-  switch ( whichTimeline->getTimeUnit() )
+  if ( strUnits.compare( OLDCFG_VAL_TIMEUNIT_NS ) == 0 )
+    return NS;
+  else if ( strUnits.compare( OLDCFG_VAL_TIMEUNIT_US ) == 0 )
+    return US;
+  else if ( strUnits.compare( OLDCFG_VAL_TIMEUNIT_MS ) == 0 )
+    return MS;
+  else if ( strUnits.compare( OLDCFG_VAL_TIMEUNIT_S ) == 0 )
+    return SEC;
+  else if ( strUnits.compare( OLDCFG_VAL_TIMEUNIT_M ) == 0 )
+    return MIN;
+  else if ( strUnits.compare( OLDCFG_VAL_TIMEUNIT_H ) == 0 )
+    return HOUR;
+  else if ( strUnits.compare( OLDCFG_VAL_TIMEUNIT_D ) == 0 )
+    return DAY;
+
+  return NS;
+}
+
+
+void CFGLoader::dumpTimeUnits( TTimeUnit whichUnit, std::ostream& whichFile )
+{
+  switch ( whichUnit )
   {
     case NS:
       whichFile << OLDCFG_VAL_TIMEUNIT_NS;
@@ -1030,20 +1050,43 @@ void CFGLoader::dumpTimeUnits( Timeline *whichTimeline, std::ofstream& whichFile
 }
 
 
-void CFGLoader::dumpColorMode( Timeline *whichTimeline, std::ofstream& whichFile )
+TColorFunction CFGLoader::parseColorMode( const std::string& strMode )
 {
-  if ( whichTimeline->isCodeColorSet() )
-    whichFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << OLDCFG_VAL_COLOR_MODE_CODE;
-  else if ( whichTimeline->isGradientColorSet() )
-    whichFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << OLDCFG_VAL_COLOR_MODE_GRADIENT;
-  else if ( whichTimeline->isNotNullGradientColorSet() )
-    whichFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT;
-  else if ( whichTimeline->isAlternativeGradientColorSet() )
-    whichFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_ALTERNATIVE_GRADIENT;
-  else if ( whichTimeline->isPunctualColorSet() )
-    whichFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_PUNCTUAL;
-  else if ( whichTimeline->isFusedLinesColorSet() )
-    whichFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_FUSED_LINES;
+  if ( strMode.compare( OLDCFG_VAL_COLOR_MODE_CODE ) == 0 )
+    return TColorFunction::CODE_COLOR;
+  else if ( strMode.compare( OLDCFG_VAL_COLOR_MODE_GRADIENT ) == 0 )
+    return TColorFunction::GRADIENT;
+  else if ( strMode.compare( OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT ) == 0 )
+    return TColorFunction::NOT_NULL_GRADIENT;
+  else if ( strMode.compare( CFG_VAL_COLOR_MODE_ALTERNATIVE_GRADIENT ) == 0 )
+    return TColorFunction::ALTERNATIVE_GRADIENT;
+  else if( strMode.compare( CFG_VAL_COLOR_MODE_PUNCTUAL ) == 0 )
+    return TColorFunction::PUNCTUAL;
+  else if( strMode.compare( CFG_VAL_COLOR_MODE_FUSED_LINES ) == 0 )
+    return TColorFunction::FUSED_LINES;
+  else if( strMode.compare( CFG_VAL_COLOR_MODE_FUNCTION_LINE ) == 0 )
+    return TColorFunction::FUNCTION_LINE;
+
+  return TColorFunction::CODE_COLOR;
+}
+
+
+void CFGLoader::dumpColorMode( TColorFunction whichColorMode, std::ostream& whichFile )
+{
+  if ( whichColorMode == TColorFunction::CODE_COLOR )
+    whichFile << OLDCFG_VAL_COLOR_MODE_CODE;
+  else if ( whichColorMode == TColorFunction::GRADIENT )
+    whichFile << OLDCFG_VAL_COLOR_MODE_GRADIENT;
+  else if ( whichColorMode == TColorFunction::NOT_NULL_GRADIENT )
+    whichFile << OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT;
+  else if ( whichColorMode == TColorFunction::ALTERNATIVE_GRADIENT )
+    whichFile << CFG_VAL_COLOR_MODE_ALTERNATIVE_GRADIENT;
+  else if ( whichColorMode == TColorFunction::PUNCTUAL )
+    whichFile << CFG_VAL_COLOR_MODE_PUNCTUAL;
+  else if ( whichColorMode == TColorFunction::FUSED_LINES )
+    whichFile << CFG_VAL_COLOR_MODE_FUSED_LINES;
+  else if ( whichColorMode == TColorFunction::FUNCTION_LINE )
+    whichFile << CFG_VAL_COLOR_MODE_FUNCTION_LINE;
 }
 
 
@@ -1609,18 +1652,7 @@ bool WindowColorMode::parseLine( KernelConnection *whichKernel, istringstream& l
   if( windows[ windows.size() - 1 ]->isFunctionLineColorSet() )
     return true;
 
-  if ( strMode.compare( OLDCFG_VAL_COLOR_MODE_CODE ) == 0 )
-    windows[ windows.size() - 1 ]->setCodeColorMode();
-  else if ( strMode.compare( OLDCFG_VAL_COLOR_MODE_GRADIENT ) == 0 )
-    windows[ windows.size() - 1 ]->setGradientColorMode();
-  else if ( strMode.compare( OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT ) == 0 )
-    windows[ windows.size() - 1 ]->setNotNullGradientColorMode();
-  else if ( strMode.compare( CFG_VAL_COLOR_MODE_ALTERNATIVE_GRADIENT ) == 0 )
-    windows[ windows.size() - 1 ]->setAlternativeGradientColorMode();
-  else if( strMode.compare( CFG_VAL_COLOR_MODE_PUNCTUAL ) == 0 )
-    windows[ windows.size() - 1 ]->setPunctualColorMode();
-  else if( strMode.compare( CFG_VAL_COLOR_MODE_FUSED_LINES ) == 0 )
-    windows[ windows.size() - 1 ]->setFusedLinesColorMode();
+  windows[ windows.size() - 1 ]->getSemanticColor().setColorMode( CFGLoader::parseColorMode( strMode ) );
 
   return true;
 }
@@ -1629,7 +1661,8 @@ bool WindowColorMode::parseLine( KernelConnection *whichKernel, istringstream& l
 void WindowColorMode::printLine( ofstream& cfgFile,
                                  const vector<Timeline *>::const_iterator it )
 {
-  CFGLoader::dumpColorMode( *it, cfgFile );
+  cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " ";
+  CFGLoader::dumpColorMode( (*it)->getSemanticColor().getColorMode(), cfgFile );
   cfgFile << std::endl;
 }
 
@@ -2004,20 +2037,7 @@ bool WindowUnits::parseLine( KernelConnection *whichKernel, istringstream& line,
 
   getline( line, strUnits, ' ' );
 
-  if ( strUnits.compare( OLDCFG_VAL_TIMEUNIT_NS ) == 0 )
-    windows[ windows.size() - 1 ]->setTimeUnit( NS );
-  else if ( strUnits.compare( OLDCFG_VAL_TIMEUNIT_US ) == 0 )
-    windows[ windows.size() - 1 ]->setTimeUnit( US );
-  else if ( strUnits.compare( OLDCFG_VAL_TIMEUNIT_MS ) == 0 )
-    windows[ windows.size() - 1 ]->setTimeUnit( MS );
-  else if ( strUnits.compare( OLDCFG_VAL_TIMEUNIT_S ) == 0 )
-    windows[ windows.size() - 1 ]->setTimeUnit( SEC );
-  else if ( strUnits.compare( OLDCFG_VAL_TIMEUNIT_M ) == 0 )
-    windows[ windows.size() - 1 ]->setTimeUnit( MIN );
-  else if ( strUnits.compare( OLDCFG_VAL_TIMEUNIT_H ) == 0 )
-    windows[ windows.size() - 1 ]->setTimeUnit( HOUR );
-  else if ( strUnits.compare( OLDCFG_VAL_TIMEUNIT_D ) == 0 )
-    windows[ windows.size() - 1 ]->setTimeUnit( DAY );
+  windows[ windows.size() - 1 ]->setTimeUnit( CFGLoader::parseTimeUnit( strUnits ) );
 
   return true;
 }
@@ -2025,7 +2045,8 @@ bool WindowUnits::parseLine( KernelConnection *whichKernel, istringstream& line,
 void WindowUnits::printLine( ofstream& cfgFile,
                              const vector<Timeline *>::const_iterator it )
 {
-  CFGLoader::dumpTimeUnits( *it, cfgFile );
+  cfgFile << OLDCFG_TAG_WNDW_UNITS << " ";
+  CFGLoader::dumpTimeUnits( (*it)->getTimeUnit(), cfgFile );
   cfgFile << endl;
 }
 

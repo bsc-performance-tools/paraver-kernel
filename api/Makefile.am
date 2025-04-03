@@ -19,6 +19,7 @@ libparaver_api_la_SOURCES = \
                     localkernel.cpp \
                     output.cpp \
                     paraverconfig.cpp \
+                    ParaverMetadataManager.cpp \
                     previousfiles.cpp \
                     progresscontroller.cpp \
                     recordlist.cpp \
@@ -68,6 +69,7 @@ include_HEADERS = \
                   paraverkernelexception.h \
                   paraverkerneltypes.h \
                   paraverlabels.h \
+                  ParaverMetadataManager.h \
                   paravertypes.h \
                   previousfiles.h \
                   progresscontroller.h \

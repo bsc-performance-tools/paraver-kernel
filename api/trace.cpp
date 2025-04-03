@@ -25,6 +25,7 @@
 
 #include "csvsymbolsparser.h"
 #include "kernelconnection.h"
+#include "ParaverMetadataManager.h"
 #include "paraverconfig.h"
 #include "progresscontroller.h"
 #include "trace.h"
@@ -621,20 +622,9 @@ PRV_UINT64 TraceProxy::getCutterLastEndTime()
 }
 
 
-PRV_UINT64 TraceProxy::getCutterOffset()
+const MetadataManager& TraceProxy::getMetadata() const
 {
-  return myTrace->getCutterOffset();
-}
-
-PRV_UINT64 TraceProxy::getCutterBeginTime()
-{
-  return myTrace->getCutterBeginTime();
-}
-
-
-PRV_UINT64 TraceProxy::getCutterEndTime()
-{
-  return myTrace->getCutterEndTime();
+  return myTrace->getMetadata();
 }
 
 

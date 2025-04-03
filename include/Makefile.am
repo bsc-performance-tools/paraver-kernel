@@ -48,7 +48,6 @@ noinst_HEADERS = \
                           noloadblocks.h\
                           noloadexception.h\
                           noloadtrace.h\
-                          ParaverMetadataManager.h \
                           plainblocks.h\
                           plaintrace.h\
                           plaintypes.h\

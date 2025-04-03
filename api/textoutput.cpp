@@ -27,6 +27,7 @@
 #include "labelconstructor.h"
 #include "csvsymbolsparser.h"
 #include "cfg.h"
+#include "ParaverMetadataManager.h"
 
 using namespace std;
 
@@ -393,12 +394,13 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
 
 void TextOutput::dumpMetadata( Timeline *whichTimeline, std::ofstream& whichFile ) const
 {
-  whichFile << "#";
-  CFGLoader::dumpTimeUnits( whichTimeline, whichFile );
-  whichFile << std::endl;
+  CSVMetadataAction tmpMetadata( MetadataManager::getCurrentDate(),
+                                  CSVMetadataAction::RUNAPP_APPLICATION_ID,
+                                  CSVMetadataAction::ORIGINAL_APPLICATION_ID,
+                                  whichTimeline->getTimeUnit(),
+                                  whichTimeline->getSemanticColor().getColorMode() );
 
-  whichFile << "#";
-  CFGLoader::dumpColorMode( whichTimeline, whichFile );
+  tmpMetadata.write( whichFile );
   whichFile << std::endl;
 }
 
