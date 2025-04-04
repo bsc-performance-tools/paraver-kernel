@@ -144,7 +144,8 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel, bool createHistog
   globalIndexLink = 0;
 }
 
-bool HistogramProxy::setParents( std::vector< Histogram * >& whichParents )
+
+bool HistogramProxy::linkToParents( const std::vector< Histogram * >& whichParents )
 {
   if ( whichParents.size() != 2 )
     return false;
@@ -155,18 +156,27 @@ bool HistogramProxy::setParents( std::vector< Histogram * >& whichParents )
   whichParents[0]->addChild( this );
   whichParents[1]->addChild( this );
 
+  return true;
+}
+
+
+bool HistogramProxy::setParents( std::vector< Histogram * >& whichParents )
+{
+  if ( !linkToParents( whichParents ) )
+    return false;
+
   // Parents related info
   myTrace = parent1->getTrace(); // Only for further queries, may not be necessary
+  myHisto = myKernel->newDerivedHistogram( parent1, parent2 );
+
   currentStat = parent1->getCurrentStat();
-  
+
   sortSemanticColumns = parent1->getSemanticSortColumns();
   sortSemanticReverse = parent1->getSemanticSortReverse();
   currentSemanticSort = parent1->getCurrentSemanticSort();
   customSemanticSort = parent1->getCustomSemanticSort();
   fixedSemanticSort = parent1->getFixedSemanticSort();
   setSemanticSortCriteria( parent1->getSemanticSortCriteria() );
-
-  myHisto = myKernel->newDerivedHistogram( parent1, parent2 );
 
   setControlWindow( parent1->getControlWindow() );
   setDataWindow( parent1->getDataWindow() );
@@ -204,7 +214,6 @@ HistogramProxy::~HistogramProxy()
     dataWindow->unsetUsedByHistogram( this );
   if( extraControlWindow != nullptr )
     extraControlWindow->unsetUsedByHistogram( this );
-std::cout <<"HistogramProxy::~HistogramProxy" <<std::endl;
   if( derivedHistogram )
   {
     parent1->removeChild( this );
@@ -1436,12 +1445,12 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->derivedHistogram = derivedHistogram;
   if ( derivedHistogram )
   {
-    clonedHistogramProxy->parent1 = parent1;
-    clonedHistogramProxy->parent2 = parent2;
-    parent1->addChild( clonedHistogramProxy );
-    parent2->addChild( clonedHistogramProxy );
+    clonedHistogramProxy->linkToParents( { parent1, parent2 } );
 
+    // TODO: think: is a clone of an intermediate derived histogram
     // clonedHistogramProxy->children = children; // TODO: not sure; seems copying is wrong
+
+    clonedHistogramProxy->setDerivedOperation( getDerivedOperation() );
   }
 
   clonedHistogramProxy->posX = posX;

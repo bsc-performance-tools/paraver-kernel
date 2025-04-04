@@ -1133,6 +1133,9 @@ class HistogramProxy : public Histogram
 
     void fillSemanticSort();
 
+    // Derived histograms
+    bool linkToParents( const std::vector< Histogram * >& whichParents );
+
     friend Histogram *Histogram::create( KernelConnection * );
     friend Histogram *Histogram::create( KernelConnection *whichKernel, Histogram *parent1, Histogram *parent2 );
 };
