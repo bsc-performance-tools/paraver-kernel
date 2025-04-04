@@ -7,6 +7,7 @@ noinst_HEADERS = \
                           cube_impl.h \
                           cubebuffer.h\
                           cubebuffer_impl.h \
+                          derivedhistogrammanagement.h\
                           filtermanagement.h\
                           functionmanagement.h\
                           functionmanagement_impl.h \
