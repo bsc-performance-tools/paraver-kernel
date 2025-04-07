@@ -47,7 +47,7 @@ class Histogram
 {
   public:
     static Histogram *create( KernelConnection *whichKernel );
-    static Histogram *create( KernelConnection *whichKernel, Histogram *parent1, Histogram *parent2 );
+    static Histogram *create( KernelConnection *whichKernel, std::vector< Histogram * > parents );
 
     Histogram() {};
     Histogram( KernelConnection *whichKernel );
@@ -69,7 +69,7 @@ class Histogram
     
     // Specific methods for Derived Histograms
     virtual bool isDerivedHistogram() const = 0;
-    virtual bool setParents( std::vector< Histogram * >& whichParents )
+    virtual bool setParents( const std::vector< Histogram * >& whichParents )
     {
       return true;
     }
@@ -725,7 +725,7 @@ class HistogramProxy : public Histogram
     Histogram *getConcrete() const;
 
     virtual bool isDerivedHistogram() const override;
-    virtual bool setParents( std::vector< Histogram * >& whichParents ) override;
+    virtual bool setParents( const std::vector< Histogram * >& whichParents ) override;
     virtual Histogram *getParent( PRV_UINT16 whichParent ) const override;
     virtual void addChild( Histogram *whichHistogram ) override;
     virtual void removeChild( Histogram *whichHistogram ) override;
@@ -1113,8 +1113,7 @@ class HistogramProxy : public Histogram
 
     // Derived Histogram
     bool derivedHistogram;
-    Histogram *parent1 = nullptr;
-    Histogram *parent2 = nullptr;
+    std::vector< Histogram * > parents {};
     std::set< Histogram * > children;
 
     // CFG4D
@@ -1129,7 +1128,7 @@ class HistogramProxy : public Histogram
     SelectionManagement< TObjectOrder, TTraceLevel > rowSelection;
 
     HistogramProxy( KernelConnection *whichKernel, bool createHistogram = true, bool isDerivedHistogram = false );
-    HistogramProxy( KernelConnection *whichKernel, Histogram *whichParent1, Histogram *whichParent2 );
+    HistogramProxy( KernelConnection *whichKernel, const std::vector< Histogram * >& whichParents );
 
     void fillSemanticSort();
 
@@ -1137,7 +1136,7 @@ class HistogramProxy : public Histogram
     bool linkToParents( const std::vector< Histogram * >& whichParents );
 
     friend Histogram *Histogram::create( KernelConnection * );
-    friend Histogram *Histogram::create( KernelConnection *whichKernel, Histogram *parent1, Histogram *parent2 );
+    friend Histogram *Histogram::create( KernelConnection *whichKernel, std::vector< Histogram * > parents );
 };
 
 

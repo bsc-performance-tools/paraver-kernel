@@ -52,7 +52,7 @@ class LocalKernel: public KernelConnection
     virtual Timeline *newDerivedWindow() const override;
     virtual Timeline *newDerivedWindow( Timeline *window1, Timeline * window2 ) const override;
     virtual Histogram *newHistogram() const override;
-    virtual Histogram *newDerivedHistogram( Histogram *histogram1, Histogram *histogram2 ) const override;
+    virtual Histogram *newDerivedHistogram( std::vector< Histogram * > parents ) const override;
 
 //    virtual RecordList *newRecordList() const;
     virtual ProgressController *newProgressController() const override;

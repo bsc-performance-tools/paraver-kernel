@@ -3895,7 +3895,7 @@ bool Analyzer2DType::parseLine( KernelConnection *whichKernel,
   // else
   // {
   histograms.pop_back();
-  histograms.push_back( Histogram::create( whichKernel, nullptr, nullptr ) );
+  histograms.push_back( Histogram::create( whichKernel, {} ) );
   // }
 
   histograms[ histograms.size() - 1 ]->setCFG4DMode( false );

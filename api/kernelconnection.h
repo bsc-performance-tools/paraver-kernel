@@ -82,7 +82,7 @@ class KernelConnection
     virtual Timeline *newDerivedWindow() const = 0;
     virtual Timeline *newDerivedWindow( Timeline *window1, Timeline * window2 ) const = 0;
     virtual Histogram *newHistogram() const = 0;
-    virtual Histogram *newDerivedHistogram( Histogram *histogram1, Histogram *histogram2 ) const = 0;
+    virtual Histogram *newDerivedHistogram( std::vector< Histogram * > parents ) const = 0;
 
     virtual ProgressController *newProgressController() const = 0;
     virtual Filter *newFilter( Filter *concreteFilter ) const = 0;
