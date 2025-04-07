@@ -1107,7 +1107,7 @@ class HistogramProxy : public Histogram
     GradientColor myGradientColor;
     GradientColor myAltGradientColor{ std::vector<rgb>{ {0,255,0}, {255,255,0}, {255,0,0} } };
 
-    Histogram *myHisto;
+    Histogram *myHisto = nullptr;
 
     int number_of_clones;
 
