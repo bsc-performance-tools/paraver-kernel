@@ -758,7 +758,7 @@ void CFGLoader::pushbackHistogram( Histogram *whichHistogram, vector<Histogram *
 {
   if ( whichHistogram->isDerivedHistogram() )
   {
-    for ( PRV_UINT16 i = 1; i > 0; --i )
+    for ( const PRV_UINT16 i: { 1, 0 }  )
       pushbackHistogram( whichHistogram->getParent( i ), allHistograms );
   }
 
