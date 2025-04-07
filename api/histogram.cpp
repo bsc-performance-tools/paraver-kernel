@@ -216,10 +216,11 @@ HistogramProxy::~HistogramProxy()
     extraControlWindow->unsetUsedByHistogram( this );
   if( derivedHistogram )
   {
-    parent1->removeChild( this );
-    parent2->removeChild( this );
-    parent1 = nullptr;
-    parent2 = nullptr;
+    // TODO: change to vector
+    std::vector< PRV_UINT16 > parents = { 0, 1 };
+    std::for_each( parents.cbegin(), parents.cend(), [this]( const auto &i ) { Histogram *p = getParent( i );
+                                                                               p->removeChild( this );
+                                                                               p = nullptr; } );
   }
 
   if( sync )
