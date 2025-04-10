@@ -156,6 +156,7 @@ class CFGLoader
   private:
     static std::map<std::string, TagFunction *> cfgTagFunctions;
     static bool firstMapLoaded;
+    static std::stringstream cfgFile;
 
     static void loadMap();
     static void unLoadMap();
@@ -173,6 +174,7 @@ class CFGLoader
     static bool loadDescription( const std::string& filename, std::string& description );
 
     static bool getCFGTag( std::ifstream& cfgFile, std::string& strLine, std::istringstream& auxStream, std::string& cfgTag );
+    static bool getCFGTag( std::string& strLine, std::istringstream& auxStream, std::string& cfgTag );
 
     static bool loadCFG( KernelConnection *whichKernel,
                          const std::string& filename,
@@ -180,8 +182,18 @@ class CFGLoader
                          std::vector<Timeline *>& windows,
                          std::vector<Histogram *>& histograms,
                          SaveOptions &options );
+    static bool loadCFG( KernelConnection *whichKernel,
+                         Trace *whichTrace,
+                         std::vector<Timeline *>& windows,
+                         std::vector<Histogram *>& histograms,
+                         SaveOptions &options,
+                         bool overrideChecks = true );
     static bool saveCFG( const std::string& filename,
                          const SaveOptions& options,
+                         const std::vector<Timeline *>& windows,
+                         const std::vector<Histogram *>& histograms,
+                         const std::vector<CFGS4DLinkedPropertiesManager>& linkedProperties );
+    static bool saveCFG( const SaveOptions& options,
                          const std::vector<Timeline *>& windows,
                          const std::vector<Histogram *>& histograms,
                          const std::vector<CFGS4DLinkedPropertiesManager>& linkedProperties );
@@ -347,7 +359,7 @@ class WindowName: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -370,7 +382,7 @@ class WindowType: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -394,7 +406,7 @@ class WindowFactors: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -418,7 +430,7 @@ class WindowShifts: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -442,7 +454,7 @@ class WindowPositionX: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -466,7 +478,7 @@ class WindowPositionY: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -490,7 +502,7 @@ class WindowWidth: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -514,7 +526,7 @@ class WindowHeight: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -538,7 +550,7 @@ class WindowCommLines: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -562,7 +574,7 @@ class WindowFlagsEnabled: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -586,7 +598,7 @@ class WindowNonColorMode: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -610,7 +622,7 @@ class WindowColorMode: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -634,7 +646,7 @@ class WindowGradientFunction: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -658,7 +670,7 @@ class WindowCustomColorEnabled: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -681,7 +693,7 @@ class WindowCustomBackgroundColor: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -704,7 +716,7 @@ class WindowCustomAxisColor: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -727,7 +739,7 @@ class WindowCustomPunctualColor: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -750,7 +762,7 @@ class WindowCustomColorPalette: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -773,7 +785,7 @@ class WindowCustomBackgroundAsZero: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -796,7 +808,7 @@ class WindowSemanticScaleMinAtZero: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -819,7 +831,7 @@ class WindowUnits: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -843,7 +855,7 @@ class WindowOperation: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -867,7 +879,7 @@ class WindowMaximumY: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -891,7 +903,7 @@ class WindowMinimumY: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -915,7 +927,7 @@ class WindowComputeYMax: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const SaveOptions& options,
                            const std::vector<Timeline *>::const_iterator it );
 
@@ -940,7 +952,7 @@ class WindowLevel: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -964,7 +976,7 @@ class WindowZoomObjects: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -988,7 +1000,7 @@ class WindowIdentifiers: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>& allWindows,
                            const std::vector<Timeline *>::const_iterator it );
 
@@ -1013,7 +1025,7 @@ class WindowScaleRelative: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const SaveOptions& options,
                            const std::vector<Timeline *>::const_iterator it );
 
@@ -1038,7 +1050,7 @@ class WindowEndTimeRelative: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const SaveOptions& options,
                            const std::vector<Timeline *>::const_iterator it );
 
@@ -1063,7 +1075,7 @@ class WindowObject: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1087,7 +1099,7 @@ class WindowBeginTime: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const SaveOptions& options,
                            const std::vector<Timeline *>::const_iterator it );
 
@@ -1112,7 +1124,7 @@ class WindowEndTime: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const SaveOptions& options,
                            const std::vector<Timeline *>::const_iterator it );
 
@@ -1137,7 +1149,7 @@ class WindowStopTime: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const SaveOptions& options,
                            const std::vector<Timeline *>::const_iterator it );
 
@@ -1162,7 +1174,7 @@ class WindowBeginTimeRelative: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const SaveOptions& options,
                            const std::vector<Timeline *>::const_iterator it );
 
@@ -1187,7 +1199,7 @@ class WindowNumberOfRow: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1210,7 +1222,7 @@ class WindowSelectedFunctions: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1234,7 +1246,7 @@ class WindowComposeFunctions: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1258,7 +1270,7 @@ class WindowSemanticModule: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1282,7 +1294,7 @@ class WindowFilterModule: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1306,7 +1318,7 @@ class WindowFilterLogical: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1328,7 +1340,7 @@ class WindowFilterPhysical: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1350,7 +1362,7 @@ class WindowFilterIntraComms: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1372,7 +1384,7 @@ class WindowFilterInterComms: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1394,7 +1406,7 @@ class WindowFilterBoolOpFromTo: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1418,7 +1430,7 @@ class WindowFilterBoolOpTagSize: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1442,7 +1454,7 @@ class WindowFilterBoolOpTypeVal: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1466,7 +1478,7 @@ class WindowOpen: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it,
                            const std::vector<Timeline *>& forcedOpenWindows );
 
@@ -1491,7 +1503,7 @@ class WindowDrawMode: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1515,7 +1527,7 @@ class WindowDrawModeRows: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1539,7 +1551,7 @@ class WindowPixelSize: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1562,7 +1574,7 @@ class WindowLabelsToDraw: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1585,7 +1597,7 @@ class WindowObjectAxisSize: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1608,7 +1620,7 @@ class WindowPunctualColorWindow: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>& allWindows,
                            const std::vector<Timeline *>::const_iterator it );
 
@@ -1632,7 +1644,7 @@ class WindowSynchronize: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1656,7 +1668,7 @@ class Analyzer2DCreate: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1680,7 +1692,7 @@ class Analyzer2DName: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1704,7 +1716,7 @@ class Analyzer2DX: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1728,7 +1740,7 @@ class Analyzer2DY: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1752,7 +1764,7 @@ class Analyzer2DWidth: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1776,7 +1788,7 @@ class Analyzer2DHeight: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1800,7 +1812,7 @@ class Analyzer2DControlWindow: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>& allWindows,
                            const std::vector<Histogram *>::const_iterator it );
 
@@ -1825,7 +1837,7 @@ class Analyzer2DDataWindow: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>& allWindows,
                            const std::vector<Histogram *>::const_iterator it );
 
@@ -1850,7 +1862,7 @@ class Analyzer2DStatistic: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1874,7 +1886,7 @@ class Analyzer2DCalculateAll: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1898,7 +1910,7 @@ class Analyzer2DHideColumns: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1922,7 +1934,7 @@ class Analyzer2DHorizontal: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1946,7 +1958,7 @@ class Analyzer2DColor: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1970,7 +1982,7 @@ class Analyzer2DSemanticColor: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1994,7 +2006,7 @@ class Analyzer2DZoom: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2018,7 +2030,7 @@ class Analyzer2DAccumulator: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2042,7 +2054,7 @@ class Analyzer2DAccumulateByControlWindow: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2066,7 +2078,7 @@ class Analyzer2DSortCols: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2090,7 +2102,7 @@ class Analyzer2DSortCriteria: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2114,7 +2126,7 @@ class Analyzer2DSortReverse: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2138,7 +2150,7 @@ class Analyzer2DParameters: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2162,7 +2174,7 @@ class Analyzer2DAnalysisLimits: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const SaveOptions& options,
                            const std::vector<Histogram *>::const_iterator it );
 
@@ -2187,7 +2199,7 @@ class Analyzer2DRelativeTime: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2211,7 +2223,7 @@ class Analyzer2DComputeYScale: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const SaveOptions& options,
                            const std::vector<Histogram *>::const_iterator it );
 
@@ -2235,7 +2247,7 @@ class Analyzer2DComputeYScaleZero: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const SaveOptions& options,
                            const std::vector<Histogram *>::const_iterator it );
 
@@ -2259,7 +2271,7 @@ class Analyzer2DMinimum: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2283,7 +2295,7 @@ class Analyzer2DMaximum: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2307,7 +2319,7 @@ class Analyzer2DDelta: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2331,7 +2343,7 @@ class Analyzer2DUseCustomDelta: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2355,7 +2367,7 @@ class Analyzer2DUseFixedDelta: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2379,7 +2391,7 @@ class Analyzer2DNumColumns: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2403,7 +2415,7 @@ class Analyzer2DComputeGradient: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const SaveOptions& options,
                            const std::vector<Histogram *>::const_iterator it );
 
@@ -2427,7 +2439,7 @@ class Analyzer2DMinimumGradient: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2451,7 +2463,7 @@ class Analyzer2DMaximumGradient: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2474,7 +2486,7 @@ class Analyzer2DObjects: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2497,7 +2509,7 @@ class Analyzer2DDrawModeObjects: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2520,7 +2532,7 @@ class Analyzer2DDrawModeColumns: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2543,7 +2555,7 @@ class Analyzer2DPixelSize: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2566,7 +2578,7 @@ class Analyzer2DCodeColor: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2590,7 +2602,7 @@ class Analyzer2DColorMode: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2614,7 +2626,7 @@ class Analyzer2DOnlyTotals: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2638,7 +2650,7 @@ class Analyzer2DShortLabels: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2661,7 +2673,7 @@ class Analyzer2DSynchronize: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2685,7 +2697,7 @@ class Analyzer3DControlWindow: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Timeline *>& allWindows,
                            const std::vector<Histogram *>::const_iterator it );
 
@@ -2710,7 +2722,7 @@ class Analyzer3DComputeYScale: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const SaveOptions& options,
                            const std::vector<Histogram *>::const_iterator it );
 
@@ -2735,7 +2747,7 @@ class Analyzer3DMinimum: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2759,7 +2771,7 @@ class Analyzer3DMaximum: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2783,7 +2795,7 @@ class Analyzer3DDelta: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2807,7 +2819,7 @@ class Analyzer3DFixedValue: public TagFunction
                             Trace *whichTrace,
                             std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
-    static void printLine( std::ofstream& cfgFile,
+    static void printLine( std::ostream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2833,9 +2845,9 @@ class TagAliasCFG4D: public TagFunction
 
     static const std::string &getTagCFG() { return tagCFG; }
 
-    static void printAliasList( std::ofstream& cfgFile,
+    static void printAliasList( std::stringstream& cfgFile,
                                 const std::vector<Timeline *>::const_iterator it );
-    static void printAliasList( std::ofstream& cfgFile,
+    static void printAliasList( std::stringstream& cfgFile,
                                 const std::vector<Histogram *>::const_iterator it );
 
   protected:
@@ -2860,7 +2872,7 @@ class TagLinkCFG4D: public TagFunction
     static const std::string &getTagCFG() { return tagCFG; }
 
     template< typename T >
-    static void printLinkList( std::ofstream& cfgFile,
+    static void printLinkList( std::stringstream& cfgFile,
                                const CFGS4DLinkedPropertiesManager& linkedProperties,
                                const T *window );
 
@@ -2884,7 +2896,7 @@ class TagAliasStatisticCFG4D: public TagFunction
 
     static const std::string &getTagCFG() { return tagCFG; }
 
-    static void printAliasList( std::ofstream& cfgFile,
+    static void printAliasList( std::stringstream& cfgFile,
                                 const std::vector<Histogram *>::const_iterator it );
 
   protected:
@@ -2907,7 +2919,7 @@ class TagAliasParamCFG4D: public TagFunction
 
     static const std::string &getTagCFG() { return tagCFG; }
 
-    static void printAliasList( std::ofstream& cfgFile,
+    static void printAliasList( std::stringstream& cfgFile,
                                 const std::vector<Timeline *>::const_iterator it );
 
   protected:
