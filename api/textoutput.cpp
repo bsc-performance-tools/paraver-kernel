@@ -396,7 +396,7 @@ void TextOutput::dumpMetadata( Timeline *whichTimeline, std::ofstream& whichFile
 {
   CSVMetadataAction tmpMetadata( MetadataManager::getCurrentDate(),
                                   CSVMetadataAction::RUNAPP_APPLICATION_ID,
-                                  CSVMetadataAction::ORIGINAL_APPLICATION_ID,
+                                  whichTimeline->getTrace()->getFileName(),
                                   whichTimeline->getTimeUnit(),
                                   whichTimeline->getSemanticColor().getColorMode() );
 
