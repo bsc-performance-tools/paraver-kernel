@@ -25,22 +25,23 @@
 #pragma once
 
 #include <algorithm>
+#include <fstream>
+#include <istream>
 #include <functional>
 #include <map>
 #include <vector>
 #include <sstream>
-#include <fstream>
 #include <string>
 
 #include "cfgs4d.h"
+#include "eventlabels.h"
 #include "paraverkerneltypes.h"
 #include "paraverlabels.h"
-#include "eventlabels.h"
 #include "semanticcolor.h"
 
 class KernelConnection;
-class Timeline;
 class Trace;
+class Timeline;
 class Histogram;
 
 class TagFunction
@@ -156,7 +157,6 @@ class CFGLoader
   private:
     static std::map<std::string, TagFunction *> cfgTagFunctions;
     static bool firstMapLoaded;
-    static std::stringstream cfgFile;
 
     static void loadMap();
     static void unLoadMap();
@@ -170,33 +170,23 @@ class CFGLoader
   public:
     static bool hasCFGExtension( const std::string& filename );
     static bool isCFGFile( const std::string& filename );
-    static bool isDimemasCFGFile( const std::string& filename ); // TODO: here?
+    static bool isDimemasCFGFile( const std::string& filename );
     static bool loadDescription( const std::string& filename, std::string& description );
 
-    static bool getCFGTag( std::ifstream& cfgFile, std::string& strLine, std::istringstream& auxStream, std::string& cfgTag );
-    static bool getCFGTag( std::string& strLine, std::istringstream& auxStream, std::string& cfgTag );
-
-    static bool loadCFG( KernelConnection *whichKernel,
-                         const std::string& filename,
-                         Trace *whichTrace,
-                         std::vector<Timeline *>& windows,
-                         std::vector<Histogram *>& histograms,
-                         SaveOptions &options );
+    static bool getCFGTag( std::istream& cfgFile, std::string& strLine, std::istringstream& auxStream, std::string& cfgTag );
     static bool loadCFG( KernelConnection *whichKernel,
                          Trace *whichTrace,
+                         std::istream& cfgFile, 
                          std::vector<Timeline *>& windows,
                          std::vector<Histogram *>& histograms,
                          SaveOptions &options,
-                         bool overrideChecks = true );
-    static bool saveCFG( const std::string& filename,
+                         bool overrideChecks = false );
+    static bool saveCFG( std::ostream& cfgFile, 
                          const SaveOptions& options,
                          const std::vector<Timeline *>& windows,
                          const std::vector<Histogram *>& histograms,
                          const std::vector<CFGS4DLinkedPropertiesManager>& linkedProperties );
-    static bool saveCFG( const SaveOptions& options,
-                         const std::vector<Timeline *>& windows,
-                         const std::vector<Histogram *>& histograms,
-                         const std::vector<CFGS4DLinkedPropertiesManager>& linkedProperties );
+
     static int findWindow( const Timeline *whichWindow,
                            const std::vector<Timeline *>& allWindows );
     static int findWindowBackwards( const Timeline *whichWindow,
@@ -2845,9 +2835,9 @@ class TagAliasCFG4D: public TagFunction
 
     static const std::string &getTagCFG() { return tagCFG; }
 
-    static void printAliasList( std::stringstream& cfgFile,
+    static void printAliasList( std::ostream& cfgFile,
                                 const std::vector<Timeline *>::const_iterator it );
-    static void printAliasList( std::stringstream& cfgFile,
+    static void printAliasList( std::ostream& cfgFile,
                                 const std::vector<Histogram *>::const_iterator it );
 
   protected:
@@ -2872,7 +2862,7 @@ class TagLinkCFG4D: public TagFunction
     static const std::string &getTagCFG() { return tagCFG; }
 
     template< typename T >
-    static void printLinkList( std::stringstream& cfgFile,
+    static void printLinkList( std::ostream& cfgFile,
                                const CFGS4DLinkedPropertiesManager& linkedProperties,
                                const T *window );
 
@@ -2896,7 +2886,7 @@ class TagAliasStatisticCFG4D: public TagFunction
 
     static const std::string &getTagCFG() { return tagCFG; }
 
-    static void printAliasList( std::stringstream& cfgFile,
+    static void printAliasList( std::ostream& cfgFile,
                                 const std::vector<Histogram *>::const_iterator it );
 
   protected:
@@ -2919,7 +2909,7 @@ class TagAliasParamCFG4D: public TagFunction
 
     static const std::string &getTagCFG() { return tagCFG; }
 
-    static void printAliasList( std::stringstream& cfgFile,
+    static void printAliasList( std::ostream& cfgFile,
                                 const std::vector<Timeline *>::const_iterator it );
 
   protected:

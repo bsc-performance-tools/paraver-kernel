@@ -53,7 +53,6 @@ PRV_UINT16 numSemanticParamExtraComposesInWindow = 0;
 
 map<string, TagFunction *> CFGLoader::cfgTagFunctions;
 bool CFGLoader::firstMapLoaded = false;
-std::stringstream CFGLoader::cfgFile;
 
 string currentWindowName;
 string CFGLoader::errorLine = "";
@@ -499,8 +498,8 @@ bool CFGLoader::loadDescription( const std::string& filename, std::string& descr
   return false;
 }
 
-// TODO: refactor
-bool CFGLoader::getCFGTag( string& strLine, istringstream& auxStream, string& cfgTag )
+
+bool CFGLoader::getCFGTag( istream& cfgFile, string& strLine, istringstream& auxStream, string& cfgTag )
 {
   getline( cfgFile, strLine );
 
@@ -520,48 +519,10 @@ bool CFGLoader::getCFGTag( string& strLine, istringstream& auxStream, string& cf
   return true;
 }
 
-bool CFGLoader::getCFGTag( ifstream& cfgFile, string& strLine, istringstream& auxStream, string& cfgTag )
-{
-  getline( cfgFile, strLine );
-
-  if ( strLine.empty() || strLine[ 0 ] == '#' )
-    return false;
-
-  if ( strLine.back() == '\r' )
-    strLine.pop_back();
-
-  auxStream.str( strLine );
-
-  if ( strLine[ 0 ] == '<' )
-    cfgTag = strLine;
-  else
-    getline( auxStream, cfgTag, ' ' );
-
-  return true;
-}
-
-bool CFGLoader::loadCFG( KernelConnection *whichKernel,
-                         const string& filename,
-                         Trace *whichTrace,
-                         vector<Timeline *>& windows,
-                         vector<Histogram *>& histograms,
-                         SaveOptions &options )
-{
-  ifstream tmpCFGFile( filename.c_str() );
-  if ( !tmpCFGFile )
-    return false;
-  
-  cfgFile.clear();
-  cfgFile.str( "" );
-  cfgFile << tmpCFGFile.rdbuf();
-
-  tmpCFGFile.close();
-
-  return ( CFGLoader::loadCFG( whichKernel, whichTrace, windows, histograms, options, false ) );
-}
 
 bool CFGLoader::loadCFG( KernelConnection *whichKernel,
                          Trace *whichTrace,
+                         std::istream& cfgFile,
                          vector<Timeline *>& windows,
                          vector<Histogram *>& histograms,
                          SaveOptions &options,
@@ -593,7 +554,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   {
     auxStream.clear();
 
-    if( !CFGLoader::getCFGTag( strLine, auxStream, cfgTag ) )
+    if( !CFGLoader::getCFGTag( cfgFile, strLine, auxStream, cfgTag ) )
       continue;
 
     if ( strLine.compare( CFG_TAG_CFG4D_ENABLED ) == 0 )
@@ -745,8 +706,8 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   return true;
 }
 
-void CFGLoader::pushbackWindow( Timeline *whichWindow,
-                                vector<Timeline *>& allWindows )
+
+void CFGLoader::pushbackWindow( Timeline *whichWindow, vector<Timeline *>& allWindows )
 {
   if ( whichWindow->isDerivedWindow() )
   {
@@ -801,28 +762,8 @@ void CFGLoader::pushbackAllWindows( const vector<Timeline *>& selectedWindows,
 }
 
 
-bool CFGLoader::saveCFG( const string& filename,
+bool CFGLoader::saveCFG( std::ostream& cfgFile,
                          const SaveOptions& options,
-                         const vector<Timeline *>& windows,
-                         const vector<Histogram *>& histograms,
-                         const vector<CFGS4DLinkedPropertiesManager>& linkedProperties )
-{
-  ofstream tmpCFGFile( filename.c_str() );
-  if ( !tmpCFGFile )
-    return false;
-
-  if ( saveCFG( options, windows, histograms, linkedProperties ) )
-  {
-    tmpCFGFile << cfgFile.str();
-  }
-
-  tmpCFGFile.close();
-
-  return true;
-}
-
-
-bool CFGLoader::saveCFG( const SaveOptions& options,
                          const vector<Timeline *>& windows,
                          const vector<Histogram *>& histograms,
                          const vector<CFGS4DLinkedPropertiesManager>& linkedProperties )
@@ -832,8 +773,6 @@ bool CFGLoader::saveCFG( const SaveOptions& options,
 
   syncRealGroup.clear();
   lastSyncGroupUsed = 0;
-  cfgFile.clear();
-  cfgFile.str( "" );
 
   initDrawModeTags();
 
@@ -6150,7 +6089,7 @@ bool TagAliasCFG4D::parseLine( KernelConnection *whichKernel,
 }
 
 
-void TagAliasCFG4D::printAliasList( stringstream& cfgFile,
+void TagAliasCFG4D::printAliasList( std::ostream& cfgFile,
                                     const vector<Timeline *>::const_iterator it )
 {
   map< string, string > tmpAlias( (*it)->getCFG4DAliasList() );
@@ -6163,7 +6102,7 @@ void TagAliasCFG4D::printAliasList( stringstream& cfgFile,
 }
 
 
-void TagAliasCFG4D::printAliasList( stringstream& cfgFile,
+void TagAliasCFG4D::printAliasList( std::ostream& cfgFile,
                                     const vector<Histogram *>::const_iterator it )
 {
   map< string, string > tmpAlias( (*it)->getCFG4DAliasList() );
@@ -6236,7 +6175,7 @@ bool TagLinkCFG4D::parseLine( KernelConnection *whichKernel,
 }
 
 template< typename T >
-void TagLinkCFG4D::printLinkList( std::stringstream& cfgFile,
+void TagLinkCFG4D::printLinkList( std::ostream& cfgFile,
                                   const CFGS4DLinkedPropertiesManager& linkedProperties,
                                   const T *window )
 {
@@ -6278,7 +6217,7 @@ bool TagAliasStatisticCFG4D::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void TagAliasStatisticCFG4D::printAliasList( stringstream& cfgFile,
+void TagAliasStatisticCFG4D::printAliasList( std::ostream& cfgFile,
                                              const vector<Histogram *>::const_iterator it )
 {
   map< string, string > tmpAlias( (*it)->getCFG4DStatisticsAliasList() );
@@ -6331,7 +6270,7 @@ bool TagAliasParamCFG4D::parseLine( KernelConnection *whichKernel,
 }
 
 
-void TagAliasParamCFG4D::printAliasList( stringstream& cfgFile,
+void TagAliasParamCFG4D::printAliasList( std::ostream& cfgFile,
                                          const vector<Timeline *>::const_iterator it )
 {
   Timeline::TParamAliasKey aliasKey;
