@@ -49,6 +49,8 @@ class SyncWindows
     TGroupId newGroup();
     TGroupId getNumGroups() const;
     void getGroups( std::vector< TGroupId >& groups ) const;
+    
+    bool isGroupCreated(TGroupId wichGroup) const;
     void removeAllGroups();
 
     void broadcastTime( TGroupId whichGroup, Timeline *sendWindow, TTime beginTime, TTime endTime );

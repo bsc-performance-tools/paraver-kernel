@@ -202,6 +202,12 @@ TGroupId SyncWindows::getNumGroups() const
   return syncGroupsTimeline.size();
 }
 
+bool SyncWindows::isGroupCreated(TGroupId wichGroup) const
+{
+  return !((syncGroupsTimeline.find(wichGroup) == syncGroupsTimeline.end()) || (syncGroupsHistogram.find(wichGroup) == syncGroupsHistogram.end()));
+}
+
+
 void SyncWindows::getGroups( vector< TGroupId >& groups ) const
 {
   for( std::map<TGroupId, std::vector<Timeline *> >::const_iterator it = syncGroupsTimeline.begin();
