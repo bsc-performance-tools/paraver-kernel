@@ -1498,7 +1498,24 @@ bool HistogramProxy::getDestroy() const
 
 void HistogramProxy::setDestroy( bool newValue )
 {
+  if( controlWindow != nullptr )
+   {
+    controlWindow->unsetUsedByHistogram( this );
+    controlWindow = nullptr;
+  }
+  if( dataWindow != nullptr )
+  {
+    dataWindow->unsetUsedByHistogram( this );
+    dataWindow = nullptr;
+  }
+  if( extraControlWindow != nullptr )
+  {
+    extraControlWindow->unsetUsedByHistogram( this );
+    extraControlWindow = nullptr;
+  }
+
   destroy = newValue;
+
 }
 
 
