@@ -51,11 +51,14 @@ class SelectionManagement
 
     void setSelected( std::vector< bool > &selection, LevelType level = (LevelType)0 );
     void setSelected( std::vector< SelType > &selection, SelType maxElems, LevelType level = (LevelType)0 );
+    void setIntersection(const SelectionManagement< SelType, LevelType > &selection);
+
 
     void getSelected( std::vector< bool > &selection, LevelType level = (LevelType)0 ) const;
     void getSelected( std::vector< bool > &selection, SelType first, SelType last, LevelType level = (LevelType)0 ) const;
     void getSelected( std::vector< SelType > &selection, LevelType level = (LevelType)0 ) const;
     void getSelected( std::vector< SelType > &selection, SelType first, SelType last, LevelType level = (LevelType)0 ) const;
+
 
     bool isSelectedPosition( SelType whichSelected, LevelType level = (LevelType)0 ) const;
     bool areAllSelected( LevelType level ) const;

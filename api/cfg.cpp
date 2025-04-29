@@ -751,14 +751,16 @@ void CFGLoader::pushbackAllWindows( const vector<Timeline *>& selectedWindows,
   for ( vector<Histogram *>::const_iterator it = selectedHistos.begin();
         it != selectedHistos.end(); ++it )
   {
-    checkTimelineAndPushback( true, ( *it )->getControlWindow() );
+    if(!( *it )->getDestroy()){
+      checkTimelineAndPushback( true, ( *it )->getControlWindow() );
 
-    checkTimelineAndPushback( ( *it )->getControlWindow() != ( *it )->getDataWindow(), ( *it )->getDataWindow() );
+      checkTimelineAndPushback( ( *it )->getControlWindow() != ( *it )->getDataWindow(), ( *it )->getDataWindow() );
 
-    checkTimelineAndPushback( ( *it )->getThreeDimensions() &&
-                               ( *it )->getExtraControlWindow() != ( *it )->getControlWindow() &&
-                               ( *it )->getExtraControlWindow() != ( *it )->getDataWindow(),
-                               ( *it )->getExtraControlWindow() );
+      checkTimelineAndPushback( ( *it )->getThreeDimensions() &&
+                                  ( *it )->getExtraControlWindow() != ( *it )->getControlWindow() &&
+                                  ( *it )->getExtraControlWindow() != ( *it )->getDataWindow(),
+                                  ( *it )->getExtraControlWindow() );
+      }
   }
 }
 

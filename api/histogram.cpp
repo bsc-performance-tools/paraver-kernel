@@ -1283,6 +1283,15 @@ pair <TObjectOrder, TObjectOrder> HistogramProxy::getZoomSecondDimension() const
 {
   return zoomHistory.getSecondDimension();
 }
+std::vector< TObjectOrder > HistogramProxy::getCurrentZoomRange() const
+{
+  vector< TObjectOrder > zoomRange;
+
+  zoomRange.push_back( getZoomSecondDimension().first );
+  zoomRange.push_back( getZoomSecondDimension().second );
+  
+  return zoomRange;
+}
 
 void HistogramProxy::addToSyncGroup( TGroupId whichGroup )
 {

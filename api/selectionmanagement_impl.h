@@ -325,6 +325,29 @@ void SelectionManagement< SelType, LevelType >::getSelected( std::vector< SelTyp
   }
 }
 
+template < typename SelType, typename LevelType >
+void SelectionManagement< SelType, LevelType >::setIntersection(const SelectionManagement< SelType, LevelType > &selection)
+{
+
+  for ( size_t itSet = 0 ; itSet < selected.size(); ++itSet )
+  {
+    std::vector< bool > selectionDerived;
+    selection.getSelected(selectionDerived,static_cast<LevelType>( itSet ) );
+
+    for ( size_t itSelection = 0 ; itSelection < selected[itSet].size(); ++itSelection )
+    {
+      if( selected[itSet][itSelection] != selectionDerived[itSelection] )
+      {
+        selected[itSet][itSelection] = false;
+        auto& vec = selectedSet[itSet];
+        vec.erase(std::remove(vec.begin(), vec.end(), itSelection), vec.end());
+      }          
+    }
+
+  }
+}
+
+
 
 template < typename SelType, typename LevelType >
 SelType SelectionManagement< SelType, LevelType >::shiftFirst( SelType whichFirst, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, LevelType level ) const

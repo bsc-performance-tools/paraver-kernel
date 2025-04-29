@@ -427,7 +427,10 @@ class Histogram
     {
       return std::pair<TObjectOrder, TObjectOrder>();
     }
-
+    virtual std::vector< TObjectOrder > getCurrentZoomRange() const
+    {
+      return std::vector< TObjectOrder >{};
+    }
     // Synchronize
     virtual void addToSyncGroup( TGroupId whichGroup )
     {}
@@ -845,6 +848,7 @@ class HistogramProxy : public Histogram
     virtual void setZoomSecondDimension( std::pair<TObjectOrder, TObjectOrder> &objects ) override;
     virtual std::pair<TZoomInfo, TZoomInfo> getZoomFirstDimension() const override;
     virtual std::pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const override;
+    virtual std::vector< TObjectOrder > getCurrentZoomRange() const override;
 
     virtual void addToSyncGroup( TGroupId whichGroup ) override;
     virtual void removeFromSync() override;
