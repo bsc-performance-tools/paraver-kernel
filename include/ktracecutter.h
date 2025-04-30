@@ -53,7 +53,7 @@ class KTraceCutter : public TraceCutter
     virtual void set_remFirstStates( bool remStates ) override;
     virtual void set_remLastStates( bool remStates ) override;
     virtual void set_keep_boundary_events( bool keepEvents ) override;
-    virtual void setCutterApplicationCaller( std::string caller ) override;
+    virtual void setCutterOriginCaller( std::string caller ) override;
 
     virtual void execute( std::string trace_in,
                           std::string trace_out,
@@ -151,7 +151,7 @@ class KTraceCutter : public TraceCutter
 
     struct selected_tasks wanted_tasks[MAX_SELECTED_TASKS];
     KTraceOptions *exec_options;
-    std::string cutterApplicationCaller;
+    std::string cutterOriginCaller;
 
     void read_cutter_params();
     void proces_cutter_header( const std::string &header, TraceStream *whichFile, FILE *outfile );

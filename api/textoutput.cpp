@@ -395,10 +395,10 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
 void TextOutput::dumpMetadata( Timeline *whichTimeline, std::ofstream& whichFile ) const
 {
   CSVMetadataAction tmpMetadata( MetadataManager::getCurrentDate(),
-                                  CSVMetadataAction::RUNAPP_APPLICATION_ID,
-                                  whichTimeline->getTrace()->getFileName(),
-                                  whichTimeline->getTimeUnit(),
-                                  whichTimeline->getSemanticColor().getColorMode() );
+                                 MetadataAction::RUNAPP_ORIGIN_ID,
+                                 whichTimeline->getTrace()->getFileName(),
+                                 whichTimeline->getTimeUnit(),
+                                 whichTimeline->getSemanticColor().getColorMode() );
 
   tmpMetadata.write( whichFile );
   whichFile << std::endl;

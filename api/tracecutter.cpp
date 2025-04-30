@@ -191,9 +191,9 @@ void TraceCutterProxy::set_keep_all_events( bool keepAllEvents )
   myTraceCutter->set_keep_all_events( keepAllEvents );
 }
 
-void TraceCutterProxy::setCutterApplicationCaller( string caller )
+void TraceCutterProxy::setCutterOriginCaller( string caller )
 {
-  myTraceCutter->setCutterApplicationCaller( caller );
+  myTraceCutter->setCutterOriginCaller( caller );
 }
 
 

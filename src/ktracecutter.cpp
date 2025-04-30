@@ -63,7 +63,7 @@ KTraceCutter::KTraceCutter( TraceOptions *options,
   exec_options = new KTraceOptions( (KTraceOptions *) options );
   HWCTypesInPCF.insert( whichHWCTypes.begin(), whichHWCTypes.end() );
   notHWCTypesInPCF.insert( whichNotHWCTypes.begin(), whichNotHWCTypes.end() );
-  cutterApplicationCaller = CutterMetadataAction::ORIGINAL_APPLICATION_ID;
+  cutterOriginCaller = MetadataAction::MANUAL_ORIGIN_ID;
   
   // PROFET
   firstApplicationFinished = false;
@@ -135,9 +135,9 @@ void KTraceCutter::set_keep_boundary_events( bool keepEvents )
 {
 }
 
-void KTraceCutter::setCutterApplicationCaller( std::string caller )
+void KTraceCutter::setCutterOriginCaller( std::string caller )
 {
-  cutterApplicationCaller = caller;
+  cutterOriginCaller = caller;
 }
 
 
@@ -216,7 +216,7 @@ void KTraceCutter::writeOffsetLine( T& whichFile,
     timeOffset = 0;
 
   CutterMetadataAction tmpData( MetadataManager::getCurrentDate(),
-                                cutterApplicationCaller,
+                                cutterOriginCaller,
                                 string( '"' + string( trace_in_name ) + '"'),
                                 (PRV_UINT64)timeOffset,   // first record of the trace
                                 (PRV_UINT64)timeCutBegin, // first time of the cut

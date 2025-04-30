@@ -73,16 +73,19 @@ std::string& cepba_tools::trim( std::string& s )
 /******************************************************************************
  ***                      MetadataAction                                    ***
  ******************************************************************************/
+constexpr char MetadataAction::RUNAPP_ORIGIN_ID[];
+constexpr char MetadataAction::MANUAL_ORIGIN_ID[];
+
 MetadataAction::MetadataAction( string date,
                     string action,
                     string application,
                     string originalTrace )
-  : date( date ), action( action ), application( application ), originalTrace( originalTrace )
+  : date( date ), action( action ), origin( application ), originalTrace( originalTrace )
 {}
 
 void MetadataAction::write( ostream& os ) const
 {
-  os << "#" << date << ":" << action << ":" << application << ":" << originalTrace << ":";
+  os << "#" << date << ":" << action << ":" << origin << ":" << originalTrace << ":";
 
   flushSpecificFields( os );
 }
@@ -98,16 +101,14 @@ ostream& operator<<( ostream& os, const MetadataAction& metadataRecord )
  ***                      CutterMetadataAction                              ***
  ******************************************************************************/
 constexpr char CutterMetadataAction::ACTION_ID[];
-constexpr char CutterMetadataAction::RUNAPP_APPLICATION_ID[];
-constexpr char CutterMetadataAction::ORIGINAL_APPLICATION_ID[];
 
 CutterMetadataAction::CutterMetadataAction( string date,
-                                            string application,
+                                            string origin,
                                             string originalTrace,
                                             PRV_UINT64 offset,
                                             PRV_UINT64 beginTime,
                                             PRV_UINT64 endTime )
-  : MetadataAction( date, CutterMetadataAction::ACTION_ID, application, originalTrace )
+  : MetadataAction( date, CutterMetadataAction::ACTION_ID, origin, originalTrace )
 {
   this->offset    = offset;
   this->beginTime = beginTime;
@@ -133,7 +134,7 @@ CutterMetadataAction::CutterMetadataAction( vector< string >& cutterMetadataFiel
   
   this->date          = cutterMetadataFields[ 0 ];
   this->action        = cutterMetadataFields[ 1 ];
-  this->application   = cutterMetadataFields[ 2 ];
+  this->origin        = cutterMetadataFields[ 2 ];
   this->originalTrace = cutterMetadataFields[ 3 ];
 
   /* FIELD 5: Offset */
@@ -192,15 +193,13 @@ void CutterMetadataAction::flushSpecificFields( ostream& os ) const
  ***                      CSVMetadataAction                                 ***
  ******************************************************************************/
 constexpr char CSVMetadataAction::ACTION_ID[];
-constexpr char CSVMetadataAction::RUNAPP_APPLICATION_ID[];
-constexpr char CSVMetadataAction::ORIGINAL_APPLICATION_ID[];
 
 CSVMetadataAction::CSVMetadataAction( string         date,
-                                      string         application,
+                                      string         origin,
                                       string         originalTrace,
                                       TTimeUnit      timeUnits,
                                       TColorFunction colorMode )
-  : MetadataAction( date, CSVMetadataAction::ACTION_ID, application, originalTrace )
+  : MetadataAction( date, CSVMetadataAction::ACTION_ID, origin, originalTrace )
 {
   this->timeUnits = timeUnits;
   this->colorMode = colorMode;
@@ -221,7 +220,7 @@ CSVMetadataAction::CSVMetadataAction( vector< string >& csvMetadataFields )
 
   this->date          = csvMetadataFields[ 0 ];
   this->action        = csvMetadataFields[ 1 ];
-  this->application   = csvMetadataFields[ 2 ];
+  this->origin        = csvMetadataFields[ 2 ];
   this->originalTrace = csvMetadataFields[ 3 ];
 
   this->timeUnits = CFGLoader::parseTimeUnit( csvMetadataFields[ 4 ] );
@@ -300,7 +299,6 @@ bool CSVMetadata::newMetadata( std::vector< std::string > metadataFields )
   {
     // error = true;
     // errorMessage = newCutterMetadata->getErrorMessage();
-
 
     return false;
   }

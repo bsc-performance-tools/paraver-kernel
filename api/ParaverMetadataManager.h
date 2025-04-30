@@ -39,17 +39,19 @@ class MetadataAction
 {
   public:
     static constexpr int FIELD_COUNT = 4;
+    static constexpr char RUNAPP_ORIGIN_ID[] = "RUNAPP";
+    static constexpr char MANUAL_ORIGIN_ID[] = "MANUAL";
 
     MetadataAction() { error = false; }
 
     MetadataAction( std::string date,
                     std::string action,
-                    std::string application,
+                    std::string origin,
                     std::string originalTrace );
 
     std::string getDate()          { return date; }
     std::string getAction()        { return action; }
-    std::string getApplication()   { return application; }
+    std::string getOrigin()        { return origin; }
     std::string getOriginalTrace() { return originalTrace; }
 
     bool getError() { return error; }
@@ -63,7 +65,7 @@ class MetadataAction
 
     std::string date;
     std::string action;
-    std::string application;
+    std::string origin;
     std::string originalTrace;
 
   private:
@@ -91,14 +93,11 @@ class CutterMetadataAction : public MetadataAction
   public:
     static constexpr int  FIELD_COUNT = MetadataAction::FIELD_COUNT + 3;
     static constexpr char ACTION_ID[] = "CUTTER";
-    static constexpr char RUNAPP_APPLICATION_ID[] = "RUNAPP";
-    static constexpr char ORIGINAL_APPLICATION_ID[] = "ORIGINAL";
   
     CutterMetadataAction( std::vector<std::string>& cutterMetadataFields );
   
-  
     CutterMetadataAction( std::string date,
-                          std::string application,
+                          std::string origin,
                           std::string originalTrace,
                           PRV_UINT64 offset,
                           PRV_UINT64 beginTime,
@@ -125,13 +124,11 @@ class CSVMetadataAction : public MetadataAction
   public:
     static constexpr int  FIELD_COUNT = MetadataAction::FIELD_COUNT + 2;
     static constexpr char ACTION_ID[] = "CSV";
-    static constexpr char RUNAPP_APPLICATION_ID[] = "PARAVER";
-    static constexpr char ORIGINAL_APPLICATION_ID[] = "ORIGINAL";
   
     CSVMetadataAction( std::vector<std::string>& csvMetadataFields );
 
     CSVMetadataAction( std::string     date,
-                        std::string    application,
+                        std::string    origin,
                         std::string    originalTrace,
                         TTimeUnit      timeUnits,
                         TColorFunction colorMode );

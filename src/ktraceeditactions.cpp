@@ -106,7 +106,7 @@ bool TraceCutterAction::execute( std::string whichTrace )
                                                      newName,
                                                      options,
                                                      nullptr );
-        myCutter->setCutterApplicationCaller( CutterMetadataAction::RUNAPP_APPLICATION_ID );
+        myCutter->setCutterOriginCaller( MetadataAction::RUNAPP_ORIGIN_ID );
         myCutter->execute( whichTrace, newName, nullptr );
       }
     }
@@ -119,7 +119,7 @@ bool TraceCutterAction::execute( std::string whichTrace )
                                                 newName,
                                                 options,
                                                 nullptr );
-    myCutter->setCutterApplicationCaller( CutterMetadataAction::RUNAPP_APPLICATION_ID );
+    myCutter->setCutterOriginCaller( MetadataAction::RUNAPP_ORIGIN_ID );
     myCutter->execute( whichTrace, newName, nullptr );
 #ifndef _WIN32
   }
