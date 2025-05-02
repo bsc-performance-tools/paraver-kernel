@@ -162,27 +162,27 @@ bool HistogramProxy::setParents( const std::vector< Histogram * >& whichParents 
     return false;
 
   // Parents related info
-  Histogram *parent1 = parents.front();
+  Histogram *mainHistogram = parents.front();
 
-  myTrace = parent1->getTrace(); // Only for further queries, may not be necessary
+  myTrace = mainHistogram->getTrace(); // Only for further queries, may not be necessary
   myHisto = myKernel->newDerivedHistogram( parents );
 
-  currentStat = parent1->getCurrentStat();
+  currentStat = mainHistogram->getCurrentStat();
 
-  sortSemanticColumns = parent1->getSemanticSortColumns();
-  sortSemanticReverse = parent1->getSemanticSortReverse();
-  currentSemanticSort = parent1->getCurrentSemanticSort();
-  customSemanticSort = parent1->getCustomSemanticSort();
-  fixedSemanticSort = parent1->getFixedSemanticSort();
-  setSemanticSortCriteria( parent1->getSemanticSortCriteria() );
+  sortSemanticColumns = mainHistogram->getSemanticSortColumns();
+  sortSemanticReverse = mainHistogram->getSemanticSortReverse();
+  currentSemanticSort = mainHistogram->getCurrentSemanticSort();
+  customSemanticSort = mainHistogram->getCustomSemanticSort();
+  fixedSemanticSort = mainHistogram->getFixedSemanticSort();
+  setSemanticSortCriteria( mainHistogram->getSemanticSortCriteria() );
 
-  setControlWindow( parent1->getControlWindow() );
-  setDataWindow( parent1->getDataWindow() );
-  if ( parent1->getExtraControlWindow() != nullptr )
-    setExtraControlWindow( parent1->getExtraControlWindow() );
+  setControlWindow( mainHistogram->getControlWindow() );
+  setDataWindow( mainHistogram->getDataWindow() );
+  if ( mainHistogram->getExtraControlWindow() != nullptr )
+    setExtraControlWindow( mainHistogram->getExtraControlWindow() );
 
   setCalculateAll( Histogram::getCalculateAll() );
-
+  
   return true;
 }
 
