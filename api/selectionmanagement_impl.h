@@ -264,6 +264,33 @@ void SelectionManagement< SelType, LevelType >::setSelected( std::vector< SelTyp
   }
 }
 
+template < typename SelType, typename LevelType >
+void SelectionManagement< SelType, LevelType >::setAllSelected( std::vector<std::vector< SelType >> &selection )
+{
+
+  for ( size_t itSet = 0 ; itSet < selected.size(); ++itSet )
+  {
+    selectedSet[ static_cast<size_t>( itSet ) ] = selection[itSet];
+
+    auto it = selectedSet[ static_cast<size_t>( itSet ) ].begin();
+
+    
+    for ( size_t current = 0; current < ( size_t ) selected[ static_cast<size_t>( itSet ) ].size(); ++current )
+    {
+      if ( it != selectedSet[ static_cast<size_t>( itSet ) ].end() && current == ( size_t )*it )
+      {
+        selected[itSet][ static_cast<size_t>( current ) ] =  true ;
+        ++it;
+      }
+      else
+      {
+        selected[itSet][ static_cast<size_t>( current ) ] = false ;
+      }
+    }
+
+
+  }
+}
 
 template < typename SelType, typename LevelType >
 bool SelectionManagement< SelType, LevelType >::isSelectedPosition( SelType whichSelected,
@@ -323,6 +350,13 @@ void SelectionManagement< SelType, LevelType >::getSelected( std::vector< SelTyp
     if ( *it == last )
       break;
   }
+}
+
+template < typename SelType, typename LevelType >
+void SelectionManagement< SelType, LevelType >::getAllSelected( std::vector<std::vector< SelType >> &selection ) const
+{
+  selection = selectedSet;
+
 }
 
 template < typename SelType, typename LevelType >
