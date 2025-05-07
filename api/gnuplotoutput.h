@@ -35,6 +35,7 @@ class GNUPlotOutput: public Output
 
     virtual void dumpWindow( Timeline *whichWindow,
                              std::string& strOutputFile,
+                             std::string whichOrigin,
                              ProgressController *progress = nullptr ) override;
     virtual void dumpHistogram( Histogram *whichHisto,
                                 std::string& strOutputFile,

@@ -39,7 +39,7 @@ TextOutput::TextOutput()
 TextOutput::~TextOutput()
 {}
 
-void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, ProgressController *progress )
+void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, std::string whichOrigin, ProgressController *progress )
 {
   static short int progressSteps = 0;
 
@@ -69,7 +69,7 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, Progr
   if ( !multipleFiles )
   {
     outputFile.open( strOutputFile.c_str() );
-    dumpMetadata( whichWindow, outputFile );
+    dumpMetadata( whichWindow, outputFile, whichOrigin );
   }
 
   maxTime = 0.0;
@@ -182,7 +182,7 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, Progr
   symbolsFilename.erase( strOutputFile.rfind( string( ".csv" ) ) );
   symbolsFilename += ".legend.csv";
 
-  symbols.dumpToFile( symbolsFilename );
+  symbols.dumpToFile( symbolsFilename, !whichWindow->isCodeColorSet() );
 }
 
 
@@ -392,10 +392,10 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
 }
 
 
-void TextOutput::dumpMetadata( Timeline *whichTimeline, std::ofstream& whichFile ) const
+void TextOutput::dumpMetadata( Timeline *whichTimeline, std::ofstream& whichFile, std::string whichOrigin ) const
 {
   CSVMetadataAction tmpMetadata( MetadataManager::getCurrentDate(),
-                                 MetadataAction::RUNAPP_ORIGIN_ID,
+                                 whichOrigin,
                                  whichTimeline->getTrace()->getFileName(),
                                  whichTimeline->getTimeUnit(),
                                  whichTimeline->getSemanticColor().getColorMode() );

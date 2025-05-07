@@ -79,7 +79,7 @@ void CSVSymbolsParser::parseLine( const std::string& whichLine )
   std::string::size_type toPos = whichLine.find_first_of( " ", fromPos );
   currentField = whichLine.substr( fromPos, toPos - fromPos );
   value = std::stoul( currentField );
-
+std::cout << value << std::endl;
   fromPos = toPos + 2;
   toPos = whichLine.find_first_of( "\"", fromPos );
   currentField = whichLine.substr( fromPos, toPos - fromPos );
@@ -109,27 +109,57 @@ void CSVSymbolsParser::parseLine( const std::string& whichLine )
   semanticColors.insert( { value, { red, green, blue } } );
 }
 
-void CSVSymbolsParser::dumpToFile( const std::string& filename ) const
+template< typename T >
+void printEvent( std::ofstream& csvFile,
+                 const std::map< TEventValue, std::string >& eventLabels,
+                 const T& firstEvent,
+                 const T& lastEvent = {},
+                 bool isGradientColor = false )
+{
+  csvFile << std::to_string( firstEvent.first );
+  
+  if( isGradientColor && firstEvent != lastEvent )
+    csvFile << "-" << lastEvent.first;
+
+  csvFile << " ";
+
+  auto itLabel = eventLabels.find( firstEvent.first );
+  csvFile << "\"";
+  if( itLabel != eventLabels.end() )
+    csvFile << itLabel->second;
+  if( isGradientColor  && firstEvent != lastEvent )
+  {
+    itLabel = eventLabels.find( lastEvent.first );
+    if( itLabel != eventLabels.end() )
+      csvFile << "-" << itLabel->second;
+  }
+  csvFile << "\"" << " ";
+
+  csvFile << std::to_string( std::get<0>( firstEvent.second ) ) << ",";
+  csvFile << std::to_string( std::get<1>( firstEvent.second ) ) << ",";
+  csvFile << std::to_string( std::get<2>( firstEvent.second ) );
+
+  csvFile << std::endl;
+}
+
+void CSVSymbolsParser::dumpToFile( const std::string& filename, bool isGradientColor ) const
 {
   std::ofstream csvFile( filename );
 
+  std::pair< uint32_t, CSVSymbolsParser::rgb > rangeFirstColor = *semanticColors.begin();
+  auto rangeEndColor = rangeFirstColor;
+
   for( auto& event : semanticColors )
   {
-    csvFile << std::to_string( event.first ) << " ";
-
-    auto itLabel = eventLabels.find( event.first );
-    csvFile << "\"";
-    if( itLabel != eventLabels.end() )
+    if( isGradientColor && rangeFirstColor.second != event.second )
     {
-      csvFile << itLabel->second;
+      printEvent( csvFile, eventLabels, rangeFirstColor, rangeEndColor, isGradientColor );
+      rangeFirstColor = rangeEndColor = event;
     }
-    csvFile << "\"" << " ";
-
-    csvFile << std::to_string( std::get<0>( event.second ) ) << ",";
-    csvFile << std::to_string( std::get<1>( event.second ) ) << ",";
-    csvFile << std::to_string( std::get<2>( event.second ) );
-
-    csvFile << std::endl;
+    else if( isGradientColor )
+      rangeEndColor = event;
+    else
+      printEvent( csvFile, eventLabels, event );
   }
 
   csvFile.close();

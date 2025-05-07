@@ -42,6 +42,7 @@ class TextOutput:public Output
 
     void dumpWindow( Timeline *whichWindow,
                      std::string& strOutputFile,
+                     std::string whichOrigin,
                      ProgressController *progress = nullptr );
     void dumpHistogram( Histogram *whichHisto,
                         std::string& strOutputFile,
@@ -78,7 +79,8 @@ class TextOutput:public Output
     TTime maxTime;
 
     void dumpMetadata( Timeline *whichTimeline,
-                       std::ofstream& whichFile ) const;
+                       std::ofstream& whichFile,
+                       std::string whichOrigin ) const;
 
     void dumpMatrixHorizontal( Histogram *whichHisto,
                                TObjectOrder numRows,

@@ -42,7 +42,7 @@ class CSVSymbolsParser
     
     ~CSVSymbolsParser() = default;
 
-    void dumpToFile( const std::string& filename ) const;
+    void dumpToFile( const std::string& filename, bool isGradientColor ) const;
 
     const std::map< uint32_t, CSVSymbolsParser::rgb >& getSemanticColors() const;
     void                                               getEventTypes( std::vector< TEventType >& onVector ) const;

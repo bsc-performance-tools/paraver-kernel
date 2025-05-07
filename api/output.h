@@ -47,6 +47,7 @@ class Output
 
     virtual void dumpWindow( Timeline *whichWindow,
                              std::string& strOutputFile,
+                             std::string whichOrigin,
                              ProgressController *progress = nullptr ) = 0;
 
     virtual void dumpHistogram( Histogram *whichHisto,

@@ -43,6 +43,7 @@
 #include "histogramtotals.h"
 #include "paraverkernelexception.h"
 #include "paraverconfig.h"
+#include "ParaverMetadataManager.h"
 #include "textoutput.h"
 #include "traceoptions.h"
 #include "labelconstructor.h" // for getDate
@@ -781,7 +782,7 @@ void loadCFGs( KernelConnection *myKernel )
           for( auto currentWindow : windows )
           {
             tmpFilename = it->second + "_" + std::to_string( numWindow );
-            output.dumpWindow( currentWindow, tmpFilename  );
+            output.dumpWindow( currentWindow, tmpFilename, CSVMetadataAction::MANUAL_ORIGIN_ID );
             ++numWindow;
           }
 
@@ -809,7 +810,7 @@ void loadCFGs( KernelConnection *myKernel )
                                   !option[ PREFERENCES_PRECISION ].active );
           else if( windows.begin() != windows.end() &&
                   windows[ windows.size() - 1 ] != nullptr )
-            output.dumpWindow( windows[ windows.size() - 1 ], it->second );
+            output.dumpWindow( windows[ windows.size() - 1 ], it->second, CSVMetadataAction::MANUAL_ORIGIN_ID );
         }
       }
       else

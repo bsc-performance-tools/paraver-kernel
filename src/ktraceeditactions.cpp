@@ -223,7 +223,7 @@ bool CSVOutputAction::execute( std::string whichTrace )
   std::string tmpFileName = ( (CSVFileNameState *)tmpSequence->getState( TSequenceStates::csvFileNameState ) )->getData();
   TextOutput output = ( (CSVOutputState *)tmpSequence->getState( TSequenceStates::csvOutputState ) )->getData();
 
-  output.dumpWindow( tmpWindow, tmpFileName );
+  output.dumpWindow( tmpWindow, tmpFileName, CSVMetadataAction::RUNAPP_ORIGIN_ID );
 
   TraceOptions *options = ( (TraceOptionsState *)tmpSequence->getState( TSequenceStates::traceOptionsState ) )->getData();
   if( options != nullptr )

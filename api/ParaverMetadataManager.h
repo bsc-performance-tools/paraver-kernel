@@ -127,11 +127,11 @@ class CSVMetadataAction : public MetadataAction
   
     CSVMetadataAction( std::vector<std::string>& csvMetadataFields );
 
-    CSVMetadataAction( std::string     date,
-                        std::string    origin,
-                        std::string    originalTrace,
-                        TTimeUnit      timeUnits,
-                        TColorFunction colorMode );
+    CSVMetadataAction( std::string    date,
+                       std::string    origin,
+                       std::string    originalTrace,
+                       TTimeUnit      timeUnits,
+                       TColorFunction colorMode );
 
     TTimeUnit      getTimeUnits() const { return timeUnits; }
     TColorFunction getColorMode() const { return colorMode; }

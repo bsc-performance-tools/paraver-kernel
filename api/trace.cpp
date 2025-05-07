@@ -488,8 +488,13 @@ void TraceProxy::parseSymbolsFile( const string& whichFile )
   }
   else if ( whichFile.substr( whichFile.length() - 3 ) == "csv" )
   {
-    CSVSymbolsParser csvParser( whichFile );
-    fillSymbols( csvParser );
+    CSVMetadata *tmpMetadata = nullptr;
+    if( getMetadata().getMetadata< MetadataManager::TAppID::CSV >( tmpMetadata ) &&
+        tmpMetadata->getColorMode() == TColorFunction::CODE_COLOR )
+    {
+      CSVSymbolsParser csvParser( whichFile );
+      fillSymbols( csvParser );
+    }
   }
 }
 
