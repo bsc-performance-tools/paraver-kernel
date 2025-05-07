@@ -131,7 +131,8 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, std::
         semanticLabel = LabelConstructor::semanticLabel( whichWindow, tmpSemValue, true, config->getTimelinePrecision(), false );
         symbols.setEventValueLabel( 1, tmpSemValue, semanticLabel );
         rgb tmpColor( whichWindow->getSemanticColor().calcColor( tmpSemValue, whichWindow->getMinimumY(), whichWindow->getMaximumY() ) );
-        symbols.setSemanticColor( whichWindow->getValue( i ), { tmpColor.red, tmpColor.green, tmpColor.blue } );
+        CSVSymbolsParser::rgb tmprgb{ tmpColor.red, tmpColor.green, tmpColor.blue };
+        symbols.setSemanticColor( whichWindow->getValue( i ), tmprgb );
 
         if( textualSemantic )
           outputFile << semanticLabel << endl;

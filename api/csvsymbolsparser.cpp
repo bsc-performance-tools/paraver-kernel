@@ -106,7 +106,8 @@ std::cout << value << std::endl;
   currentColor = currentField.substr( fromPos );
   blue = std::stoul( currentColor );
 
-  semanticColors.insert( { value, { red, green, blue } } );
+  CSVSymbolsParser::rgb tmprgb{ red, green, blue };
+  semanticColors.insert( { value, tmprgb } );
 }
 
 template< typename T >
