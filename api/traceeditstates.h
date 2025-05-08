@@ -193,4 +193,6 @@ using MaxTraceTimeState = DerivedTraceEditStateTTime< TraceEditSequence * >;
 using ShiftLevelState = DerivedTraceEditStateTWindowLevel< TraceEditSequence * >;
 using OnEventCutter = DerivedTraceEditStateTEventType< TraceEditSequence * >;
 
+using UsingWholeTraceState = DerivedTraceEditStateBool< TraceEditSequence * >;
+
 

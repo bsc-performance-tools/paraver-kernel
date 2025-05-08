@@ -58,6 +58,7 @@ enum class TSequenceStates
   copyAdditionalFilesState,
   onlyFilterState,
   acceptableAppsState,
+  usingWholeTraceState,
   numStates
 };
 
