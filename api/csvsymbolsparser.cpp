@@ -79,7 +79,6 @@ void CSVSymbolsParser::parseLine( const std::string& whichLine )
   std::string::size_type toPos = whichLine.find_first_of( " ", fromPos );
   currentField = whichLine.substr( fromPos, toPos - fromPos );
   value = std::stoul( currentField );
-std::cout << value << std::endl;
   fromPos = toPos + 2;
   toPos = whichLine.find_first_of( "\"", fromPos );
   currentField = whichLine.substr( fromPos, toPos - fromPos );
