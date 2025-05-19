@@ -28,7 +28,7 @@
 #include "csvsymbolsparser.h"
 #include "utils/traceparser/pcffileparser.h"
 
-CSVSymbolsParser::CSVSymbolsParser( std::string filename )
+CSVSymbolsParser::CSVSymbolsParser( std::string filename, bool isGradientColor )
 {
   #ifndef _WIN32
   struct stat fileInfo;
@@ -62,51 +62,58 @@ CSVSymbolsParser::CSVSymbolsParser( std::string filename )
     if ( strLine[ 0 ] == '#' )
       continue;
 
-    parseLine( strLine );
+    parseLine( strLine, isGradientColor );
   }
 
   csvFile.close();
 }
 
-void CSVSymbolsParser::parseLine( const std::string& whichLine )
+void CSVSymbolsParser::parseLine( const std::string& whichLine, bool isGradientColor )
 {
-  uint32_t value;
+  uint32_t value, secondValue;
   std::string label;
   
   std::string currentField;
-  std::string::size_type fromPos = 0;
+  std::string::size_type fromPos = 0, secondPos = 0;
 
   std::string::size_type toPos = whichLine.find_first_of( " ", fromPos );
   currentField = whichLine.substr( fromPos, toPos - fromPos );
   value = std::stoul( currentField );
+  if( ( secondPos = currentField.find_first_of( "-" ) ) != std::string::npos )
+    secondValue = std::stoul( currentField.substr( secondPos + 1 ) );
   fromPos = toPos + 2;
   toPos = whichLine.find_first_of( "\"", fromPos );
   currentField = whichLine.substr( fromPos, toPos - fromPos );
   label = currentField;
   eventLabels.insert( { value, label } );
+  if( isGradientColor && secondPos != std::string::npos )
+    eventLabels.insert( { secondValue, label } );
 
-  fromPos = toPos + 2;
-  currentField = whichLine.substr( fromPos );
+  if( !isGradientColor )
+  {
+    fromPos = toPos + 2;
+    currentField = whichLine.substr( fromPos );
 
-  std::string currentColor;
-  uint8_t red, green, blue;
+    std::string currentColor;
+    uint8_t red, green, blue;
 
-  fromPos = 0;
-  toPos = currentField.find_first_of( ",", fromPos );
-  currentColor = currentField.substr( fromPos, toPos - fromPos );
-  red = std::stoul( currentColor );
+    fromPos = 0;
+    toPos = currentField.find_first_of( ",", fromPos );
+    currentColor = currentField.substr( fromPos, toPos - fromPos );
+    red = std::stoul( currentColor );
 
-  fromPos = toPos + 1;
-  toPos = currentField.find_first_of( ",", fromPos );
-  currentColor = currentField.substr( fromPos, toPos - fromPos );
-  green = std::stoul( currentColor );
+    fromPos = toPos + 1;
+    toPos = currentField.find_first_of( ",", fromPos );
+    currentColor = currentField.substr( fromPos, toPos - fromPos );
+    green = std::stoul( currentColor );
 
-  fromPos = toPos + 1;
-  currentColor = currentField.substr( fromPos );
-  blue = std::stoul( currentColor );
+    fromPos = toPos + 1;
+    currentColor = currentField.substr( fromPos );
+    blue = std::stoul( currentColor );
 
-  CSVSymbolsParser::rgb tmprgb{ red, green, blue };
-  semanticColors.insert( { value, tmprgb } );
+    CSVSymbolsParser::rgb tmprgb{ red, green, blue };
+      semanticColors.insert( { value, tmprgb } );
+  }
 }
 
 template< typename T >
@@ -161,6 +168,9 @@ void CSVSymbolsParser::dumpToFile( const std::string& filename, bool isGradientC
     else
       printEvent( csvFile, eventLabels, event );
   }
+
+  if( isGradientColor && rangeFirstColor == rangeEndColor )
+    printEvent( csvFile, eventLabels, rangeFirstColor, rangeEndColor, isGradientColor );
 
   csvFile.close();
 }

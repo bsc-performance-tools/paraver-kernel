@@ -467,7 +467,7 @@ void TraceProxy::fillSymbols( Parser& whichParser )
     std::tie( tmpColor.red, tmpColor.green, tmpColor.blue ) = it.second;
     mySemanticColor.setColor( it.first, tmpColor );
   }
-  
+
   myEventLabels = EventLabels( whichParser );
   myStateLabels = StateLabels( whichParser );
   
@@ -489,12 +489,10 @@ void TraceProxy::parseSymbolsFile( const string& whichFile )
   else if ( whichFile.substr( whichFile.length() - 3 ) == "csv" )
   {
     CSVMetadata *tmpMetadata = nullptr;
-    if( getMetadata().getMetadata< MetadataManager::TAppID::CSV >( tmpMetadata ) &&
-        tmpMetadata->getColorMode() == TColorFunction::CODE_COLOR )
-    {
-      CSVSymbolsParser csvParser( whichFile );
-      fillSymbols( csvParser );
-    }
+    bool isGradientColor = getMetadata().getMetadata< MetadataManager::TAppID::CSV >( tmpMetadata ) &&
+                           tmpMetadata->getColorMode() != TColorFunction::CODE_COLOR;
+    CSVSymbolsParser csvParser( whichFile, isGradientColor );
+    fillSymbols( csvParser );
   }
 }
 

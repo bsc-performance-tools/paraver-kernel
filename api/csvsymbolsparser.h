@@ -38,7 +38,7 @@ class CSVSymbolsParser
     
     CSVSymbolsParser() = default;
 
-    CSVSymbolsParser( std::string filename );
+    CSVSymbolsParser( std::string filename, bool isGradientColor );
     
     ~CSVSymbolsParser() = default;
 
@@ -54,7 +54,7 @@ class CSVSymbolsParser
     void setEventValueLabel( TEventType eventType, TEventValue eventValue, const std::string& label );
 
   private:
-    void parseLine( const std::string& whichLine );
+    void parseLine( const std::string& whichLine, bool isGradientColor );
     
     std::map< uint32_t, CSVSymbolsParser::rgb > semanticColors;
     std::map< TEventValue, std::string > eventLabels;
