@@ -70,6 +70,10 @@ TraceEditState *KTraceEditSequence::createState( TSequenceStates whichState )
       return new SourceTimelineState( this );
       break;
 
+    case TSequenceStates::createdTimelinesState:
+      return new CreatedTimelinesState( this );
+      break;
+
     case TSequenceStates::csvFileNameState:
       return new CSVFileNameState( this );
       break;
