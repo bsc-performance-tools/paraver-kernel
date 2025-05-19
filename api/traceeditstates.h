@@ -173,7 +173,6 @@ using TraceEditState = BaseTraceEditState< TraceEditSequence * >;
 using CSVOutputState = DerivedTraceEditState< TraceEditSequence *, TextOutput >;
 using TraceOptionsState = DerivedTraceEditState< TraceEditSequence *, TraceOptions * >;
 using SourceTimelineState = DerivedTraceEditState< TraceEditSequence *, Timeline * >;
-using CreatedTimelinesState = DerivedTraceEditState< TraceEditSequence *, std::vector< Timeline * > >;
 using ShiftTimesState = DerivedTraceEditState< TraceEditSequence *, std::vector< TTime > * >;
 using EventTranslationTableState = DerivedTraceEditState< TraceEditSequence *, std::map< TTypeValuePair, TTypeValuePair > >;
 using AcceptableAppsState = DerivedTraceEditState< TraceEditSequence *, std::vector< bool > >;
