@@ -147,7 +147,7 @@ bool prv_atoll_precision( std::string::const_iterator& it,
     sign = -1;
     ++it;
   }
-  bool dotFound = false;
+
   while( ( '0' <= *it && *it <= '9' ) || *it == '.' )
   {
     if ( *it == '.' )
@@ -290,19 +290,22 @@ inline bool TraceBodyIO_csv::readCommon( const ResourceModel<>& whichResourceMod
 { 
   static ProcessModel<>::ThreadLocation lastATT = { 0, 0, 0 };
 
-  std::getline( line, tmpstring, '.' ); 
+  std::getline( line, tmpstring, '.' );
+  if( line.eof() ) return false;
   auto it = tmpstring.cbegin();
-  if( !prv_atoll_v( it, tmpstring.cend(), appl ) )
+  if( !prv_atoll_v( it, tmpstring.cend(), appl ) || appl == 0 )
+    return false;
+    
+  std::getline( line, tmpstring, '.' );
+  if( line.eof() ) return false;
+  it = tmpstring.cbegin();
+  if( !prv_atoll_v( it, tmpstring.end(), task ) || task == 0 )
     return false;
 
-  std::getline( line, tmpstring, '.' ); 
+  std::getline( line, tmpstring, '\t' );
+  if( line.eof() ) return false;
   it = tmpstring.cbegin();
-  if( !prv_atoll_v( it, tmpstring.end(), task ) )
-    return false;
-
-  std::getline( line, tmpstring, '\t' );  
-  it = tmpstring.cbegin();
-  if( !prv_atoll_v( it, tmpstring.end(), thread ) )
+  if( !prv_atoll_v( it, tmpstring.end(), thread ) || thread == 0 )
     return false;
 
   ProcessModel<>::ThreadLocation currATT = { appl, task, thread };
@@ -316,11 +319,13 @@ inline bool TraceBodyIO_csv::readCommon( const ResourceModel<>& whichResourceMod
   }
 
   std::getline( line, tmpstring, '\t' ); 
+  if( line.eof() ) return false;
   it = tmpstring.cbegin();
   if( !prv_atoll_v( it, tmpstring.end(), begintime ) )
     return false;
 
-    std::getline( line, tmpstring, '\t' );
+  std::getline( line, tmpstring, '\t' );
+  if( line.eof() ) return false;
   it = tmpstring.cbegin();
   if( !prv_atoll_v( it, tmpstring.end(), time ) )
     return false;
