@@ -904,11 +904,15 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
 
   initMatrix( numPlanes, numCols, numRows );
 
+  initTotals ();
+
+  if (selectedRows.empty ())
+  {
+    return;
+  }
   initSemantic( beginTime );
 
   initStatistics();
-
-  initTotals();
 
 #ifdef PARALLEL_ENABLED
   initTmpBuffers( numPlanes, rowsTranslator->totalRows() );

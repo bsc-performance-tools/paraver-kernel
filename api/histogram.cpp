@@ -137,18 +137,18 @@ HistogramProxy::~HistogramProxy()
   delete myHisto;
 }
 
-void HistogramProxy::setWindowBeginTime( TRecordTime whichTime, bool isBroadcast )
+void HistogramProxy::setWindowBeginTime (TRecordTime whichTime)
 {
   winBeginTime = whichTime;
-  if( sync && !isBroadcast )
-    SyncWindows::getInstance()->broadcastTime( syncGroup, this, winBeginTime, winEndTime );
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_TIME))
+    SyncWindows::getInstance ()->broadcastTimeAll (syncGroup, winBeginTime, winEndTime);
 }
 
-void HistogramProxy::setWindowEndTime( TRecordTime whichTime, bool isBroadcast )
+void HistogramProxy::setWindowEndTime (TRecordTime whichTime)
 {
   winEndTime = whichTime;
-  if( sync && !isBroadcast )
-    SyncWindows::getInstance()->broadcastTime( syncGroup, this, winBeginTime, winEndTime );
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_TIME))
+    SyncWindows::getInstance ()->broadcastTimeAll (syncGroup, winBeginTime, winEndTime);
 }
 
 bool HistogramProxy::getThreeDimensions() const
@@ -253,16 +253,22 @@ void HistogramProxy::setUseFixedDelta( bool whichValue )
 void HistogramProxy::setControlMin( THistogramLimit whichMin )
 {
   myHisto->setControlMin( whichMin );
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_MIN))
+    SyncWindows::getInstance ()->broadcastMinAll (syncGroup, whichMin);
 }
 
 void HistogramProxy::setControlMax( THistogramLimit whichMax )
 {
   myHisto->setControlMax( whichMax );
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_MAX))
+    SyncWindows::getInstance ()->broadcastMaxAll (syncGroup, whichMax);
 }
 
 void HistogramProxy::setControlDelta( THistogramLimit whichDelta )
 {
   myHisto->setControlDelta( whichDelta );
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_HISTOGRAM_DELTA))
+    SyncWindows::getInstance ()->broadcastDeltaAll (syncGroup, whichDelta);
 }
 
 void HistogramProxy::setExtraControlMin( THistogramLimit whichMin )
@@ -1065,11 +1071,11 @@ void HistogramProxy::compute2DScale( ProgressController *progress )
   }
   TRecordTime tmpBeginTime = controlWindow->getWindowBeginTime();
   TRecordTime tmpEndTime = controlWindow->getWindowEndTime();
-  controlWindow->setWindowBeginTime( getBeginTime(), true );
-  controlWindow->setWindowEndTime( getEndTime(), true );
+  controlWindow->setWindowBeginTime (getBeginTime ());
+  controlWindow->setWindowEndTime (getEndTime ());
   controlWindow->computeYScale( progress );
-  controlWindow->setWindowBeginTime( tmpBeginTime, true );
-  controlWindow->setWindowEndTime( tmpEndTime, true );
+  controlWindow->setWindowBeginTime (tmpBeginTime);
+  controlWindow->setWindowEndTime (tmpEndTime);
   TSemanticValue minY = controlWindow->getMinimumY();
   if( getCompute2DScaleZero() && controlWindow->getExistSemanticZero() && minY > 0.0 )
     minY = 0.0;
@@ -1110,11 +1116,11 @@ void HistogramProxy::compute3DScale( ProgressController *progress )
   TSemanticValue tmpMaxY = extraControlWindow->getMaximumY();
   TRecordTime tmpBeginTime = extraControlWindow->getWindowBeginTime();
   TRecordTime tmpEndTime = extraControlWindow->getWindowEndTime();
-  extraControlWindow->setWindowBeginTime( getBeginTime(), true );
-  extraControlWindow->setWindowEndTime( getEndTime(), true );
+  extraControlWindow->setWindowBeginTime (getBeginTime ());
+  extraControlWindow->setWindowEndTime (getEndTime ());
   extraControlWindow->computeYScale( progress );
-  extraControlWindow->setWindowBeginTime( tmpBeginTime, true );
-  extraControlWindow->setWindowEndTime( tmpEndTime, true );
+  extraControlWindow->setWindowBeginTime (tmpBeginTime);
+  extraControlWindow->setWindowEndTime (tmpEndTime);
   TSemanticValue minY = extraControlWindow->getMinimumY();
   TSemanticValue maxY = extraControlWindow->getMaximumY();
   extraControlWindow->setMinimumY( tmpMinY );
@@ -1297,7 +1303,7 @@ void HistogramProxy::addToSyncGroup( TGroupId whichGroup )
 {
   SyncWindows::getInstance()->removeWindow( this, syncGroup );
   syncGroup = whichGroup;
-  sync = SyncWindows::getInstance()->addWindow( this, whichGroup );
+  sync = SyncWindows::getInstance ()->addWindow ((Histogram *)this, whichGroup);
 }
 
 void HistogramProxy::removeFromSync()
@@ -1484,7 +1490,7 @@ Histogram *HistogramProxy::clone()
     clonedHistogramProxy->sync = sync;
     clonedHistogramProxy->syncGroup = syncGroup;
     if( clonedHistogramProxy->sync )
-      SyncWindows::getInstance()->addWindow( clonedHistogramProxy, syncGroup );
+      SyncWindows::getInstance ()->addWindow ((Histogram *)clonedHistogramProxy, syncGroup);
   }
 
   clonedHistogramProxy->rowSelection = rowSelection;
@@ -1970,16 +1976,34 @@ vector< bool > HistogramProxy::getSelectedBooleanRows() const
   return vecRows;
 }
 
-void HistogramProxy::setSelectedRows( vector< bool > &selected )
+void HistogramProxy::setSelectedRows (vector<bool> &selected)
 {
-  rowSelection.setSelected( selected, myHisto->getControlWindow()->getLevel() );
+  auto tmpLevel = myHisto->getControlWindow ()->getLevel ();
+  rowSelection.setSelected (selected, tmpLevel);
+
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_OBJECT_SELECTION))
+    SyncWindows::getInstance ()->broadcastObjectSelectionAll (syncGroup, tmpLevel, selected);
 }
 
-void HistogramProxy::setSelectedRows( vector< TObjectOrder > &selected )
+void HistogramProxy::setSelectedRows (TTraceLevel onLevel, std::vector<bool> &selected)
 {
-  rowSelection.setSelected( selected,
-                            myTrace->getLevelObjects( myHisto->getControlWindow()->getLevel() ),
-                            myHisto->getControlWindow()->getLevel() );
+  rowSelection.setSelected (selected, onLevel);
+
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_OBJECT_SELECTION))
+    SyncWindows::getInstance ()->broadcastObjectSelectionAll (syncGroup, onLevel, selected);
+}
+
+void HistogramProxy::setSelectedRows (vector<TObjectOrder> &selected)
+{
+  auto tmpLevel = myHisto->getControlWindow ()->getLevel ();
+  rowSelection.setSelected (selected,
+                            myTrace->getLevelObjects (tmpLevel),
+                            tmpLevel);
+  vector<bool> tmpSelectedRows;
+  rowSelection.getSelected (tmpSelectedRows, tmpLevel);
+
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_OBJECT_SELECTION))
+    SyncWindows::getInstance ()->broadcastObjectSelectionAll (syncGroup, tmpLevel, tmpSelectedRows);
 }
 
 void HistogramProxy::fillSemanticSort()

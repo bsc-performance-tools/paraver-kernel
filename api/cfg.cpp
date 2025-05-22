@@ -130,6 +130,49 @@ void initDrawModeTags()
   }
 }
 
+SyncPropertiesType stringToProperty (const std::string &label)
+{
+  if (label == CFG_VAL_SYNC_TIME)
+    return SyncPropertiesType::SYNC_TIME;
+  else if (label == CFG_VAL_SYNC_HISTO_COLUMNS)
+    return SyncPropertiesType::SYNC_HISTOGRAM_COLUMNS;
+  else if (label == CFG_VAL_SYNC_HISTO_DELTA)
+    return SyncPropertiesType::SYNC_HISTOGRAM_DELTA;
+  else if (label == CFG_VAL_SYNC_SEM_MIN)
+    return SyncPropertiesType::SYNC_MIN;
+  else if (label == CFG_VAL_SYNC_SEM_MAX)
+    return SyncPropertiesType::SYNC_MAX;
+  else if (label == CFG_VAL_SYNC_OBJ_ZOOM)
+    return SyncPropertiesType::SYNC_OBJECT_ZOOM;
+  else if (label == CFG_VAL_SYNC_OBJ_SEL)
+    return SyncPropertiesType::SYNC_OBJECT_SELECTION;
+  else
+    return SyncPropertiesType::SYNC_INIT;
+}
+
+string propertyToString (SyncPropertiesType prop)
+{
+  switch (prop)
+  {
+  case SyncPropertiesType::SYNC_TIME:
+    return CFG_VAL_SYNC_TIME;
+  case SyncPropertiesType::SYNC_HISTOGRAM_COLUMNS:
+    return CFG_VAL_SYNC_HISTO_COLUMNS;
+  case SyncPropertiesType::SYNC_HISTOGRAM_DELTA:
+    return CFG_VAL_SYNC_HISTO_DELTA;
+  case SyncPropertiesType::SYNC_MIN:
+    return CFG_VAL_SYNC_SEM_MIN;
+  case SyncPropertiesType::SYNC_MAX:
+    return CFG_VAL_SYNC_SEM_MAX;
+  case SyncPropertiesType::SYNC_OBJECT_ZOOM:
+    return CFG_VAL_SYNC_OBJ_ZOOM;
+  case SyncPropertiesType::SYNC_OBJECT_SELECTION:
+    return CFG_VAL_SYNC_OBJ_SEL;
+
+  default:
+    return "";
+  }
+}
 
 TWindowLevel stringToLevel( const std::string& strLevel )
 {
@@ -566,6 +609,13 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
       continue;
     }
 
+    if (cfgTag.compare (CFG_HEADER_SYNC_GROUPS) == 0)
+    {
+      SyncWindowsGroups lineSyncWindows;
+      lineSyncWindows.parseLine (whichKernel, auxStream, whichTrace);
+      continue;
+    }
+
     map<string, TagFunction *>::iterator it = cfgTagFunctions.find( cfgTag );
 
     if ( it != cfgTagFunctions.end() )
@@ -795,6 +845,8 @@ bool CFGLoader::saveCFG( const string& filename,
   cfgFile << CFG_HEADER_BEGIN_DESCRIPTION << endl;
   cfgFile << options.description << endl;
   cfgFile << CFG_HEADER_END_DESCRIPTION << endl;
+
+  SyncWindowsGroups::printLine (cfgFile);
 
   if ( options.enabledCFG4DMode )
     cfgFile << CFG_TAG_CFG4D_ENABLED << endl;
@@ -1143,6 +1195,111 @@ void CFGLoader::unLoadMap()
     delete ( *it ).second;
 }
 
+string SyncWindowsGroups::tagCFG = CFG_HEADER_SYNC_GROUPS;
+
+bool SyncWindowsGroups::parseLine (KernelConnection *whichKernel, istringstream &line,
+                                   Trace *whichTrace)
+{
+  string inner;
+  getline (line, inner);
+
+  std::string groupStr;
+
+  std::map<TGroupId, std::vector<SyncPropertiesType>> groups;
+
+  bool lastElement = false;
+  size_t start = 0;
+  while (!lastElement)
+  {
+    size_t pos = inner.find (';', start);
+
+    if (pos == std::string::npos)
+    {
+      groupStr = inner.substr (start);
+      lastElement = true; // exit loop
+    }
+    else
+    {
+      groupStr = inner.substr (start, pos - start);
+      start = pos + 1;
+    }
+
+    groupStr.erase (0, groupStr.find_first_not_of (" \t"));
+    groupStr.erase (groupStr.find_last_not_of (" \t") + 1);
+
+    size_t colonPos = groupStr.find (':');
+
+    int id = std::stoi (groupStr.substr (0, colonPos));
+    syncRealGroup[id] = 0;
+
+    std::string values = groupStr.substr (colonPos + 1);
+
+    bool tmpIsLastSyncElement = false;
+
+    size_t tmpStartSyncElement = 0;
+
+    while (!tmpIsLastSyncElement)
+    {
+      size_t posSyncElements = values.find (',', tmpStartSyncElement);
+
+      if (posSyncElements == std::string::npos)
+      {
+        groupStr = values.substr (tmpStartSyncElement);
+        tmpIsLastSyncElement = true; // exit loop
+      }
+      else
+      {
+        groupStr = values.substr (tmpStartSyncElement, posSyncElements - tmpStartSyncElement);
+        tmpStartSyncElement = posSyncElements + 1;
+      }
+      auto property = stringToProperty (groupStr);
+      groups[id].push_back (property);
+    }
+  }
+
+  SyncWindows::getInstance ()->initConfigGroup (syncRealGroup);
+
+  for (auto &group : groups)
+  {
+    for (auto &groupProperties : group.second)
+    {
+      SyncWindows::getInstance ()->addProperty (syncRealGroup[group.first], groupProperties);
+    }
+  }
+
+  return true;
+}
+
+void SyncWindowsGroups::printLine (ofstream &cfgFile)
+{
+  cfgFile << CFG_HEADER_SYNC_GROUPS << " ";
+
+  std::map<TGroupId, std::vector<SyncPropertiesType>> groups;
+
+  SyncWindows::getInstance ()->getGroupsProperties (groups);
+
+  bool firstGroup = true;
+
+  for (auto &group : groups)
+  {
+    if (!firstGroup)
+      cfgFile << ";"; // separator between groups
+
+    cfgFile << group.first << ":";
+
+    bool firstProperty = true;
+
+    for (auto &property : group.second)
+    {
+      if (!firstProperty)
+        cfgFile << ",";
+      cfgFile << propertyToString (property);
+      firstProperty = false;
+    }
+
+    firstGroup = false;
+  }
+}
 
 string WindowName::tagCFG = OLDCFG_TAG_WNDW_NAME;
 
@@ -4094,6 +4251,7 @@ bool WindowSynchronize::parseLine( KernelConnection *whichKernel, istringstream&
     return false;
 
   TGroupId realGroupID;
+  groupID = groupID;
   if( syncRealGroup.find( groupID ) == syncRealGroup.end() )
   {
     realGroupID = SyncWindows::getInstance()->newGroup();
@@ -4112,16 +4270,7 @@ void WindowSynchronize::printLine( ofstream& cfgFile,
 {
   if( (*it)->isSync() )
   {
-    TGroupId realGroupID;
-    if( syncRealGroup.find( (*it)->getSyncGroup() ) == syncRealGroup.end() )
-    {
-      realGroupID = ++lastSyncGroupUsed;
-      syncRealGroup[ (*it)->getSyncGroup() ] = realGroupID;
-    }
-    else
-      realGroupID = syncRealGroup[ (*it)->getSyncGroup() ];
-
-    cfgFile << OLDCFG_TAG_WNDW_SYNCHRONIZE << " " << realGroupID << endl;
+    cfgFile << OLDCFG_TAG_WNDW_SYNCHRONIZE << " " << (*it)->getSyncGroup () << endl;
   }
 }
 
@@ -5778,6 +5927,7 @@ bool Analyzer2DSynchronize::parseLine( KernelConnection *whichKernel, istringstr
     return false;
 
   TGroupId realGroupID;
+  groupID = groupID;
   if( syncRealGroup.find( groupID ) == syncRealGroup.end() )
   {
     realGroupID = SyncWindows::getInstance()->newGroup();
@@ -5796,16 +5946,7 @@ void Analyzer2DSynchronize::printLine( ofstream& cfgFile,
 {
   if( (*it)->isSync() )
   {
-    TGroupId realGroupID;
-    if( syncRealGroup.find( (*it)->getSyncGroup() ) == syncRealGroup.end() )
-    {
-      realGroupID = ++lastSyncGroupUsed;
-      syncRealGroup[ (*it)->getSyncGroup() ] = realGroupID;
-    }
-    else
-      realGroupID = syncRealGroup[ (*it)->getSyncGroup() ];
-
-    cfgFile << OLDCFG_TAG_AN2D_SYNCHRONIZE << " " << realGroupID << endl;
+    cfgFile << OLDCFG_TAG_AN2D_SYNCHRONIZE << " " << (*it)->getSyncGroup () << endl;
   }
 }
 

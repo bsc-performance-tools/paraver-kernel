@@ -307,6 +307,50 @@ string LabelConstructor::histoTotalLabel( THistoTotals whichTotal )
   return "";
 }
 
+string LabelConstructor::propertyToLabel (SyncPropertiesType prop)
+{
+  switch (prop)
+  {
+  case SyncPropertiesType::SYNC_TIME:
+    return "Time";
+  case SyncPropertiesType::SYNC_HISTOGRAM_COLUMNS:
+    return "Histogram Columns";
+  case SyncPropertiesType::SYNC_HISTOGRAM_DELTA:
+    return "Histogram Delta";
+  case SyncPropertiesType::SYNC_MIN:
+    return "Semantic Min";
+  case SyncPropertiesType::SYNC_MAX:
+    return "Semantic Max";
+  case SyncPropertiesType::SYNC_OBJECT_ZOOM:
+    return "Object Zoom";
+  case SyncPropertiesType::SYNC_OBJECT_SELECTION:
+    return "Object Selection";
+
+  default:
+    return "Unknown";
+  }
+}
+SyncPropertiesType LabelConstructor::labelToProperty (const std::string &label)
+{
+
+  if (label == "Time")
+    return SyncPropertiesType::SYNC_TIME;
+  else if (label == "Histogram Columns")
+    return SyncPropertiesType::SYNC_HISTOGRAM_COLUMNS;
+  else if (label == "Histogram Delta")
+    return SyncPropertiesType::SYNC_HISTOGRAM_DELTA;
+  else if (label == "Semantic Min")
+    return SyncPropertiesType::SYNC_MIN;
+  else if (label == "Semantic Max")
+    return SyncPropertiesType::SYNC_MAX;
+  else if (label == "Object Zoom")
+    return SyncPropertiesType::SYNC_OBJECT_ZOOM;
+  else if (label == "Object Selection")
+    return SyncPropertiesType::SYNC_OBJECT_SELECTION;
+  else
+    return SyncPropertiesType::SYNC_INIT;
+}
+
 // TODO: precision not used!
 string LabelConstructor::timeLabel( ptime value, PRV_UINT32 precision )
 {

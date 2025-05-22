@@ -21,279 +21,774 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-
 #include "syncwindows.h"
-#include "window.h"
 #include "histogram.h"
+#include "window.h"
 
-using std::vector;
 using std::map;
+using std::vector;
 
 SyncWindows *SyncWindows::instance = nullptr;
 
-SyncWindows *SyncWindows::getInstance()
+SyncWindows *SyncWindows::getInstance ()
 {
-  if( SyncWindows::instance == nullptr )
-    SyncWindows::instance = new SyncWindows();
+  if (SyncWindows::instance == nullptr)
+    SyncWindows::instance = new SyncWindows ();
   return SyncWindows::instance;
 }
 
-SyncWindows::SyncWindows()
+SyncWindows::SyncWindows ()
 {
   lastNewGroup = 0;
-  syncGroupsTimeline[ lastNewGroup ] = vector<Timeline *>();
-  syncGroupsHistogram[ lastNewGroup ] = vector<Histogram *>();
+  syncGroups[lastNewGroup].syncGroupsWindows = vector<WindowGenericItem> ();
   removingAll = false;
 }
 
-SyncWindows::~SyncWindows()
+SyncWindows::~SyncWindows ()
 {
 }
 
-bool SyncWindows::addWindow( Timeline *whichWindow, TGroupId whichGroup )
+void SyncWindows::initConfigGroup (std::map<TGroupId, TGroupId> &syncRealGroup)
 {
-  if( syncGroupsTimeline.find( whichGroup ) == syncGroupsTimeline.end() )
-    return false;
+  bool tmpConfigGroupsCreated = false;
 
-  if( syncGroupsTimeline[ whichGroup ].size() > 0 || syncGroupsHistogram[ whichGroup ].size() > 0 )
+  int tmpIteratorGroupMap = 0;
+  int tmpIteratorSyncGroups = 0;
+
+  auto itMapSyncGroups = syncRealGroup.begin ();
+
+  while (!tmpConfigGroupsCreated)
   {
-    TTime nanoBeginTime, nanoEndTime;
-    getGroupTimes( whichGroup, nanoBeginTime, nanoEndTime );
-    if( whichWindow->traceUnitsToCustomUnits( whichWindow->getWindowBeginTime(), NS ) != nanoBeginTime ||
-        whichWindow->traceUnitsToCustomUnits( whichWindow->getWindowEndTime(), NS )   != nanoEndTime )
+    auto itSyncGroups = syncGroups.find (tmpIteratorSyncGroups);
+
+    if (itSyncGroups == syncGroups.end ())
     {
-      whichWindow->addZoom( nanoBeginTime, nanoEndTime, true );
-      whichWindow->setWindowBeginTime( whichWindow->customUnitsToTraceUnits( nanoBeginTime, NS ), true );
-      whichWindow->setWindowEndTime( whichWindow->customUnitsToTraceUnits( nanoEndTime, NS ), true );
-      whichWindow->setChanged( true );
-      whichWindow->setRedraw( true );
+      syncGroups[tmpIteratorSyncGroups].syncGroupsWindows = std::vector<WindowGenericItem> ();
+      itMapSyncGroups->second = (TGroupId)tmpIteratorSyncGroups;
+      itMapSyncGroups++;
+
+      if (tmpIteratorSyncGroups > lastNewGroup)
+        lastNewGroup = tmpIteratorSyncGroups;
+
+      tmpIteratorGroupMap += 1;
+      if (itMapSyncGroups == syncRealGroup.end ())
+        tmpConfigGroupsCreated = true;
     }
-  }
-  syncGroupsTimeline[ whichGroup ].push_back( whichWindow );
-
-  return true;
-}
-
-bool SyncWindows::addWindow( Histogram *whichWindow, TGroupId whichGroup )
-{
-  if( syncGroupsHistogram.find( whichGroup ) == syncGroupsHistogram.end() )
-    return false;
-
-  if( syncGroupsHistogram[ whichGroup ].size() > 0 || syncGroupsTimeline[ whichGroup ].size() > 0 )
-  {
-    TTime nanoBeginTime, nanoEndTime;
-    getGroupTimes( whichGroup, nanoBeginTime, nanoEndTime );
-    if( whichWindow->getControlWindow()->traceUnitsToCustomUnits( whichWindow->getBeginTime(), NS ) != nanoBeginTime ||
-        whichWindow->getControlWindow()->traceUnitsToCustomUnits( whichWindow->getEndTime(), NS )   != nanoEndTime )
+    else
     {
-      whichWindow->setWindowBeginTime( whichWindow->getControlWindow()->customUnitsToTraceUnits( nanoBeginTime, NS ), true );
-      whichWindow->setWindowEndTime( whichWindow->getControlWindow()->customUnitsToTraceUnits( nanoEndTime, NS ), true );
-      whichWindow->setChanged( true );
-      whichWindow->setRecalc( true );
-      whichWindow->setRedraw( true );
+      if (syncGroups[tmpIteratorSyncGroups].syncGroupsWindows.size () == 0)
+      {
+        itMapSyncGroups->second = (TGroupId)tmpIteratorSyncGroups;
+        itMapSyncGroups++;
+
+        tmpIteratorGroupMap += 1;
+        if (itMapSyncGroups == syncRealGroup.end ())
+          tmpConfigGroupsCreated = true;
+      }
     }
-  }
-  syncGroupsHistogram[ whichGroup ].push_back( whichWindow );
-
-  return true;
-}
-
-void SyncWindows::removeWindow( Timeline *whichWindow, TGroupId whichGroup )
-{
-  if( syncGroupsTimeline.find( whichGroup ) == syncGroupsTimeline.end() || removingAll )
-    return;
-
-  for( vector<Timeline *>::iterator it = syncGroupsTimeline[ whichGroup ].begin();
-       it != syncGroupsTimeline[ whichGroup ].end(); ++it )
-  {
-    if( *it == whichWindow )
-    {
-      syncGroupsTimeline[ whichGroup ].erase( it );
-      break;
-    }
+    tmpIteratorSyncGroups += 1;
   }
 }
 
-void SyncWindows::removeWindow( Histogram *whichWindow, TGroupId whichGroup )
+void SyncWindows::changePropertiesGroup (WindowGenericItem genericWindow, TGroupId whichGroup, bool isAdded)
 {
-  if( syncGroupsHistogram.find( whichGroup ) == syncGroupsHistogram.end() || removingAll )
-    return;
+  auto &tmpSyncGroup = syncGroups[whichGroup].groupType;
 
-  for( vector<Histogram *>::iterator it = syncGroupsHistogram[ whichGroup ].begin();
-       it != syncGroupsHistogram[ whichGroup ].end(); ++it )
+  if (isAdded)
   {
-    if( *it == whichWindow )
+    if (std::holds_alternative<Timeline *> (genericWindow))
     {
-      syncGroupsHistogram[ whichGroup ].erase( it );
-      break;
+      if (tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_HISTOGRAMS)
+        tmpSyncGroup = SyncPropertiesGroup::SYNC_GROUP_MIXED;
+      else
+        tmpSyncGroup = SyncPropertiesGroup::SYNC_GROUP_TIMELINES;
+    }
+
+    if (std::holds_alternative<Histogram *> (genericWindow))
+    {
+      auto &tmpSyncGroup = syncGroups[whichGroup].groupType;
+      if (tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_TIMELINES)
+        tmpSyncGroup = SyncPropertiesGroup::SYNC_GROUP_MIXED;
+      else
+        tmpSyncGroup = SyncPropertiesGroup::SYNC_GROUP_HISTOGRAMS;
+    }
+  }
+  else
+  {
+    for (auto &window : syncGroups[whichGroup].syncGroupsWindows)
+    {
+      if (std::holds_alternative<Timeline *> (window))
+      {
+        if (tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_HISTOGRAMS)
+          tmpSyncGroup = SyncPropertiesGroup::SYNC_GROUP_MIXED;
+        else
+          tmpSyncGroup = SyncPropertiesGroup::SYNC_GROUP_TIMELINES;
+      }
+      if (std::holds_alternative<Histogram *> (window))
+      {
+        auto &tmpSyncGroup = syncGroups[whichGroup].groupType;
+        if (tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_TIMELINES)
+          tmpSyncGroup = SyncPropertiesGroup::SYNC_GROUP_MIXED;
+        else
+          tmpSyncGroup = SyncPropertiesGroup::SYNC_GROUP_HISTOGRAMS;
+      }
     }
   }
 }
 
-void SyncWindows::removeAllWindows( TGroupId whichGroup )
+void SyncWindows::removeAllWindows (TGroupId whichGroup)
 {
-  if( syncGroupsTimeline.find( whichGroup ) == syncGroupsTimeline.end() )
+  if (syncGroups.find (whichGroup) == syncGroups.end ())
     return;
 
   removingAll = true;
 
-  for( vector<Timeline *>::iterator it = syncGroupsTimeline[ whichGroup ].begin();
-       it != syncGroupsTimeline[ whichGroup ].end(); ++it )
-    (*it)->removeFromSync();
+  auto visitor = overloads{
+      [] (Histogram *histogram)
+      { histogram->removeFromSync (); },
+      [] (Timeline *timeline)
+      { timeline->removeFromSync (); }};
 
-  syncGroupsTimeline[ whichGroup ].clear();
-  if( whichGroup != 0 )
-    syncGroupsTimeline.erase( whichGroup );
+  auto windows = syncGroups[whichGroup].syncGroupsWindows;
 
-  for( vector<Histogram *>::iterator it = syncGroupsHistogram[ whichGroup ].begin();
-       it != syncGroupsHistogram[ whichGroup ].end(); ++it )
-    (*it)->removeFromSync();
+  for (auto &it : windows)
+    std::visit (visitor, it);
 
-  syncGroupsHistogram[ whichGroup ].clear();
-  if( whichGroup != 0 )
-    syncGroupsHistogram.erase( whichGroup );
+  windows.clear ();
+
+  if (whichGroup != 0)
+    syncGroups.erase (whichGroup);
 
   removingAll = false;
 }
 
-int SyncWindows::getNumWindows( TGroupId whichGroup ) const
+int SyncWindows::getNumWindows (TGroupId whichGroup)
 {
-  int numGroups = 0;
-  
-  if( syncGroupsTimeline.find( whichGroup ) != syncGroupsTimeline.end() )
-    numGroups += syncGroupsTimeline.find( whichGroup )->second.size() +
-                 syncGroupsHistogram.find( whichGroup )->second.size();
-
-  return numGroups;
+  return syncGroups[whichGroup].syncGroupsWindows.size ();
 }
 
-
-void SyncWindows::removeAllGroups()
+void SyncWindows::removeAllGroups ()
 {
-  for( std::map<TGroupId, std::vector<Timeline *> >::iterator it = syncGroupsTimeline.begin(); 
-       it != syncGroupsTimeline.end(); ++it )
-    removeAllWindows( it->first );
+  for (auto &it : syncGroups)
+    removeAllWindows (it.first);
 }
 
-TGroupId SyncWindows::newGroup()
+TGroupId SyncWindows::newGroup ()
 {
-  for( size_t i = 0; i <= lastNewGroup; ++i )
+  for (size_t i = 0; i <= lastNewGroup; ++i)
   {
-    map< TGroupId, std::vector< Timeline *> >::iterator it = syncGroupsTimeline.find( i );
-    if( it == syncGroupsTimeline.end() )
+    auto it = syncGroups.find (i);
+    if (it == syncGroups.end ())
     {
-      syncGroupsTimeline[ i ]  = vector<Timeline *>();
-      syncGroupsHistogram[ i ] = vector<Histogram *>();
+      syncGroups[i].syncGroupsWindows = std::vector<WindowGenericItem> ();
+      addProperty (i, SyncPropertiesType::SYNC_TIME);
       return i;
     }
-    else if ( it->second.size() == 0 && syncGroupsHistogram[ it->first ].size() == 0 )
+    else if (it->second.syncGroupsWindows.size () == 0)
       return i;
   }
 
   ++lastNewGroup;
-  syncGroupsTimeline[ lastNewGroup ]  = vector<Timeline *>();
-  syncGroupsHistogram[ lastNewGroup ] = vector<Histogram *>();
+  syncGroups[lastNewGroup].syncGroupsWindows = std::vector<WindowGenericItem> ();
+  addProperty (lastNewGroup, SyncPropertiesType::SYNC_TIME);
 
   return lastNewGroup;
 }
 
-TGroupId SyncWindows::getNumGroups() const
+int SyncWindows::getNumGroups () const
 {
-  return syncGroupsTimeline.size();
+  return syncGroups.size ();
 }
 
-bool SyncWindows::isGroupCreated(TGroupId wichGroup) const
+bool SyncWindows::isPropertySelected (TGroupId wichGroup, const SyncPropertiesType &newProperty)
 {
-  return !((syncGroupsTimeline.find(wichGroup) == syncGroupsTimeline.end()) || (syncGroupsHistogram.find(wichGroup) == syncGroupsHistogram.end()));
-}
-
-
-void SyncWindows::getGroups( vector< TGroupId >& groups ) const
-{
-  for( std::map<TGroupId, std::vector<Timeline *> >::const_iterator it = syncGroupsTimeline.begin();
-       it != syncGroupsTimeline.end(); ++it )
-    groups.push_back( it->first );
-}
-
-void SyncWindows::broadcastTime( TGroupId whichGroup, Timeline *sendWindow, TTime beginTime, TTime endTime )
-{
-  if( syncGroupsTimeline.find( whichGroup ) == syncGroupsTimeline.end() )
-    return;
-
-  broadcastTimeTimelines( whichGroup, sendWindow, beginTime, endTime );
-  broadcastTimeHistograms( whichGroup, nullptr, beginTime, endTime );
-}
-
-void SyncWindows::broadcastTime( TGroupId whichGroup, Histogram *sendWindow, TTime beginTime, TTime endTime )
-{
-  if( syncGroupsHistogram.find( whichGroup ) == syncGroupsHistogram.end() )
-    return;
-
-  broadcastTimeTimelines( whichGroup, nullptr, beginTime, endTime );
-  broadcastTimeHistograms( whichGroup, sendWindow, beginTime, endTime );
-}
-
-void SyncWindows::broadcastTimeTimelines( TGroupId whichGroup, Timeline *sendWindow, TTime beginTime, TTime endTime )
-{
-  for( vector<Timeline *>::iterator it = syncGroupsTimeline[ whichGroup ].begin();
-       it != syncGroupsTimeline[ whichGroup ].end(); ++it )
+  if (syncGroups[wichGroup].groupType != SyncPropertiesGroup::SYNC_GROUP_HISTOGRAMS
+      && newProperty == SyncPropertiesType::SYNC_HISTOGRAM_DELTA)
   {
-    TTime tmpBeginTime, tmpEndTime;
-    tmpBeginTime = ( *it )->customUnitsToTraceUnits( beginTime, NS );
-    tmpEndTime = ( *it )->customUnitsToTraceUnits( endTime, NS );
-    if( ( *it ) != sendWindow  &&
-        ( ( *it )->getWindowBeginTime() != tmpBeginTime ||
-          ( *it )->getWindowEndTime()   != tmpEndTime )
-      )
+    return false;
+  }
+  if (syncGroups[wichGroup].groupType != SyncPropertiesGroup::SYNC_GROUP_TIMELINES
+      && newProperty == SyncPropertiesType::SYNC_OBJECT_ZOOM)
+  {
+    return false;
+  }
+
+  if (!syncGroups[wichGroup].isSameTraceStruct && newProperty == SyncPropertiesType::SYNC_OBJECT_SELECTION)
+  {
+    return false;
+  }
+
+  auto groupProperties = syncGroups[wichGroup].syncGroupsSelectedProperties;
+
+  return (std::find (groupProperties.begin (), groupProperties.end (), newProperty)
+          != groupProperties.end ());
+}
+
+bool SyncWindows::isGroupCreated (TGroupId wichGroup) const
+{
+  return !((syncGroups.find (wichGroup) == syncGroups.end ()));
+}
+
+void SyncWindows::updateGroupTraceStruct (TGroupId whichGroup)
+{
+  auto visitor = overloads{
+      [] (Histogram *histogram)
+      { return histogram->getDataWindow ()->getTrace (); },
+      [] (Timeline *timeline)
+      { return timeline->getTrace (); }};
+  if (!syncGroups[whichGroup].syncGroupsWindows.empty ())
+  {
+    auto trace = std::visit (visitor, (syncGroups[whichGroup].syncGroupsWindows[0]));
+
+    for (auto &window : syncGroups[whichGroup].syncGroupsWindows)
     {
-      ( *it )->addZoom( tmpBeginTime, tmpEndTime, true );
-      ( *it )->setWindowBeginTime( tmpBeginTime, true );
-      ( *it )->setWindowEndTime( tmpEndTime, true );
-      ( *it )->setChanged( true );
-      ( *it )->setRedraw( true );
+      if (!trace->isSameObjectStruct (std::visit (visitor, window), true))
+      {
+        syncGroups[whichGroup].isSameTraceStruct = false;
+        break;
+      }
+      else
+      {
+        syncGroups[whichGroup].isSameTraceStruct = true;
+      }
     }
   }
 }
 
-void SyncWindows::broadcastTimeHistograms( TGroupId whichGroup, Histogram *sendWindow, TTime beginTime, TTime endTime )
+void SyncWindows::getGroups (vector<TGroupId> &groups) const
 {
-  for( vector<Histogram *>::iterator it = syncGroupsHistogram[ whichGroup ].begin();
-       it != syncGroupsHistogram[ whichGroup ].end(); ++it )
+  for (auto it = syncGroups.begin (); it != syncGroups.end (); ++it)
+    groups.push_back (it->first);
+}
+
+void SyncWindows::getGroupsProperties (std::map<TGroupId, std::vector<SyncPropertiesType>> &groups) const
+{
+  for (auto it = syncGroups.begin (); it != syncGroups.end (); ++it)
+    groups[it->first] = it->second.syncGroupsSelectedProperties;
+}
+
+void SyncWindows::getGroupAvailableProperties (TGroupId groupId, std::vector<SyncPropertiesType> &properties)
+{
+  // TODO: CHECK
+
+  properties.push_back (SyncPropertiesType::SYNC_TIME);
+  properties.push_back (SyncPropertiesType::SYNC_MAX);
+  properties.push_back (SyncPropertiesType::SYNC_MIN);
+
+  if (syncGroups[groupId].groupType == SyncPropertiesGroup::SYNC_GROUP_HISTOGRAMS)
   {
-    TTime tmpBeginTime, tmpEndTime;
-    tmpBeginTime = ( *it )->getControlWindow()->customUnitsToTraceUnits( beginTime, NS );
-    tmpEndTime = ( *it )->getControlWindow()->customUnitsToTraceUnits( endTime, NS );
-    if( ( *it ) != sendWindow  &&
-        ( ( *it )->getBeginTime() != tmpBeginTime ||
-          ( *it )->getEndTime()   != tmpEndTime )
-      )
+    // properties.push_back(SyncPropertiesType::SYNC_HISTOGRAM_COLUMNS);
+    properties.push_back (SyncPropertiesType::SYNC_HISTOGRAM_DELTA);
+  }
+  if (syncGroups[groupId].groupType == SyncPropertiesGroup::SYNC_GROUP_TIMELINES)
+  {
+    properties.push_back (SyncPropertiesType::SYNC_OBJECT_ZOOM);
+  }
+
+  if (syncGroups[groupId].isSameTraceStruct)
+  {
+    properties.push_back (SyncPropertiesType::SYNC_OBJECT_SELECTION);
+  }
+}
+
+void SyncWindows::broadcastProperty (TGroupId whichGroup)
+{
+  if (syncGroups.find (whichGroup) == syncGroups.end ())
+    return;
+
+  for (auto &property : syncGroups[whichGroup].syncGroupsSelectedProperties)
+  {
+    if (isPropertySelected (whichGroup, property))
     {
-      ( *it )->setWindowBeginTime( tmpBeginTime, true );
-      ( *it )->setWindowEndTime( tmpEndTime, true );
-      ( *it )->setChanged( true );
-      ( *it )->setRecalc( true );
+      switch (property)
+      {
+      case SyncPropertiesType::SYNC_TIME:
+        /* code */
+        broadcastTimeAll (whichGroup);
+        break;
+      case SyncPropertiesType::SYNC_HISTOGRAM_DELTA:
+        /* code */
+        broadcastDeltaAll (whichGroup);
+        break;
+      case SyncPropertiesType::SYNC_HISTOGRAM_COLUMNS:
+        /* code */
+        broadcastColumnsAll (whichGroup);
+        break;
+      case SyncPropertiesType::SYNC_MAX:
+        /* code */
+        broadcastMaxAll (whichGroup);
+        break;
+      case SyncPropertiesType::SYNC_MIN:
+        /* code */
+        broadcastMinAll (whichGroup);
+        break;
+      case SyncPropertiesType::SYNC_OBJECT_ZOOM:
+        /* code */
+        broadcastObjectZoomAll (whichGroup);
+        break;
+      case SyncPropertiesType::SYNC_OBJECT_SELECTION:
+        /* code */
+        for (TTraceLevel level = TTraceLevel::NONE; level <= TTraceLevel::CPU; ++level)
+        {
+          broadcastObjectSelectionAll (whichGroup, level);
+        }
+        break;
+      default:
+        break;
+      }
     }
   }
 }
 
-void SyncWindows::getGroupTimes( TGroupId whichGroup, TTime& beginTime, TTime& endTime ) const
+void SyncWindows::addProperty (const TGroupId &whichGroup, SyncPropertiesType newProperty)
 {
-  if( syncGroupsTimeline.find( whichGroup ) == syncGroupsTimeline.end() )
-    return;
-
-  std::map<TGroupId, std::vector<Timeline *> >::const_iterator itTimeline = syncGroupsTimeline.find( whichGroup );
-  if( (*itTimeline).second.size() > 0 )
+  auto it = std::find (syncGroups[whichGroup].syncGroupsSelectedProperties.begin (), syncGroups[whichGroup].syncGroupsSelectedProperties.end (), newProperty);
+  if (it == syncGroups[whichGroup].syncGroupsSelectedProperties.end ())
   {
-    beginTime = (*itTimeline).second[ 0 ]->traceUnitsToCustomUnits( (*itTimeline).second[ 0 ]->getWindowBeginTime(), NS );
-    endTime   = (*itTimeline).second[ 0 ]->traceUnitsToCustomUnits( (*itTimeline).second[ 0 ]->getWindowEndTime(), NS );
+    syncGroups[whichGroup].syncGroupsSelectedProperties.push_back (newProperty);
+  }
+}
+
+void SyncWindows::removeProperty (const TGroupId &whichGroup, SyncPropertiesType newProperty)
+{
+  auto &vec = syncGroups[whichGroup].syncGroupsSelectedProperties;
+  vec.erase (std::remove (vec.begin (), vec.end (), newProperty), vec.end ());
+}
+
+void SyncWindows::broadcastTimeAll (TGroupId whichGroup, std::optional<TTime> beginTime, std::optional<TTime> endTime)
+{
+  if (syncGroups.find (whichGroup) == syncGroups.end ())
     return;
+  if (syncGroups[whichGroup].isChanging)
+    return;
+  syncGroups[whichGroup].isChanging = true;
+
+  if (beginTime == std::nullopt || endTime == std::nullopt)
+  {
+    TTime tmpBeginTime, tmpEndTime;
+    getGroupTimes (whichGroup, tmpBeginTime, tmpEndTime);
+
+    beginTime = tmpBeginTime;
+    endTime = tmpEndTime;
   }
 
-  std::map<TGroupId, std::vector<Histogram *> >::const_iterator itHistogram = syncGroupsHistogram.find( whichGroup );
-  if( (*itHistogram).second.size() > 0 )
+  for (auto &window : syncGroups[whichGroup].syncGroupsWindows)
   {
-    const Timeline *tmpControl = (*itHistogram).second[ 0 ]->getControlWindow();
-    beginTime = tmpControl->traceUnitsToCustomUnits( (*itHistogram).second[ 0 ]->getBeginTime(), NS );
-    endTime   = tmpControl->traceUnitsToCustomUnits( (*itHistogram).second[ 0 ]->getEndTime(), NS );
+    std::visit ([this, whichGroup, beginTime, endTime] (auto &window)
+                { broadcastTime (window, whichGroup, beginTime.value (), endTime.value ()); },
+                window);
   }
+  syncGroups[whichGroup].isChanging = false;
+}
+
+void SyncWindows::broadcastDeltaAll (TGroupId whichGroup, std::optional<THistogramLimit> whichDelta)
+{
+  if (syncGroups.find (whichGroup) == syncGroups.end ())
+    return;
+
+  if (syncGroups[whichGroup].isChanging)
+    return;
+
+  syncGroups[whichGroup].isChanging = true;
+
+  if (whichDelta == std::nullopt)
+  {
+    THistogramLimit tmpWhichDelta;
+    getGroupDelta (whichGroup, tmpWhichDelta);
+    whichDelta = tmpWhichDelta;
+  }
+
+  for (auto &window : syncGroups[whichGroup].syncGroupsWindows)
+  {
+    std::visit (overloads{[this, whichGroup, whichDelta] (Histogram *window)
+                          { broadcastDelta (window, whichGroup, whichDelta.value ()); },
+                          [] (Timeline *window) {}},
+                window);
+  }
+  syncGroups[whichGroup].isChanging = false;
+}
+
+void SyncWindows::broadcastColumnsAll (TGroupId whichGroup, std::optional<THistogramColumn> whichColumns)
+{
+  if (syncGroups.find (whichGroup) == syncGroups.end ())
+    return;
+
+  if (syncGroups[whichGroup].isChanging)
+    return;
+
+  syncGroups[whichGroup].isChanging = true;
+
+  if (whichColumns == std::nullopt)
+  {
+    THistogramColumn tmpWhichColumn;
+    getGroupColumns (whichGroup, tmpWhichColumn);
+    whichColumns = tmpWhichColumn;
+  }
+  for (auto &window : syncGroups[whichGroup].syncGroupsWindows)
+  {
+    std::visit (overloads{[this, whichGroup, whichColumns] (Histogram *window)
+                          { broadcastColumns (window, whichGroup, whichColumns.value ()); },
+                          [] (Timeline *window) {}},
+                window);
+  }
+  syncGroups[whichGroup].isChanging = false;
+}
+
+void SyncWindows::broadcastMaxAll (TGroupId whichGroup, std::optional<double> whichMax)
+{
+  if (syncGroups.find (whichGroup) == syncGroups.end ())
+    return;
+
+  if (syncGroups[whichGroup].isChanging)
+    return;
+
+  syncGroups[whichGroup].isChanging = true;
+
+  if (whichMax == std::nullopt)
+  {
+    THistogramLimit tmpWhichMax;
+    getGroupMax (whichGroup, tmpWhichMax);
+    whichMax = tmpWhichMax;
+  }
+  for (auto &window : syncGroups[whichGroup].syncGroupsWindows)
+  {
+    std::visit (overloads{[this, whichGroup, whichMax] (Histogram *window)
+                          { broadcastSemanticMax (window, whichGroup, whichMax.value ()); },
+                          [this, whichGroup, whichMax] (Timeline *window)
+                          { broadcastSemanticMax (window, whichGroup, whichMax.value ()); }},
+                window);
+  }
+  syncGroups[whichGroup].isChanging = false;
+}
+
+void SyncWindows::broadcastMinAll (TGroupId whichGroup, std::optional<double> whichMin)
+{
+  if (syncGroups.find (whichGroup) == syncGroups.end ())
+    return;
+
+  if (syncGroups[whichGroup].isChanging)
+    return;
+
+  syncGroups[whichGroup].isChanging = true;
+
+  if (whichMin == std::nullopt)
+  {
+    THistogramLimit tmpWhichMin;
+    getGroupMin (whichGroup, tmpWhichMin);
+    whichMin = tmpWhichMin;
+  }
+  for (auto &window : syncGroups[whichGroup].syncGroupsWindows)
+  {
+    std::visit (overloads{[this, whichGroup, whichMin] (Histogram *window)
+                          { broadcastSemanticMin (window, whichGroup, whichMin.value ()); },
+                          [this, whichGroup, whichMin] (Timeline *window)
+                          { broadcastSemanticMin (window, whichGroup, whichMin.value ()); }},
+                window);
+  }
+  syncGroups[whichGroup].isChanging = false;
+}
+
+void SyncWindows::broadcastObjectZoomAll (TGroupId whichGroup, std::optional<TObjectOrder> beginObject, std::optional<TObjectOrder> endObject)
+{
+  if (syncGroups.find (whichGroup) == syncGroups.end ())
+    return;
+
+  if (syncGroups[whichGroup].isChanging)
+    return;
+
+  syncGroups[whichGroup].isChanging = true;
+
+  if (beginObject == std::nullopt || endObject == std::nullopt)
+  {
+    TObjectOrder tmpBeginObject;
+    TObjectOrder tmpEndObject;
+
+    getGroupObjectZoom (whichGroup, tmpBeginObject, tmpEndObject);
+
+    beginObject = tmpBeginObject;
+    endObject = tmpEndObject;
+  }
+
+  for (auto &window : syncGroups[whichGroup].syncGroupsWindows)
+  {
+    std::visit (overloads{[this, whichGroup, beginObject, endObject] (Histogram *) {},
+                          [this, whichGroup, beginObject, endObject] (Timeline *window)
+                          { broadcastObjectZoom (window, whichGroup, beginObject.value (), endObject.value ()); }},
+                window);
+  }
+  syncGroups[whichGroup].isChanging = false;
+}
+
+void SyncWindows::broadcastObjectSelectionAll (TGroupId whichGroup, TTraceLevel wichLevel, std::optional<std::vector<bool>> selectedObjects)
+{
+  if (syncGroups.find (whichGroup) == syncGroups.end ())
+    return;
+
+  if (syncGroups[whichGroup].isChanging)
+    return;
+
+  syncGroups[whichGroup].isChanging = true;
+
+  if (selectedObjects == std::nullopt)
+  {
+    std::vector<bool> tmpSelectedObjects;
+
+    getSelectObjectZoom (whichGroup, tmpSelectedObjects, wichLevel);
+
+    selectedObjects = tmpSelectedObjects;
+  }
+
+  for (auto &window : syncGroups[whichGroup].syncGroupsWindows)
+  {
+    std::visit (overloads{[this, &whichGroup, &wichLevel, &selectedObjects] (auto *w)
+                          { broadcastObjectSelection (w, whichGroup, wichLevel, selectedObjects.value ()); }},
+                window);
+    // [this,whichGroup,beginObject, endObject](Timeline* window){broadcastObjectSelection( window, whichGroup , beginObject.value(), endObject.value());}},
+    // window  );
+  }
+  syncGroups[whichGroup].isChanging = false;
+}
+
+void SyncWindows::broadcastTime (Timeline *timeline, TGroupId whichGroup, TTime beginTime, TTime endTime)
+{
+  if ((timeline->getWindowBeginTime () != beginTime || timeline->getWindowEndTime () != endTime))
+  {
+    timeline->addZoom (beginTime, endTime);
+    timeline->setWindowBeginTime (beginTime);
+    timeline->setWindowEndTime (endTime);
+    timeline->setChanged (true);
+    timeline->setRedraw (true);
+  }
+}
+
+void SyncWindows::broadcastTime (Histogram *histogram, TGroupId whichGroup, TTime beginTime, TTime endTime)
+{
+  if ((histogram->getBeginTime () != beginTime || histogram->getEndTime () != endTime))
+  {
+    histogram->setWindowBeginTime (beginTime);
+    histogram->setWindowEndTime (endTime);
+    histogram->setChanged (true);
+    histogram->setRecalc (true);
+  }
+}
+
+void SyncWindows::broadcastDelta (Histogram *histogram, TGroupId whichGroup, THistogramLimit whichDelta)
+{
+  if (histogram->getControlDelta () != whichDelta)
+  {
+    histogram->setControlDelta (whichDelta);
+
+    // modify current zoom directly
+    std::pair<HistogramProxy::TZoomInfo, HistogramProxy::TZoomInfo> zoomInfo = histogram->getZoomFirstDimension ();
+    zoomInfo.second.begin = whichDelta; // delta
+    histogram->setZoomFirstDimension (zoomInfo);
+    histogram->setCompute2DScale (false);
+    histogram->setUseFixedDelta (true);
+    histogram->setRecalc (true);
+  }
+}
+
+void SyncWindows::broadcastColumns (Histogram *histogram, TGroupId whichGroup, THistogramColumn newNumColumns)
+{
+  if (histogram->getNumColumns () != newNumColumns)
+  {
+    histogram->setUseFixedDelta (false);
+    histogram->setNumColumns (newNumColumns);
+    histogram->setCompute2DScale (false);
+    histogram->setRecalc (true);
+  }
+}
+
+void SyncWindows::broadcastSemanticMin (Histogram *whichHistogram, TGroupId whichGroup, THistogramLimit newHistoMin)
+{
+  if (whichHistogram->getControlMin () != newHistoMin)
+  {
+    whichHistogram->setControlMin (newHistoMin);
+
+    // modify current zoom directly
+    std::pair<HistogramProxy::TZoomInfo, HistogramProxy::TZoomInfo> zoomInfo = whichHistogram->getZoomFirstDimension ();
+    zoomInfo.first.begin = newHistoMin; // minimum
+    whichHistogram->setZoomFirstDimension (zoomInfo);
+
+    whichHistogram->setCompute2DScale (false);
+    whichHistogram->setRecalc (true);
+  }
+}
+
+void SyncWindows::broadcastSemanticMin (Timeline *whichTimeline, TGroupId whichGroup, THistogramLimit newHistoMin)
+{
+  if (whichTimeline->getMinimumY () != newHistoMin)
+  {
+    whichTimeline->setMinimumY (newHistoMin);
+
+    // modify current zoom directly
+    whichTimeline->setRedraw (true);
+  }
+}
+
+void SyncWindows::broadcastSemanticMax (Histogram *whichHistogram, TGroupId whichGroup, THistogramLimit newHistoMax)
+{
+  if (whichHistogram->getControlMax () != newHistoMax)
+  {
+    whichHistogram->setControlMax (newHistoMax);
+
+    // modify current zoom directly
+    std::pair<HistogramProxy::TZoomInfo, HistogramProxy::TZoomInfo> zoomInfo = whichHistogram->getZoomFirstDimension ();
+    zoomInfo.first.begin = newHistoMax; // minimum
+    whichHistogram->setZoomFirstDimension (zoomInfo);
+
+    whichHistogram->setCompute2DScale (false);
+    whichHistogram->setRecalc (true);
+  }
+}
+
+void SyncWindows::broadcastSemanticMax (Timeline *whichTimeline, TGroupId whichGroup, THistogramLimit newHistoMax)
+{
+  if (whichTimeline->getMaximumY () != newHistoMax)
+  {
+    whichTimeline->setMaximumY (newHistoMax);
+
+    // modify current zoom directly
+    whichTimeline->setRedraw (true);
+  }
+}
+
+void SyncWindows::broadcastObjectZoom (Timeline *whichWindow, TGroupId whichGroup, TObjectOrder beginObject, TObjectOrder endObject)
+{
+  if (whichWindow->getZoomSecondDimension ().first != beginObject && whichWindow->getZoomSecondDimension ().first != endObject)
+  {
+    whichWindow->addZoom (beginObject, endObject);
+
+    whichWindow->setRedraw (true);
+  }
+}
+
+void SyncWindows::broadcastObjectSelection (Timeline *whichWindow, TGroupId whichGroup, TTraceLevel wichLevel, std::vector<bool> selectedObjects)
+{
+  std::vector<bool> tmpSelectedObjects;
+  whichWindow->getSelectedRows (wichLevel, tmpSelectedObjects);
+
+  if (tmpSelectedObjects != selectedObjects)
+  {
+    whichWindow->setSelectedRows (wichLevel, selectedObjects);
+
+    whichWindow->setRedraw (true);
+    whichWindow->setChanged (true);
+  }
+}
+
+void SyncWindows::broadcastObjectSelection (Histogram *whichWindow, TGroupId whichGroup, TTraceLevel wichLevel, std::vector<bool> selectedObjects)
+{
+  std::vector<bool> tmpSelectedObjects;
+  whichWindow->getRowSelectionManagement ()->getSelected (tmpSelectedObjects, wichLevel);
+
+  if (tmpSelectedObjects != selectedObjects)
+  {
+    whichWindow->setSelectedRows (wichLevel, selectedObjects);
+    whichWindow->setRecalc (true);
+  }
+}
+
+void SyncWindows::getGroupTimes (TGroupId whichGroup, TTime &beginTime, TTime &endTime)
+{
+  auto visitor_begin = overloads{
+      [] (Histogram *h)
+      { return h->getControlWindow ()->traceUnitsToCustomUnits (h->getBeginTime (), NS); },
+      [] (Timeline *t)
+      { return t->traceUnitsToCustomUnits (t->getWindowBeginTime (), NS); }};
+  auto visitor_end = overloads{
+      [] (Histogram *h)
+      { return h->getControlWindow ()->traceUnitsToCustomUnits (h->getEndTime (), NS); },
+      [] (Timeline *t)
+      { return t->traceUnitsToCustomUnits (t->getWindowEndTime (), NS); }};
+
+  applyToFirstWindow (whichGroup, beginTime, visitor_begin);
+  applyToFirstWindow (whichGroup, endTime, visitor_end);
+}
+
+void SyncWindows::getGroupDelta (TGroupId whichGroup, THistogramLimit &whichDelta)
+{
+  auto visitor = overloads{
+      [] (Histogram *h)
+      { return h->getControlDelta (); },
+      [] (Timeline *)
+      { return 0.0; }};
+
+  applyToFirstWindow (whichGroup, whichDelta, visitor);
+}
+
+void SyncWindows::getGroupObjectZoom (TGroupId whichGroup, TObjectOrder &beginObject, TObjectOrder &endObject)
+{
+  auto visitor_begin = overloads{
+      [] (Timeline *t)
+      { return t->getZoomSecondDimension ().first; },
+      [] (Histogram *)
+      { return (uint16_t)0; }};
+
+  auto visitor_end = overloads{
+      [] (Timeline *t)
+      { return t->getZoomSecondDimension ().second; },
+      [] (Histogram *)
+      { return (uint16_t)0; }};
+
+  applyToFirstWindow (whichGroup, beginObject, visitor_begin);
+  applyToFirstWindow (whichGroup, endObject, visitor_end);
+}
+
+void SyncWindows::getSelectObjectZoom (TGroupId whichGroup, std::vector<bool> &selectedObjects, TTraceLevel &objectsLevel)
+{
+
+  auto visitor = overloads{
+      [&selectedObjects, &objectsLevel] (Timeline *t)
+      {  t->getSelectedRows(objectsLevel,selectedObjects); return selectedObjects; },
+      [&selectedObjects, &objectsLevel] (Histogram *h)
+      {  h->getRowSelectionManagement()->getSelected(selectedObjects, objectsLevel); return selectedObjects; },
+  };
+
+  applyToFirstWindow (whichGroup, selectedObjects, visitor);
+}
+
+void SyncWindows::getGroupColumns (TGroupId whichGroup, THistogramColumn &whichColumns)
+{
+  auto visitor = overloads{
+      [] (Histogram *h)
+      { return h->getNumColumns (); },
+      [] (Timeline *)
+      { return (PRV_UINT32)0; }};
+
+  applyToFirstWindow (whichGroup, whichColumns, visitor);
+}
+
+void SyncWindows::getGroupMax (TGroupId whichGroup, double &whichMax)
+{
+  auto visitor = overloads{
+      [] (Histogram *h)
+      { return h->getControlMax (); },
+      [] (Timeline *t)
+      { return t->getMaximumY (); }};
+
+  applyToFirstWindow (whichGroup, whichMax, visitor);
+}
+
+void SyncWindows::getGroupMin (TGroupId whichGroup, double &whichMin)
+{
+  auto visitor = overloads{
+      [] (Histogram *h)
+      { return h->getControlMin (); },
+      [] (Timeline *t)
+      { return t->getMinimumY (); }};
+
+  applyToFirstWindow (whichGroup, whichMin, visitor);
+}
+
+template <typename T, typename Visitor>
+bool SyncWindows::applyToFirstWindow (TGroupId whichGroup, T &result, Visitor visitor)
+{
+  auto it = syncGroups.find (whichGroup);
+  if (it == syncGroups.end ())
+    return false;
+
+  const WindowGenericItem &firstElement = *(it->second.syncGroupsWindows.begin ());
+  result = std::visit (visitor, firstElement);
+  return true;
 }

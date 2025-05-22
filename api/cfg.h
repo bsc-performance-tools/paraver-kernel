@@ -59,6 +59,13 @@ class TagFunction
       return false;
     }
 
+    virtual bool parseLine (KernelConnection *whichKernel,
+                            std::istringstream &line,
+                            Trace *whichTrace)
+    {
+      return false;
+    }
+
     virtual void setCurrentNameTag( const std::string & whichCurrentNameTag )
     {
       currentNameTag = whichCurrentNameTag;
@@ -326,6 +333,26 @@ class CFGLoader
 
 };
 
+class SyncWindowsGroups : public TagFunction
+{
+public:
+  SyncWindowsGroups ()
+  {
+  }
+
+  ~SyncWindowsGroups ()
+  {
+  }
+  virtual bool parseLine (KernelConnection *whichKernel, std::istringstream &line,
+                          Trace *whichTrace);
+
+  static void printLine (std::ofstream &cfgFile);
+
+  static const std::string &getTagCFG () { return tagCFG; }
+
+protected:
+  static std::string tagCFG;
+};
 
 class WindowName: public TagFunction
 {

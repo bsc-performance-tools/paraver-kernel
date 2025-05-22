@@ -209,8 +209,8 @@ class Timeline
       return std::set<Histogram *>();
     }
 
-    virtual void setWindowBeginTime( TRecordTime whichTime, bool isBroadcast = false ) {}
-    virtual void setWindowEndTime( TRecordTime whichTime, bool isBroadcast = false ) {}
+    virtual void setWindowBeginTime (TRecordTime whichTime) {}
+    virtual void setWindowEndTime (TRecordTime whichTime) {}
     virtual TRecordTime getWindowBeginTime() const
     {
       return 0;
@@ -558,13 +558,12 @@ class Timeline
       return true;
     }
 
-    virtual void addZoom( TTime beginTime, TTime endTime,
-                          TObjectOrder beginObject, TObjectOrder endObject,
-                          bool isBroadCast = false )
+    virtual void addZoom (TTime beginTime, TTime endTime,
+                          TObjectOrder beginObject, TObjectOrder endObject)
     {}
-    virtual void addZoom( TTime beginTime, TTime endTime, bool isBroadCast = false )
+    virtual void addZoom (TTime beginTime, TTime endTime)
     {}
-    virtual void addZoom( TObjectOrder beginObject, TObjectOrder endObject )
+    virtual void addZoom (TObjectOrder beginObject, TObjectOrder endObject)
     {}
     virtual void nextZoom()
     {}
@@ -617,9 +616,9 @@ class Timeline
     {
       return nullptr;
     }
-    virtual void setSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected )
+    virtual void setSelectedRows (TTraceLevel onLevel, std::vector<bool> &selected)
     {}
-    virtual void setSelectedRows( TTraceLevel onLevel, std::vector< TObjectOrder > &selection )
+    virtual void setSelectedRows (TTraceLevel onLevel, std::vector<TObjectOrder> &selection)
     {}
     virtual void getSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected, bool lookUpLevels = false )
     {}
@@ -910,8 +909,8 @@ class TimelineProxy: public Timeline
     virtual bool getUsedByHistogram() const override;
     virtual std::set<Histogram *> getHistograms() const override;
 
-    virtual void setWindowBeginTime( TRecordTime whichTime, bool isBroadcast = false ) override;
-    virtual void setWindowEndTime( TRecordTime whichTime, bool isBroadcast = false ) override;
+    virtual void setWindowBeginTime (TRecordTime whichTime) override;
+    virtual void setWindowEndTime (TRecordTime whichTime) override;
     virtual TRecordTime getWindowBeginTime() const override;
     virtual TRecordTime getWindowEndTime() const override;
 
@@ -1070,11 +1069,10 @@ class TimelineProxy: public Timeline
 
     virtual bool emptyPrevZoom() const override;
     virtual bool emptyNextZoom() const override;
-    virtual void addZoom( TTime beginTime, TTime endTime,
-                          TObjectOrder beginObject, TObjectOrder endObject,
-                          bool isBroadCast = false ) override;
-    virtual void addZoom( TTime beginTime, TTime endTime, bool isBroadCast = false ) override;
-    virtual void addZoom( TObjectOrder beginObject, TObjectOrder endObject ) override;
+    virtual void addZoom (TTime beginTime, TTime endTime,
+                          TObjectOrder beginObject, TObjectOrder endObject) override;
+    virtual void addZoom (TTime beginTime, TTime endTime) override;
+    virtual void addZoom (TObjectOrder beginObject, TObjectOrder endObject) override;
     virtual void nextZoom() override;
     virtual void prevZoom() override;
     virtual void setZoomFirstDimension( std::pair<TTime, TTime> &dim ) override;
@@ -1092,8 +1090,8 @@ class TimelineProxy: public Timeline
 
     virtual bool areAllSelectedRows( TTraceLevel onLevel ) const override;
     virtual SelectionManagement< TObjectOrder, TTraceLevel > *getSelectedRows() override;
-    virtual void setSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected ) override;
-    virtual void setSelectedRows( TTraceLevel onLevel, std::vector< TObjectOrder > &selected ) override;
+    virtual void setSelectedRows (TTraceLevel onLevel, std::vector<bool> &selected) override;
+    virtual void setSelectedRows (TTraceLevel onLevel, std::vector<TObjectOrder> &selected) override;
     virtual void getSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected, bool lookUpLevels = false ) override;
     virtual void getSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected,
                                   TObjectOrder first, TObjectOrder last, bool lookUpLevels = false ) override;

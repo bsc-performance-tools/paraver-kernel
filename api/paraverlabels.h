@@ -237,6 +237,14 @@ constexpr char OLDCFG_VAL_LIMIT_ALLTRACE[] =  "Alltrace";
 constexpr char OLDCFG_VAL_LIMIT_ALLWINDOW[] = "Allwindow";
 constexpr char OLDCFG_VAL_LIMIT_REGION[] =    "Region";
 
+constexpr char CFG_VAL_SYNC_TIME[] = "Time";
+constexpr char CFG_VAL_SYNC_HISTO_COLUMNS[] = "Histogram Columns";
+constexpr char CFG_VAL_SYNC_HISTO_DELTA[] = "Histogram Delta";
+constexpr char CFG_VAL_SYNC_SEM_MIN[] = "Semantic Min";
+constexpr char CFG_VAL_SYNC_SEM_MAX[] = "Semantic Max";
+constexpr char CFG_VAL_SYNC_OBJ_ZOOM[] = "Object Zoom";
+constexpr char CFG_VAL_SYNC_OBJ_SEL[] = "Object Selection";
+
 constexpr char OLDCFG_VAL_AN2D_ACCUM_SEMANTIC[] = "Semantic";
 
 constexpr char CFG_TAG_ALIAS_CFG4D[] = "cfg4d";
@@ -281,6 +289,7 @@ constexpr char CFG_HEADER_VERSION[] =             "ConfigFile.Version:";
 constexpr char CFG_HEADER_NUM_WINDOWS[] =         "ConfigFile.NumWindows:";
 constexpr char CFG_HEADER_BEGIN_DESCRIPTION[] =   "ConfigFile.BeginDescription";
 constexpr char CFG_HEADER_END_DESCRIPTION[] =     "ConfigFile.EndDescription";
+constexpr char CFG_HEADER_SYNC_GROUPS[] = "ConfigFile.SyncGroups";
 
 constexpr char CFG_TAG_WNDW_END_TIME_RELATIVE[] = "window_end_time_relative";
 

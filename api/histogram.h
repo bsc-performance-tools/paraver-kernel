@@ -52,8 +52,8 @@ class Histogram
     Histogram( KernelConnection *whichKernel );
     virtual ~Histogram() {}
 
-    virtual void setWindowBeginTime( TRecordTime whichTime, bool isBroadcast = false ) {};
-    virtual void setWindowEndTime( TRecordTime whichTime, bool isBroadcast = false ) {};
+    virtual void setWindowBeginTime (TRecordTime whichTime){};
+    virtual void setWindowEndTime (TRecordTime whichTime){};
 
     virtual bool getThreeDimensions() const = 0;
 
@@ -640,10 +640,14 @@ class Histogram
       return std::vector< bool > ();
     }
 
-    virtual void setSelectedRows( std::vector< bool > &selected )
+    virtual void setSelectedRows (std::vector<bool> &selected)
     {}
 
-    virtual void setSelectedRows( std::vector< TObjectOrder > &selected )
+    virtual void setSelectedRows (TTraceLevel onLevel, std::vector<bool> &selected)
+    {
+    }
+
+    virtual void setSelectedRows (std::vector<TObjectOrder> &selected)
     {}
 
     virtual std::vector<int> getCurrentSemanticSort() const
@@ -665,8 +669,8 @@ class HistogramProxy : public Histogram
   public:
     virtual ~HistogramProxy();
 
-    virtual void setWindowBeginTime( TRecordTime whichTime, bool isBroadcast = false ) override;
-    virtual void setWindowEndTime( TRecordTime whichTime, bool isBroadcast = false ) override;
+    virtual void setWindowBeginTime (TRecordTime whichTime) override;
+    virtual void setWindowEndTime (TRecordTime whichTime) override;
 
     virtual bool getThreeDimensions() const override;
     virtual TRecordTime getBeginTime() const override;
@@ -963,8 +967,9 @@ class HistogramProxy : public Histogram
     virtual std::vector< TObjectOrder > getSelectedRows() const override;
     virtual std::vector< TObjectOrder > getSelectedRows( TObjectOrder whichBeginRow, TObjectOrder whichEndRow ) const override;
     virtual std::vector< bool > getSelectedBooleanRows() const override;
-    virtual void setSelectedRows( std::vector< bool > &selected ) override;
-    virtual void setSelectedRows( std::vector< TObjectOrder > &selected ) override;
+    virtual void setSelectedRows (std::vector<bool> &selected) override;
+    virtual void setSelectedRows (TTraceLevel onLevel, std::vector<bool> &selected) override;
+    virtual void setSelectedRows (std::vector<TObjectOrder> &selected) override;
 
     virtual std::vector<int> getCurrentSemanticSort() const override;
     virtual void setCurrentSemanticSort( const std::vector<int>& whichSort ) override;
