@@ -77,18 +77,20 @@ struct SaveOptions
 public:
   SaveOptions()
   {
-    windowComputeYMaxOnLoad = false;
-    windowScaleRelative = true;
-    windowBeginTimeRelative = true;
+    timelineComputeYMaxOnLoad = false;
+    timelineScaleRelative = true;
+    timelineBeginTimeRelative = true;
+    timelineAllTrace = false;
     histoComputeGradient = true;
     histoAllTrace = true;
     enabledCFG4DMode = false;
   }
 
   std::string description;
-  bool windowComputeYMaxOnLoad;
-  bool windowScaleRelative;
-  bool windowBeginTimeRelative;
+  bool timelineComputeYMaxOnLoad;
+  bool timelineScaleRelative;
+  bool timelineBeginTimeRelative;
+  bool timelineAllTrace;
   bool histoComputeGradient;
   bool histoAllTrace;
   bool enabledCFG4DMode;

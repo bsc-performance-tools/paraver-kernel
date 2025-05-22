@@ -2161,7 +2161,7 @@ void WindowComputeYMax::printLine( ostream& cfgFile,
                                    const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_COMPUTE_Y_MAX << " ";
-  if ( options.windowComputeYMaxOnLoad )
+  if ( options.timelineComputeYMaxOnLoad )
     cfgFile << OLDCFG_VAL_TRUE;
   else
     cfgFile << OLDCFG_VAL_FALSE;
@@ -2320,11 +2320,19 @@ void WindowScaleRelative::printLine( ostream& cfgFile,
                                      const SaveOptions& options,
                                      const vector<Timeline *>::const_iterator it )
 {
-  if ( options.windowScaleRelative )
+  if ( options.timelineScaleRelative )
   {
     cfgFile << OLDCFG_TAG_WNDW_SCALE_RELATIVE << " ";
-    double maxScale = ( *it )->getTrace()->getEndTime() / ( double )( *it )->getWidth();
-    cfgFile << ( ( *it )->getWindowEndTime() / ( *it )->getWidth() ) / maxScale;
+    if ( options.timelineAllTrace )
+    {
+      cfgFile << 1.0;
+    }  
+    else
+    {
+      double maxScale = ( *it )->getTrace()->getEndTime() / ( double )( *it )->getWidth();
+      cfgFile << ( ( *it )->getWindowEndTime() / ( *it )->getWidth() ) / maxScale;
+    }
+
     cfgFile << endl;
   }
 }
@@ -2358,10 +2366,19 @@ void WindowEndTimeRelative::printLine( ostream& cfgFile,
                                        const SaveOptions& options,
                                        const vector<Timeline *>::const_iterator it )
 {
-  if ( options.windowScaleRelative )
+  if ( options.timelineScaleRelative )
   {
     cfgFile << CFG_TAG_WNDW_END_TIME_RELATIVE << " ";
-    cfgFile << ( *it )->getWindowEndTime() / ( *it )->getTrace()->getEndTime();
+
+    if ( options.timelineAllTrace )
+    {
+      cfgFile << 1.0;
+    }  
+    else
+    {
+      cfgFile << ( *it )->getWindowEndTime() / ( *it )->getTrace()->getEndTime();
+    }
+
     cfgFile << endl;
   }
 }
@@ -2776,7 +2793,7 @@ void WindowBeginTime::printLine( ostream& cfgFile,
                                  const SaveOptions& options,
                                  const vector<Timeline *>::const_iterator it )
 {
-  if ( !options.windowBeginTimeRelative )
+  if ( !options.timelineBeginTimeRelative )
   {
     cfgFile << OLDCFG_TAG_WNDW_BEGIN_TIME << " " << ( *it )->getWindowBeginTime() << endl;
   }
@@ -2844,7 +2861,7 @@ void WindowStopTime::printLine( ostream& cfgFile,
                                 const SaveOptions& options,
                                 const vector<Timeline *>::const_iterator it )
 {
-  if ( !options.windowScaleRelative )
+  if ( !options.timelineScaleRelative )
   {
     cfgFile << OLDCFG_TAG_WNDW_STOP_TIME << " " << ( *it )->getWindowEndTime() << endl;
  }
@@ -2878,13 +2895,17 @@ bool WindowBeginTimeRelative::parseLine( KernelConnection *whichKernel,
 }
 
 void WindowBeginTimeRelative::printLine( ostream& cfgFile,
-    const SaveOptions& options,
-    const vector<Timeline *>::const_iterator it )
+                                         const SaveOptions& options,
+                                         const vector<Timeline *>::const_iterator it )
 {
-  if ( options.windowBeginTimeRelative )
+  if ( options.timelineBeginTimeRelative )
   {
     cfgFile << OLDCFG_TAG_WNDW_BEGIN_TIME_RELATIVE << " ";
-    cfgFile << ( *it )->getWindowBeginTime() / ( *it )->getTrace()->getEndTime();
+    if ( options.timelineAllTrace )
+      cfgFile << 0.0;
+    else
+      cfgFile << ( *it )->getWindowBeginTime() / ( *it )->getTrace()->getEndTime();
+
     cfgFile << endl;
   }
 }
