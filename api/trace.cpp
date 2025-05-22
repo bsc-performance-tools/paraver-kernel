@@ -461,7 +461,7 @@ template< typename Parser >
 void TraceProxy::fillSymbols( Parser& whichParser )
 {
   rgb tmpColor;
-  const std::map< uint32_t, typename Parser::rgb >& semanticColors = whichParser.getSemanticColors();
+  const auto& semanticColors = whichParser.getSemanticColors();
   for ( auto it : semanticColors )
   {
     std::tie( tmpColor.red, tmpColor.green, tmpColor.blue ) = it.second;

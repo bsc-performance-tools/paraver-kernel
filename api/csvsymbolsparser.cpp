@@ -70,7 +70,7 @@ CSVSymbolsParser::CSVSymbolsParser( std::string filename, bool isGradientColor )
 
 void CSVSymbolsParser::parseLine( const std::string& whichLine, bool isGradientColor )
 {
-  uint32_t value, secondValue;
+  TSemanticValue value, secondValue;
   std::string label;
   
   std::string currentField;
@@ -78,9 +78,9 @@ void CSVSymbolsParser::parseLine( const std::string& whichLine, bool isGradientC
 
   std::string::size_type toPos = whichLine.find_first_of( " ", fromPos );
   currentField = whichLine.substr( fromPos, toPos - fromPos );
-  value = std::stoul( currentField );
+  value = std::stod( currentField );
   if( ( secondPos = currentField.find_first_of( "-" ) ) != std::string::npos )
-    secondValue = std::stoul( currentField.substr( secondPos + 1 ) );
+    secondValue = std::stod( currentField.substr( secondPos + 1 ) );
   fromPos = toPos + 2;
   toPos = whichLine.find_first_of( "\"", fromPos );
   currentField = whichLine.substr( fromPos, toPos - fromPos );
@@ -123,7 +123,9 @@ void printEvent( std::ofstream& csvFile,
                  const T& lastEvent = {},
                  bool isGradientColor = false )
 {
-  csvFile << std::to_string( firstEvent.first );
+  csvFile << std::fixed;
+
+  csvFile << firstEvent.first;
   
   if( isGradientColor && firstEvent != lastEvent )
     csvFile << "-" << lastEvent.first;
@@ -153,7 +155,7 @@ void CSVSymbolsParser::dumpToFile( const std::string& filename, bool isGradientC
 {
   std::ofstream csvFile( filename );
 
-  std::pair< uint32_t, CSVSymbolsParser::rgb > rangeFirstColor = *semanticColors.begin();
+  std::pair< TSemanticValue, CSVSymbolsParser::rgb > rangeFirstColor = *semanticColors.begin();
   auto rangeEndColor = rangeFirstColor;
 
   for( auto& event : semanticColors )
@@ -175,7 +177,7 @@ void CSVSymbolsParser::dumpToFile( const std::string& filename, bool isGradientC
   csvFile.close();
 }
 
-const std::map< uint32_t, CSVSymbolsParser::rgb >& CSVSymbolsParser::getSemanticColors() const
+const std::map< TSemanticValue, CSVSymbolsParser::rgb >& CSVSymbolsParser::getSemanticColors() const
 {
   return semanticColors;
 }
@@ -201,7 +203,7 @@ unsigned int CSVSymbolsParser::getEventPrecision( TEventType eventType ) const
   return 0;
 }
 
-void CSVSymbolsParser::setSemanticColor( uint32_t semanticValue, CSVSymbolsParser::rgb color )
+void CSVSymbolsParser::setSemanticColor( TSemanticValue semanticValue, CSVSymbolsParser::rgb color )
 {
   semanticColors[ semanticValue ] = color;
 }

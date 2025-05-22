@@ -44,18 +44,18 @@ class CSVSymbolsParser
 
     void dumpToFile( const std::string& filename, bool isGradientColor ) const;
 
-    const std::map< uint32_t, CSVSymbolsParser::rgb >& getSemanticColors() const;
-    void                                               getEventTypes( std::vector< TEventType >& onVector ) const;
-    const std::string&                                 getEventLabel( TEventType eventType ) const;
-    const std::map< TEventValue, std::string >&        getEventValues( TEventType eventType ) const;
-    unsigned int                                       getEventPrecision( TEventType eventType ) const;
+    const std::map< TSemanticValue, CSVSymbolsParser::rgb >& getSemanticColors() const;
+    void                                                     getEventTypes( std::vector< TEventType >& onVector ) const;
+    const std::string&                                       getEventLabel( TEventType eventType ) const;
+    const std::map< TEventValue, std::string >&              getEventValues( TEventType eventType ) const;
+    unsigned int                                             getEventPrecision( TEventType eventType ) const;
     
-    void setSemanticColor( uint32_t semanticValue, CSVSymbolsParser::rgb color );
+    void setSemanticColor( TSemanticValue semanticValue, CSVSymbolsParser::rgb color );
     void setEventValueLabel( TEventType eventType, TEventValue eventValue, const std::string& label );
 
   private:
     void parseLine( const std::string& whichLine, bool isGradientColor );
     
-    std::map< uint32_t, CSVSymbolsParser::rgb > semanticColors;
+    std::map< TSemanticValue, CSVSymbolsParser::rgb > semanticColors;
     std::map< TEventValue, std::string > eventLabels;
 };
