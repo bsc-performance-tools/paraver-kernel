@@ -202,7 +202,7 @@ void TraceBodyIO_csv::read( TraceStream& file,
     return;
   }
 
-  readEvents( whichResourceModel, line, records, states, endTime );
+  readEvents( whichResourceModel, line, records, events, endTime );
 }
 
 void TraceBodyIO_csv::bufferWrite( fstream& whichStream, bool writeReady, bool lineClear ) const
