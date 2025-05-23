@@ -294,19 +294,19 @@ inline bool TraceBodyIO_csv::readCommon( const ResourceModel<>& whichResourceMod
   if( line.eof() ) return false;
   auto it = tmpstring.cbegin();
   if( !prv_atoll_v( it, tmpstring.cend(), appl ) || appl == 0 )
-    return false;
+    throw ParaverKernelException( TErrorCode::csvWrongFormat );
     
   std::getline( line, tmpstring, '.' );
   if( line.eof() ) return false;
   it = tmpstring.cbegin();
   if( !prv_atoll_v( it, tmpstring.end(), task ) || task == 0 )
-    return false;
+    throw ParaverKernelException( TErrorCode::csvWrongFormat );
 
   std::getline( line, tmpstring, '\t' );
   if( line.eof() ) return false;
   it = tmpstring.cbegin();
   if( !prv_atoll_v( it, tmpstring.end(), thread ) || thread == 0 )
-    return false;
+    throw ParaverKernelException( TErrorCode::csvWrongFormat );
 
   ProcessModel<>::ThreadLocation currATT = { appl, task, thread };
   if ( !( currATT == lastATT ) )
@@ -322,18 +322,18 @@ inline bool TraceBodyIO_csv::readCommon( const ResourceModel<>& whichResourceMod
   if( line.eof() ) return false;
   it = tmpstring.cbegin();
   if( !prv_atoll_v( it, tmpstring.end(), begintime ) )
-    return false;
+    throw ParaverKernelException( TErrorCode::csvWrongFormat );
 
   std::getline( line, tmpstring, '\t' );
   if( line.eof() ) return false;
   it = tmpstring.cbegin();
   if( !prv_atoll_v( it, tmpstring.end(), time ) )
-    return false;
+    throw ParaverKernelException( TErrorCode::csvWrongFormat );
 
   std::getline( line, tmpstring );
   it = tmpstring.cbegin();
   if( !prv_atoll_precision( it, tmpstring.end(), eventvalue, decimals ) )
-    return false;
+    throw ParaverKernelException( TErrorCode::csvWrongFormat );
 
   return true;
 }

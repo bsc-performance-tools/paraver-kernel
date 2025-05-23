@@ -43,6 +43,7 @@ const char *ParaverKernelException::errorMessage[] =
     "Requested Tool Name not defined: ",
     "Index out of range: ",
     "Download failed: ",
+    "CSV file wrong format (cannot be loaded as a trace): ",
     nullptr
   };
 
