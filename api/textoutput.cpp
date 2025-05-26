@@ -43,9 +43,8 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, std::
 {
   static short int progressSteps = 0;
 
-  
-  if( strOutputFile.rfind( string( ".csv" ) ) == string::npos )
-  strOutputFile += ".csv";
+  if( strOutputFile.rfind( LabelConstructor::getDataFileSuffix( TTextFormat::CSV ) ) == string::npos )
+    strOutputFile += LabelConstructor::getDataFileSuffix( TTextFormat::CSV );
   
   string semanticLabel;
   CSVSymbolsParser symbols;
@@ -180,9 +179,8 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, std::
     outputFile.close();
 
   string symbolsFilename( strOutputFile );
-  symbolsFilename.erase( strOutputFile.rfind( string( ".csv" ) ) );
-  bool initWithDot = true;
-  symbolsFilename += LabelConstructor::getDataFileSuffix( TTextFormat::LEGEND_CSV, initWithDot );
+  symbolsFilename.erase( strOutputFile.rfind( LabelConstructor::getDataFileSuffix( TTextFormat::CSV ) ) );
+  symbolsFilename += LabelConstructor::getDataFileSuffix( TTextFormat::LEGEND_CSV );
 
   symbols.dumpToFile( symbolsFilename, !whichWindow->isCodeColorSet() );
 }

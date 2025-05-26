@@ -245,7 +245,10 @@ string LocalKernel::getSymbolsFileLocation( const string& traceFilename ) const
   if( tmpTraceType == TraceType::PRV )
     symbolsFilename.append( "pcf" );
   else if( tmpTraceType == TraceType::CSV )
-    symbolsFilename.append( LabelConstructor::getDataFileSuffix( TTextFormat::LEGEND_CSV ) );
+  {
+    bool initWithDot = false;
+    symbolsFilename.append( LabelConstructor::getDataFileSuffix( TTextFormat::LEGEND_CSV, initWithDot ) );
+  }
 
   return symbolsFilename;
 }
