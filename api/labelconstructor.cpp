@@ -766,7 +766,7 @@ std::string LabelConstructor::getImageFileSuffix( const TImageFormat& format )
 }
 
 
-std::string LabelConstructor::getDataFileSuffix( const TTextFormat& format )
+std::string LabelConstructor::getDataFileSuffix( const TTextFormat& format, bool initWithDot )
 {
   string resultString;
 
@@ -774,6 +774,10 @@ std::string LabelConstructor::getDataFileSuffix( const TTextFormat& format )
   {
     case TTextFormat::CSV:
       resultString = string( "csv" );
+      break;
+
+    case TTextFormat::LEGEND_CSV:
+      resultString = string( "legend.csv" );
       break;
 
     case TTextFormat::GNUPLOT:
@@ -785,6 +789,9 @@ std::string LabelConstructor::getDataFileSuffix( const TTextFormat& format )
       resultString = string( "dat" );
       break;
   }
+
+  if ( initWithDot && !resultString.empty() )
+    resultString = "." + resultString;
 
   return resultString;
 }

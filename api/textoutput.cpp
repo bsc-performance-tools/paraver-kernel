@@ -181,7 +181,8 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, std::
 
   string symbolsFilename( strOutputFile );
   symbolsFilename.erase( strOutputFile.rfind( string( ".csv" ) ) );
-  symbolsFilename += ".legend.csv";
+  bool initWithDot = true;
+  symbolsFilename += LabelConstructor::getDataFileSuffix( TTextFormat::LEGEND_CSV, initWithDot );
 
   symbols.dumpToFile( symbolsFilename, !whichWindow->isCodeColorSet() );
 }

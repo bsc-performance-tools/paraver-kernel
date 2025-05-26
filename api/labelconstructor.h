@@ -107,8 +107,8 @@ class LabelConstructor
 
     static std::string getDate( bool reverseOrder = false );
 
-    static std::string getImageFileSuffix( const TImageFormat& format =  TImageFormat::PNG );
-    static std::string getDataFileSuffix( const TTextFormat& format = TTextFormat::PLAIN );
+    static std::string getImageFileSuffix( const TImageFormat& format = TImageFormat::PNG );
+    static std::string getDataFileSuffix( const TTextFormat& format = TTextFormat::PLAIN, bool initWithDot = false );
 
     static void presetBaseFormat( std::stringstream &whichStream,
                                   PRV_UINT32 precision = PERCENT_PRECISION );

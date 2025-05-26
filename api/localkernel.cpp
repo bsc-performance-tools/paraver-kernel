@@ -245,7 +245,7 @@ string LocalKernel::getSymbolsFileLocation( const string& traceFilename ) const
   if( tmpTraceType == TraceType::PRV )
     symbolsFilename.append( "pcf" );
   else if( tmpTraceType == TraceType::CSV )
-    symbolsFilename.append( "legend.csv" );
+    symbolsFilename.append( LabelConstructor::getDataFileSuffix( TTextFormat::LEGEND_CSV ) );
 
   return symbolsFilename;
 }
