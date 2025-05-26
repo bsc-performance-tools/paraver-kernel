@@ -790,7 +790,7 @@ std::string LabelConstructor::getDataFileSuffix( const TTextFormat& format, bool
       break;
   }
 
-  if ( initWithDot && !resultString.empty() )
+  if ( initWithDot )
     resultString = "." + resultString;
 
   return resultString;
