@@ -98,7 +98,7 @@ void SyncWindows::changePropertiesGroup (WindowGenericItem genericWindow, TGroup
   {
     if (std::holds_alternative<Timeline *> (genericWindow))
     {
-      if (tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_HISTOGRAMS)
+      if (tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_HISTOGRAMS || tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_MIXED)
         tmpSyncGroup = SyncPropertiesGroup::SYNC_GROUP_MIXED;
       else
         tmpSyncGroup = SyncPropertiesGroup::SYNC_GROUP_TIMELINES;
@@ -107,7 +107,7 @@ void SyncWindows::changePropertiesGroup (WindowGenericItem genericWindow, TGroup
     if (std::holds_alternative<Histogram *> (genericWindow))
     {
       auto &tmpSyncGroup = syncGroups[whichGroup].groupType;
-      if (tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_TIMELINES)
+      if (tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_TIMELINES || tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_MIXED)
         tmpSyncGroup = SyncPropertiesGroup::SYNC_GROUP_MIXED;
       else
         tmpSyncGroup = SyncPropertiesGroup::SYNC_GROUP_HISTOGRAMS;
@@ -115,11 +115,13 @@ void SyncWindows::changePropertiesGroup (WindowGenericItem genericWindow, TGroup
   }
   else
   {
+    tmpSyncGroup = SyncPropertiesGroup::SYNC_GROUP_INI;
+
     for (auto &window : syncGroups[whichGroup].syncGroupsWindows)
     {
       if (std::holds_alternative<Timeline *> (window))
       {
-        if (tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_HISTOGRAMS)
+        if (tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_HISTOGRAMS || tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_MIXED)
           tmpSyncGroup = SyncPropertiesGroup::SYNC_GROUP_MIXED;
         else
           tmpSyncGroup = SyncPropertiesGroup::SYNC_GROUP_TIMELINES;
@@ -127,7 +129,7 @@ void SyncWindows::changePropertiesGroup (WindowGenericItem genericWindow, TGroup
       if (std::holds_alternative<Histogram *> (window))
       {
         auto &tmpSyncGroup = syncGroups[whichGroup].groupType;
-        if (tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_TIMELINES)
+        if (tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_TIMELINES || tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_MIXED)
           tmpSyncGroup = SyncPropertiesGroup::SYNC_GROUP_MIXED;
         else
           tmpSyncGroup = SyncPropertiesGroup::SYNC_GROUP_HISTOGRAMS;
@@ -233,16 +235,25 @@ void SyncWindows::updateGroupTraceStruct (TGroupId whichGroup)
 {
   auto visitor = overloads{
       [] (Histogram *histogram)
-      { return histogram->getDataWindow ()->getTrace (); },
+      { 
+        if(histogram->getDataWindow () != nullptr)
+        return histogram->getDataWindow () ->getTrace ();
+        else return (Trace*)nullptr; },
       [] (Timeline *timeline)
       { return timeline->getTrace (); }};
-  if (!syncGroups[whichGroup].syncGroupsWindows.empty ())
+
+  if (!syncGroups[whichGroup].syncGroupsWindows.empty () && syncGroups[whichGroup].syncGroupsWindows.size () > 0)
   {
-    auto trace = std::visit (visitor, (syncGroups[whichGroup].syncGroupsWindows[0]));
+    auto trace = std::visit (visitor, (*syncGroups[whichGroup].syncGroupsWindows.begin ()));
 
     for (auto &window : syncGroups[whichGroup].syncGroupsWindows)
     {
-      if (!trace->isSameObjectStruct (std::visit (visitor, window), true))
+      auto tmpTrace = std::visit (visitor, window);
+      if (tmpTrace == trace)
+      {
+        syncGroups[whichGroup].isSameTraceStruct = true;
+      }
+      else if (!trace->isSameObjectStruct (tmpTrace, true))
       {
         syncGroups[whichGroup].isSameTraceStruct = false;
         break;
@@ -274,6 +285,7 @@ void SyncWindows::getGroupAvailableProperties (TGroupId groupId, std::vector<Syn
   properties.push_back (SyncPropertiesType::SYNC_TIME);
   properties.push_back (SyncPropertiesType::SYNC_MAX);
   properties.push_back (SyncPropertiesType::SYNC_MIN);
+  properties.push_back (SyncPropertiesType::SYNC_WINDOWS_SIZE);
 
   if (syncGroups[groupId].groupType == SyncPropertiesGroup::SYNC_GROUP_HISTOGRAMS)
   {
@@ -294,6 +306,9 @@ void SyncWindows::getGroupAvailableProperties (TGroupId groupId, std::vector<Syn
 void SyncWindows::broadcastProperty (TGroupId whichGroup)
 {
   if (syncGroups.find (whichGroup) == syncGroups.end ())
+    return;
+
+  if (syncGroups[whichGroup].syncGroupsWindows.empty ())
     return;
 
   for (auto &property : syncGroups[whichGroup].syncGroupsSelectedProperties)
@@ -325,6 +340,10 @@ void SyncWindows::broadcastProperty (TGroupId whichGroup)
       case SyncPropertiesType::SYNC_OBJECT_ZOOM:
         /* code */
         broadcastObjectZoomAll (whichGroup);
+        break;
+      case SyncPropertiesType::SYNC_WINDOWS_SIZE:
+        /* code */
+        broadcastSizeAll (whichGroup);
         break;
       case SyncPropertiesType::SYNC_OBJECT_SELECTION:
         /* code */
@@ -483,6 +502,34 @@ void SyncWindows::broadcastMinAll (TGroupId whichGroup, std::optional<double> wh
                           { broadcastSemanticMin (window, whichGroup, whichMin.value ()); },
                           [this, whichGroup, whichMin] (Timeline *window)
                           { broadcastSemanticMin (window, whichGroup, whichMin.value ()); }},
+                window);
+  }
+  syncGroups[whichGroup].isChanging = false;
+}
+
+void SyncWindows::broadcastSizeAll (TGroupId whichGroup, std::optional<PRV_UINT16> whichPosW, std::optional<PRV_UINT16> whichPosH)
+{
+  if (syncGroups.find (whichGroup) == syncGroups.end ())
+    return;
+
+  if (syncGroups[whichGroup].isChanging)
+    return;
+
+  syncGroups[whichGroup].isChanging = true;
+
+  if (whichPosW == std::nullopt)
+  {
+    PRV_UINT16 tmpShichPosW, tmpShichPosH;
+    getGroupSize (whichGroup, tmpShichPosW, tmpShichPosH);
+    whichPosW = tmpShichPosW;
+    whichPosH = tmpShichPosH;
+  }
+  for (auto &window : syncGroups[whichGroup].syncGroupsWindows)
+  {
+    std::visit (overloads{[this, whichGroup, whichPosW, whichPosH] (Histogram *window)
+                          { broadcastWindowsSize (window, whichGroup, whichPosW.value (), whichPosH.value ()); },
+                          [this, whichGroup, whichPosW, whichPosH] (Timeline *window)
+                          { broadcastWindowsSize (window, whichGroup, whichPosW.value (), whichPosH.value ()); }},
                 window);
   }
   syncGroups[whichGroup].isChanging = false;
@@ -689,6 +736,41 @@ void SyncWindows::broadcastObjectSelection (Histogram *whichWindow, TGroupId whi
   }
 }
 
+void SyncWindows::broadcastWindowsSize (Histogram *whichWindow, TGroupId whichGroup, PRV_UINT16 whichPosW, PRV_UINT16 whichPosH)
+{
+  whichWindow->setWidth (whichPosW, false);
+  whichWindow->setHeight (whichPosH, false);
+  whichWindow->onResizeFunctionCallback (whichPosW, whichPosH);
+}
+
+void SyncWindows::broadcastWindowsSize (Timeline *whichWindow, TGroupId whichGroup, PRV_UINT16 whichPosW, PRV_UINT16 whichPosH)
+{
+  if (whichWindow->getWidth () != whichPosW || whichWindow->getHeight () != whichPosH)
+  {
+    whichWindow->setWidth (whichPosW, false);
+    whichWindow->setHeight (whichPosH, false);
+    whichWindow->onResizeFunctionCallback (whichPosW, whichPosH);
+    whichWindow->setRedraw (true);
+  }
+}
+
+void SyncWindows::getGroupSize (TGroupId whichGroup, PRV_UINT16 &whichPosW, PRV_UINT16 &whichPosH)
+{
+  auto visitor_begin = overloads{
+      [] (Histogram *h)
+      { return h->getHeight (); },
+      [] (Timeline *t)
+      { return t->getHeight (); }};
+  auto visitor_end = overloads{
+      [] (Histogram *h)
+      { return h->getWidth (); },
+      [] (Timeline *t)
+      { return t->getWidth (); }};
+
+  applyToFirstWindow (whichGroup, whichPosW, visitor_end);
+  applyToFirstWindow (whichGroup, whichPosH, visitor_begin);
+}
+
 void SyncWindows::getGroupTimes (TGroupId whichGroup, TTime &beginTime, TTime &endTime)
 {
   auto visitor_begin = overloads{
@@ -712,7 +794,7 @@ void SyncWindows::getGroupDelta (TGroupId whichGroup, THistogramLimit &whichDelt
       [] (Histogram *h)
       { return h->getControlDelta (); },
       [] (Timeline *)
-      { return 0.0; }};
+      { return 1.0; }};
 
   applyToFirstWindow (whichGroup, whichDelta, visitor);
 }

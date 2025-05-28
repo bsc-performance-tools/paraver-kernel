@@ -1108,9 +1108,15 @@ PRV_UINT16 TimelineProxy::getWidth() const
   return width;
 }
 
-void TimelineProxy::setWidth( PRV_UINT16 whichPos )
+void TimelineProxy::setWidth (PRV_UINT16 whichPos, bool broadcastProperty)
 {
-  width = whichPos;
+  if (width != whichPos)
+  {
+    width = whichPos;
+
+    if (sync && broadcastProperty && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_WINDOWS_SIZE))
+      SyncWindows::getInstance ()->broadcastSizeAll (syncGroup, width, height);
+  }
 }
 
 PRV_UINT16 TimelineProxy::getHeight() const
@@ -1118,9 +1124,15 @@ PRV_UINT16 TimelineProxy::getHeight() const
   return height;
 }
 
-void TimelineProxy::setHeight( PRV_UINT16 whichPos )
+void TimelineProxy::setHeight (PRV_UINT16 whichPos, bool broadcastProperty)
 {
-  height = whichPos;
+  if (height != whichPos)
+  {
+    height = whichPos;
+
+    if (sync && broadcastProperty && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_WINDOWS_SIZE))
+      SyncWindows::getInstance ()->broadcastSizeAll (syncGroup, width, height);
+  }
 }
 
 void TimelineProxy::setDrawModeObject( DrawModeMethod method )
@@ -2189,6 +2201,17 @@ TCFGS4DGroup TimelineProxy::getCFGS4DGroupLink( std::string originalName ) const
     return it->second;
 
   return NO_GROUP_LINK;
+}
+
+void TimelineProxy::registerResizeFunctionCallback (const std::function<void (int, int)> &callbackFunction)
+{
+  resizeFunctionCallback = callbackFunction;
+}
+
+void TimelineProxy::onResizeFunctionCallback (int height, int width)
+{
+  if (resizeFunctionCallback != nullptr)
+    resizeFunctionCallback (height, width);
 }
 
 #ifdef _MSC_VER

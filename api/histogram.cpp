@@ -581,6 +581,17 @@ HistogramTotals *HistogramProxy::getCommRowTotals() const
   return HistogramTotals::create( myHisto->getCommRowTotals() );
 }
 
+void HistogramProxy::registerResizeFunctionCallback (const std::function<void (int, int)> &callbackFunction)
+{
+  resizeFunctionCallback = callbackFunction;
+}
+
+void HistogramProxy::onResizeFunctionCallback (int height, int width)
+{
+  if (resizeFunctionCallback != nullptr)
+    resizeFunctionCallback (height, width);
+}
+
 void HistogramProxy::clearStatistics()
 {
   myHisto->clearStatistics();
@@ -1559,9 +1570,16 @@ PRV_UINT16 HistogramProxy::getWidth() const
   return width;
 }
 
-void HistogramProxy::setWidth( PRV_UINT16 whichPos )
+void HistogramProxy::setWidth (PRV_UINT16 whichPos, bool broadcastValue)
 {
-  width = whichPos;
+  if (width != whichPos)
+  {
+    width = whichPos;
+    onResizeFunctionCallback (width, height);
+
+    if (sync && broadcastValue && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_WINDOWS_SIZE))
+      SyncWindows::getInstance ()->broadcastSizeAll (syncGroup, width, height);
+  }
 }
 
 PRV_UINT16 HistogramProxy::getHeight() const
@@ -1569,9 +1587,16 @@ PRV_UINT16 HistogramProxy::getHeight() const
   return height;
 }
 
-void HistogramProxy::setHeight( PRV_UINT16 whichPos )
+void HistogramProxy::setHeight (PRV_UINT16 whichPos, bool broadcastValue)
 {
-  height = whichPos;
+  if (height != whichPos)
+  {
+    height = whichPos;
+    onResizeFunctionCallback (width, height);
+
+    if (sync && broadcastValue && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_WINDOWS_SIZE))
+      SyncWindows::getInstance ()->broadcastSizeAll (syncGroup, width, height);
+  }
 }
 
 bool HistogramProxy::getShowWindow() const

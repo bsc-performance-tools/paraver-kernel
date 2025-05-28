@@ -40,7 +40,8 @@ enum class SyncPropertiesType
   SYNC_MIN,
   SYNC_MAX,
   SYNC_OBJECT_ZOOM,
-  SYNC_OBJECT_SELECTION
+  SYNC_OBJECT_SELECTION,
+  SYNC_WINDOWS_SIZE
 };
 
 enum class SyncPropertiesGroup
@@ -157,6 +158,7 @@ public:
   void broadcastMinAll (TGroupId whichGroup, std::optional<double> whichMin = std::nullopt);
   void broadcastObjectZoomAll (TGroupId whichGroup, std::optional<TObjectOrder> beginObject = std::nullopt, std::optional<TObjectOrder> endObject = std::nullopt);
   void broadcastObjectSelectionAll (TGroupId whichGroup, TTraceLevel wichLevel, std::optional<std::vector<bool>> selectedObjects = std::nullopt);
+  void broadcastSizeAll (TGroupId whichGroup, std::optional<PRV_UINT16> whichPosW = std::nullopt, std::optional<PRV_UINT16> whichPosH = std::nullopt);
 
   void getGroupTimes (TGroupId whichGroup, TTime &beginTime, TTime &endTime);
   void getGroupDelta (TGroupId whichGroup, THistogramLimit &whichDelta);
@@ -164,6 +166,7 @@ public:
   void getGroupMax (TGroupId whichGroup, double &whichMax);
   void getGroupMin (TGroupId whichGroup, double &whichMin);
   void getGroupObjectZoom (TGroupId whichGroup, TObjectOrder &beginObject, TObjectOrder &endObject);
+  void getGroupSize (TGroupId whichGroup, PRV_UINT16 &whichPosW, PRV_UINT16 &whichPosH);
 
   void getSelectObjectZoom (TGroupId whichGroup, std::vector<bool> &beginObject, TTraceLevel &endObject);
 
@@ -199,6 +202,9 @@ private:
 
   void broadcastObjectSelection (Timeline *whichWindow, TGroupId whichGroup, TTraceLevel wichLevel, std::vector<bool> selectedObjects);
   void broadcastObjectSelection (Histogram *whichWindow, TGroupId whichGroup, TTraceLevel wichLevel, std::vector<bool> selectedObjects);
+
+  void broadcastWindowsSize (Timeline *whichWindow, TGroupId whichGroup, PRV_UINT16 whichPosW, PRV_UINT16 whichPosH);
+  void broadcastWindowsSize (Histogram *whichWindow, TGroupId whichGroup, PRV_UINT16 whichPosW, PRV_UINT16 whichPosH);
 
   template <typename T>
   void applyGroupProperties (T *whichWindow, TGroupId whichGroup)
@@ -268,6 +274,12 @@ private:
             broadcastObjectSelection (whichWindow, whichGroup, level, tmpSelectedObjects);
           }
 
+          break;
+        case SyncPropertiesType::SYNC_WINDOWS_SIZE:
+          /* code */
+          PRV_UINT16 whichPosW, whichPosH;
+          getGroupSize (whichGroup, whichPosW, whichPosH);
+          broadcastWindowsSize (whichWindow, whichGroup, whichPosW, whichPosH);
           break;
         default:
           break;

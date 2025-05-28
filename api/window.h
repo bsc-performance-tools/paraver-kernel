@@ -366,14 +366,14 @@ class Timeline
     {
       return 0;
     }
-    virtual void setWidth( PRV_UINT16 whichPos )
+    virtual void setWidth (PRV_UINT16 whichPos, bool broadcastProperty = true)
     {}
 
     virtual PRV_UINT16 getHeight() const
     {
       return 0;
     }
-    virtual void setHeight( PRV_UINT16 whichPos )
+    virtual void setHeight (PRV_UINT16 whichPos, bool broadcastProperty = true)
     {}
     virtual void setDrawModeObject( DrawModeMethod method )
     {}
@@ -809,6 +809,13 @@ class Timeline
       return NO_INDEX_LINK;
     }
 
+    virtual void registerResizeFunctionCallback (const std::function<void (int, int)> &callbackFunction)
+    {
+    }
+    virtual void onResizeFunctionCallback (int height, int width)
+    {
+    }
+
 #ifdef _MSC_VER
     virtual void computeSemanticParallel( std::vector< TObjectOrder >& selectedSet,
                                           std::vector< bool >& selected,
@@ -1006,10 +1013,10 @@ class TimelineProxy: public Timeline
     virtual void setPosX( PRV_UINT16 whichPos ) override;
     virtual PRV_UINT16 getPosY() const override;
     virtual void setPosY( PRV_UINT16 whichPos ) override;
-    virtual PRV_UINT16 getWidth() const override;
-    virtual void setWidth( PRV_UINT16 whichPos ) override;
-    virtual PRV_UINT16 getHeight() const override;
-    virtual void setHeight( PRV_UINT16 whichPos ) override;
+    virtual PRV_UINT16 getWidth () const override;
+    virtual void setWidth (PRV_UINT16 whichPos, bool broadcastProperty = true) override;
+    virtual PRV_UINT16 getHeight () const override;
+    virtual void setHeight (PRV_UINT16 whichPos, bool broadcastProperty = true) override;
     virtual void setDrawModeObject( DrawModeMethod method ) override;
     virtual DrawModeMethod getDrawModeObject() const override;
     virtual void setDrawModeTime( DrawModeMethod method ) override;
@@ -1175,33 +1182,37 @@ class TimelineProxy: public Timeline
     virtual void setCFGS4DIndexLink( TCFGS4DIndexLink whichIndex ) override;
     virtual TCFGS4DIndexLink getCFGS4DIndexLink() const override;
 
+    virtual void registerResizeFunctionCallback (const std::function<void (int, int)> &callbackFunction) override;
+
+    virtual void onResizeFunctionCallback (int height, int width) override;
+
 #ifdef _MSC_VER
-    virtual void computeSemanticParallel( std::vector< TObjectOrder >& selectedSet,
-                                          std::vector< bool >& selected,
+    virtual void computeSemanticParallel (std::vector<TObjectOrder> &selectedSet,
+                                          std::vector<bool> &selected,
                                           TTime timeStep,
                                           PRV_INT32 timePos,
                                           PRV_INT32 objectAxisPos,
-                                          std::vector< PRV_INT32 >& objectPosList,
+                                          std::vector<PRV_INT32> &objectPosList,
                                           TObjectOrder maxObj,
-                                          bool& drawCaution,                      // O
-                                          std::vector< std::vector< TSemanticValue > >& valuesToDraw, // O
-                                          std::vector< hash_set< PRV_INT32 > >& eventsToDraw,    // O
-                                          std::vector< hash_set< commCoord > >& commsToDraw,    // O
-                                          ProgressController *progress ) override;
+                                          bool &drawCaution,                                      // O
+                                          std::vector<std::vector<TSemanticValue>> &valuesToDraw, // O
+                                          std::vector<hash_set<PRV_INT32>> &eventsToDraw,         // O
+                                          std::vector<hash_set<commCoord>> &commsToDraw,          // O
+                                          ProgressController *progress) override;
 
 #else
-    virtual void computeSemanticParallel( std::vector< TObjectOrder >& selectedSet,
-                                          std::vector< bool >& selected,
+    virtual void computeSemanticParallel (std::vector<TObjectOrder> &selectedSet,
+                                          std::vector<bool> &selected,
                                           TTime timeStep,
                                           PRV_INT32 timePos,
                                           PRV_INT32 objectAxisPos,
-                                          std::vector< PRV_INT32 >& objectPosList,
+                                          std::vector<PRV_INT32> &objectPosList,
                                           TObjectOrder maxObj,
-                                          bool& drawCaution,                                                  // I/O
-                                          std::vector< std::vector< TSemanticValue > >& valuesToDraw,         // I/O
-                                          std::vector< std::unordered_set< PRV_INT32 > >& eventsToDraw,                 // I/O
-                                          std::vector< std::unordered_set< commCoord, hashCommCoord > >& commsToDraw,   // I/O
-                                          ProgressController *progress ) override;
+                                          bool &drawCaution,                                                      // I/O
+                                          std::vector<std::vector<TSemanticValue>> &valuesToDraw,                 // I/O
+                                          std::vector<std::unordered_set<PRV_INT32>> &eventsToDraw,               // I/O
+                                          std::vector<std::unordered_set<commCoord, hashCommCoord>> &commsToDraw, // I/O
+                                          ProgressController *progress) override;
 #endif // _WIN32
 
 #ifdef _MSC_VER
@@ -1248,6 +1259,8 @@ class TimelineProxy: public Timeline
     PRV_UINT16 posY;
     PRV_UINT16 width;
     PRV_UINT16 height;
+    PRV_UINT16 widthClient;
+    PRV_UINT16 heightClient;
 
     TRecordTime winBeginTime;
     TRecordTime winEndTime;
@@ -1311,6 +1324,7 @@ class TimelineProxy: public Timeline
     TCFGS4DIndexLink globalIndexLink;
     static std::stringstream sstrCFGS4DOriginalName;
 
+    std::function<void (int, int)> resizeFunctionCallback = nullptr;
 
     // For Clone
     TimelineProxy();

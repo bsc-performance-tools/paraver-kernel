@@ -244,6 +244,7 @@ constexpr char CFG_VAL_SYNC_SEM_MIN[] = "Semantic Min";
 constexpr char CFG_VAL_SYNC_SEM_MAX[] = "Semantic Max";
 constexpr char CFG_VAL_SYNC_OBJ_ZOOM[] = "Object Zoom";
 constexpr char CFG_VAL_SYNC_OBJ_SEL[] = "Object Selection";
+constexpr char CFG_VAL_SYNC_WIN_SIZE[] = "Windows Size";
 
 constexpr char OLDCFG_VAL_AN2D_ACCUM_SEMANTIC[] = "Semantic";
 

@@ -146,6 +146,8 @@ SyncPropertiesType stringToProperty (const std::string &label)
     return SyncPropertiesType::SYNC_OBJECT_ZOOM;
   else if (label == CFG_VAL_SYNC_OBJ_SEL)
     return SyncPropertiesType::SYNC_OBJECT_SELECTION;
+  else if (label == CFG_VAL_SYNC_WIN_SIZE)
+    return SyncPropertiesType::SYNC_WINDOWS_SIZE;
   else
     return SyncPropertiesType::SYNC_INIT;
 }
@@ -168,6 +170,8 @@ string propertyToString (SyncPropertiesType prop)
     return CFG_VAL_SYNC_OBJ_ZOOM;
   case SyncPropertiesType::SYNC_OBJECT_SELECTION:
     return CFG_VAL_SYNC_OBJ_SEL;
+  case SyncPropertiesType::SYNC_WINDOWS_SIZE:
+    return CFG_VAL_SYNC_WIN_SIZE;
 
   default:
     return "";
@@ -1559,7 +1563,7 @@ bool WindowWidth::parseLine( KernelConnection *whichKernel, istringstream& line,
   if ( !( tmpStream >> width ) )
     return false;
 
-  windows[ windows.size() - 1 ]->setWidth( width );
+  windows[windows.size () - 1]->setWidth (width);
 
   return true;
 }
@@ -1567,7 +1571,7 @@ bool WindowWidth::parseLine( KernelConnection *whichKernel, istringstream& line,
 void WindowWidth::printLine( ofstream& cfgFile,
                              const vector<Timeline *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_WIDTH << " " << ( *it )->getWidth() << endl;
+  cfgFile << OLDCFG_TAG_WNDW_WIDTH << " " << (*it)->getWidth () << endl;
 }
 
 
@@ -1591,7 +1595,7 @@ bool WindowHeight::parseLine( KernelConnection *whichKernel, istringstream& line
   if ( !( tmpStream >> height ) )
     return false;
 
-  windows[ windows.size() - 1 ]->setHeight( height );
+  windows[windows.size () - 1]->setHeight (height);
 
   return true;
 }
@@ -1599,7 +1603,7 @@ bool WindowHeight::parseLine( KernelConnection *whichKernel, istringstream& line
 void WindowHeight::printLine( ofstream& cfgFile,
                               const vector<Timeline *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_HEIGHT << " " << ( *it )->getHeight() << endl;
+  cfgFile << OLDCFG_TAG_WNDW_HEIGHT << " " << (*it)->getHeight () << endl;
 }
 
 
@@ -2450,8 +2454,8 @@ void WindowScaleRelative::printLine( ofstream& cfgFile,
   if ( options.windowScaleRelative )
   {
     cfgFile << OLDCFG_TAG_WNDW_SCALE_RELATIVE << " ";
-    double maxScale = ( *it )->getTrace()->getEndTime() / ( double )( *it )->getWidth();
-    cfgFile << ( ( *it )->getWindowEndTime() / ( *it )->getWidth() ) / maxScale;
+    double maxScale = (*it)->getTrace ()->getEndTime () / (double)(*it)->getWidth ();
+    cfgFile << ((*it)->getWindowEndTime () / (*it)->getWidth ()) / maxScale;
     cfgFile << endl;
   }
 }
@@ -4420,7 +4424,7 @@ bool Analyzer2DWidth::parseLine( KernelConnection *whichKernel, istringstream& l
   if ( !( tmpStream >> width ) )
     return false;
 
-  histograms[ histograms.size() - 1 ]->setWidth( width );
+  histograms[histograms.size () - 1]->setWidth (width);
 
   return true;
 }
@@ -4428,7 +4432,7 @@ bool Analyzer2DWidth::parseLine( KernelConnection *whichKernel, istringstream& l
 void Analyzer2DWidth::printLine( ofstream& cfgFile,
                                  const vector<Histogram *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_AN2D_WIDTH << " " << ( *it )->getWidth() << endl;
+  cfgFile << OLDCFG_TAG_AN2D_WIDTH << " " << (*it)->getWidth () << endl;
 }
 
 
@@ -4454,7 +4458,7 @@ bool Analyzer2DHeight::parseLine( KernelConnection *whichKernel,
   if ( !( tmpStream >> height ) )
     return false;
 
-  histograms[ histograms.size() - 1 ]->setHeight( height );
+  histograms[histograms.size () - 1]->setHeight (height);
 
   return true;
 }
@@ -4462,7 +4466,7 @@ bool Analyzer2DHeight::parseLine( KernelConnection *whichKernel,
 void Analyzer2DHeight::printLine( ofstream& cfgFile,
                                   const vector<Histogram *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_AN2D_HEIGHT << " " << ( *it )->getHeight() << endl;
+  cfgFile << OLDCFG_TAG_AN2D_HEIGHT << " " << (*it)->getHeight () << endl;
 }
 
 

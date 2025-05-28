@@ -325,6 +325,8 @@ string LabelConstructor::propertyToLabel (SyncPropertiesType prop)
     return "Object Zoom";
   case SyncPropertiesType::SYNC_OBJECT_SELECTION:
     return "Object Selection";
+  case SyncPropertiesType::SYNC_WINDOWS_SIZE:
+    return "Windows Size";
 
   default:
     return "Unknown";
@@ -347,6 +349,8 @@ SyncPropertiesType LabelConstructor::labelToProperty (const std::string &label)
     return SyncPropertiesType::SYNC_OBJECT_ZOOM;
   else if (label == "Object Selection")
     return SyncPropertiesType::SYNC_OBJECT_SELECTION;
+  else if (label == "Windows Size")
+    return SyncPropertiesType::SYNC_WINDOWS_SIZE;
   else
     return SyncPropertiesType::SYNC_INIT;
 }

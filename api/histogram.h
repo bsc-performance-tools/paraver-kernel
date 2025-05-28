@@ -198,14 +198,14 @@ class Histogram
     {
       return 600;
     }
-    virtual void setWidth( PRV_UINT16 whichPos )
+    virtual void setWidth (PRV_UINT16 whichPos, bool broadcastValue = true)
     {}
 
     virtual PRV_UINT16 getHeight() const
     {
       return 300;
     }
-    virtual void setHeight( PRV_UINT16 whichPos )
+    virtual void setHeight (PRV_UINT16 whichPos, bool broadcastValue = true)
     {}
     virtual HistogramTotals *getTotals( const std::string& whichStat ) const
     {
@@ -352,6 +352,13 @@ class Histogram
     {
       return 0;
     }
+    virtual void registerResizeFunctionCallback (const std::function<void (int, int)> &callbackFunction)
+    {
+    }
+    virtual void onResizeFunctionCallback (int height, int width)
+    {
+    }
+
     virtual void compute2DScale( ProgressController *progress = nullptr ) {}
     virtual void compute3DScale( ProgressController *progress = nullptr ) {}
     virtual std::string getRowLabel( TObjectOrder whichRow ) const
@@ -838,6 +845,10 @@ class HistogramProxy : public Histogram
                                               bool hideEmptyColumns,
                                               std::vector<THistogramColumn> &noVoidSemRanges ) const override;
 
+    virtual void registerResizeFunctionCallback (const std::function<void (int, int)> &callbackFunction) override;
+
+    virtual void onResizeFunctionCallback (int height, int width) override;
+
     // Zoom history
     virtual bool isZoomEmpty() const override;
     virtual bool emptyPrevZoom() const override;
@@ -898,9 +909,9 @@ class HistogramProxy : public Histogram
     virtual PRV_UINT16 getPosY() const override;
     virtual void setPosY( PRV_UINT16 whichPos ) override;
     virtual PRV_UINT16 getWidth() const override;
-    virtual void setWidth( PRV_UINT16 whichPos ) override;
+    virtual void setWidth (PRV_UINT16 whichPos, bool broadcastValue = true) override;
     virtual PRV_UINT16 getHeight() const override;
-    virtual void setHeight( PRV_UINT16 whichPos ) override;
+    virtual void setHeight (PRV_UINT16 whichPos, bool broadcastValue = true) override;
     virtual bool getShowWindow() const override;
     virtual void setShowWindow( bool newValue ) override;
     virtual DrawModeMethod getDrawModeObjects() const override;
@@ -983,6 +994,8 @@ class HistogramProxy : public Histogram
     PRV_UINT16 posY;
     PRV_UINT16 width;
     PRV_UINT16 height;
+    PRV_UINT16 widthClient;
+    PRV_UINT16 heightClient;
 
     bool horizontal;
     bool hideColumns;
@@ -1058,6 +1071,8 @@ class HistogramProxy : public Histogram
     std::map< std::string, std::string > statisticsAliasCFG4D;
     std::map< std::string, TCFGS4DGroup > groupLinkFromPropName;
     TCFGS4DIndexLink globalIndexLink;
+
+    std::function<void (int, int)> resizeFunctionCallback = nullptr;
 
     //Selection of rows
     SelectionManagement< TObjectOrder, TTraceLevel > rowSelection;
