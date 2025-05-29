@@ -122,7 +122,7 @@ class KTraceCutter : public TraceCutter
     typedef CubeContainer<TApplOrder, TTaskOrder, TThreadOrder, ThreadInfo> CutterThreadInfo;
     CutterThreadInfo threadsInfo;
 
-    // PROFET
+    // MESS
     class ApplicationInfo
     {
       public:

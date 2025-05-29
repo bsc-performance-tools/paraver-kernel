@@ -227,7 +227,7 @@ bool TraceOptionsProxy::get_keep_all_events() const
   return myTraceOptions->get_keep_all_events();
 }
 
-// PROFET
+// MESS
 bool TraceOptionsProxy::get_max_cut_time_to_finish_of_first_appl() const
 {
   return myTraceOptions->get_max_cut_time_to_finish_of_first_appl();

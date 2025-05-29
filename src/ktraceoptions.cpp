@@ -78,7 +78,7 @@ KTraceOptions::KTraceOptions( const KTraceOptions *whichTraceOptions )
   set_keep_boundary_events( whichTraceOptions->get_keep_boundary_events() );
   set_keep_all_events( whichTraceOptions->get_keep_all_events() );
 
-  // PROFET
+  // MESS
   set_max_cut_time_to_finish_of_first_appl( whichTraceOptions->get_max_cut_time_to_finish_of_first_appl() );
 
   // Filter Default Options: states

@@ -65,7 +65,7 @@ KTraceCutter::KTraceCutter( TraceOptions *options,
   notHWCTypesInPCF.insert( whichNotHWCTypes.begin(), whichNotHWCTypes.end() );
   cutterApplicationCaller = CutterMetadata::ORIGINAL_APPLICATION_ID;
   
-  // PROFET
+  // MESS
   firstApplicationFinished = false;
   timeOfFirsApplicationFinished = 0;
 }
@@ -887,7 +887,7 @@ void KTraceCutter::execute( std::string trace_in,
           break;
         }
 
-        // PROFET
+        // MESS
         if ( exec_options->get_max_cut_time_to_finish_of_first_appl() &&
              firstApplicationFinished &&
              ( time_1 >= timeOfFirsApplicationFinished || 
@@ -927,7 +927,7 @@ void KTraceCutter::execute( std::string trace_in,
             --useful_tasks;
             threadsInfo( appl - 1, task - 1, thread - 1 ).finished = true;
 
-            // PROFET
+            // MESS
             if ( exec_options->get_max_cut_time_to_finish_of_first_appl() )
             {
               if ( appl == 1 && appsInfo[ appl - 1 ].addFinishedThread() )
@@ -958,7 +958,7 @@ void KTraceCutter::execute( std::string trace_in,
           {
             threadsInfo( appl - 1, task - 1, thread - 1 ).finished = true;
 
-            // PROFET
+            // MESS
             if ( exec_options->get_max_cut_time_to_finish_of_first_appl() )
             {
               if ( appl == 1 && appsInfo[ appl - 1 ].addFinishedThread() )
@@ -1013,7 +1013,7 @@ void KTraceCutter::execute( std::string trace_in,
           break;
         }
 
-        // PROFET
+        // MESS
         if ( exec_options->get_max_cut_time_to_finish_of_first_appl() &&
              firstApplicationFinished && time_1 >= timeOfFirsApplicationFinished )
           break;
@@ -1119,7 +1119,7 @@ void KTraceCutter::execute( std::string trace_in,
           break;
         }
 
-        // PROFET
+        // MESS
         if ( exec_options->get_max_cut_time_to_finish_of_first_appl() &&
              firstApplicationFinished &&
              ( time_1 >= timeOfFirsApplicationFinished ||

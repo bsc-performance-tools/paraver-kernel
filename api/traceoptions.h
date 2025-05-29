@@ -85,7 +85,7 @@ class TraceOptions
     virtual bool get_keep_boundary_events() const = 0;
     virtual bool get_keep_all_events() const = 0;
 
-    // PROFET
+    // MESS
     virtual bool get_max_cut_time_to_finish_of_first_appl() const = 0;
 
     /* Sets for filtering */
@@ -189,7 +189,7 @@ class TraceOptionsProxy :public TraceOptions
     virtual bool get_keep_boundary_events() const override;
     virtual bool get_keep_all_events() const override;
 
-    // PROFET
+    // MESS
     virtual bool get_max_cut_time_to_finish_of_first_appl() const override;
 
     /* Sets for filtering */
