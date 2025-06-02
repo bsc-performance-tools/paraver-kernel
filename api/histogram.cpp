@@ -142,7 +142,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel, bool createHistog
 }
 
 
-bool HistogramProxy::linkToParents( const std::vector< Histogram * >& whichParents )
+bool HistogramProxy::createLinkToParents( const std::vector< Histogram * >& whichParents )
 {
   if ( whichParents.size() < 2 ||
        std::any_of( whichParents.cbegin(), whichParents.cend(), []( const auto& parent ){ return parent == nullptr; } ) )
@@ -158,7 +158,7 @@ bool HistogramProxy::linkToParents( const std::vector< Histogram * >& whichParen
 
 bool HistogramProxy::setParents( const std::vector< Histogram * >& whichParents )
 {
-  if ( !linkToParents( whichParents ) )
+  if ( !createLinkToParents( whichParents ) )
     return false;
 
   // Parents related info
@@ -1437,7 +1437,7 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->derivedHistogram = derivedHistogram;
   if ( derivedHistogram )
   {
-    clonedHistogramProxy->linkToParents( parents );
+    clonedHistogramProxy->createLinkToParents( parents );
 
     // TODO: think: is a clone of an intermediate derived histogram
     // clonedHistogramProxy->children = children; // TODO: not sure; seems copying is wrong
