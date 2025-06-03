@@ -312,45 +312,49 @@ string LabelConstructor::propertyToLabel (SyncPropertiesType prop)
   switch (prop)
   {
   case SyncPropertiesType::SYNC_TIME:
-    return "Time";
+    return CFG_VAL_SYNC_TIME;
   case SyncPropertiesType::SYNC_HISTOGRAM_COLUMNS:
-    return "Histogram Columns";
+    return CFG_VAL_SYNC_HISTO_COLUMNS;
   case SyncPropertiesType::SYNC_HISTOGRAM_DELTA:
-    return "Histogram Delta";
+    return CFG_VAL_SYNC_HISTO_DELTA;
   case SyncPropertiesType::SYNC_MIN:
-    return "Semantic Min";
+    return CFG_VAL_SYNC_SEM_MIN;
   case SyncPropertiesType::SYNC_MAX:
-    return "Semantic Max";
+    return CFG_VAL_SYNC_SEM_MAX;
   case SyncPropertiesType::SYNC_OBJECT_ZOOM:
-    return "Object Zoom";
+    return CFG_VAL_SYNC_OBJ_ZOOM;
   case SyncPropertiesType::SYNC_OBJECT_SELECTION:
-    return "Object Selection";
+    return CFG_VAL_SYNC_OBJ_SEL;
   case SyncPropertiesType::SYNC_WINDOWS_SIZE:
-    return "Windows Size";
+    return CFG_VAL_SYNC_WIN_SIZE;
+  case SyncPropertiesType::SYNC_WINDOWS_POSITION:
+    return CFG_VAL_SYNC_WIN_POSITION;
 
   default:
-    return "Unknown";
+    return "";
   }
 }
 SyncPropertiesType LabelConstructor::labelToProperty (const std::string &label)
 {
 
-  if (label == "Time")
+  if (label == CFG_VAL_SYNC_TIME)
     return SyncPropertiesType::SYNC_TIME;
-  else if (label == "Histogram Columns")
+  else if (label == CFG_VAL_SYNC_HISTO_COLUMNS)
     return SyncPropertiesType::SYNC_HISTOGRAM_COLUMNS;
-  else if (label == "Histogram Delta")
+  else if (label == CFG_VAL_SYNC_HISTO_DELTA)
     return SyncPropertiesType::SYNC_HISTOGRAM_DELTA;
-  else if (label == "Semantic Min")
+  else if (label == CFG_VAL_SYNC_SEM_MIN)
     return SyncPropertiesType::SYNC_MIN;
-  else if (label == "Semantic Max")
+  else if (label == CFG_VAL_SYNC_SEM_MAX)
     return SyncPropertiesType::SYNC_MAX;
-  else if (label == "Object Zoom")
+  else if (label == CFG_VAL_SYNC_OBJ_ZOOM)
     return SyncPropertiesType::SYNC_OBJECT_ZOOM;
-  else if (label == "Object Selection")
+  else if (label == CFG_VAL_SYNC_OBJ_SEL)
     return SyncPropertiesType::SYNC_OBJECT_SELECTION;
-  else if (label == "Windows Size")
+  else if (label == CFG_VAL_SYNC_WIN_SIZE)
     return SyncPropertiesType::SYNC_WINDOWS_SIZE;
+  else if (label == CFG_VAL_SYNC_WIN_POSITION)
+    return SyncPropertiesType::SYNC_WINDOWS_POSITION;
   else
     return SyncPropertiesType::SYNC_INIT;
 }

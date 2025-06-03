@@ -1088,7 +1088,7 @@ PRV_UINT16 TimelineProxy::getPosX() const
   return posX;
 }
 
-void TimelineProxy::setPosX( PRV_UINT16 whichPos )
+void TimelineProxy::setPosX (PRV_UINT16 whichPos, bool broadcastValue)
 {
   posX = whichPos;
 }
@@ -1098,7 +1098,7 @@ PRV_UINT16 TimelineProxy::getPosY() const
   return posY;
 }
 
-void TimelineProxy::setPosY( PRV_UINT16 whichPos )
+void TimelineProxy::setPosY (PRV_UINT16 whichPos, bool broadcastValue)
 {
   posY = whichPos;
 }
@@ -2212,6 +2212,22 @@ void TimelineProxy::onResizeFunctionCallback (int height, int width)
 {
   if (resizeFunctionCallback != nullptr)
     resizeFunctionCallback (height, width);
+}
+
+void TimelineProxy::registerPositionFunctionCallback (const std::function<void (int, int)> &callbackFunction)
+{
+  positionFunctionCallback = callbackFunction;
+}
+void TimelineProxy::onPositionFunctionCallback (int height, int width)
+{
+  if (positionFunctionCallback != nullptr)
+    positionFunctionCallback (height, width);
+}
+
+void TimelineProxy::addOffsetPosition (int posXDiff, int posYDiff)
+{
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_WINDOWS_POSITION))
+    SyncWindows::getInstance ()->broadcastPositionAll (syncGroup, posYDiff, posXDiff);
 }
 
 #ifdef _MSC_VER

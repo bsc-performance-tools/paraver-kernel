@@ -40,6 +40,7 @@
 #include "syncwindows.h"
 #include "loadedwindows.h"
 
+#include "labelconstructor.h"
 
 using namespace std;
 
@@ -127,54 +128,6 @@ void initDrawModeTags()
     {
       drawModeTags[ DrawModeMethod( current ) ] = string( drawModeCfgTags[ current ] );
     }
-  }
-}
-
-SyncPropertiesType stringToProperty (const std::string &label)
-{
-  if (label == CFG_VAL_SYNC_TIME)
-    return SyncPropertiesType::SYNC_TIME;
-  else if (label == CFG_VAL_SYNC_HISTO_COLUMNS)
-    return SyncPropertiesType::SYNC_HISTOGRAM_COLUMNS;
-  else if (label == CFG_VAL_SYNC_HISTO_DELTA)
-    return SyncPropertiesType::SYNC_HISTOGRAM_DELTA;
-  else if (label == CFG_VAL_SYNC_SEM_MIN)
-    return SyncPropertiesType::SYNC_MIN;
-  else if (label == CFG_VAL_SYNC_SEM_MAX)
-    return SyncPropertiesType::SYNC_MAX;
-  else if (label == CFG_VAL_SYNC_OBJ_ZOOM)
-    return SyncPropertiesType::SYNC_OBJECT_ZOOM;
-  else if (label == CFG_VAL_SYNC_OBJ_SEL)
-    return SyncPropertiesType::SYNC_OBJECT_SELECTION;
-  else if (label == CFG_VAL_SYNC_WIN_SIZE)
-    return SyncPropertiesType::SYNC_WINDOWS_SIZE;
-  else
-    return SyncPropertiesType::SYNC_INIT;
-}
-
-string propertyToString (SyncPropertiesType prop)
-{
-  switch (prop)
-  {
-  case SyncPropertiesType::SYNC_TIME:
-    return CFG_VAL_SYNC_TIME;
-  case SyncPropertiesType::SYNC_HISTOGRAM_COLUMNS:
-    return CFG_VAL_SYNC_HISTO_COLUMNS;
-  case SyncPropertiesType::SYNC_HISTOGRAM_DELTA:
-    return CFG_VAL_SYNC_HISTO_DELTA;
-  case SyncPropertiesType::SYNC_MIN:
-    return CFG_VAL_SYNC_SEM_MIN;
-  case SyncPropertiesType::SYNC_MAX:
-    return CFG_VAL_SYNC_SEM_MAX;
-  case SyncPropertiesType::SYNC_OBJECT_ZOOM:
-    return CFG_VAL_SYNC_OBJ_ZOOM;
-  case SyncPropertiesType::SYNC_OBJECT_SELECTION:
-    return CFG_VAL_SYNC_OBJ_SEL;
-  case SyncPropertiesType::SYNC_WINDOWS_SIZE:
-    return CFG_VAL_SYNC_WIN_SIZE;
-
-  default:
-    return "";
   }
 }
 
@@ -1256,7 +1209,7 @@ bool SyncWindowsGroups::parseLine (KernelConnection *whichKernel, istringstream 
         groupStr = values.substr (tmpStartSyncElement, posSyncElements - tmpStartSyncElement);
         tmpStartSyncElement = posSyncElements + 1;
       }
-      auto property = stringToProperty (groupStr);
+      auto property = LabelConstructor::labelToProperty (groupStr);
       groups[id].push_back (property);
     }
   }
@@ -1297,7 +1250,7 @@ void SyncWindowsGroups::printLine (ofstream &cfgFile)
     {
       if (!firstProperty)
         cfgFile << ",";
-      cfgFile << propertyToString (property);
+      cfgFile << LabelConstructor::propertyToLabel (property);
       firstProperty = false;
     }
 

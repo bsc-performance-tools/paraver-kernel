@@ -41,7 +41,8 @@ enum class SyncPropertiesType
   SYNC_MAX,
   SYNC_OBJECT_ZOOM,
   SYNC_OBJECT_SELECTION,
-  SYNC_WINDOWS_SIZE
+  SYNC_WINDOWS_SIZE,
+  SYNC_WINDOWS_POSITION
 };
 
 enum class SyncPropertiesGroup
@@ -159,6 +160,7 @@ public:
   void broadcastObjectZoomAll (TGroupId whichGroup, std::optional<TObjectOrder> beginObject = std::nullopt, std::optional<TObjectOrder> endObject = std::nullopt);
   void broadcastObjectSelectionAll (TGroupId whichGroup, TTraceLevel wichLevel, std::optional<std::vector<bool>> selectedObjects = std::nullopt);
   void broadcastSizeAll (TGroupId whichGroup, std::optional<PRV_UINT16> whichPosW = std::nullopt, std::optional<PRV_UINT16> whichPosH = std::nullopt);
+  void broadcastPositionAll (TGroupId whichGroup, int whichPosWDiff = 0, int whichPosHDiff = 0);
 
   void getGroupTimes (TGroupId whichGroup, TTime &beginTime, TTime &endTime);
   void getGroupDelta (TGroupId whichGroup, THistogramLimit &whichDelta);
@@ -167,7 +169,6 @@ public:
   void getGroupMin (TGroupId whichGroup, double &whichMin);
   void getGroupObjectZoom (TGroupId whichGroup, TObjectOrder &beginObject, TObjectOrder &endObject);
   void getGroupSize (TGroupId whichGroup, PRV_UINT16 &whichPosW, PRV_UINT16 &whichPosH);
-
   void getSelectObjectZoom (TGroupId whichGroup, std::vector<bool> &beginObject, TTraceLevel &endObject);
 
 private:
@@ -205,6 +206,9 @@ private:
 
   void broadcastWindowsSize (Timeline *whichWindow, TGroupId whichGroup, PRV_UINT16 whichPosW, PRV_UINT16 whichPosH);
   void broadcastWindowsSize (Histogram *whichWindow, TGroupId whichGroup, PRV_UINT16 whichPosW, PRV_UINT16 whichPosH);
+
+  void broadcastWindowsPosition (Timeline *whichWindow, TGroupId whichGroup, int whichPosW, int whichPosH);
+  void broadcastWindowsPosition (Histogram *whichWindow, TGroupId whichGroup, int whichPosW, int whichPosH);
 
   template <typename T>
   void applyGroupProperties (T *whichWindow, TGroupId whichGroup)

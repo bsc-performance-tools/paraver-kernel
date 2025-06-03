@@ -1550,7 +1550,7 @@ PRV_UINT16 HistogramProxy::getPosX() const
   return posX;
 }
 
-void HistogramProxy::setPosX( PRV_UINT16 whichPos )
+void HistogramProxy::setPosX (PRV_UINT16 whichPos, bool broadcastValue)
 {
   posX = whichPos;
 }
@@ -1560,7 +1560,7 @@ PRV_UINT16 HistogramProxy::getPosY() const
   return posY;
 }
 
-void HistogramProxy::setPosY( PRV_UINT16 whichPos )
+void HistogramProxy::setPosY (PRV_UINT16 whichPos, bool broadcastValue)
 {
   posY = whichPos;
 }
@@ -1597,6 +1597,22 @@ void HistogramProxy::setHeight (PRV_UINT16 whichPos, bool broadcastValue)
     if (sync && broadcastValue && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_WINDOWS_SIZE))
       SyncWindows::getInstance ()->broadcastSizeAll (syncGroup, width, height);
   }
+}
+
+void HistogramProxy::registerPositionFunctionCallback (const std::function<void (int, int)> &callbackFunction)
+{
+  positionFunctionCallback = callbackFunction;
+}
+void HistogramProxy::onPositionFunctionCallback (int height, int width)
+{
+  if (positionFunctionCallback != nullptr)
+    positionFunctionCallback (height, width);
+}
+
+void HistogramProxy::addOffsetPosition (int posXDiff, int posYDiff)
+{
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_WINDOWS_POSITION))
+    SyncWindows::getInstance ()->broadcastPositionAll (syncGroup, posYDiff, posXDiff);
 }
 
 bool HistogramProxy::getShowWindow() const

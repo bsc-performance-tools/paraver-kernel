@@ -286,6 +286,7 @@ void SyncWindows::getGroupAvailableProperties (TGroupId groupId, std::vector<Syn
   properties.push_back (SyncPropertiesType::SYNC_MAX);
   properties.push_back (SyncPropertiesType::SYNC_MIN);
   properties.push_back (SyncPropertiesType::SYNC_WINDOWS_SIZE);
+  properties.push_back (SyncPropertiesType::SYNC_WINDOWS_POSITION);
 
   if (syncGroups[groupId].groupType == SyncPropertiesGroup::SYNC_GROUP_HISTOGRAMS)
   {
@@ -344,6 +345,10 @@ void SyncWindows::broadcastProperty (TGroupId whichGroup)
       case SyncPropertiesType::SYNC_WINDOWS_SIZE:
         /* code */
         broadcastSizeAll (whichGroup);
+        break;
+      case SyncPropertiesType::SYNC_WINDOWS_POSITION:
+        /* code */
+        broadcastPositionAll (whichGroup);
         break;
       case SyncPropertiesType::SYNC_OBJECT_SELECTION:
         /* code */
@@ -530,6 +535,27 @@ void SyncWindows::broadcastSizeAll (TGroupId whichGroup, std::optional<PRV_UINT1
                           { broadcastWindowsSize (window, whichGroup, whichPosW.value (), whichPosH.value ()); },
                           [this, whichGroup, whichPosW, whichPosH] (Timeline *window)
                           { broadcastWindowsSize (window, whichGroup, whichPosW.value (), whichPosH.value ()); }},
+                window);
+  }
+  syncGroups[whichGroup].isChanging = false;
+}
+
+void SyncWindows::broadcastPositionAll (TGroupId whichGroup, int whichPosYDiff, int whichPosXDiff)
+{
+  if (syncGroups.find (whichGroup) == syncGroups.end ())
+    return;
+
+  if (syncGroups[whichGroup].isChanging)
+    return;
+
+  syncGroups[whichGroup].isChanging = true;
+
+  for (auto &window : syncGroups[whichGroup].syncGroupsWindows)
+  {
+    std::visit (overloads{[this, whichGroup, whichPosYDiff, whichPosXDiff] (Histogram *window)
+                          { broadcastWindowsPosition (window, whichGroup, whichPosXDiff, whichPosYDiff); },
+                          [this, whichGroup, whichPosYDiff, whichPosXDiff] (Timeline *window)
+                          { broadcastWindowsPosition (window, whichGroup, whichPosXDiff, whichPosYDiff); }},
                 window);
   }
   syncGroups[whichGroup].isChanging = false;
@@ -738,9 +764,12 @@ void SyncWindows::broadcastObjectSelection (Histogram *whichWindow, TGroupId whi
 
 void SyncWindows::broadcastWindowsSize (Histogram *whichWindow, TGroupId whichGroup, PRV_UINT16 whichPosW, PRV_UINT16 whichPosH)
 {
-  whichWindow->setWidth (whichPosW, false);
-  whichWindow->setHeight (whichPosH, false);
-  whichWindow->onResizeFunctionCallback (whichPosW, whichPosH);
+  if (whichWindow->getWidth () != whichPosW || whichWindow->getHeight () != whichPosH)
+  {
+    whichWindow->setWidth (whichPosW, false);
+    whichWindow->setHeight (whichPosH, false);
+    whichWindow->onResizeFunctionCallback (whichPosW, whichPosH);
+  }
 }
 
 void SyncWindows::broadcastWindowsSize (Timeline *whichWindow, TGroupId whichGroup, PRV_UINT16 whichPosW, PRV_UINT16 whichPosH)
@@ -752,6 +781,17 @@ void SyncWindows::broadcastWindowsSize (Timeline *whichWindow, TGroupId whichGro
     whichWindow->onResizeFunctionCallback (whichPosW, whichPosH);
     whichWindow->setRedraw (true);
   }
+}
+
+void SyncWindows::broadcastWindowsPosition (Histogram *whichWindow, TGroupId whichGroup, int whichPosX, int whichPosY)
+{
+
+  whichWindow->onPositionFunctionCallback (whichPosX, whichPosY);
+}
+
+void SyncWindows::broadcastWindowsPosition (Timeline *whichWindow, TGroupId whichGroup, int whichPosX, int whichPosY)
+{
+  whichWindow->onPositionFunctionCallback (whichPosX, whichPosY);
 }
 
 void SyncWindows::getGroupSize (TGroupId whichGroup, PRV_UINT16 &whichPosW, PRV_UINT16 &whichPosH)

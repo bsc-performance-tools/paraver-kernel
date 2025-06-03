@@ -352,14 +352,14 @@ class Timeline
     {
       return 0;
     }
-    virtual void setPosX( PRV_UINT16 whichPos )
+    virtual void setPosX (PRV_UINT16 whichPos, bool broadcastValue = true)
     {}
 
     virtual PRV_UINT16 getPosY() const
     {
       return 0;
     }
-    virtual void setPosY( PRV_UINT16 whichPos )
+    virtual void setPosY (PRV_UINT16 whichPos, bool broadcastValue = true)
     {}
 
     virtual PRV_UINT16 getWidth() const
@@ -816,32 +816,43 @@ class Timeline
     {
     }
 
+    virtual void registerPositionFunctionCallback (const std::function<void (int, int)> &callbackFunction)
+    {
+    }
+    virtual void onPositionFunctionCallback (int height, int width)
+    {
+    }
+
+    virtual void addOffsetPosition (int height, int width)
+    {
+    }
+
 #ifdef _MSC_VER
-    virtual void computeSemanticParallel( std::vector< TObjectOrder >& selectedSet,
-                                          std::vector< bool >& selected,
+    virtual void computeSemanticParallel (std::vector<TObjectOrder> &selectedSet,
+                                          std::vector<bool> &selected,
                                           TTime timeStep,
                                           PRV_INT32 timePos,
                                           PRV_INT32 objectAxisPos,
-                                          std::vector< PRV_INT32 >& objectPosList,
+                                          std::vector<PRV_INT32> &objectPosList,
                                           TObjectOrder maxObj,
-                                          bool& drawCaution,                      // I/O
-                                          std::vector< std::vector< TSemanticValue > >& valuesToDraw, // I/O
-                                          std::vector< hash_set< PRV_INT32 > >& eventsToDraw,    // I/O
-                                          std::vector< hash_set< commCoord > >& commsToDraw,    // I/O
-                                          ProgressController *progress )
+                                          bool &drawCaution,                                      // I/O
+                                          std::vector<std::vector<TSemanticValue>> &valuesToDraw, // I/O
+                                          std::vector<hash_set<PRV_INT32>> &eventsToDraw,         // I/O
+                                          std::vector<hash_set<commCoord>> &commsToDraw,          // I/O
+                                          ProgressController *progress)
 #else
-    virtual void computeSemanticParallel( std::vector< TObjectOrder >& selectedSet,
-                                          std::vector< bool >& selected,
+    virtual void computeSemanticParallel (std::vector<TObjectOrder> &selectedSet,
+                                          std::vector<bool> &selected,
                                           TTime timeStep,
                                           PRV_INT32 timePos,
                                           PRV_INT32 objectAxisPos,
-                                          std::vector< PRV_INT32 >& objectPosList,
+                                          std::vector<PRV_INT32> &objectPosList,
                                           TObjectOrder maxObj,
-                                          bool& drawCaution,                                  // I/O
-                                          std::vector< std::vector< TSemanticValue > >& valuesToDraw,             // I/O
-                                          std::vector< std::unordered_set< PRV_INT32 > >& eventsToDraw,                // I/O
-                                          std::vector< std::unordered_set< commCoord, hashCommCoord > >& commsToDraw,    // I/O
-                                          ProgressController *progress )
+                                          bool &drawCaution,                                                      // I/O
+                                          std::vector<std::vector<TSemanticValue>> &valuesToDraw,                 // I/O
+                                          std::vector<std::unordered_set<PRV_INT32>> &eventsToDraw,               // I/O
+                                          std::vector<std::unordered_set<commCoord, hashCommCoord>> &commsToDraw, // I/O
+                                          ProgressController *progress)
 #endif
     {}
 
@@ -1010,9 +1021,9 @@ class TimelineProxy: public Timeline
     virtual void setName( const std::string& whichName ) override;
     virtual std::string getName() const override;
     virtual PRV_UINT16 getPosX() const override;
-    virtual void setPosX( PRV_UINT16 whichPos ) override;
+    virtual void setPosX (PRV_UINT16 whichPos, bool broadcastValue = true) override;
     virtual PRV_UINT16 getPosY() const override;
-    virtual void setPosY( PRV_UINT16 whichPos ) override;
+    virtual void setPosY (PRV_UINT16 whichPos, bool broadcastValue = true) override;
     virtual PRV_UINT16 getWidth () const override;
     virtual void setWidth (PRV_UINT16 whichPos, bool broadcastProperty = true) override;
     virtual PRV_UINT16 getHeight () const override;
@@ -1186,6 +1197,10 @@ class TimelineProxy: public Timeline
 
     virtual void onResizeFunctionCallback (int height, int width) override;
 
+    virtual void registerPositionFunctionCallback (const std::function<void (int, int)> &callbackFunction) override;
+    virtual void onPositionFunctionCallback (int height, int width) override;
+    virtual void addOffsetPosition (int height, int width) override;
+
 #ifdef _MSC_VER
     virtual void computeSemanticParallel (std::vector<TObjectOrder> &selectedSet,
                                           std::vector<bool> &selected,
@@ -1325,9 +1340,10 @@ class TimelineProxy: public Timeline
     static std::stringstream sstrCFGS4DOriginalName;
 
     std::function<void (int, int)> resizeFunctionCallback = nullptr;
+    std::function<void (int, int)> positionFunctionCallback = nullptr;
 
     // For Clone
-    TimelineProxy();
+    TimelineProxy ();
     // For Single Timeline
     TimelineProxy( KernelConnection *whichKernel, Trace *whichTrace );
     // For Derived Timeline
