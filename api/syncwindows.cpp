@@ -348,7 +348,7 @@ void SyncWindows::broadcastProperty (TGroupId whichGroup)
         break;
       case SyncPropertiesType::SYNC_WINDOWS_POSITION:
         /* code */
-        broadcastPositionAll (whichGroup);
+        // broadcastPositionAll (whichGroup);
         break;
       case SyncPropertiesType::SYNC_OBJECT_SELECTION:
         /* code */
