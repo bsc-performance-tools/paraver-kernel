@@ -249,6 +249,12 @@ void SyncWindows::updateGroupTraceStruct (TGroupId whichGroup)
     for (auto &window : syncGroups[whichGroup].syncGroupsWindows)
     {
       auto tmpTrace = std::visit (visitor, window);
+
+      if (tmpTrace == nullptr)
+      {
+        syncGroups[whichGroup].isSameTraceStruct = false;
+        break;
+      }
       if (tmpTrace == trace)
       {
         syncGroups[whichGroup].isSameTraceStruct = true;
