@@ -111,10 +111,12 @@ class LabelConstructor
     static std::string getDataFileSuffix( const TTextFormat& format = TTextFormat::PLAIN, bool initWithDot = true );
 
     static void presetBaseFormat( std::stringstream &whichStream,
-                                  PRV_UINT32 precision = PERCENT_PRECISION );
+                                  PRV_UINT32 precision = PERCENT_PRECISION,
+                                  bool useLocale = true );
     static void presetBaseTimeFormat( std::stringstream &whichStream,
                                       TTimeUnit unit = NS,
-                                      PRV_UINT32 precision = 0 );
+                                      PRV_UINT32 precision = 0,
+                                      bool useLocale = true );
 
   private:
     static std::stringstream sstrObjectLabel;

@@ -328,27 +328,30 @@ string LabelConstructor::timeLabel( ptime value, PRV_UINT32 precision )
   return sstrTimeLabel.str();
 }
 
-// whichStream cleared and preset to myLocaleWithThousands
+
 void LabelConstructor::presetBaseFormat( std::stringstream &whichStream,
-                                         PRV_UINT32 precision )
+                                         PRV_UINT32 precision,
+                                         bool useLocale )
 {
   whichStream.clear();
   whichStream.str( "" );
 
   whichStream << fixed;
   whichStream.precision( precision );
-  whichStream.imbue( myLocaleWithThousands );
+  if ( useLocale )
+    whichStream.imbue( myLocaleWithThousands );
 }
 
 
 void LabelConstructor::presetBaseTimeFormat( std::stringstream &whichStream,
                                              TTimeUnit unit,
-                                             PRV_UINT32 precision )
+                                             PRV_UINT32 precision,
+                                             bool useLocale )
 {
   if( unit == NS )
     precision = 0;
 
-  presetBaseFormat( whichStream, precision );
+  presetBaseFormat( whichStream, precision, useLocale );
 }
 
 
