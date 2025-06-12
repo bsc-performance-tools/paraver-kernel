@@ -29,6 +29,7 @@
 
 #include "paravertypes.h"
 
+class Timeline;
 
 class CSVSymbolsParser
 {
@@ -42,7 +43,7 @@ class CSVSymbolsParser
     
     ~CSVSymbolsParser() = default;
 
-    void dumpToFile( const std::string& filename, bool isGradientColor ) const;
+    void dumpToFile( const std::string& filename, const Timeline *whichTimeline, bool isGradientColor ) const;
 
     const std::map< TSemanticValue, CSVSymbolsParser::rgb >& getSemanticColors() const;
     void                                                     getEventTypes( std::vector< TEventType >& onVector ) const;

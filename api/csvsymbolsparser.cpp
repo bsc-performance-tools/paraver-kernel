@@ -26,7 +26,9 @@
 #include <sys/stat.h>
 
 #include "csvsymbolsparser.h"
+#include "labelconstructor.h"
 #include "utils/traceparser/pcffileparser.h"
+#include "window.h"
 
 CSVSymbolsParser::CSVSymbolsParser( std::string filename, bool isGradientColor )
 {
@@ -118,7 +120,7 @@ void CSVSymbolsParser::parseLine( const std::string& whichLine, bool isGradientC
 
 template< typename T >
 void printEvent( std::ofstream& csvFile,
-                 const std::map< TEventValue, std::string >& eventLabels,
+                 const Timeline *whichTimeline,
                  const T& firstEvent,
                  const T& lastEvent = {},
                  bool isGradientColor = false )
@@ -132,15 +134,15 @@ void printEvent( std::ofstream& csvFile,
 
   csvFile << " ";
 
-  auto itLabel = eventLabels.find( firstEvent.first );
+  auto itLabel = LabelConstructor::semanticLabel( whichTimeline, firstEvent.first, true, ParaverConfig::getInstance()->getTimelinePrecision(), false );
   csvFile << "\"";
-  if( itLabel != eventLabels.end() )
-    csvFile << itLabel->second;
-  if( isGradientColor  && firstEvent != lastEvent )
+  if( itLabel != "" )
+    csvFile << itLabel;
+  if( isGradientColor && firstEvent != lastEvent )
   {
-    itLabel = eventLabels.find( lastEvent.first );
-    if( itLabel != eventLabels.end() )
-      csvFile << "-" << itLabel->second;
+    itLabel = LabelConstructor::semanticLabel( whichTimeline, lastEvent.first, true, ParaverConfig::getInstance()->getTimelinePrecision(), false );
+    if( itLabel != "" )
+      csvFile << "-" << itLabel;
   }
   csvFile << "\"" << " ";
 
@@ -151,7 +153,7 @@ void printEvent( std::ofstream& csvFile,
   csvFile << std::endl;
 }
 
-void CSVSymbolsParser::dumpToFile( const std::string& filename, bool isGradientColor ) const
+void CSVSymbolsParser::dumpToFile( const std::string& filename, const Timeline *whichTimeline, bool isGradientColor ) const
 {
   std::ofstream csvFile( filename );
 
@@ -162,17 +164,17 @@ void CSVSymbolsParser::dumpToFile( const std::string& filename, bool isGradientC
   {
     if( isGradientColor && rangeFirstColor.second != event.second )
     {
-      printEvent( csvFile, eventLabels, rangeFirstColor, rangeEndColor, isGradientColor );
+      printEvent( csvFile, whichTimeline, rangeFirstColor, rangeEndColor, isGradientColor );
       rangeFirstColor = rangeEndColor = event;
     }
     else if( isGradientColor )
       rangeEndColor = event;
     else
-      printEvent( csvFile, eventLabels, event );
+      printEvent( csvFile, whichTimeline, event );
   }
 
   if( isGradientColor && rangeFirstColor == rangeEndColor )
-    printEvent( csvFile, eventLabels, rangeFirstColor, rangeEndColor, isGradientColor );
+    printEvent( csvFile, whichTimeline, rangeFirstColor, rangeEndColor, isGradientColor );
 
   csvFile.close();
 }

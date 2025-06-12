@@ -182,7 +182,7 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, std::
   symbolsFilename.erase( strOutputFile.rfind( LabelConstructor::getDataFileSuffix( TTextFormat::CSV ) ) );
   symbolsFilename += LabelConstructor::getDataFileSuffix( TTextFormat::LEGEND_CSV );
 
-  symbols.dumpToFile( symbolsFilename, !whichWindow->isCodeColorSet() );
+  symbols.dumpToFile( symbolsFilename, whichWindow, !whichWindow->isCodeColorSet() );
 }
 
 
