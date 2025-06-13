@@ -80,9 +80,9 @@ class KernelConnection
     virtual Timeline *newSingleWindow() const = 0;
     virtual Timeline *newSingleWindow( Trace *whichTrace ) const = 0;
     virtual Timeline *newDerivedWindow() const = 0;
-    virtual Timeline *newDerivedWindow( Timeline *window1, Timeline * window2 ) const = 0;
+    virtual Timeline *newDerivedWindow( Timeline *window1, Timeline *window2 ) const = 0;
     virtual Histogram *newHistogram() const = 0;
-    virtual Histogram *newDerivedHistogram( std::vector< Histogram * > parents ) const = 0;
+    virtual Histogram *newDerivedHistogram( std::vector< Histogram * >& parents ) const = 0;
 
     virtual ProgressController *newProgressController() const = 0;
     virtual Filter *newFilter( Filter *concreteFilter ) const = 0;

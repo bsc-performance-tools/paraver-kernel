@@ -1872,20 +1872,19 @@ bool KHistogram::isReady() const
 /***************************************************************
 ***                     KDerivedHistogram                    ***
 ****************************************************************/
-KDerivedHistogram::KDerivedHistogram( KHistogram *whichParent1, KHistogram *whichParent2 )                                                                                                
+KDerivedHistogram::KDerivedHistogram( std::vector< KHistogram * >& whichParents )                                                                                                
 {
-  parent1 = whichParent1;
-  parent2 = whichParent2;
+  parents = whichParents;
 
   numRows = 0;
   numPlanes = 0;
-  numCols = parent1->getNumColumns();
-  //numCommCols = parent1->getCommNumColumns();
+  numCols = parents[ MAIN ]->getNumColumns();
+  //numCommCols = parents[ MAIN ]->getCommNumColumns();
 
-  KHistogram::setControlMin( parent1->getControlMin() );
-  KHistogram::setControlMax( parent1->getControlMax() );
-  KHistogram::setControlDelta( parent1->getControlDelta() );
-  KHistogram::setExtraControlDelta( parent1->getExtraControlDelta() );
+  KHistogram::setControlMin( parents[ MAIN ]->getControlMin() );
+  KHistogram::setControlMax( parents[ MAIN ]->getControlMax() );
+  KHistogram::setControlDelta( parents[ MAIN ]->getControlDelta() );
+  KHistogram::setExtraControlDelta( parents[ MAIN ]->getExtraControlDelta() );
 }
 
 
@@ -1899,121 +1898,92 @@ inline bool KDerivedHistogram::getThreeDimensions() const
 
 Timeline *KDerivedHistogram::getControlWindow() const
 {
-  return parent1->getControlWindow();
+  return parents[ MAIN ]->getControlWindow();
 }
 
 Timeline *KDerivedHistogram::getDataWindow() const
 {
-  return parent1->getDataWindow();
+  return parents[ MAIN ]->getDataWindow();
 }
 
 Timeline *KDerivedHistogram::getExtraControlWindow() const
 {
-  return parent1->getExtraControlWindow();
+  return parents[ MAIN ]->getExtraControlWindow();
 }
 
 void KDerivedHistogram::setControlWindow( Timeline *whichWindow )
 {
-  parent1->setControlWindow( whichWindow );
-  parent2->setControlWindow( whichWindow );
+  std::for_each( parents.begin(), parents.end(), [&whichWindow]( auto &parent ){ parent->setControlWindow( whichWindow ); } );
 }
 
 void KDerivedHistogram::setDataWindow( Timeline *whichWindow )
 {
-  parent1->setDataWindow( whichWindow );
-  parent2->setDataWindow( whichWindow );
+  std::for_each( parents.begin(), parents.end(), [&whichWindow]( auto &parent ){ parent->setDataWindow( whichWindow ); } );
 }
 
 void KDerivedHistogram::setExtraControlWindow( Timeline *whichWindow )
 {
-  parent1->setExtraControlWindow( whichWindow );
-  parent2->setExtraControlWindow( whichWindow );
+  std::for_each( parents.begin(), parents.end(), [&whichWindow]( auto &parent ){ parent->setExtraControlWindow( whichWindow ); } );
 }
 
 void KDerivedHistogram::clearControlWindow()
 {
-  parent1->clearControlWindow();
-  parent2->clearControlWindow();
+  std::for_each( parents.begin(), parents.end(), []( auto &parent ){ parent->clearControlWindow(); } );
 }
 
 void KDerivedHistogram::clearDataWindow()
 {
-  parent1->clearDataWindow();
-  parent2->clearDataWindow();
+  std::for_each( parents.begin(), parents.end(), []( auto &parent ){ parent->clearDataWindow(); } );
 }
 
 void KDerivedHistogram::clearExtraControlWindow()
 {
-  parent1->clearExtraControlWindow();
-  parent2->clearExtraControlWindow();
+  std::for_each( parents.begin(), parents.end(), []( auto &parent ){ parent->clearExtraControlWindow(); } );
 }
 
 void KDerivedHistogram::setUseFixedDelta( bool whichValue )
 {
-  KHistogram::setUseFixedDelta( whichValue );
-
-  parent1->setUseFixedDelta( whichValue );
-  parent2->setUseFixedDelta( whichValue );
+  std::for_each( parents.begin(), parents.end(), [&whichValue]( auto &parent ){ parent->setUseFixedDelta( whichValue ); } );
 }
 
 void KDerivedHistogram::setControlMin( THistogramLimit whichMin )
 {
-  KHistogram::setControlMin( whichMin );
-
-  parent1->setControlMin( whichMin );
-  parent2->setControlMin( whichMin );
+  std::for_each( parents.begin(), parents.end(), [&whichMin]( auto &parent ){ parent->setControlMin( whichMin ); } );
 }
 
 void KDerivedHistogram::setControlMax( THistogramLimit whichMax )
 {
-  KHistogram::setControlMax( whichMax );
-
-  parent1->setControlMax( whichMax );
-  parent2->setControlMax( whichMax );
+  std::for_each( parents.begin(), parents.end(), [&whichMax]( auto &parent ){ parent->setControlMax( whichMax ); } );
 }
 
 void KDerivedHistogram::setControlDelta( THistogramLimit whichDelta )
 {
-  KHistogram::setControlDelta( whichDelta );
-
-  parent1->setControlDelta( whichDelta );
-  parent2->setControlDelta( whichDelta );
+  std::for_each( parents.begin(), parents.end(), [&whichDelta]( auto &parent ){ parent->setControlDelta( whichDelta ); } );
 }
 
 void KDerivedHistogram::setExtraControlMin( THistogramLimit whichMin )
 {
-  KHistogram::setExtraControlMin( whichMin );
-
-  parent1->setExtraControlMin( whichMin );
-  parent2->setExtraControlMin( whichMin );
+  std::for_each( parents.begin(), parents.end(), [&whichMin]( auto &parent ){ parent->setExtraControlMin( whichMin ); } );
 }
 
 void KDerivedHistogram::setExtraControlMax( THistogramLimit whichMax )
 {
-  KHistogram::setExtraControlMax( whichMax );
-
-  parent1->setExtraControlMax( whichMax );
-  parent2->setExtraControlMax( whichMax );
+  std::for_each( parents.begin(), parents.end(), [&whichMax]( auto &parent ){ parent->setExtraControlMax( whichMax ); } );
 }
 
 void KDerivedHistogram::setExtraControlDelta( THistogramLimit whichDelta )
 {
-  KHistogram::setExtraControlDelta( whichDelta );
-
-  parent1->setExtraControlDelta( whichDelta );
-  parent2->setExtraControlDelta( whichDelta );
+  std::for_each( parents.begin(), parents.end(), [&whichDelta]( auto &parent ){ parent->setExtraControlDelta( whichDelta ); } );
 }
 
 void KDerivedHistogram::setDataMin( TSemanticValue whichMin )
 {
-  parent1->setDataMin( whichMin );
-  parent2->setDataMin( whichMin );
+  std::for_each( parents.begin(), parents.end(), [&whichMin]( auto &parent ){ parent->setDataMin( whichMin ); } );
 }
 
 void KDerivedHistogram::setDataMax( TSemanticValue whichMax )
 {
-  parent1->setDataMax( whichMax );
-  parent2->setDataMax( whichMax );
+  std::for_each( parents.begin(), parents.end(), [&whichMax]( auto &parent ){ parent->setDataMax( whichMax ); } );
 }
 
 // bool KDerivedHistogram::getUseFixedDelta() const
@@ -2056,12 +2026,16 @@ void KDerivedHistogram::setDataMax( TSemanticValue whichMax )
 
 TSemanticValue KDerivedHistogram::getDataMin() const
 {
-  return parent1->getDataMin() > parent2->getDataMin() ? parent2->getDataMin() : parent1->getDataMin();
+  auto tmpHisto = std::min_element( parents.begin(), parents.end(), []( KHistogram *l, KHistogram *r ){ return l->getDataMin() < r->getDataMin(); } ); 
+
+  return (*tmpHisto)->getDataMin();
 }
 
 TSemanticValue KDerivedHistogram::getDataMax() const
 {
-  return parent1->getDataMax() < parent2->getDataMax() ? parent2->getDataMax() : parent1->getDataMax();
+  auto tmpHisto = std::max_element( parents.begin(), parents.end(), []( KHistogram *l, KHistogram *r ){ return l->getDataMax() > r->getDataMax(); } ); 
+
+  return (*tmpHisto)->getDataMax();
 }
 
 // bool KDerivedHistogram::getInclusiveEnabled() const
@@ -2071,8 +2045,7 @@ TSemanticValue KDerivedHistogram::getDataMax() const
 
 void KDerivedHistogram::setInclusive( bool newValue )
 {
-  parent1->setInclusive( newValue );
-  parent2->setInclusive( newValue );
+  std::for_each( parents.begin(), parents.end(), [newValue]( auto &whichParent ){ whichParent->setInclusive( newValue ); } );
 }
 
 // bool KDerivedHistogram::getInclusive() const
@@ -2082,23 +2055,22 @@ void KDerivedHistogram::setInclusive( bool newValue )
 
 void KDerivedHistogram::setNumColumns( THistogramColumn whichNumColumns )
 {
-  parent1->setNumColumns( whichNumColumns );
-  parent2->setNumColumns( whichNumColumns );
+  std::for_each( parents.begin(), parents.end(), [whichNumColumns]( auto &whichParent ){ whichParent->setNumColumns( whichNumColumns ); } );
 }
 
 THistogramColumn KDerivedHistogram::getNumPlanes() const
 {
-  return parent1->getNumPlanes();
+  return parents[ MAIN ]->getNumPlanes();
 }
 
 THistogramColumn KDerivedHistogram::getNumColumns() const
 {
-  return parent1->getNumColumns();
+  return parents[ MAIN ]->getNumColumns();
 }
 
 THistogramColumn KDerivedHistogram::getCommNumColumns() const
 {
-  return parent1->getCommNumColumns();
+  return parents[ MAIN ]->getCommNumColumns();
 }
 
 // TObjectOrder KDerivedHistogram::getNumRows() const
@@ -2256,70 +2228,64 @@ void KDerivedHistogram::pushbackStatistic( const std::string& whichStatistic )
 
 std::string KDerivedHistogram::getUnitsLabel( const std::string& whichStat ) const
 {
-  return parent1->getUnitsLabel( whichStat );
+  return parents[ MAIN ]->getUnitsLabel( whichStat );
 }
 
-// TODO: rename, decideNumColumns? adjunstNumColumns?
+// TODO: decideNumColumns, adjustNumColumns
 void KDerivedHistogram::mergeColumns( TRecordTime whichBeginTime, TRecordTime whichEndTime,
                                        std::vector<TObjectOrder>& selectedRows, ProgressController *progress )
 {
   if ( columnsMergeMode & MERGE_MIN_MAX )
   {
-    setControlMin( std::min( parent1->getControlMin(), parent2->getControlMin() ) );
-    setControlMax( std::max( parent1->getControlMax(), parent2->getControlMax() ) );
+    auto tmpHisto = std::min_element( parents.begin(), parents.end(), []( KHistogram *l, KHistogram *r ){ return l->getControlMin() < r->getControlMin(); } ); 
+    setControlMin( (*tmpHisto)->getControlMin() );
+
+    tmpHisto = std::max_element( parents.begin(), parents.end(), []( KHistogram *l, KHistogram *r ){ return l->getControlMax() > r->getControlMax(); } ); 
+    setControlMax( (*tmpHisto)->getControlMax() );
   }
   
   if ( columnsMergeMode & KEEP_DELTA_AS_PARENT1 )
   {
-    setControlDelta( parent1->getControlDelta() );
-    // if ( parent2->getControlDelta() != )
-    parent2->setControlDelta( parent1->getControlDelta() ); // First version
-// std::cout << "KDerivedHistogram::mergeColumns" << std::endl;
+    setControlDelta( parents[ MAIN ]->getControlDelta() );
   }
 }
 
 
 void KDerivedHistogram::combineHistograms()
 {
-  assert( parent1->getControlDelta() == parent2->getControlDelta() );
-
   std::array< TSemanticValue, NUM_SEMANTIC_STATS > wholeSemVals;
   std::array< TSemanticValue, NUM_COMM_STATS > wholeCommVals;
 
-//  PRV_UINT32 currentPlane = 0;
-  // Size of parents?
-  THistogramColumn tmpNumPlanes = getNumPlanes();
-  THistogramColumn tmpNumCols = getNumColumns();
   //THistogramColumn tmpNumCols = getColumnTranslator()->totalColumns();
   THistogramColumn tmpCommNumCols = ( createComms() )? getCommNumColumns(): 0;
-  TObjectOrder tmpNumRows = getNumRows();
-
-  // bool foundParent1Col = false;
-  // bool foundParent2Col = false;
-  // THistogramColumn parent1Col;
-  // THistogramColumn parent2Col;
-  // THistogramLimit parent1Value = parent1->getControlMin();
-  // THistogramLimit parent2Value = parent2->getControlMin();
-
+  // TObjectOrder tmpNumRows = getNumRows();
 
   // Get derived operation
   THistogramCorrespondenceInfo::const_iterator secondHistogramIndex;
-  for ( THistogramColumn iPlane = 0; iPlane < tmpNumPlanes; ++iPlane )
+  for ( THistogramColumn iPlane = 0; iPlane < getNumPlanes(); ++iPlane )
   {
-    if ( parent1->planeWithValues() || parent2->planeWithValues() ) // ?
+    if ( std::any_of( parents.cbegin(), parents.cend(), [&iPlane]( auto &parent ){ return parent->planeWithValues( iPlane ); } ) )
     {
-      for ( THistogramColumn iCol = 0; iCol < tmpNumCols; ++iCol )
+      for ( THistogramColumn iCol = 0; iCol < getNumColumns(); ++iCol )
       {
         // TODO: put in a function "bool firstCellAvailable(parent1, icol, iplane)"
 
+        // PRV_INT32 iRow = 0;
+        // bool isEndCell = startFirstCell( [this, iCol, iPlane](){ setFirstCell( iCol, iPlane ); },
+        //                                  [this, iCol, iPlane](){ parents[ MAIN ]->setFirstCell( iCol, iPlane ); },
+        //                                  [this, iCol, iPlane](){ return parents[ MAIN ]->endCell( iCol, iPlane ); },
+        //                                  [this, iCol, iPlane](){ return parents[ MAIN ]->getCurrentRow( iCol, iPlane ); },
+        //                                  iRow, iCol, iPlane,
+        //                                  matrix, cube );
+
         // First Cell
         PRV_INT32 iRow = 0;
-        parent1->setFirstCell( iCol, iPlane );
+        parents[ MAIN ]->setFirstCell( iCol, iPlane );
 
-        bool isEndCell = parent1->endCell( iCol, iPlane );
+        bool isEndCell = parents[ MAIN ]->endCell( iCol, iPlane );
         if ( !isEndCell )
         {
-          iRow = parent1->getCurrentRow( iCol, iPlane );
+          iRow = parents[ MAIN ]->getCurrentRow( iCol, iPlane );
 
           if ( getThreeDimensions() )
             cube->newRow( iPlane, iCol, iRow );
@@ -2327,7 +2293,7 @@ void KDerivedHistogram::combineHistograms()
             matrix->newRow( iCol, iRow );
 
           setFirstCell( iCol, iPlane );
-          // std::cout << "newRow: " << "( " << iCol << ", " << iRow << ")" << std::endl;
+          //std::cout << "newRow: " << "( " << iCol << ", " << iRow << ")" << std::endl;
         }
 
         while ( !isEndCell ) //  use advanceRow here
@@ -2354,12 +2320,12 @@ void KDerivedHistogram::combineHistograms()
             matrix->setValue( iCol, wholeSemVals );
 
           // Advance
-          parent1->setNextCell( iCol, iPlane );       
+          parents[ MAIN ]->setNextCell( iCol, iPlane );       
 
-          isEndCell = parent1->endCell( iCol, iPlane );
+          isEndCell = parents[ MAIN ]->endCell( iCol, iPlane );
           if ( !isEndCell )
           {
-            iRow = parent1->getCurrentRow( iCol, iPlane );
+            iRow = parents[ MAIN ]->getCurrentRow( iCol, iPlane );
             if ( getThreeDimensions() )
               cube->newRow( iPlane, iCol, iRow );
             else
@@ -2377,11 +2343,17 @@ void KDerivedHistogram::combineHistograms()
         {
           // First Cell
           PRV_INT32 iRow = 0;
-          parent1->setCommFirstCell( iCol, iPlane );
-          bool isCommEndCell = parent1->endCommCell( iCol, iPlane );
+          // bool isCommEndCell = startFirstCell( [this, iCol, iPlane](){ setFirstCell( iCol, iPlane ); },
+          //                                 [this, iCol, iPlane](){ parents[ MAIN ]->setCommFirstCell( iCol, iPlane ); },
+          //                                 [this, iCol, iPlane](){ return parents[ MAIN ]->endCommCell( iCol, iPlane ); },
+          //                                 [this, iCol, iPlane](){ return parents[ MAIN ]->getCommCurrentRow( iCol, iPlane ); },
+          //                                 iRow, iCol, iPlane,
+          //                                 commMatrix, commCube );
+          parents[ MAIN ]->setCommFirstCell( iCol, iPlane );
+          bool isCommEndCell = parents[ MAIN ]->endCommCell( iCol, iPlane );
           if ( !isCommEndCell )
           {
-            iRow = parent1->getCommCurrentRow( iCol, iPlane );
+            iRow = parents[ MAIN ]->getCommCurrentRow( iCol, iPlane );
 
             if ( getThreeDimensions() )
               commCube->newRow( iPlane, iCol, iRow );
@@ -2415,12 +2387,12 @@ void KDerivedHistogram::combineHistograms()
               commMatrix->setValue( iCol, wholeCommVals );
 
             // Advance
-            parent1->setCommNextCell( iCol, iPlane );       
+            parents[ MAIN ]->setCommNextCell( iCol, iPlane );       
 
-            isCommEndCell = parent1->endCommCell( iCol, iPlane );
+            isCommEndCell = parents[ MAIN ]->endCommCell( iCol, iPlane );
             if ( !isCommEndCell )
             {
-              iRow = parent1->getCommCurrentRow( iCol, iPlane );
+              iRow = parents[ MAIN ]->getCommCurrentRow( iCol, iPlane );
               if ( getThreeDimensions() )
                 commCube->newRow( iPlane, iCol, iRow );
               else
@@ -2516,14 +2488,14 @@ bool KDerivedHistogram::getExtraOutOfLimits() const
 
 TTimeUnit KDerivedHistogram::getTimeUnit() const
 {
-  return parent1->getTimeUnit();
+  return parents[ MAIN ]->getTimeUnit();
 }
 
 KHistogram *KDerivedHistogram::clone()
 {
-  // TODO: think clone; use KHistogram::clone?
-  KDerivedHistogram *clonedKDerivedHistogram = new KDerivedHistogram( static_cast<KHistogram*>(parent1)->clone(),
-                                                                      static_cast<KHistogram*>(parent2)->clone() );
+  std::vector< KHistogram * > clonedParents;
+  std::transform( parents.cbegin(), parents.cend(), std::back_inserter( clonedParents ), []( auto& parent ){ return parent->clone(); } ); 
+  KDerivedHistogram *clonedKDerivedHistogram = new KDerivedHistogram( clonedParents );
 
   clonedKDerivedHistogram->numRows = numRows;
   clonedKDerivedHistogram->numCols = numCols;
@@ -2603,7 +2575,7 @@ void KDerivedHistogram::getDerivedOperationLabelsAndSymbols( std::map<std::strin
     onVector[ op->getName() ] = op->getSymbol();
 }
 
-bool KDerivedHistogram::setColumnsMergeMode( TColumnsMergeMode whichMode )
+void KDerivedHistogram::setColumnsMergeMode( TColumnsMergeMode whichMode )
 {
   columnsMergeMode = whichMode;
 }
@@ -2670,18 +2642,18 @@ void KDerivedHistogram::fillCellCorrespondence()
   {
     for ( THistogramColumn iCol = 0; iCol < tmpNumCols; ++iCol )
     {
-      parent1->setFirstCell( iCol, iPlane );
+      parents[ MAIN ]->setFirstCell( iCol, iPlane );
 
-      bool isEndCell = parent1->endCell( iCol, iPlane );
+      bool isEndCell = parents[ MAIN ]->endCell( iCol, iPlane );
       while ( !isEndCell )
       {
-        TObjectOrder iRow = (TObjectOrder)parent1->getCurrentRow( iCol, iPlane );
+        TObjectOrder iRow = (TObjectOrder)parents[ MAIN ]->getCurrentRow( iCol, iPlane );
 
         cellCorrespondence( iPlane, iRow, iCol ) = TRemoteIndex{ iPlane, iRow, iCol };
 
-        parent1->setNextCell( iCol, iPlane );
+        parents[ MAIN ]->setNextCell( iCol, iPlane );
 
-        isEndCell = parent1->endCell( iCol, iPlane );
+        isEndCell = parents[ MAIN ]->endCell( iCol, iPlane );
       }
     }
 
@@ -2689,18 +2661,18 @@ void KDerivedHistogram::fillCellCorrespondence()
     {
       for ( THistogramColumn iCol = 0; iCol < tmpNumRows; ++iCol )
       {
-        parent1->setCommFirstCell( iCol, iPlane );
+        parents[ MAIN ]->setCommFirstCell( iCol, iPlane );
 
-        bool isEndCell = parent1->endCommCell( iCol, iPlane );
+        bool isEndCell = parents[ MAIN ]->endCommCell( iCol, iPlane );
         while ( !isEndCell )
         {
-          TObjectOrder iRow = (TObjectOrder)parent1->getCommCurrentRow( iCol, iPlane );
+          TObjectOrder iRow = (TObjectOrder)parents[ MAIN ]->getCommCurrentRow( iCol, iPlane );
 
           cellCommCorrespondence( iPlane, iRow, iCol ) = TRemoteIndex{ iPlane, iRow, iCol };
 
-          parent1->setCommNextCell( iCol, iPlane );
+          parents[ MAIN ]->setCommNextCell( iCol, iPlane );
 
-          isEndCell = parent1->endCommCell( iCol, iPlane );
+          isEndCell = parents[ MAIN ]->endCommCell( iCol, iPlane );
         }
       }
     }
