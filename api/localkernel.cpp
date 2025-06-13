@@ -286,13 +286,13 @@ Histogram *LocalKernel::newHistogram() const
   return new KHistogram();
 }
 
-Histogram *LocalKernel::newDerivedHistogram( std::vector< Histogram * > parents ) const
+Histogram *LocalKernel::newDerivedHistogram( std::vector< Histogram * >& whichParents ) const
 {
   std::vector< KHistogram * > concreteParents;
-  std::transform( parents.begin(), parents.end(), std::back_inserter( concreteParents ),
-                                                  []( auto& parent ){ return ( KHistogram * )parent->getConcrete(); } ); 
+  std::transform( whichParents.begin(), whichParents.end(), std::back_inserter( concreteParents ),
+                                                            []( auto& parent ){ return ( KHistogram * )parent->getConcrete(); } ); 
 
-  return new KDerivedHistogram( concreteParents[0], concreteParents[1] );
+  return new KDerivedHistogram( concreteParents );
 }
 
 /*RecordList *LocalKernel::newRecordList() const

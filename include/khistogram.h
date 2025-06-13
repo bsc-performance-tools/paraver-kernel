@@ -419,7 +419,7 @@ struct TRemoteIndex
 class KDerivedHistogram : public KHistogram
 {
   public:
-    KDerivedHistogram( KHistogram *whichParent1, KHistogram *whichParent2 );
+    KDerivedHistogram( std::vector< KHistogram * >& whichParents );
     ~KDerivedHistogram();
 
     bool getThreeDimensions() const override;
@@ -541,15 +541,15 @@ class KDerivedHistogram : public KHistogram
                                                       PRV_UINT32 whichGroup,
                                                       bool getOriginalList = true ) const override;
 
-    bool setColumnsMergeMode( TColumnsMergeMode whichMode );
+    void setColumnsMergeMode( TColumnsMergeMode whichMode );
     TColumnsMergeMode getColumnsMergeMode() const;  
 
 
   protected:
 
   private:
-    Histogram *parent1 = nullptr;
-    Histogram *parent2 = nullptr;
+    const size_t MAIN = 0;
+    std::vector< KHistogram * > parents = {};
 
     std::string currentDerivedOperation = "add";
 
@@ -579,6 +579,25 @@ class KDerivedHistogram : public KHistogram
                         THistogramColumn i2Plane = 0, THistogramColumn i2Col = 0, THistogramColumn i2Row = 0,
                         bool existCorrespondence = false );
 
+    // template< std::function< void( THistogramColumn, THistogramColumn ) > FSetFirstCell,
+    //           std::function< bool( THistogramColumn, THistogramColumn ) > FEndCell,
+    //           std::function< PRV_INT32( THistogramColumn, THistogramColumn ) > FGetCurrentRow,
+    // template< class FSetFirstCell,
+    //           class FSetParentFirstCell,
+    //           class FEndCell,
+    //           class FGetCurrentRow,
+    //           class TMatrix,
+    //           class TCube >
+    // bool startFirstCell( FSetFirstCell whichThisSetFirstCell,
+    //                      FSetParentFirstCell whichParentSetFirstCell,
+    //                      FEndCell whichParentEndCell,
+    //                      FGetCurrentRow whichParentGetCurrentRow,
+    //                      PRV_INT32& iRow,
+    //                      THistogramColumn iCol,
+    //                      THistogramColumn iPlane,
+    //                      TMatrix *matrix,
+    //                      TCube *cube );
+ 
     void combineHistograms();
 
     void orderWindows();
@@ -599,27 +618,41 @@ void KDerivedHistogram::combineValues( std::array< TSemanticValue, NUM_STATS >& 
 {
   TSemanticValue semVal1 = 0.0;
   TSemanticValue semVal2 = 0.0;
+  std::vector< TSemanticValue > semValues;
 
   DerivedHistogramFunctionInfo tmpValues;
   SemanticDerivedHistogram *op = FunctionManagement<SemanticDerivedHistogram>::getInstance()->getFunction( getDerivedOperation() );
 
+  // auto findAllValues = []()
+  // {
+  //   foundVal1 = parents[ MAIN ]->getCellValue( semVal1, iRow, iCol, currentStat, iPlane );
+  //   if ( existCorrespondence )
+  //     foundVal2 = parents[ 1 ]->getCellValue( semVal2, i2Row, i2Col, currentStat, i2Plane );
+  // };
+
+
   // TODO: hay una llamada que recibe el vector
   for ( size_t currentStat = 0; currentStat < NUM_STATS; ++currentStat )
-  {
+   {
+    //TODO:  Refactor1 -> template to separate comm statistics.
+    //TODO:  Refactor2 -> lambda to compute foundValues.
+
+
+
     // TODO: PENDING COMMS
     bool foundVal1 = false;
     bool foundVal2 = false;
     if ( !isCommValue )  // c++17 --> remove isCommValue + if constexpr( NUM_STATS == NUM_SEMANTIC_STATS )
     {
-      foundVal1 = parent1->getCellValue( semVal1, iRow, iCol, currentStat, iPlane );
+      foundVal1 = parents[ MAIN ]->getCellValue( semVal1, iRow, iCol, currentStat, iPlane );
       if ( existCorrespondence )
-        foundVal2 = parent2->getCellValue( semVal2, i2Row, i2Col, currentStat, i2Plane );
+        foundVal2 = parents[ 1 ]->getCellValue( semVal2, i2Row, i2Col, currentStat, i2Plane );
     }
     else
     {
-      foundVal1 = parent1->getCommCellValue( semVal1, iRow, iCol, currentStat, iPlane );
+      foundVal1 = parents[ MAIN ]->getCommCellValue( semVal1, iRow, iCol, currentStat, iPlane );
       if ( existCorrespondence )
-        foundVal2 = parent2->getCommCellValue( semVal2, i2Row, i2Col, currentStat, i2Plane );
+        foundVal2 = parents[ 1 ]->getCommCellValue( semVal2, i2Row, i2Col, currentStat, i2Plane );
     }
 
     if ( !foundVal1 && !foundVal2 )
@@ -646,3 +679,44 @@ void KDerivedHistogram::combineValues( std::array< TSemanticValue, NUM_STATS >& 
     }
   }
 };
+
+// template< std::function< void( THistogramColumn, THistogramColumn ) > FSetFirstCell,
+//           std::function< bool( THistogramColumn, THistogramColumn ) > FEndCell,
+//           std::function< PRV_INT32( THistogramColumn, THistogramColumn ) > FGetCurrentRow,
+// template< class FSetFirstCell,
+//           class FSetParentFirstCell,
+//           class FEndCell,
+//           class FGetCurrentRow,
+//           class TMatrix,
+//           class TCube >
+// bool KDerivedHistogram::startFirstCell( FSetFirstCell whichThisSetFirstCell,
+//                                         FSetParentFirstCell whichParentSetFirstCell,
+//                                         FEndCell whichParentEndCell,
+//                                         FGetCurrentRow whichParentGetCurrentRow,
+//                                         PRV_INT32& iRow,
+//                                         THistogramColumn iCol,
+//                                         THistogramColumn iPlane,
+//                                         TMatrix *matrix,
+//                                         TCube *cube )
+// {
+//   // parents[ MAIN ]->whichSetFirstCell( iCol, iPlane );
+//   // whichParentSetFirstCell( iCol, iPlane );
+//   whichParentSetFirstCell();
+
+//   // bool isEndCell = parents[ MAIN ]->whichEndCell( iCol, iPlane );
+//   bool isEndCell = whichParentEndCell();
+//   if ( !isEndCell )
+//   {
+//     // iRow = parents[ MAIN ]->whichGetCurrentRow( iCol, iPlane );
+//     iRow = whichParentGetCurrentRow();
+
+//     if ( getThreeDimensions() )
+//       cube->newRow( iPlane, iCol, iRow );
+//     else
+//       matrix->newRow( iCol, iRow );
+
+//     whichThisSetFirstCell();
+//   }
+
+//   return isEndCell;
+// };
