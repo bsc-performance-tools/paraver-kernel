@@ -198,11 +198,15 @@ CSVMetadataAction::CSVMetadataAction( string         date,
                                       string         origin,
                                       string         originalTrace,
                                       TTimeUnit      timeUnits,
-                                      TColorFunction colorMode )
+                                      TColorFunction colorMode,
+                                      TSemanticValue semanticMin,
+                                      TSemanticValue semanticMax )
   : MetadataAction( date, CSVMetadataAction::ACTION_ID, origin, originalTrace )
 {
   this->timeUnits = timeUnits;
   this->colorMode = colorMode;
+  this->semanticMin = semanticMin;
+  this->semanticMax = semanticMax;
 }
 
 CSVMetadataAction::CSVMetadataAction( vector< string >& csvMetadataFields )
@@ -215,7 +219,7 @@ CSVMetadataAction::CSVMetadataAction( vector< string >& csvMetadataFields )
     errorMessageSStr << FIELD_COUNT << " expected)";
 
     error = true;
-    errorMessage = errorMessageSStr.str();
+    errorMessage = errorMessageSStr.str() + "\n";
   }
 
   this->date          = csvMetadataFields[ 0 ];
@@ -225,6 +229,29 @@ CSVMetadataAction::CSVMetadataAction( vector< string >& csvMetadataFields )
 
   this->timeUnits = CFGLoader::parseTimeUnit( csvMetadataFields[ 4 ] );
   this->colorMode = CFGLoader::parseColorMode( csvMetadataFields[ 5 ] );
+
+  TSemanticValue tmpValue;
+  stringstream auxSStr;
+  locale mylocale( "C" );
+  auxSStr.imbue( mylocale );
+  auxSStr.str( csvMetadataFields[ 6 ] );
+  if( auxSStr >> tmpValue )
+    this->semanticMin = tmpValue;
+  else
+  {
+    error = true;
+    errorMessage += "Semantic Minimum value can't be converted to double.";
+  }
+
+  auxSStr.clear();
+  auxSStr.str( csvMetadataFields[ 7 ] );
+  if( auxSStr >> tmpValue )
+    this->semanticMax = tmpValue;
+  else
+  {
+    error = true;
+    errorMessage += "Semantic Maximum value can't be converted to double.";
+  }
 }
 
 void CSVMetadataAction::flushSpecificFields( ostream& os ) const
@@ -232,6 +259,8 @@ void CSVMetadataAction::flushSpecificFields( ostream& os ) const
   CFGLoader::dumpTimeUnits( timeUnits, os );
   os << ":";
   CFGLoader::dumpColorMode( colorMode, os );
+  os << std::fixed;
+  os << ":" << semanticMin << ":" << semanticMax;
 }
 
 
@@ -322,6 +351,22 @@ TColorFunction CSVMetadata::getColorMode() const
     return {};
 
   return metadataActions.back().getColorMode();
+}
+
+TSemanticValue CSVMetadata::getSemanticMin() const
+{
+  if( metadataActions.empty() )
+    return 0.0;
+
+  return metadataActions.back().getSemanticMin();
+}
+
+TSemanticValue CSVMetadata::getSemanticMax() const
+{
+  if( metadataActions.empty() )
+    return 0.0;
+
+  return metadataActions.back().getSemanticMax();
 }
 
 

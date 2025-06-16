@@ -398,7 +398,9 @@ void TextOutput::dumpMetadata( Timeline *whichTimeline, std::ofstream& whichFile
                                  whichOrigin,
                                  whichTimeline->getTrace()->getFileName(),
                                  whichTimeline->getTimeUnit(),
-                                 whichTimeline->getSemanticColor().getColorMode() );
+                                 whichTimeline->getSemanticColor().getColorMode(),
+                                 whichTimeline->getMinimumY(),
+                                 whichTimeline->getMaximumY() );
 
   tmpMetadata.write( whichFile );
   whichFile << std::endl;

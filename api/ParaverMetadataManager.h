@@ -122,7 +122,7 @@ class CutterMetadataAction : public MetadataAction
 class CSVMetadataAction : public MetadataAction
 {
   public:
-    static constexpr int  FIELD_COUNT = MetadataAction::FIELD_COUNT + 2;
+    static constexpr int  FIELD_COUNT = MetadataAction::FIELD_COUNT + 4;
     static constexpr char ACTION_ID[] = "CSV";
   
     CSVMetadataAction( std::vector<std::string>& csvMetadataFields );
@@ -131,14 +131,20 @@ class CSVMetadataAction : public MetadataAction
                        std::string    origin,
                        std::string    originalTrace,
                        TTimeUnit      timeUnits,
-                       TColorFunction colorMode );
+                       TColorFunction colorMode,
+                       TSemanticValue semanticMin,
+                       TSemanticValue semanticMax );
 
     TTimeUnit      getTimeUnits() const { return timeUnits; }
     TColorFunction getColorMode() const { return colorMode; }
+    TSemanticValue getSemanticMin() const { return semanticMin; }
+    TSemanticValue getSemanticMax() const { return semanticMax; }
 
   private:
     TTimeUnit      timeUnits;
     TColorFunction colorMode;
+    TSemanticValue semanticMin = 0.0;
+    TSemanticValue semanticMax = 0.0;
 
     void flushSpecificFields( std::ostream& os ) const;
 };
@@ -178,6 +184,8 @@ class CSVMetadata : public MetadataApplication
 
     TTimeUnit      getTimeUnits() const;
     TColorFunction getColorMode() const;
+    TSemanticValue getSemanticMin() const;
+    TSemanticValue getSemanticMax() const;
 
   private:
     std::vector< CSVMetadataAction > metadataActions;
