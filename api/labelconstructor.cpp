@@ -329,7 +329,10 @@ string LabelConstructor::propertyToLabel (SyncPropertiesType prop)
     return CFG_VAL_SYNC_WIN_SIZE;
   case SyncPropertiesType::SYNC_WINDOWS_POSITION:
     return CFG_VAL_SYNC_WIN_POSITION;
-
+  case SyncPropertiesType::SYNC_COLOR_PALETTE:
+    return CFG_VAL_SYNC_COLOR_PALETTE;
+  case SyncPropertiesType::SYNC_INFO_PANEL:
+    return CFG_VAL_SYNC_INFO_PANEL;
   default:
     return "";
   }
@@ -355,6 +358,10 @@ SyncPropertiesType LabelConstructor::labelToProperty (const std::string &label)
     return SyncPropertiesType::SYNC_WINDOWS_SIZE;
   else if (label == CFG_VAL_SYNC_WIN_POSITION)
     return SyncPropertiesType::SYNC_WINDOWS_POSITION;
+  else if (label == CFG_VAL_SYNC_COLOR_PALETTE)
+    return SyncPropertiesType::SYNC_COLOR_PALETTE;
+  else if (label == CFG_VAL_SYNC_INFO_PANEL)
+    return SyncPropertiesType::SYNC_INFO_PANEL;
   else
     return SyncPropertiesType::SYNC_INIT;
 }

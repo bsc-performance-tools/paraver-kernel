@@ -1239,22 +1239,25 @@ void SyncWindowsGroups::printLine (ofstream &cfgFile)
 
   for (auto &group : groups)
   {
-    if (!firstGroup)
-      cfgFile << ";"; // separator between groups
-
-    cfgFile << group.first << ":";
-
-    bool firstProperty = true;
-
-    for (auto &property : group.second)
+    if (SyncWindows::getInstance ()->getNumWindows (group.first) != 0)
     {
-      if (!firstProperty)
-        cfgFile << ",";
-      cfgFile << LabelConstructor::propertyToLabel (property);
-      firstProperty = false;
-    }
+      if (!firstGroup)
+        cfgFile << ";"; // separator between groups
 
-    firstGroup = false;
+      cfgFile << group.first << ":";
+
+      bool firstProperty = true;
+
+      for (auto &property : group.second)
+      {
+        if (!firstProperty)
+          cfgFile << ",";
+        cfgFile << LabelConstructor::propertyToLabel (property);
+        firstProperty = false;
+      }
+
+      firstGroup = false;
+    }
   }
 }
 

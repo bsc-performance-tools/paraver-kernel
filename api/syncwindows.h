@@ -28,6 +28,7 @@
 #include <variant>
 
 #include "paraverkerneltypes.h"
+#include "paravertypes.h"
 
 typedef unsigned int TGroupId;
 
@@ -42,7 +43,9 @@ enum class SyncPropertiesType
   SYNC_OBJECT_ZOOM,
   SYNC_OBJECT_SELECTION,
   SYNC_WINDOWS_SIZE,
-  SYNC_WINDOWS_POSITION
+  SYNC_WINDOWS_POSITION,
+  SYNC_COLOR_PALETTE,
+  SYNC_INFO_PANEL
 };
 
 enum class SyncPropertiesGroup
@@ -139,6 +142,7 @@ public:
 
   int getNumWindows (TGroupId whichGroup);
   int getNumGroups () const;
+  std::vector<Timeline *> getGroupTimelineWindows (TGroupId whichGroup);
 
   void getGroups (std::vector<TGroupId> &groups) const;
   void getGroupsProperties (std::map<TGroupId, std::vector<SyncPropertiesType>> &groups) const;
@@ -161,6 +165,8 @@ public:
   void broadcastObjectSelectionAll (TGroupId whichGroup, TTraceLevel wichLevel, std::optional<std::vector<bool>> selectedObjects = std::nullopt);
   void broadcastSizeAll (TGroupId whichGroup, std::optional<PRV_UINT16> whichPosW = std::nullopt, std::optional<PRV_UINT16> whichPosH = std::nullopt);
   void broadcastPositionAll (TGroupId whichGroup, int whichPosWDiff = 0, int whichPosHDiff = 0);
+  void broadcastColorPaletteAll (TGroupId whichGroup, std::optional<std::map<TSemanticValue, rgb>> paletteColors = std::nullopt, std::optional<rgb> backgroundColor = std::nullopt,
+                                 std::optional<rgb> axisColor = std::nullopt, std::optional<bool> backgroundAsZero = std::nullopt);
 
   void getGroupTimes (TGroupId whichGroup, TTime &beginTime, TTime &endTime);
   void getGroupDelta (TGroupId whichGroup, THistogramLimit &whichDelta);
@@ -170,6 +176,8 @@ public:
   void getGroupObjectZoom (TGroupId whichGroup, TObjectOrder &beginObject, TObjectOrder &endObject);
   void getGroupSize (TGroupId whichGroup, PRV_UINT16 &whichPosW, PRV_UINT16 &whichPosH);
   void getSelectObjectZoom (TGroupId whichGroup, std::vector<bool> &beginObject, TTraceLevel &endObject);
+  void getGroupColorPalette (TGroupId whichGroup, std::map<TSemanticValue, rgb> &paletteColors, rgb &backgroundColor,
+                             rgb &axisColor, bool &backgroundAsZero);
 
 private:
   SyncWindows ();
@@ -199,6 +207,7 @@ private:
   void broadcastSemanticMax (Histogram *histogram, TGroupId whichGroup, THistogramLimit newNumColumns);
   void broadcastSemanticMax (Timeline *histogram, TGroupId whichGroup, TSemanticValue newNumColumns);
 
+  void broadcastObjectZoom (Histogram *whichWindow, TGroupId whichGroup, TObjectOrder beginTime, TObjectOrder endTime);
   void broadcastObjectZoom (Timeline *whichWindow, TGroupId whichGroup, TObjectOrder beginTime, TObjectOrder endTime);
 
   void broadcastObjectSelection (Timeline *whichWindow, TGroupId whichGroup, TTraceLevel wichLevel, std::vector<bool> selectedObjects);
@@ -210,6 +219,8 @@ private:
   void broadcastWindowsPosition (Timeline *whichWindow, TGroupId whichGroup, int whichPosW, int whichPosH);
   void broadcastWindowsPosition (Histogram *whichWindow, TGroupId whichGroup, int whichPosW, int whichPosH);
 
+  void broadcastColorPalette (Timeline *whichWindow, TGroupId whichGroup, std::optional<std::map<TSemanticValue, rgb>> paletteColors = std::nullopt, std::optional<rgb> backgroundColor = std::nullopt,
+                              std::optional<rgb> axisColor = std::nullopt, std::optional<bool> backgroundAsZero = std::nullopt);
   template <typename T>
   void applyGroupProperties (T *whichWindow, TGroupId whichGroup)
   {
@@ -261,13 +272,10 @@ private:
           break;
         case SyncPropertiesType::SYNC_OBJECT_ZOOM:
           /* code */
-          if constexpr (std::is_same_v<T, Timeline>)
-          {
-            TObjectOrder tmpBeginObject;
-            TObjectOrder tmpEndObject;
-            getGroupObjectZoom (whichGroup, tmpBeginObject, tmpEndObject);
-            broadcastObjectZoom (whichWindow, whichGroup, tmpBeginObject, tmpEndObject);
-          }
+          TObjectOrder tmpBeginObject;
+          TObjectOrder tmpEndObject;
+          getGroupObjectZoom (whichGroup, tmpBeginObject, tmpEndObject);
+          broadcastObjectZoom (whichWindow, whichGroup, tmpBeginObject, tmpEndObject);
           break;
         case SyncPropertiesType::SYNC_OBJECT_SELECTION:
           /* code */
@@ -285,6 +293,18 @@ private:
           getGroupSize (whichGroup, whichPosW, whichPosH);
           broadcastWindowsSize (whichWindow, whichGroup, whichPosW, whichPosH);
           break;
+        case SyncPropertiesType::SYNC_COLOR_PALETTE:
+          /* code */
+          if constexpr (std::is_same_v<T, Timeline>)
+          {
+            std::map<TSemanticValue, rgb> tmpPaletteColors;
+            rgb tmpBackgroundColor;
+            rgb tmpAxisColor;
+            bool tmpBackgroundAsZero;
+            getGroupColorPalette (whichGroup, tmpPaletteColors, tmpBackgroundColor, tmpAxisColor, tmpBackgroundAsZero);
+            broadcastColorPalette (whichWindow, whichGroup, tmpPaletteColors, tmpBackgroundColor, tmpAxisColor, tmpBackgroundAsZero);
+            break;
+          }
         default:
           break;
         }

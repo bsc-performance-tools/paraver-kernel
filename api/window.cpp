@@ -1359,11 +1359,25 @@ bool TimelineProxy::getBackgroundAsZero() const
 void TimelineProxy::setCustomBackgroundColor( rgb whichColor )
 {
   mySemanticColor.setCustomBackgroundColor( whichColor );
+
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_COLOR_PALETTE))
+    SyncWindows::getInstance ()->broadcastColorPaletteAll (syncGroup, std::nullopt, whichColor, std::nullopt, std::nullopt);
 }
 
 void TimelineProxy::setCustomAxisColor( rgb whichColor )
 {
   mySemanticColor.setCustomAxisColor( whichColor );
+
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_COLOR_PALETTE))
+    SyncWindows::getInstance ()->broadcastColorPaletteAll (syncGroup, std::nullopt, std::nullopt, whichColor, std::nullopt);
+}
+
+void TimelineProxy::setCustomPalette (const std::map<TSemanticValue, rgb> &whichPalette)
+{
+  this->getSemanticColor ().setCustomPalette (whichPalette);
+
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_COLOR_PALETTE))
+    SyncWindows::getInstance ()->broadcastColorPaletteAll (syncGroup, whichPalette, std::nullopt, std::nullopt, std::nullopt);
 }
 
 void TimelineProxy::setCustomPunctualColor( rgb whichColor )
@@ -1374,6 +1388,9 @@ void TimelineProxy::setCustomPunctualColor( rgb whichColor )
 void TimelineProxy::setBackgroundAsZero( bool newValue )
 {
   backgroundAsZero = newValue;
+
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_COLOR_PALETTE))
+    SyncWindows::getInstance ()->broadcastColorPaletteAll (syncGroup, std::nullopt, std::nullopt, std::nullopt, newValue);
 }
 
 bool TimelineProxy::getChanged() const

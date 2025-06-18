@@ -246,6 +246,8 @@ constexpr char CFG_VAL_SYNC_OBJ_ZOOM[] = "Object Zoom";
 constexpr char CFG_VAL_SYNC_OBJ_SEL[] = "Object Selection";
 constexpr char CFG_VAL_SYNC_WIN_SIZE[] = "Windows Size";
 constexpr char CFG_VAL_SYNC_WIN_POSITION[] = "Windows Position";
+constexpr char CFG_VAL_SYNC_COLOR_PALETTE[] = "Color Palette";
+constexpr char CFG_VAL_SYNC_INFO_PANEL[] = "What/where Info Panel";
 
 constexpr char OLDCFG_VAL_AN2D_ACCUM_SEMANTIC[] = "Semantic";
 

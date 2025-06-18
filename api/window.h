@@ -510,6 +510,9 @@ class Timeline
     {}
     virtual void setCustomAxisColor( rgb whichColor )
     {}
+    virtual void setCustomPalette (const std::map<TSemanticValue, rgb> &whichPalette)
+    {
+    }
     virtual void setCustomPunctualColor( rgb whichColor )
     {}
     virtual void setBackgroundAsZero( bool newValue )
@@ -1072,6 +1075,8 @@ class TimelineProxy: public Timeline
     virtual bool getBackgroundAsZero() const override;
     virtual void setCustomBackgroundColor( rgb whichColor ) override;
     virtual void setCustomAxisColor( rgb whichColor ) override;
+    virtual void setCustomPalette (const std::map<TSemanticValue, rgb> &whichPalette) override;
+
     virtual void setCustomPunctualColor( rgb whichColor ) override;
     virtual void setBackgroundAsZero( bool newValue ) override;
     virtual bool getChanged() const override;
