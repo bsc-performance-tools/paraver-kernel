@@ -41,6 +41,7 @@ SyncWindows::SyncWindows ()
 {
   lastNewGroup = 0;
   syncGroups[lastNewGroup].syncGroupsWindows = vector<WindowGenericItem> ();
+  addProperty (lastNewGroup, SyncPropertiesType::SYNC_TIME);
   removingAll = false;
 }
 

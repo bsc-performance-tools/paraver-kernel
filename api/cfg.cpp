@@ -1160,6 +1160,11 @@ bool SyncWindowsGroups::parseLine (KernelConnection *whichKernel, istringstream 
   string inner;
   getline (line, inner);
 
+  if (inner == "")
+  {
+    return true;
+  }
+
   std::string groupStr;
 
   std::map<TGroupId, std::vector<SyncPropertiesType>> groups;
