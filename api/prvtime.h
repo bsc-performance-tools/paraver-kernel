@@ -110,13 +110,12 @@ inline constexpr auto timePrecisionsTable = fillTimeConversionTable<Length>
       
       result[ unit ] = 0;
 
-      if ( unit > NS )
+      if ( unit < DAY )
       {
-        for( TTimeUnit i = unit - 1; i > NS; --i )
+        for( TTimeUnit i = unit + 1; i <= DAY; ++i )
         {
-          result[ i ] = result[ i + 1 ] + precisionTable[ i + 1 ];
+          result[ i ] = result[ i - 1 ] + precisionTable[ i ];
         }
-        result[ NS ] = result[ US ] + precisionTable[ US ];
       }
 
       return result;
