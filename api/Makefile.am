@@ -73,6 +73,7 @@ include_HEADERS = \
                   paravertypes.h \
                   previousfiles.h \
                   progresscontroller.h \
+                  prvtime.h \
                   prvtypes.h \
                   recordlist.h \
                   selectionmanagement.h \

@@ -26,22 +26,13 @@
 
 
 #include <stddef.h>
-#include <vector>
 #include <string>
-#include "prvtypes.h"
-#include "config_traits.h"
-#include "utils/traceparser/tracetypes.h"
+#include <vector>
 
-static const TRecordTime factorTable[ DAY + 1 ] =
-{
-  1,   // ns
-  1E3, // us
-  1E3, // ms
-  1E3, // seconds
-  60,  // minutes
-  60,  // hours
-  24   // days
-};
+#include "config_traits.h"
+#include "prvtypes.h"
+#include "prvtime.h"
+
 
 
 enum TWindowLevel

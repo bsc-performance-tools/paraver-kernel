@@ -25,6 +25,7 @@
 #pragma once
 
 #include "utils/traceparser/tracelabels.h"
+#include "prvtime.h"
 
 constexpr char CFG_CURRENT_VERSION[] = "3.4";
 
@@ -254,7 +255,7 @@ constexpr char CFG_TAG_AN2D_NUMCOLUMNS[] = "Analyzer2D.NumColumns:";
 constexpr char CFG_TAG_AN2D_USE_CUSTOM_DELTA[] = "Analyzer2D.UseCustomDelta:";
 constexpr char CFG_TAG_AN2D_USE_FIXED_DELTA[] = "Analyzer2D.UseFixedDelta:";
 
-static const std::string LABEL_TIMEUNIT[ DAY + 1 ] =
+static const std::string LABEL_TIMEUNIT[ TIME_SCALE_SIZE ] =
 {
   "ns",
   "us",
@@ -265,7 +266,7 @@ static const std::string LABEL_TIMEUNIT[ DAY + 1 ] =
   "d"
 };
 
-static const std::string FULL_LABEL_TIMEUNIT[ DAY + 1 ] =
+static const std::string FULL_LABEL_TIMEUNIT[ TIME_SCALE_SIZE ] =
 {
   "Nanoseconds",
   "Microseconds",

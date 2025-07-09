@@ -27,13 +27,15 @@
 
 #include <locale>
 #include <sstream>
-#include "paraverkerneltypes.h"
+#include <utility>
+
 #include "paraverconfig.h"
+#include "paraverkerneltypes.h"
+#include "prvtime.h"
 #include "trace.h"
 
 // TODO: Improve to global parameter
 constexpr PRV_UINT16 PERCENT_PRECISION = 2;
-
 
 using boost::posix_time::ptime;
 
@@ -75,9 +77,8 @@ class LabelConstructor
 
     static std::string histoTotalLabel( THistoTotals whichTotal );
 
-    static std::string timeLabel( TTime value, TTimeUnit unit, PRV_UINT32 precision );
-
-    static std::string timeLabel( ptime value, PRV_UINT32 precision );
+    static std::string timeLabel( ptime value );
+    static std::string timeLabel( TTime value, TTimeUnit unit, PRV_UINT32 precision, bool useLocale = true );
 
     static std::string semanticLabel( const Timeline * whichWindow, TSemanticValue value,
                                  bool text, PRV_UINT32 precision, bool hexMode );
@@ -113,10 +114,9 @@ class LabelConstructor
     static void presetBaseFormat( std::stringstream &whichStream,
                                   PRV_UINT32 precision = PERCENT_PRECISION,
                                   bool useLocale = true );
-    static void presetBaseTimeFormat( std::stringstream &whichStream,
-                                      TTimeUnit unit = NS,
-                                      PRV_UINT32 precision = 0,
-                                      bool useLocale = true );
+
+    static TTimeFactorTable timeFactorsConversionTable;
+    static TTimePrecisionTable timePrecisionsConversionTable;
 
   private:
     static std::stringstream sstrObjectLabel;

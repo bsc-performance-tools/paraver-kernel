@@ -36,6 +36,7 @@
 #include "tracebodyio_v2.h"
 #include "tracestream.h"
 #include "kprogresscontroller.h"
+#include "labelconstructor.h"
 #include "plaintrace.h"
 #include "plainblocks.h"
 #include "noloadtrace.h"
@@ -360,22 +361,13 @@ TRecordTime KTrace::getPhysicalReceive( TCommID whichComm ) const
 TRecordTime KTrace::customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const
 {
   TRecordTime tmpTime;
-  TRecordTime factor = 1;
 
   if( getTimeUnit() == whichUnits )
     tmpTime = whichTime;
   else
   {
-    PRV_UINT16 from = getTimeUnit() > whichUnits ? whichUnits : getTimeUnit();
-    PRV_UINT16 to = getTimeUnit() > whichUnits ? getTimeUnit() : whichUnits;
 
-    for( PRV_UINT16 i = from + 1; i <= to; i++ )
-      factor *= factorTable[ i ];
-
-    if( getTimeUnit() > whichUnits )
-      tmpTime = whichTime / factor;
-    else
-      tmpTime = whichTime * factor;
+    tmpTime = whichTime * LabelConstructor::timeFactorsConversionTable[ whichUnits ][ getTimeUnit() ];
   }
 
   return tmpTime;
@@ -385,22 +377,13 @@ TRecordTime KTrace::customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit wh
 TRecordTime KTrace::traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const
 {
   TRecordTime tmpTime;
-  TRecordTime factor = 1;
 
   if( getTimeUnit() == whichUnits )
     tmpTime = whichTime;
   else
   {
-    PRV_UINT16 from = getTimeUnit() > whichUnits ? whichUnits : getTimeUnit();
-    PRV_UINT16 to = getTimeUnit() > whichUnits ? getTimeUnit() : whichUnits;
 
-    for( PRV_UINT16 i = from + 1; i <= to; i++ )
-      factor *= factorTable[ i ];
-
-    if( getTimeUnit() > whichUnits )
-      tmpTime = whichTime * factor;
-    else
-      tmpTime = whichTime / factor;
+    tmpTime = whichTime * LabelConstructor::timeFactorsConversionTable[ getTimeUnit() ][ whichUnits ];
   }
 
   return tmpTime;

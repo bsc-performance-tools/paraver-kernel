@@ -47,6 +47,9 @@ char         LabelConstructor::point;
 locale       LabelConstructor::myLocaleWithoutThousands;
 locale       LabelConstructor::myLocaleWithThousands;
 
+TTimeFactorTable    LabelConstructor::timeFactorsConversionTable    = timeFactorsTable< TIME_SCALE_SIZE >;
+TTimePrecisionTable LabelConstructor::timePrecisionsConversionTable = timePrecisionsTable< TIME_SCALE_SIZE >;
+
 // custom numpunct with grouping:
 struct numpunct_group : std::numpunct<char> {
   std::string do_grouping() const {return "\03";}
@@ -56,6 +59,7 @@ struct numpunct_group : std::numpunct<char> {
 struct numpunct_nogroup : std::numpunct<char> {
   std::string do_grouping() const {return "\0";}
 };
+
 
 void LabelConstructor::init()
 {
@@ -201,11 +205,11 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
 
 
 string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
-    const Timeline *whichWindow,
-    THistogramLimit min,
-    THistogramLimit max,
-    THistogramLimit delta,
-    bool shortLabels )
+                                           const Timeline *whichWindow,
+                                           THistogramLimit min,
+                                           THistogramLimit max,
+                                           THistogramLimit delta,
+                                           bool shortLabels )
 {
   columnLabel.clear();
   columnLabel.str( "" );
@@ -247,8 +251,7 @@ string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
 }
 
 
-string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
-    TSemanticValue value, bool showUnits )
+string LabelConstructor::histoCellLabel( const Histogram *whichHisto, TSemanticValue value, bool showUnits )
 {
   label.clear();
   label.str( "" );
@@ -307,8 +310,8 @@ string LabelConstructor::histoTotalLabel( THistoTotals whichTotal )
   return "";
 }
 
-// TODO: precision not used!
-string LabelConstructor::timeLabel( ptime value, PRV_UINT32 precision )
+
+string LabelConstructor::timeLabel( ptime value )
 {
   sstrTimeLabel.clear();
   sstrTimeLabel.str( "" );
@@ -343,21 +346,12 @@ void LabelConstructor::presetBaseFormat( std::stringstream &whichStream,
 }
 
 
-void LabelConstructor::presetBaseTimeFormat( std::stringstream &whichStream,
-                                             TTimeUnit unit,
-                                             PRV_UINT32 precision,
-                                             bool useLocale )
+string LabelConstructor::timeLabel( TTime value, TTimeUnit unit, PRV_UINT32 precision, bool useLocale )
 {
   if( unit == NS )
     precision = 0;
 
-  presetBaseFormat( whichStream, precision, useLocale );
-}
-
-
-string LabelConstructor::timeLabel( TTime value, TTimeUnit unit, PRV_UINT32 precision )
-{
-  presetBaseTimeFormat( sstrTimeLabel, unit, precision );
+  presetBaseFormat( sstrTimeLabel, precision, useLocale );
 
   sstrTimeLabel << value;
   sstrTimeLabel << " " << LABEL_TIMEUNIT[ unit ];
