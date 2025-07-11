@@ -575,7 +575,6 @@ class KDerivedHistogram : public KHistogram
     void combineValues( std::array< TSemanticValue, NUM_STATS >& wholeSemVals,
                         KHistogramTotals* whichTotals, KHistogramTotals* whichRowTotals, 
                         THistogramColumn iPlane, THistogramColumn iCol, THistogramColumn iRow,
-                        bool isCommValue = false,
                         THistogramColumn i2Plane = 0, THistogramColumn i2Col = 0, THistogramColumn i2Row = 0,
                         bool existCorrespondence = false );
 
@@ -612,7 +611,6 @@ template <size_t NUM_STATS>
 void KDerivedHistogram::combineValues( std::array< TSemanticValue, NUM_STATS >& wholeSemVals,
                                        KHistogramTotals* whichTotals, KHistogramTotals* whichRowTotals, 
                                        THistogramColumn iPlane, THistogramColumn iCol, THistogramColumn iRow,
-                                       bool isCommValue,
                                        THistogramColumn i2Plane, THistogramColumn i2Col, THistogramColumn i2Row,
                                        bool existCorrespondence )
 {
@@ -637,16 +635,16 @@ void KDerivedHistogram::combineValues( std::array< TSemanticValue, NUM_STATS >& 
     //TODO:  Refactor1 -> template to separate comm statistics.
     //TODO:  Refactor2 -> lambda to compute foundValues.
 
-
-
-    // TODO: PENDING COMMS
     bool foundVal1 = false;
     bool foundVal2 = false;
-    if ( !isCommValue )  // c++17 --> remove isCommValue + if constexpr( NUM_STATS == NUM_SEMANTIC_STATS )
+    if constexpr( NUM_STATS == NUM_SEMANTIC_STATS )
     {
       foundVal1 = parents[ MAIN ]->getCellValue( semVal1, iRow, iCol, currentStat, iPlane );
       if ( existCorrespondence )
         foundVal2 = parents[ 1 ]->getCellValue( semVal2, i2Row, i2Col, currentStat, i2Plane );
+
+      // alg1: all of them
+      // alg2: any of them
     }
     else
     {
@@ -667,7 +665,7 @@ void KDerivedHistogram::combineValues( std::array< TSemanticValue, NUM_STATS >& 
     //  std::cout << "(v1,v2)[ "<<  iPlane <<", " << iCol << ", " << iRow << ", " << currentStat << " ] = (" << semVal1 << "," << semVal2 << ") = "<< result << std::endl;
 
     // TODO: this is kind of mixing semantic/comm detection with no detection at all --> to unite
-    if ( !isCommValue )
+    if constexpr( NUM_STATS == NUM_SEMANTIC_STATS )
     {
       totals->newValue( wholeSemVals[ currentStat ], currentStat, iCol, iPlane );
       rowTotals->newValue( wholeSemVals[ currentStat ], currentStat, iRow, iPlane );

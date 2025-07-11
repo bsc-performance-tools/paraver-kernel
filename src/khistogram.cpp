@@ -2306,7 +2306,7 @@ void KDerivedHistogram::combineHistograms()
             TObjectOrder i2Row = secondHistogramIndex->second.row;
             THistogramColumn i2Col = secondHistogramIndex->second.column;
 
-            combineValues( wholeSemVals, totals, rowTotals, iPlane, iCol, iRow, false, i2Plane, i2Col, i2Row, true );
+            combineValues( wholeSemVals, totals, rowTotals, iPlane, iCol, iRow, i2Plane, i2Col, i2Row, true );
           }
           else
           {
@@ -2373,11 +2373,11 @@ void KDerivedHistogram::combineHistograms()
               TObjectOrder i2Row = secondHistogramIndex->second.row;
               THistogramColumn i2Col = secondHistogramIndex->second.column;
 
-              combineValues( wholeCommVals, commTotals, rowCommTotals, iPlane, iCol, iRow, true, i2Plane, i2Col, i2Row, true );
+              combineValues( wholeCommVals, commTotals, rowCommTotals, iPlane, iCol, iRow, i2Plane, i2Col, i2Row, true );
             }
             else
             {
-              combineValues( wholeCommVals, commTotals, rowCommTotals, iPlane, iCol, iRow, true );
+              combineValues( wholeCommVals, commTotals, rowCommTotals, iPlane, iCol, iRow );
             }
 
             // Set value
@@ -2637,7 +2637,7 @@ void KDerivedHistogram::fillCellCorrespondence()
   TObjectOrder tmpNumRows = getNumRows();
   THistogramColumn tmpNumCols = getColumnTranslator()->totalColumns();
 
-  // First version: only values of parent1 (assume parent1 == parent2)
+  // First version: all parents share the same geometry.
   for ( THistogramColumn iPlane = 0; iPlane < tmpNumPlanes; ++iPlane )
   {
     for ( THistogramColumn iCol = 0; iCol < tmpNumCols; ++iCol )
