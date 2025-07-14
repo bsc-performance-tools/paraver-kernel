@@ -550,52 +550,24 @@ class KDerivedHistogram : public KHistogram
   private:
     const size_t MAIN = 0;
     std::vector< KHistogram * > parents = {};
-
     std::string currentDerivedOperation = "add";
 
-    //std::unordered_map< PRV_UINT32, PRV_UINT32 > currentRow;
-    
-    // TODO: Is a better idea thah CubeContainer? May vary columns depending on the plane?
-    // std::unordered_map< THistogramColumn, THistogramColumn > planeCorrespondence;
-    // std::unordered_map< TObjectOrder, TObjectOrder > rowCorrespondence;
-    // std::unordered_map< THistogramColumn, THistogramColumn > colCorrespondence;
-    using THistogramCorrespondenceInfo = CubeContainer< TPlaneOrder, TObjectOrder, THistogramColumn, THistogramCoordinates >;
-    THistogramCorrespondenceInfo cellCorrespondence;
-    THistogramCorrespondenceInfo cellCommCorrespondence;
-
+    using THistogramCorrespondenceInfo = CubeContainer< TPlaneOrder, TObjectOrder, THistogramColumn, std::vector< THistogramCoordinates > >;
+    THistogramCorrespondenceInfo cellCorrespondence {};
+    THistogramCorrespondenceInfo cellCommCorrespondence {};
 
     void fillCellCorrespondence();
     bool getCellCorrespondence( THistogramCorrespondenceInfo& whichCellCorrespondence,
-                                THistogramColumn whichPlane, TObjectOrder whichRow, THistogramColumn whichColumn,
+                                const THistogramCoordinates& whichCoords,
                                 THistogramCorrespondenceInfo::iterator& whichIt );
 
     TColumnsMergeMode columnsMergeMode = DISCRETE_MAXIMUM_EXPANSION;
 
     template <size_t NUM_STATS>
-    void combineValues( std::array< TSemanticValue, NUM_STATS >& wholeSemVals,
-                        KHistogramTotals* whichTotals, KHistogramTotals* whichRowTotals, 
-                        THistogramColumn iPlane, THistogramColumn iCol, THistogramColumn iRow,
-                        THistogramColumn i2Plane = 0, THistogramColumn i2Col = 0, THistogramColumn i2Row = 0,
+    void combineValues( std::array< TSemanticValue, NUM_STATS >& wholeSemVals,                        
+                        THistogramCoordinates whichMainParentCoordinates,
+                        std::vector< THistogramCoordinates >& whichSecondaryParentsCoordinates,
                         bool existCorrespondence = false );
-
-    // template< std::function< void( THistogramColumn, THistogramColumn ) > FSetFirstCell,
-    //           std::function< bool( THistogramColumn, THistogramColumn ) > FEndCell,
-    //           std::function< PRV_INT32( THistogramColumn, THistogramColumn ) > FGetCurrentRow,
-    // template< class FSetFirstCell,
-    //           class FSetParentFirstCell,
-    //           class FEndCell,
-    //           class FGetCurrentRow,
-    //           class TMatrix,
-    //           class TCube >
-    // bool startFirstCell( FSetFirstCell whichThisSetFirstCell,
-    //                      FSetParentFirstCell whichParentSetFirstCell,
-    //                      FEndCell whichParentEndCell,
-    //                      FGetCurrentRow whichParentGetCurrentRow,
-    //                      PRV_INT32& iRow,
-    //                      THistogramColumn iCol,
-    //                      THistogramColumn iPlane,
-    //                      TMatrix *matrix,
-    //                      TCube *cube );
  
     void combineHistograms();
 
@@ -609,112 +581,58 @@ class KDerivedHistogram : public KHistogram
 
 template <size_t NUM_STATS>
 void KDerivedHistogram::combineValues( std::array< TSemanticValue, NUM_STATS >& wholeSemVals,
-                                       KHistogramTotals* whichTotals, KHistogramTotals* whichRowTotals, 
-                                       THistogramColumn iPlane, THistogramColumn iCol, THistogramColumn iRow,
-                                       THistogramColumn i2Plane, THistogramColumn i2Col, THistogramColumn i2Row,
+                                       THistogramCoordinates whichMainParentCoordinates,
+                                       std::vector< THistogramCoordinates >& whichSecondaryParentsCoordinates,
                                        bool existCorrespondence )
 {
-  TSemanticValue semVal1 = 0.0;
-  TSemanticValue semVal2 = 0.0;
-  std::vector< TSemanticValue > semValues;
+  auto getCellValue = [this]( const size_t parentIndex,
+                              const size_t currentStat,
+                              const THistogramCoordinates& coord,
+                              DerivedHistogramFunctionInfo& foundValues )
+    {
+      bool foundVal = false;
+      TSemanticValue tmpValue = 0.0;
 
+      if constexpr( NUM_STATS == NUM_SEMANTIC_STATS )
+      {
+        foundVal = parents[ parentIndex ]->getCellValue( tmpValue, coord.row, coord.column, currentStat, coord.plane );
+      }
+      else
+      {
+        foundVal = parents[ parentIndex ]->getCommCellValue( tmpValue, coord.row, coord.column, currentStat, coord.plane );
+      }
+
+      if ( foundVal )
+        foundValues.values.emplace_back( tmpValue );
+
+      return foundVal;
+    };
+
+  auto totalsNewValue = [this]( const TSemanticValue semVal,
+                                const size_t currentStat,
+                                const THistogramCoordinates& coord )
+    {
+      if constexpr( NUM_STATS == NUM_SEMANTIC_STATS )
+      {
+        totals->newValue( semVal, currentStat, coord.column, coord.plane );
+        rowTotals->newValue( semVal, currentStat, coord.row, coord.plane );
+      }
+      else
+      {
+        commTotals->newValue( semVal, currentStat, coord.column, coord.plane );
+        rowCommTotals->newValue( semVal, currentStat, coord.row, coord.plane );
+      }
+    };
+
+  TSemanticValue semVal = 0.0;
   DerivedHistogramFunctionInfo tmpValues;
   SemanticDerivedHistogram *op = FunctionManagement<SemanticDerivedHistogram>::getInstance()->getFunction( getDerivedOperation() );
 
-  // auto findAllValues = []()
-  // {
-  //   foundVal1 = parents[ MAIN ]->getCellValue( semVal1, iRow, iCol, currentStat, iPlane );
-  //   if ( existCorrespondence )
-  //     foundVal2 = parents[ 1 ]->getCellValue( semVal2, i2Row, i2Col, currentStat, i2Plane );
-  // };
-
-
   // TODO: hay una llamada que recibe el vector
   for ( size_t currentStat = 0; currentStat < NUM_STATS; ++currentStat )
-   {
-    //TODO:  Refactor1 -> template to separate comm statistics.
-    //TODO:  Refactor2 -> lambda to compute foundValues.
-
-    bool foundVal1 = false;
-    bool foundVal2 = false;
-    if constexpr( NUM_STATS == NUM_SEMANTIC_STATS )
-    {
-      foundVal1 = parents[ MAIN ]->getCellValue( semVal1, iRow, iCol, currentStat, iPlane );
-      if ( existCorrespondence )
-        foundVal2 = parents[ 1 ]->getCellValue( semVal2, i2Row, i2Col, currentStat, i2Plane );
-
-      // alg1: all of them
-      // alg2: any of them
-    }
-    else
-    {
-      foundVal1 = parents[ MAIN ]->getCommCellValue( semVal1, iRow, iCol, currentStat, iPlane );
-      if ( existCorrespondence )
-        foundVal2 = parents[ 1 ]->getCommCellValue( semVal2, i2Row, i2Col, currentStat, i2Plane );
-    }
-
-    if ( !foundVal1 && !foundVal2 )
-      continue;
-
-    tmpValues.values = { semVal1, semVal2 };
-
-    // wholeSemVals[ currentStat ] = op->execute( &tmpValues );
-    TSemanticValue result = op->execute( &tmpValues );
-    wholeSemVals[ currentStat ] = result;
-    //if (iRow == 0 && currentStat == 0)
-    //  std::cout << "(v1,v2)[ "<<  iPlane <<", " << iCol << ", " << iRow << ", " << currentStat << " ] = (" << semVal1 << "," << semVal2 << ") = "<< result << std::endl;
-
-    // TODO: this is kind of mixing semantic/comm detection with no detection at all --> to unite
-    if constexpr( NUM_STATS == NUM_SEMANTIC_STATS )
-    {
-      totals->newValue( wholeSemVals[ currentStat ], currentStat, iCol, iPlane );
-      rowTotals->newValue( wholeSemVals[ currentStat ], currentStat, iRow, iPlane );
-    }
-    else
-    {
-      commTotals->newValue( wholeSemVals[ currentStat ], currentStat, iCol, iPlane );
-      rowCommTotals->newValue( wholeSemVals[ currentStat ], currentStat, iRow, iPlane );
-    }
+  {
+    bool foundVal = getCellValue( MAIN, currentStat, whichMainParentCoordinates, tmpValues );
+    wholeSemVals[ currentStat ] = op->execute( &tmpValues );
+    totalsNewValue( wholeSemVals[ currentStat ], currentStat, whichMainParentCoordinates );
   }
 };
-
-// template< std::function< void( THistogramColumn, THistogramColumn ) > FSetFirstCell,
-//           std::function< bool( THistogramColumn, THistogramColumn ) > FEndCell,
-//           std::function< PRV_INT32( THistogramColumn, THistogramColumn ) > FGetCurrentRow,
-// template< class FSetFirstCell,
-//           class FSetParentFirstCell,
-//           class FEndCell,
-//           class FGetCurrentRow,
-//           class TMatrix,
-//           class TCube >
-// bool KDerivedHistogram::startFirstCell( FSetFirstCell whichThisSetFirstCell,
-//                                         FSetParentFirstCell whichParentSetFirstCell,
-//                                         FEndCell whichParentEndCell,
-//                                         FGetCurrentRow whichParentGetCurrentRow,
-//                                         PRV_INT32& iRow,
-//                                         THistogramColumn iCol,
-//                                         THistogramColumn iPlane,
-//                                         TMatrix *matrix,
-//                                         TCube *cube )
-// {
-//   // parents[ MAIN ]->whichSetFirstCell( iCol, iPlane );
-//   // whichParentSetFirstCell( iCol, iPlane );
-//   whichParentSetFirstCell();
-
-//   // bool isEndCell = parents[ MAIN ]->whichEndCell( iCol, iPlane );
-//   bool isEndCell = whichParentEndCell();
-//   if ( !isEndCell )
-//   {
-//     // iRow = parents[ MAIN ]->whichGetCurrentRow( iCol, iPlane );
-//     iRow = whichParentGetCurrentRow();
-
-//     if ( getThreeDimensions() )
-//       cube->newRow( iPlane, iCol, iRow );
-//     else
-//       matrix->newRow( iCol, iRow );
-
-//     whichThisSetFirstCell();
-//   }
-
-//   return isEndCell;
-// };
