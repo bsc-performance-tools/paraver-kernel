@@ -2649,7 +2649,7 @@ void KDerivedHistogram::fillCellCorrespondence()
       {
         TObjectOrder iRow = (TObjectOrder)parents[ MAIN ]->getCurrentRow( iCol, iPlane );
 
-        cellCorrespondence( iPlane, iRow, iCol ) = TRemoteIndex{ iPlane, iRow, iCol };
+        cellCorrespondence( iPlane, iRow, iCol ) = THistogramCoordinates{ iPlane, iRow, iCol };
 
         parents[ MAIN ]->setNextCell( iCol, iPlane );
 
@@ -2668,7 +2668,7 @@ void KDerivedHistogram::fillCellCorrespondence()
         {
           TObjectOrder iRow = (TObjectOrder)parents[ MAIN ]->getCommCurrentRow( iCol, iPlane );
 
-          cellCommCorrespondence( iPlane, iRow, iCol ) = TRemoteIndex{ iPlane, iRow, iCol };
+          cellCommCorrespondence( iPlane, iRow, iCol ) = THistogramCoordinates{ iPlane, iRow, iCol };
 
           parents[ MAIN ]->setCommNextCell( iCol, iPlane );
 

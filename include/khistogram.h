@@ -409,7 +409,7 @@ class KHistogram : public Histogram
 
 using TPlaneOrder = THistogramColumn;
 
-struct TRemoteIndex
+struct THistogramCoordinates
 {
   TPlaneOrder plane;
   TObjectOrder row;
@@ -559,7 +559,7 @@ class KDerivedHistogram : public KHistogram
     // std::unordered_map< THistogramColumn, THistogramColumn > planeCorrespondence;
     // std::unordered_map< TObjectOrder, TObjectOrder > rowCorrespondence;
     // std::unordered_map< THistogramColumn, THistogramColumn > colCorrespondence;
-    using THistogramCorrespondenceInfo = CubeContainer< TPlaneOrder, TObjectOrder, THistogramColumn, TRemoteIndex >;
+    using THistogramCorrespondenceInfo = CubeContainer< TPlaneOrder, TObjectOrder, THistogramColumn, THistogramCoordinates >;
     THistogramCorrespondenceInfo cellCorrespondence;
     THistogramCorrespondenceInfo cellCommCorrespondence;
 
