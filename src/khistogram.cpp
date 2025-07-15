@@ -2261,8 +2261,8 @@ void KDerivedHistogram::combineHistograms()
   // TObjectOrder tmpNumRows = getNumRows();
 
   // Get derived operation
-  THistogramCorrespondenceInfo::const_iterator secondHistogramIndex;
-  std::vector< THistogramCoordinates > dummyCoords {};
+  THistoCoordsCorrespondenceIndex::const_iterator parentsHistogramIndex;
+  THistoCoordsCorrespondence dummyCoords {};
 
   for ( THistogramColumn iPlane = 0; iPlane < getNumPlanes(); ++iPlane )
   {
@@ -2290,9 +2290,9 @@ void KDerivedHistogram::combineHistograms()
         while ( !isEndCell ) //  use advanceRow here
         {
           THistogramCoordinates currentCoord { iPlane, iRow, iCol };
-          if ( getCellCorrespondence( cellCorrespondence, currentCoord, secondHistogramIndex ) )
+          if ( getCellCorrespondence( cellCorrespondence, currentCoord, parentsHistogramIndex ) )
           {
-            combineValues( wholeSemVals, currentCoord, secondHistogramIndex->second, true );
+            combineValues( wholeSemVals, currentCoord, parentsHistogramIndex->second, true );
           }
           else
           {
@@ -2347,9 +2347,9 @@ void KDerivedHistogram::combineHistograms()
           {
             // Compute value
             THistogramCoordinates currentCoord { iPlane, iRow, iCol };
-            if ( getCellCorrespondence( cellCommCorrespondence, currentCoord, secondHistogramIndex ) )
+            if ( getCellCorrespondence( cellCommCorrespondence, currentCoord, parentsHistogramIndex ) )
             {
-              combineValues( wholeCommVals, currentCoord, secondHistogramIndex->second, true );
+              combineValues( wholeCommVals, currentCoord, parentsHistogramIndex->second, true );
             }
             else
             {
@@ -2625,8 +2625,8 @@ void KDerivedHistogram::fillCellCorrespondence()
       {
         TObjectOrder iRow = (TObjectOrder)parents[ MAIN ]->getCurrentRow( iCol, iPlane );
 
-        std::vector< THistogramCoordinates > tmpValues {};
-        tmpValues.emplace_back( THistogramCoordinates{ iPlane, iRow, iCol } );
+        THistoCoordsCorrespondence tmpValues {};
+        tmpValues.emplace_back( std::pair( MAIN, THistogramCoordinates{ iPlane, iRow, iCol } ) );
         cellCorrespondence( iPlane, iRow, iCol ) = tmpValues;
 
         parents[ MAIN ]->setNextCell( iCol, iPlane );
@@ -2646,8 +2646,8 @@ void KDerivedHistogram::fillCellCorrespondence()
         {
           TObjectOrder iRow = (TObjectOrder)parents[ MAIN ]->getCommCurrentRow( iCol, iPlane );
           
-          std::vector< THistogramCoordinates > tmpValues {};
-          tmpValues.emplace_back( THistogramCoordinates{ iPlane, iRow, iCol } );
+          THistoCoordsCorrespondence tmpValues {};
+          tmpValues.emplace_back( std::pair( MAIN, THistogramCoordinates{ iPlane, iRow, iCol } ) );
           cellCommCorrespondence( iPlane, iRow, iCol ) = tmpValues;
           
           parents[ MAIN ]->setCommNextCell( iCol, iPlane );
@@ -2660,13 +2660,13 @@ void KDerivedHistogram::fillCellCorrespondence()
 }
 
 
-bool KDerivedHistogram::getCellCorrespondence( THistogramCorrespondenceInfo& whichCellCorrespondence,
+bool KDerivedHistogram::getCellCorrespondence( THistoCoordsCorrespondenceIndex& whichCellCorrespondence,
                                                const THistogramCoordinates& whichCoords,
-                                               THistogramCorrespondenceInfo::iterator& whichIt )
+                                               THistoCoordsCorrespondenceIndex::iterator& whichIt )
 {
   bool found;
 
-  THistogramCorrespondenceInfo::iterator it = whichCellCorrespondence.find( whichCoords.plane, whichCoords.row, whichCoords.column );
+  THistoCoordsCorrespondenceIndex::iterator it = whichCellCorrespondence.find( whichCoords.plane, whichCoords.row, whichCoords.column );
   if ( found = ( it != whichCellCorrespondence.end() ) )
     whichIt = it;
 

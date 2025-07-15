@@ -552,21 +552,24 @@ class KDerivedHistogram : public KHistogram
     std::vector< KHistogram * > parents = {};
     std::string currentDerivedOperation = "add";
 
-    using THistogramCorrespondenceInfo = CubeContainer< TPlaneOrder, TObjectOrder, THistogramColumn, std::vector< THistogramCoordinates > >;
-    THistogramCorrespondenceInfo cellCorrespondence {};
-    THistogramCorrespondenceInfo cellCommCorrespondence {};
+    // For any coordinates keeps its correspondence.
+    using THistogramParentID = size_t;
+    using THistoCoordsCorrespondence = std::vector< std::pair< THistogramParentID, THistogramCoordinates > >;
+    using THistoCoordsCorrespondenceIndex = CubeContainer< TPlaneOrder, TObjectOrder, THistogramColumn, THistoCoordsCorrespondence >;
+    THistoCoordsCorrespondenceIndex cellCorrespondence {};
+    THistoCoordsCorrespondenceIndex cellCommCorrespondence {};
 
     void fillCellCorrespondence();
-    bool getCellCorrespondence( THistogramCorrespondenceInfo& whichCellCorrespondence,
+    bool getCellCorrespondence( THistoCoordsCorrespondenceIndex& whichCellCorrespondence,
                                 const THistogramCoordinates& whichCoords,
-                                THistogramCorrespondenceInfo::iterator& whichIt );
+                                THistoCoordsCorrespondenceIndex::iterator& whichIt );
 
     TColumnsMergeMode columnsMergeMode = DISCRETE_MAXIMUM_EXPANSION;
 
     template <size_t NUM_STATS>
     void combineValues( std::array< TSemanticValue, NUM_STATS >& wholeSemVals,                        
                         THistogramCoordinates whichMainParentCoordinates,
-                        std::vector< THistogramCoordinates >& whichSecondaryParentsCoordinates,
+                        THistoCoordsCorrespondence& whichSecondaryParentsCoordinates,
                         bool existCorrespondence = false );
  
     void combineHistograms();
@@ -582,7 +585,7 @@ class KDerivedHistogram : public KHistogram
 template <size_t NUM_STATS>
 void KDerivedHistogram::combineValues( std::array< TSemanticValue, NUM_STATS >& wholeSemVals,
                                        THistogramCoordinates whichMainParentCoordinates,
-                                       std::vector< THistogramCoordinates >& whichSecondaryParentsCoordinates,
+                                       THistoCoordsCorrespondence& whichSecondaryParentsCoordinates,
                                        bool existCorrespondence )
 {
   auto getCellValue = [this]( const size_t parentIndex,
