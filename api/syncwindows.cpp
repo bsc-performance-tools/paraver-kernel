@@ -297,17 +297,23 @@ void SyncWindows::getGroupAvailableProperties (TGroupId groupId, std::vector<Syn
   // TODO: CHECK
 
   properties.push_back (SyncPropertiesType::SYNC_TIME);
+  properties.push_back (SyncPropertiesType::SYNC_OBJECT_ZOOM);
+  if (syncGroups[groupId].isSameTraceStruct)
+  {
+    properties.push_back (SyncPropertiesType::SYNC_OBJECT_SELECTION);
+  }
   properties.push_back (SyncPropertiesType::SYNC_MAX);
   properties.push_back (SyncPropertiesType::SYNC_MIN);
-  properties.push_back (SyncPropertiesType::SYNC_WINDOWS_SIZE);
-  properties.push_back (SyncPropertiesType::SYNC_WINDOWS_POSITION);
-  properties.push_back (SyncPropertiesType::SYNC_OBJECT_ZOOM);
-
   if (syncGroups[groupId].groupType != SyncPropertiesGroup::SYNC_GROUP_TIMELINES)
   {
     // properties.push_back(SyncPropertiesType::SYNC_HISTOGRAM_COLUMNS);
     properties.push_back (SyncPropertiesType::SYNC_HISTOGRAM_DELTA);
   }
+  properties.push_back (SyncPropertiesType::SYNC_WINDOWS_POSITION);
+
+  properties.push_back (SyncPropertiesType::SYNC_WINDOWS_SIZE);
+
+
   if (syncGroups[groupId].groupType != SyncPropertiesGroup::SYNC_GROUP_HISTOGRAMS)
   {
     properties.push_back (SyncPropertiesType::SYNC_COLOR_PALETTE);
@@ -316,11 +322,6 @@ void SyncWindows::getGroupAvailableProperties (TGroupId groupId, std::vector<Syn
     {
       properties.push_back (SyncPropertiesType::SYNC_INFO_PANEL);
     }
-  }
-
-  if (syncGroups[groupId].isSameTraceStruct)
-  {
-    properties.push_back (SyncPropertiesType::SYNC_OBJECT_SELECTION);
   }
 }
 
