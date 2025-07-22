@@ -548,29 +548,29 @@ class KDerivedHistogram : public KHistogram
   protected:
 
   private:
-    const size_t MAIN = 0;
-    std::vector< KHistogram * > parents = {};
-    std::string currentDerivedOperation = "add";
-
-    // For any coordinates keeps its correspondence.
     using THistogramParentID = size_t;
     using THistoCoordsCorrespondence = std::vector< std::pair< THistogramParentID, THistogramCoordinates > >;
     using THistoCoordsCorrespondenceIndex = CubeContainer< TPlaneOrder, TObjectOrder, THistogramColumn, THistoCoordsCorrespondence >;
     THistoCoordsCorrespondenceIndex cellCorrespondence {};
     THistoCoordsCorrespondenceIndex cellCommCorrespondence {};
 
-    void fillCellCorrespondence();
-    bool getCellCorrespondence( THistoCoordsCorrespondenceIndex& whichCellCorrespondence,
-                                const THistogramCoordinates& whichCoords,
-                                THistoCoordsCorrespondenceIndex::iterator& whichIt );
+    const THistogramParentID MAIN = 0;
+
+    std::vector< KHistogram * > parents = {};
+    std::string currentDerivedOperation = "add";
+
+
+    void fillCellCorrespondences();
+    void getCellCorrespondences( const THistogramCoordinates& whichCoords,
+                                 THistoCoordsCorrespondenceIndex& whichCellCorrespondenceIndex,
+                                 THistoCoordsCorrespondence& resultCellCorrespondence );
 
     TColumnsMergeMode columnsMergeMode = DISCRETE_MAXIMUM_EXPANSION;
 
     template <size_t NUM_STATS>
-    void combineValues( std::array< TSemanticValue, NUM_STATS >& wholeSemVals,                        
-                        THistogramCoordinates whichMainParentCoordinates,
-                        THistoCoordsCorrespondence& whichSecondaryParentsCoordinates,
-                        bool existCorrespondence = false );
+    void combineCellValues( const THistogramCoordinates whichMainParentCoordinates,
+                            THistoCoordsCorrespondence& whichSecondaryParentsCoordinates,
+                            std::array< TSemanticValue, NUM_STATS >& resultSemVals );
  
     void combineHistograms();
 
@@ -583,27 +583,22 @@ class KDerivedHistogram : public KHistogram
 
 
 template <size_t NUM_STATS>
-void KDerivedHistogram::combineValues( std::array< TSemanticValue, NUM_STATS >& wholeSemVals,
-                                       THistogramCoordinates whichMainParentCoordinates,
-                                       THistoCoordsCorrespondence& whichSecondaryParentsCoordinates,
-                                       bool existCorrespondence )
+void KDerivedHistogram::combineCellValues( const THistogramCoordinates whichMainParentCoordinates,
+                                           THistoCoordsCorrespondence& whichSecondaryParentsCoordinates,
+                                           std::array< TSemanticValue, NUM_STATS >& resultSemVals )
 {
-  auto getCellValue = [this]( const size_t parentIndex,
-                              const size_t currentStat,
-                              const THistogramCoordinates& coord,
-                              DerivedHistogramFunctionInfo& foundValues )
+  auto getCellValueForStat = [this]( const size_t parentIndex,
+                                     const size_t currentStat,
+                                     const THistogramCoordinates& coord,
+                                     DerivedHistogramFunctionInfo& foundValues )
     {
       bool foundVal = false;
       TSemanticValue tmpValue = 0.0;
 
       if constexpr( NUM_STATS == NUM_SEMANTIC_STATS )
-      {
         foundVal = parents[ parentIndex ]->getCellValue( tmpValue, coord.row, coord.column, currentStat, coord.plane );
-      }
       else
-      {
         foundVal = parents[ parentIndex ]->getCommCellValue( tmpValue, coord.row, coord.column, currentStat, coord.plane );
-      }
 
       if ( foundVal )
         foundValues.values.emplace_back( tmpValue );
@@ -611,31 +606,40 @@ void KDerivedHistogram::combineValues( std::array< TSemanticValue, NUM_STATS >& 
       return foundVal;
     };
 
-  auto totalsNewValue = [this]( const TSemanticValue semVal,
-                                const size_t currentStat,
-                                const THistogramCoordinates& coord )
+  auto updateTotals = [this]( const TSemanticValue semVal,
+                              const size_t currentStat,
+                              const THistogramCoordinates& coord )
     {
-      if constexpr( NUM_STATS == NUM_SEMANTIC_STATS )
-      {
-        totals->newValue( semVal, currentStat, coord.column, coord.plane );
-        rowTotals->newValue( semVal, currentStat, coord.row, coord.plane );
-      }
-      else
-      {
-        commTotals->newValue( semVal, currentStat, coord.column, coord.plane );
-        rowCommTotals->newValue( semVal, currentStat, coord.row, coord.plane );
-      }
-    };
+        if constexpr( NUM_STATS == NUM_SEMANTIC_STATS )
+        {
+          totals->newValue( semVal, currentStat, coord.column, coord.plane );
+          rowTotals->newValue( semVal, currentStat, coord.row, coord.plane );
+        }
+        else
+        {
+          commTotals->newValue( semVal, currentStat, coord.column, coord.plane );
+          rowCommTotals->newValue( semVal, currentStat, coord.row, coord.plane );
+        }
+      };
 
-  TSemanticValue semVal = 0.0;
-  DerivedHistogramFunctionInfo tmpValues;
   SemanticDerivedHistogram *op = FunctionManagement<SemanticDerivedHistogram>::getInstance()->getFunction( getDerivedOperation() );
 
-  // TODO: hay una llamada que recibe el vector
   for ( size_t currentStat = 0; currentStat < NUM_STATS; ++currentStat )
   {
-    bool foundVal = getCellValue( MAIN, currentStat, whichMainParentCoordinates, tmpValues );
-    wholeSemVals[ currentStat ] = op->execute( &tmpValues );
-    totalsNewValue( wholeSemVals[ currentStat ], currentStat, whichMainParentCoordinates );
+    DerivedHistogramFunctionInfo tmpValues {};
+
+    bool foundVal = getCellValueForStat( MAIN, currentStat, whichMainParentCoordinates, tmpValues );
+
+    for( const auto& parentCoordinate: whichSecondaryParentsCoordinates )
+    {
+      auto parentId = std::get<0>( parentCoordinate );
+      auto parentCoords = std::get<1>( parentCoordinate );
+
+      foundVal = getCellValueForStat( parentId, currentStat, parentCoords, tmpValues );
+
+      resultSemVals[ currentStat ] = op->execute( &tmpValues );
+      
+      updateTotals( resultSemVals[ currentStat ], currentStat, whichMainParentCoordinates );
+    }
   }
 };
