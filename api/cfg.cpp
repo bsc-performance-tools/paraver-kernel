@@ -3960,8 +3960,12 @@ void Analyzer2DIdentifiers::printLine( ofstream& cfgFile,
                                        const vector<Histogram *>::const_iterator it )
 {
   cfgFile << CFG_TAG_AN2D_IDENTIFIERS << " ";
-  cfgFile << CFGLoader::findWindowBackwards( ( *it )->getParent( 0 ), histograms, it ) + 1 << " ";
-  cfgFile << CFGLoader::findWindowBackwards( ( *it )->getParent( 1 ), histograms, it ) + 1;
+  for( auto parent = 0; parent < ( *it )->getNumParents(); ++parent )
+  {
+    cfgFile << CFGLoader::findWindowBackwards( ( *it )->getParent( parent ), histograms, it ) + 1;
+    if ( parent != ( *it )->getNumParents() - 1 )
+      cfgFile << " ";
+  }
   cfgFile << endl;
 }
 

@@ -2119,6 +2119,12 @@ Histogram *HistogramProxy::getConcrete() const
   return myHisto;
 }
 
+PRV_UINT16 HistogramProxy::getNumParents() const
+{
+  return parents.size();
+}
+
+
 Histogram *HistogramProxy::getParent( PRV_UINT16 whichParent ) const
 {
   return ( parents.size() > whichParent ? parents[ whichParent ] : nullptr );
