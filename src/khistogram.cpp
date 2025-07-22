@@ -22,31 +22,34 @@
 \*****************************************************************************/
 
 
-#include <math.h>
-#include <limits>
-#include "config.h"
-#include "kwindow.h"
 #include "khistogram.h"
-#include "histogramstatistic.h"
-#include "histogramexception.h"
-#include "khistogramtotals.h"
+
+#include "config.h"
 #include "functionmanagement.h"
+#include "histogramexception.h"
+#include "histogramstatistic.h"
+#include "khistogramtotals.h"
 #include "kprogresscontroller.h"
+#include "kwindow.h"
+
+#include <limits>
+#include <math.h>
 
 #ifdef PARALLEL_ENABLED
-#include "omp.h"
+#  include "omp.h"
 #endif
 
 #ifdef _WIN32
-#undef max
-#undef min
+#  undef max
+#  undef min
 #endif
 
 using namespace std;
 
 
 WindowCloneManager::WindowCloneManager()
-{}
+{
+}
 
 
 WindowCloneManager::~WindowCloneManager()
@@ -54,18 +57,18 @@ WindowCloneManager::~WindowCloneManager()
 #ifdef PARALLEL_ENABLED
   for( auto it : clonedWindows )
   {
-    for( vector< Timeline * >::iterator itWin = it.second.begin(); itWin != it.second.end(); ++itWin )
+    for( vector<Timeline*>::iterator itWin = it.second.begin(); itWin != it.second.end(); ++itWin )
       delete *itWin;
   }
 #endif
 }
 
 
-Timeline *WindowCloneManager::operator()( Timeline *originalWindow ) const
+Timeline* WindowCloneManager::operator()( Timeline* originalWindow ) const
 {
 #ifdef PARALLEL_ENABLED
   auto it = clonedWindows.find( originalWindow );
-  if ( it != clonedWindows.end() )
+  if( it != clonedWindows.end() )
     return it->second[ omp_get_thread_num() ];
 #endif
 
@@ -74,18 +77,16 @@ Timeline *WindowCloneManager::operator()( Timeline *originalWindow ) const
 
 
 #ifdef PARALLEL_ENABLED
-void WindowCloneManager::update( const KHistogram *whichHistogram )
+void WindowCloneManager::update( const KHistogram* whichHistogram )
 {
   clone( whichHistogram->getControlWindow() );
 
-  if ( whichHistogram->getDataWindow() != whichHistogram->getControlWindow() )
+  if( whichHistogram->getDataWindow() != whichHistogram->getControlWindow() )
     clone( whichHistogram->getDataWindow() );
-  
-  if ( whichHistogram->getExtraControlWindow() != nullptr &&
-       whichHistogram->getExtraControlWindow() != whichHistogram->getControlWindow() &&
-       whichHistogram->getExtraControlWindow() != whichHistogram->getDataWindow() )
-    clone( whichHistogram->getExtraControlWindow() );
 
+  if( whichHistogram->getExtraControlWindow() != nullptr && whichHistogram->getExtraControlWindow() != whichHistogram->getControlWindow() &&
+      whichHistogram->getExtraControlWindow() != whichHistogram->getDataWindow() )
+    clone( whichHistogram->getExtraControlWindow() );
 }
 
 
@@ -101,9 +102,9 @@ void WindowCloneManager::clear()
 }
 
 
-void WindowCloneManager::clone( Timeline *whichWindow )
+void WindowCloneManager::clone( Timeline* whichWindow )
 {
-  vector< Timeline * > tmpClones;
+  vector<Timeline*> tmpClones;
 
   for( int i = 0; i != omp_get_num_threads(); ++i )
     tmpClones.push_back( whichWindow->clone( true ) );
@@ -119,28 +120,23 @@ RowsTranslator::RowsTranslator( const RowsTranslator& source )
 }
 
 
-RowsTranslator::RowsTranslator( vector<KTimeline *>& kwindows )
+RowsTranslator::RowsTranslator( vector<KTimeline*>& kwindows )
 {
-  for ( size_t ii = 0; ii < kwindows.size() - 1; ++ii )
+  for( size_t ii = 0; ii < kwindows.size() - 1; ++ii )
   {
     childInfo.push_back( RowChildInfo() );
-    childInfo[ii].oneToOne = ( kwindows[ ii ]->getWindowLevelObjects() ==
-                               kwindows[ ii + 1 ]->getWindowLevelObjects() );
-    childInfo[ii].numRows = kwindows[ ii ]->getWindowLevelObjects();
-    if ( !childInfo[ ii ].oneToOne )
+    childInfo[ ii ].oneToOne = ( kwindows[ ii ]->getWindowLevelObjects() == kwindows[ ii + 1 ]->getWindowLevelObjects() );
+    childInfo[ ii ].numRows  = kwindows[ ii ]->getWindowLevelObjects();
+    if( !childInfo[ ii ].oneToOne )
     {
-      KTrace *auxTrace = ( KTrace* )kwindows[ ii ]->getTrace();
-      for ( TObjectOrder iRow = 0; iRow < kwindows[ ii ]->getWindowLevelObjects(); ++iRow )
+      KTrace* auxTrace = (KTrace*)kwindows[ ii ]->getTrace();
+      for( TObjectOrder iRow = 0; iRow < kwindows[ ii ]->getWindowLevelObjects(); ++iRow )
       {
-        pair< TObjectOrder, TObjectOrder > range;
+        pair<TObjectOrder, TObjectOrder> range;
 
-        range.first = auxTrace->getFirst( iRow,
-                                          kwindows[ ii ]->getLevel(),
-                                          kwindows[ ii+1 ]->getLevel() );
-        range.second =  auxTrace->getLast( iRow,
-                                           kwindows[ ii ]->getLevel(),
-                                           kwindows[ ii+1 ]->getLevel() );
-        childInfo[ii].rowChildren.push_back( range );
+        range.first  = auxTrace->getFirst( iRow, kwindows[ ii ]->getLevel(), kwindows[ ii + 1 ]->getLevel() );
+        range.second = auxTrace->getLast( iRow, kwindows[ ii ]->getLevel(), kwindows[ ii + 1 ]->getLevel() );
+        childInfo[ ii ].rowChildren.push_back( range );
       }
     }
   }
@@ -148,23 +144,20 @@ RowsTranslator::RowsTranslator( vector<KTimeline *>& kwindows )
 
 
 RowsTranslator::~RowsTranslator()
-{}
+{
+}
 
 
-inline TObjectOrder RowsTranslator::globalTranslate( PRV_UINT16 winIndex,
-    TObjectOrder rowIndex ) const
+inline TObjectOrder RowsTranslator::globalTranslate( PRV_UINT16 winIndex, TObjectOrder rowIndex ) const
 {
   // This method will translate Kwindow rows to 2D rows.
   return rowIndex;
 }
 
 
-inline void RowsTranslator::getRowChildren( PRV_UINT16 winIndex,
-    TObjectOrder rowIndex,
-    TObjectOrder& iniRow,
-    TObjectOrder& endRow ) const
+inline void RowsTranslator::getRowChildren( PRV_UINT16 winIndex, TObjectOrder rowIndex, TObjectOrder& iniRow, TObjectOrder& endRow ) const
 {
-  if ( childInfo[winIndex].oneToOne )
+  if( childInfo[ winIndex ].oneToOne )
   {
     iniRow = rowIndex;
     endRow = rowIndex;
@@ -186,23 +179,21 @@ inline TObjectOrder RowsTranslator::totalRows() const
 ColumnTranslator::ColumnTranslator( const ColumnTranslator& source )
 {
   numColumns = source.numColumns;
-  minLimit = source.minLimit;
-  maxLimit = source.maxLimit;
-  delta = source.delta;
+  minLimit   = source.minLimit;
+  maxLimit   = source.maxLimit;
+  delta      = source.delta;
 }
 
 
-ColumnTranslator::ColumnTranslator( THistogramLimit whichMin,
-                                    THistogramLimit whichMax,
-                                    THistogramLimit whichDelta ):
-  minLimit( whichMin ), maxLimit( whichMax ), delta( whichDelta )
+ColumnTranslator::ColumnTranslator( THistogramLimit whichMin, THistogramLimit whichMax, THistogramLimit whichDelta )
+  : minLimit( whichMin ), maxLimit( whichMax ), delta( whichDelta )
 {
   double tmpNumColumns;
 
   // PRECOND: Min <= Max
   tmpNumColumns = ceil( ( maxLimit - minLimit ) / delta );
 
-  if ( delta == 1 && ( tmpNumColumns * delta ) + minLimit <= maxLimit )
+  if( delta == 1 && ( tmpNumColumns * delta ) + minLimit <= maxLimit )
     ++tmpNumColumns;
 
   if( tmpNumColumns <= 0 )
@@ -212,27 +203,25 @@ ColumnTranslator::ColumnTranslator( THistogramLimit whichMin,
 }
 
 
-ColumnTranslator::ColumnTranslator( THistogramLimit whichMin,
-                                    THistogramLimit whichMax,
-                                    THistogramColumn whichNumColumns ):
-  minLimit( whichMin ), maxLimit( whichMax ), numColumns( whichNumColumns )
+ColumnTranslator::ColumnTranslator( THistogramLimit whichMin, THistogramLimit whichMax, THistogramColumn whichNumColumns )
+  : minLimit( whichMin ), maxLimit( whichMax ), numColumns( whichNumColumns )
 {
   delta = ( maxLimit - minLimit ) / static_cast<THistogramLimit>( numColumns );
 }
 
 ColumnTranslator::~ColumnTranslator()
-{}
+{
+}
 
 // returns whichValue in [min,max)
-inline bool ColumnTranslator::getColumn( THistogramLimit whichValue,
-    THistogramColumn& column ) const
+inline bool ColumnTranslator::getColumn( THistogramLimit whichValue, THistogramColumn& column ) const
 {
-  if ( whichValue < minLimit || whichValue > maxLimit )
+  if( whichValue < minLimit || whichValue > maxLimit )
     return false;
 
   column = THistogramColumn( floor( ( whichValue - minLimit ) / delta ) );
 
-  if ( column >= numColumns )
+  if( column >= numColumns )
     column = numColumns - 1;
 
   return true;
@@ -251,83 +240,83 @@ inline THistogramLimit ColumnTranslator::getDelta() const
 
 KHistogram::KHistogram() : statistics( *this )
 {
-  controlWindow = nullptr;
-  dataWindow = nullptr;
+  controlWindow     = nullptr;
+  dataWindow        = nullptr;
   xtraControlWindow = nullptr;
 
-  useFixedDelta = false;
-  controlMin = 0;
-  controlMax = 1;
-  controlDelta = 1;
-  xtraControlMin = 0;
-  xtraControlMax = 1;
+  useFixedDelta    = false;
+  controlMin       = 0;
+  controlMax       = 1;
+  controlDelta     = 1;
+  xtraControlMin   = 0;
+  xtraControlMax   = 1;
   xtraControlDelta = 1;
-  dataMin = -std::numeric_limits<TSemanticValue>::max();
-  dataMax = std::numeric_limits<TSemanticValue>::max();
-  burstMin = -std::numeric_limits<TRecordTime>::max();
-  burstMax = std::numeric_limits<TRecordTime>::max();
-  commSizeMin = std::numeric_limits<TCommSize>::min();
-  commSizeMax = std::numeric_limits<TCommSize>::max();
-  commTagMin = std::numeric_limits<TCommTag>::min();
-  commTagMax = std::numeric_limits<TCommTag>::max();
+  dataMin          = -std::numeric_limits<TSemanticValue>::max();
+  dataMax          = std::numeric_limits<TSemanticValue>::max();
+  burstMin         = -std::numeric_limits<TRecordTime>::max();
+  burstMax         = std::numeric_limits<TRecordTime>::max();
+  commSizeMin      = std::numeric_limits<TCommSize>::min();
+  commSizeMax      = std::numeric_limits<TCommSize>::max();
+  commTagMin       = std::numeric_limits<TCommTag>::min();
+  commTagMax       = std::numeric_limits<TCommTag>::max();
 
   controlOutOfLimits = false;
-  xtraOutOfLimits = false;
+  xtraOutOfLimits    = false;
 
   inclusive = false;
 
-  rowsTranslator = nullptr;
+  rowsTranslator   = nullptr;
   columnTranslator = nullptr;
-  planeTranslator = nullptr;
+  planeTranslator  = nullptr;
 
-  cube = nullptr;
-  matrix = nullptr;
-  commCube = nullptr;
+  cube       = nullptr;
+  matrix     = nullptr;
+  commCube   = nullptr;
   commMatrix = nullptr;
 
 #ifdef PARALLEL_ENABLED
   semanticBuffer = nullptr;
-  commBuffer = nullptr;
+  commBuffer     = nullptr;
 #endif
 
-  totals = nullptr;
-  rowTotals = nullptr;
-  commTotals = nullptr;
+  totals        = nullptr;
+  rowTotals     = nullptr;
+  commTotals    = nullptr;
   rowCommTotals = nullptr;
 }
 
 
 KHistogram::~KHistogram()
 {
-  if ( rowsTranslator != nullptr )
+  if( rowsTranslator != nullptr )
     delete rowsTranslator;
-  if ( columnTranslator != nullptr )
+  if( columnTranslator != nullptr )
     delete columnTranslator;
-  if ( planeTranslator != nullptr )
+  if( planeTranslator != nullptr )
     delete planeTranslator;
 
-  if ( cube != nullptr )
+  if( cube != nullptr )
     delete cube;
-  if ( matrix != nullptr )
+  if( matrix != nullptr )
     delete matrix;
-  if ( commCube != nullptr )
+  if( commCube != nullptr )
     delete commCube;
-  if ( commMatrix != nullptr )
+  if( commMatrix != nullptr )
     delete commMatrix;
 
-  if ( totals != nullptr )
+  if( totals != nullptr )
     delete totals;
-  if ( rowTotals != nullptr )
+  if( rowTotals != nullptr )
     delete rowTotals;
-  if ( commTotals != nullptr )
+  if( commTotals != nullptr )
     delete commTotals;
-  if ( rowCommTotals != nullptr )
+  if( rowCommTotals != nullptr )
     delete rowCommTotals;
- 
+
 #ifdef PARALLEL_ENABLED
-  if ( semanticBuffer != nullptr )
+  if( semanticBuffer != nullptr )
     delete semanticBuffer;
-  if ( commBuffer != nullptr )
+  if( commBuffer != nullptr )
     delete commBuffer;
 #endif
 
@@ -353,39 +342,39 @@ inline TRecordTime KHistogram::getEndTime() const
 }
 
 
-inline Timeline *KHistogram::getControlWindow() const
+inline Timeline* KHistogram::getControlWindow() const
 {
   return controlWindow;
 }
 
 
-inline Timeline *KHistogram::getDataWindow() const
+inline Timeline* KHistogram::getDataWindow() const
 {
   return dataWindow;
 }
 
 
-inline Timeline *KHistogram::getExtraControlWindow() const
+inline Timeline* KHistogram::getExtraControlWindow() const
 {
   return xtraControlWindow;
 }
 
 
-inline void KHistogram::setControlWindow( Timeline *whichWindow )
+inline void KHistogram::setControlWindow( Timeline* whichWindow )
 {
-  controlWindow = ( KTimeline * ) whichWindow;
+  controlWindow = (KTimeline*)whichWindow;
 }
 
 
-inline void KHistogram::setDataWindow( Timeline *whichWindow )
+inline void KHistogram::setDataWindow( Timeline* whichWindow )
 {
-  dataWindow = ( KTimeline * ) whichWindow;
+  dataWindow = (KTimeline*)whichWindow;
 }
 
 
-inline void KHistogram::setExtraControlWindow( Timeline *whichWindow )
+inline void KHistogram::setExtraControlWindow( Timeline* whichWindow )
 {
-  xtraControlWindow = ( KTimeline * ) whichWindow;
+  xtraControlWindow = (KTimeline*)whichWindow;
 }
 
 
@@ -587,8 +576,7 @@ inline TCommTag KHistogram::getCommTagMax() const
 
 inline bool KHistogram::getInclusiveEnabled() const
 {
-  if ( controlWindow != nullptr
-       && controlWindow->getFirstSemUsefulFunction()->getStack() == nullptr )
+  if( controlWindow != nullptr && controlWindow->getFirstSemUsefulFunction()->getStack() == nullptr )
     return false;
   return true;
 }
@@ -596,9 +584,9 @@ inline bool KHistogram::getInclusiveEnabled() const
 
 inline void KHistogram::setInclusive( bool newValue )
 {
-  if ( newValue )
+  if( newValue )
   {
-    if ( controlWindow->getFirstSemUsefulFunction()->getStack() == nullptr )
+    if( controlWindow->getFirstSemUsefulFunction()->getStack() == nullptr )
       return;
   }
   inclusive = newValue;
@@ -619,7 +607,7 @@ inline void KHistogram::setNumColumns( THistogramColumn whichNumColumns )
 
 inline THistogramColumn KHistogram::getNumPlanes() const
 {
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
   {
     if( planeTranslator == nullptr )
       return 0;
@@ -647,11 +635,9 @@ inline TObjectOrder KHistogram::getNumRows() const
 }
 
 
-inline TSemanticValue KHistogram::getCurrentValue( PRV_UINT32 col,
-    PRV_UINT16 idStat,
-    PRV_UINT32 plane ) const
+inline TSemanticValue KHistogram::getCurrentValue( PRV_UINT32 col, PRV_UINT16 idStat, PRV_UINT32 plane ) const
 {
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
     return cube->getCurrentValue( plane, col, idStat );
   else
     return matrix->getCurrentValue( col, idStat );
@@ -661,7 +647,7 @@ inline TSemanticValue KHistogram::getCurrentValue( PRV_UINT32 col,
 
 inline PRV_UINT32 KHistogram::getCurrentRow( PRV_UINT32 col, PRV_UINT32 plane ) const
 {
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
     return cube->getCurrentRow( plane, col );
   else
     return matrix->getCurrentRow( col );
@@ -671,7 +657,7 @@ inline PRV_UINT32 KHistogram::getCurrentRow( PRV_UINT32 col, PRV_UINT32 plane ) 
 
 inline void KHistogram::setNextCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
     cube->setNextCell( plane, col );
   else
     matrix->setNextCell( col );
@@ -679,7 +665,7 @@ inline void KHistogram::setNextCell( PRV_UINT32 col, PRV_UINT32 plane )
 
 inline void KHistogram::setFirstCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
     cube->setFirstCell( plane, col );
   else
     matrix->setFirstCell( col );
@@ -687,7 +673,7 @@ inline void KHistogram::setFirstCell( PRV_UINT32 col, PRV_UINT32 plane )
 
 inline bool KHistogram::endCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
     return cube->endCell( plane, col );
   else
     return matrix->endCell( col );
@@ -697,7 +683,7 @@ inline bool KHistogram::endCell( PRV_UINT32 col, PRV_UINT32 plane )
 
 inline bool KHistogram::planeWithValues( PRV_UINT32 plane ) const
 {
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
     return cube->planeWithValues( plane );
 
   return true;
@@ -717,10 +703,7 @@ inline bool KHistogram::getCellValue( TSemanticValue& semVal,
 }
 
 
-bool KHistogram::getNotZeroValue( PRV_UINT32 whichRow,
-                                  PRV_UINT32 whichCol,
-                                  PRV_UINT16 idStat,
-                                  PRV_UINT32 whichPlane ) const
+bool KHistogram::getNotZeroValue( PRV_UINT32 whichRow, PRV_UINT32 whichCol, PRV_UINT16 idStat, PRV_UINT32 whichPlane ) const
 {
   if( getThreeDimensions() )
     return cube->getNotZeroValue( whichPlane, whichRow, whichCol, idStat );
@@ -729,11 +712,9 @@ bool KHistogram::getNotZeroValue( PRV_UINT32 whichRow,
 }
 
 
-inline TSemanticValue KHistogram::getCommCurrentValue( PRV_UINT32 col,
-                                                       PRV_UINT16 idStat,
-                                                       PRV_UINT32 plane ) const
+inline TSemanticValue KHistogram::getCommCurrentValue( PRV_UINT32 col, PRV_UINT16 idStat, PRV_UINT32 plane ) const
 {
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
     return commCube->getCurrentValue( plane, col, idStat );
   else
     return commMatrix->getCurrentValue( col, idStat );
@@ -744,7 +725,7 @@ inline TSemanticValue KHistogram::getCommCurrentValue( PRV_UINT32 col,
 
 inline PRV_UINT32 KHistogram::getCommCurrentRow( PRV_UINT32 col, PRV_UINT32 plane ) const
 {
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
     return commCube->getCurrentRow( plane, col );
   else
     return commMatrix->getCurrentRow( col );
@@ -754,7 +735,7 @@ inline PRV_UINT32 KHistogram::getCommCurrentRow( PRV_UINT32 col, PRV_UINT32 plan
 
 inline void KHistogram::setCommNextCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
     commCube->setNextCell( plane, col );
   else
     commMatrix->setNextCell( col );
@@ -762,7 +743,7 @@ inline void KHistogram::setCommNextCell( PRV_UINT32 col, PRV_UINT32 plane )
 
 inline void KHistogram::setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
     commCube->setFirstCell( plane, col );
   else
     commMatrix->setFirstCell( col );
@@ -770,7 +751,7 @@ inline void KHistogram::setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane )
 
 inline bool KHistogram::endCommCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
     return commCube->endCell( plane, col );
   else
     return commMatrix->endCell( col );
@@ -780,17 +761,17 @@ inline bool KHistogram::endCommCell( PRV_UINT32 col, PRV_UINT32 plane )
 
 inline bool KHistogram::planeCommWithValues( PRV_UINT32 plane ) const
 {
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
     return commCube->planeWithValues( plane );
 
   return true;
 }
 
 inline bool KHistogram::getCommCellValue( TSemanticValue& semVal,
-    PRV_UINT32 whichRow,
-    PRV_UINT32 whichCol,
-    PRV_UINT16 idStat,
-    PRV_UINT32 whichPlane ) const
+                                          PRV_UINT32 whichRow,
+                                          PRV_UINT32 whichCol,
+                                          PRV_UINT16 idStat,
+                                          PRV_UINT32 whichPlane ) const
 {
   if( getThreeDimensions() )
     return commCube->getCellValue( semVal, whichPlane, whichRow, whichCol, idStat );
@@ -798,25 +779,25 @@ inline bool KHistogram::getCommCellValue( TSemanticValue& semVal,
   return commMatrix->getCellValue( semVal, whichRow, whichCol, idStat );
 }
 
-inline HistogramTotals *KHistogram::getColumnTotals() const
+inline HistogramTotals* KHistogram::getColumnTotals() const
 {
   return totals;
 }
 
 
-inline HistogramTotals *KHistogram::getCommColumnTotals() const
+inline HistogramTotals* KHistogram::getCommColumnTotals() const
 {
   return commTotals;
 }
 
 
-inline HistogramTotals *KHistogram::getRowTotals() const
+inline HistogramTotals* KHistogram::getRowTotals() const
 {
   return rowTotals;
 }
 
 
-inline HistogramTotals *KHistogram::getCommRowTotals() const
+inline HistogramTotals* KHistogram::getCommRowTotals() const
 {
   return rowCommTotals;
 }
@@ -854,40 +835,39 @@ inline void KHistogram::pushbackStatistic( const string& whichStatistic )
       commStatisticFunctions.push_back( stat );
     else
       statisticFunctions.push_back( stat );
-    
+
     delete stat;
   */
 }
 
 
-void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
-                          vector<TObjectOrder>& selectedRows, ProgressController *progress )
+void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime, vector<TObjectOrder>& selectedRows, ProgressController* progress )
 {
-  if ( controlWindow == nullptr )
+  if( controlWindow == nullptr )
     throw HistogramException( THistogramErrorCode::noControlWindow );
 
   myTimeUnit = controlWindow->getTimeUnit();
 
-  if ( dataWindow == nullptr )
+  if( dataWindow == nullptr )
     dataWindow = controlWindow;
 
   controlOutOfLimits = false;
-  xtraOutOfLimits = false;
+  xtraOutOfLimits    = false;
 
   beginTime = whichBeginTime;
-  endTime = whichEndTime;
-  if ( endTime > controlWindow->getTrace()->getEndTime() )
+  endTime   = whichEndTime;
+  if( endTime > controlWindow->getTrace()->getEndTime() )
     endTime = controlWindow->getTrace()->getEndTime();
 
   orderWindows();
-  
+
   initTranslators();
 
-  numRows = selectedRows.size();
-  numCols = columnTranslator->totalColumns();
+  numRows      = selectedRows.size();
+  numCols      = columnTranslator->totalColumns();
   controlDelta = columnTranslator->getDelta();
 
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
     numPlanes = planeTranslator->totalColumns();
   else
     numPlanes = 1;
@@ -904,9 +884,9 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
 
   initMatrix( numPlanes, numCols, numRows );
 
-  initTotals ();
+  initTotals();
 
-  if (selectedRows.empty ())
+  if( selectedRows.empty() )
   {
     return;
   }
@@ -922,20 +902,16 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
 
   vector<bool> needInit( 3, true );
 #ifdef PARALLEL_ENABLED
-  if ( orderedWindows[ 0 ]->getWindowLevelObjects() == orderedWindows[ 1 ]->getWindowLevelObjects()
-       &&
-        ( ( !getThreeDimensions() )
-          ||
-          ( getThreeDimensions() && orderedWindows[ 1 ]->getWindowLevelObjects() == orderedWindows[ 2 ]->getWindowLevelObjects() )
-        )
-     )
+  if( orderedWindows[ 0 ]->getWindowLevelObjects() == orderedWindows[ 1 ]->getWindowLevelObjects() &&
+      ( ( !getThreeDimensions() ) ||
+        ( getThreeDimensions() && orderedWindows[ 1 ]->getWindowLevelObjects() == orderedWindows[ 2 ]->getWindowLevelObjects() ) ) )
   {
     parallelExecution( beginTime, endTime, 0, numRows - 1, selectedRows, progress );
   }
   else
 #endif
 
-  recursiveExecution( beginTime, endTime, 0, numRows - 1, selectedRows, needInit, true, progress );
+    recursiveExecution( beginTime, endTime, 0, numRows - 1, selectedRows, needInit, true, progress );
 
 #ifdef PARALLEL_ENABLED
   finishAllRows();
@@ -943,26 +919,26 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
 
   finishOutLimits();
 
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
   {
     cube->finish();
-    if ( createComms() )
+    if( createComms() )
       commCube->finish();
   }
   else
   {
     matrix->finish();
-    if ( createComms() )
+    if( createComms() )
       commMatrix->finish();
   }
 
-  if ( totals != nullptr )
+  if( totals != nullptr )
     totals->finish();
-  if ( rowTotals != nullptr )
+  if( rowTotals != nullptr )
     rowTotals->finish();
-  if ( commTotals != nullptr )
+  if( commTotals != nullptr )
     commTotals->finish();
-  if ( rowCommTotals != nullptr )
+  if( rowCommTotals != nullptr )
     rowCommTotals->finish();
   // - Columns will be ordered if necesary
 }
@@ -972,14 +948,14 @@ void KHistogram::orderWindows()
 {
   orderedWindows.clear();
 
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
   {
-    if ( controlWindow == dataWindow )
+    if( controlWindow == dataWindow )
     {
       orderedWindows.push_back( xtraControlWindow );
       orderedWindows.push_back( controlWindow );
     }
-    else if ( controlWindow->getLevel() >= xtraControlWindow->getLevel() )
+    else if( controlWindow->getLevel() >= xtraControlWindow->getLevel() )
     {
       orderedWindows.push_back( controlWindow );
       orderedWindows.push_back( xtraControlWindow );
@@ -999,78 +975,78 @@ void KHistogram::orderWindows()
 
 bool KHistogram::createComms() const
 {
-//  return commStatisticFunctions.size() > 0;
+  //  return commStatisticFunctions.size() > 0;
   return true;
 }
 
 
 void KHistogram::initTranslators()
 {
-  if ( rowsTranslator != nullptr )
+  if( rowsTranslator != nullptr )
     delete rowsTranslator;
   rowsTranslator = new RowsTranslator( orderedWindows );
 
-  if ( columnTranslator != nullptr )
+  if( columnTranslator != nullptr )
     delete columnTranslator;
-  if( useFixedDelta ) 
+  if( useFixedDelta )
   {
-    if(controlDelta <= 0) 
-    { 
-      throw HistogramException(THistogramErrorCode::invalidValueDelta);
+    if( controlDelta <= 0 )
+    {
+      throw HistogramException( THistogramErrorCode::invalidValueDelta );
     }
-    else 
+    else
     {
       columnTranslator = new ColumnTranslator( controlMin, controlMax, controlDelta );
     }
-  } else 
+  }
+  else
   {
     columnTranslator = new ColumnTranslator( controlMin, controlMax, numCols );
   }
 
-  if ( planeTranslator != nullptr )
+  if( planeTranslator != nullptr )
   {
     delete planeTranslator;
     planeTranslator = nullptr;
   }
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
     planeTranslator = new ColumnTranslator( xtraControlMin, xtraControlMax, xtraControlDelta );
 }
 
 
-void KHistogram::initMatrix( THistogramColumn planes, THistogramColumn cols,
-                             TObjectOrder rows )
+void KHistogram::initMatrix( THistogramColumn planes, THistogramColumn cols, TObjectOrder rows )
 {
-  if ( cube != nullptr )
+  if( cube != nullptr )
   {
     delete cube;
     cube = nullptr;
   }
-  if ( matrix != nullptr )
+  if( matrix != nullptr )
   {
     delete matrix;
     matrix = nullptr;
   }
-  if ( commCube != nullptr )
+  if( commCube != nullptr )
   {
     delete commCube;
     commCube = nullptr;
   }
-  if ( commMatrix != nullptr )
+  if( commMatrix != nullptr )
   {
     delete commMatrix;
     commMatrix = nullptr;
   }
 
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
   {
     cube = new Cube<TSemanticValue, NUM_SEMANTIC_STATS>( planes, cols );
-    if ( createComms() )
+    if( createComms() )
       commCube = new Cube<TSemanticValue, NUM_COMM_STATS>( planes, rowsTranslator->totalRows() );
   }
   else
   {
     matrix = new Matrix<TSemanticValue, NUM_SEMANTIC_STATS>( cols );
-    if ( createComms() )
+    if( createComms() )
       commMatrix = new Matrix<TSemanticValue, NUM_COMM_STATS>( rowsTranslator->totalRows() );
   }
 }
@@ -1078,37 +1054,33 @@ void KHistogram::initMatrix( THistogramColumn planes, THistogramColumn cols,
 
 void KHistogram::initTotals()
 {
-  if ( totals != nullptr )
+  if( totals != nullptr )
     delete totals;
-  if ( rowTotals != nullptr )
+  if( rowTotals != nullptr )
     delete rowTotals;
-  if ( commTotals != nullptr )
+  if( commTotals != nullptr )
     delete commTotals;
-  if ( rowCommTotals != nullptr )
+  if( rowCommTotals != nullptr )
     delete rowCommTotals;
 
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
   {
-    totals = new KHistogramTotals( NUM_SEMANTIC_STATS, numCols, numPlanes );
+    totals    = new KHistogramTotals( NUM_SEMANTIC_STATS, numCols, numPlanes );
     rowTotals = new KHistogramTotals( NUM_SEMANTIC_STATS, numRows, numPlanes );
-    if ( createComms() )
+    if( createComms() )
     {
-      commTotals = new KHistogramTotals( NUM_COMM_STATS,
-                                         rowsTranslator->totalRows(), numPlanes );
-      rowCommTotals = new KHistogramTotals( NUM_COMM_STATS,
-                                            numRows, numPlanes );
+      commTotals    = new KHistogramTotals( NUM_COMM_STATS, rowsTranslator->totalRows(), numPlanes );
+      rowCommTotals = new KHistogramTotals( NUM_COMM_STATS, numRows, numPlanes );
     }
   }
   else
   {
-    totals = new KHistogramTotals( NUM_SEMANTIC_STATS, numCols, 1 );
+    totals    = new KHistogramTotals( NUM_SEMANTIC_STATS, numCols, 1 );
     rowTotals = new KHistogramTotals( NUM_SEMANTIC_STATS, numRows, 1 );
-    if ( createComms() )
+    if( createComms() )
     {
-      commTotals = new KHistogramTotals( NUM_COMM_STATS,
-                                         rowsTranslator->totalRows(), 1 );
-      rowCommTotals = new KHistogramTotals( NUM_COMM_STATS,
-                                            numRows, 1 );
+      commTotals    = new KHistogramTotals( NUM_COMM_STATS, rowsTranslator->totalRows(), 1 );
+      rowCommTotals = new KHistogramTotals( NUM_COMM_STATS, numRows, 1 );
     }
   }
 }
@@ -1118,15 +1090,15 @@ void KHistogram::initSemantic( TRecordTime beginTime )
 {
   TCreateList create = NOCREATE;
 
-  if ( createComms() )
+  if( createComms() )
     create = CREATECOMMS;
 
   controlWindow->init( beginTime, create );
 
-  if ( xtraControlWindow != nullptr && xtraControlWindow != controlWindow )
+  if( xtraControlWindow != nullptr && xtraControlWindow != controlWindow )
     xtraControlWindow->init( beginTime, NOCREATE );
 
-  if ( dataWindow != controlWindow && dataWindow != xtraControlWindow )
+  if( dataWindow != controlWindow && dataWindow != xtraControlWindow )
     dataWindow->init( beginTime, NOCREATE );
 }
 
@@ -1140,27 +1112,23 @@ void KHistogram::initStatistics()
 void KHistogram::initTmpBuffers( THistogramColumn planes, TObjectOrder rows )
 {
   tmpControlOutOfLimits.clear();
-  tmpControlOutOfLimits.insert( tmpControlOutOfLimits.begin(),
-                                controlWindow->getWindowLevelObjects(),
-                                false );
+  tmpControlOutOfLimits.insert( tmpControlOutOfLimits.begin(), controlWindow->getWindowLevelObjects(), false );
 
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
   {
     tmpXtraOutOfLimits.clear();
-    tmpXtraOutOfLimits.insert( tmpXtraOutOfLimits.begin(),
-                               xtraControlWindow->getWindowLevelObjects(),
-                               false );
+    tmpXtraOutOfLimits.insert( tmpXtraOutOfLimits.begin(), xtraControlWindow->getWindowLevelObjects(), false );
   }
 
 #ifdef PARALLEL_ENABLED
-  if ( semanticBuffer != nullptr )
+  if( semanticBuffer != nullptr )
   {
     delete semanticBuffer;
     semanticBuffer = nullptr;
   }
   semanticBuffer = new CubeBuffer<NUM_SEMANTIC_STATS>( planes, rows );
 
-  if ( commBuffer != nullptr )
+  if( commBuffer != nullptr )
   {
     delete commBuffer;
     commBuffer = nullptr;
@@ -1174,18 +1142,18 @@ void KHistogram::finishAllRows()
 {
   array<TSemanticValue, NUM_COMM_STATS> commValues;
 
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
   {
-    for ( TObjectOrder iRow = 0; iRow < rowsTranslator->totalRows(); ++iRow )
+    for( TObjectOrder iRow = 0; iRow < rowsTranslator->totalRows(); ++iRow )
     {
-      for ( THistogramColumn iPlane = 0; iPlane < planeTranslator->totalColumns(); ++iPlane )
+      for( THistogramColumn iPlane = 0; iPlane < planeTranslator->totalColumns(); ++iPlane )
       {
         auto& rowValues = commBuffer->getRowValues( iPlane, iRow );
-        for ( auto it = rowValues.begin(); it != rowValues.end(); ++it )
+        for( auto it = rowValues.begin(); it != rowValues.end(); ++it )
         {
           commValues = it->second;
           commCube->setValue( iPlane, it->first, commValues );
-          for ( PRV_UINT16 iStat = 0; iStat < NUM_COMM_STATS; ++iStat )
+          for( PRV_UINT16 iStat = 0; iStat < NUM_COMM_STATS; ++iStat )
           {
             commTotals->newValue( commValues[ iStat ], iStat, it->first, iPlane );
             rowCommTotals->newValue( commValues[ iStat ], iStat, iRow, iPlane );
@@ -1198,14 +1166,14 @@ void KHistogram::finishAllRows()
   }
   else
   {
-    for ( TObjectOrder iRow = 0; iRow < rowsTranslator->totalRows(); ++iRow )
+    for( TObjectOrder iRow = 0; iRow < rowsTranslator->totalRows(); ++iRow )
     {
       auto& rowValues = commBuffer->getRowValues( 0, iRow );
-      for ( auto it = rowValues.begin(); it != rowValues.end(); ++it )
+      for( auto it = rowValues.begin(); it != rowValues.end(); ++it )
       {
         commValues = it->second;
         commMatrix->setValue( it->first, commValues );
-        for ( PRV_UINT16 iStat = 0; iStat < NUM_COMM_STATS; ++iStat )
+        for( PRV_UINT16 iStat = 0; iStat < NUM_COMM_STATS; ++iStat )
         {
           commTotals->newValue( commValues[ iStat ], iStat, it->first );
           rowCommTotals->newValue( commValues[ iStat ], iStat, iRow );
@@ -1218,23 +1186,22 @@ void KHistogram::finishAllRows()
 
   array<TSemanticValue, NUM_SEMANTIC_STATS> semanticValues;
 
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
   {
-    for ( TObjectOrder iRow = 0; iRow < rowsTranslator->totalRows(); ++iRow )
+    for( TObjectOrder iRow = 0; iRow < rowsTranslator->totalRows(); ++iRow )
     {
-      for ( THistogramColumn iPlane = 0; iPlane < planeTranslator->totalColumns();
-            ++iPlane )
+      for( THistogramColumn iPlane = 0; iPlane < planeTranslator->totalColumns(); ++iPlane )
       {
-        auto& rowValues = semanticBuffer->getRowValues( iPlane, iRow );
+        auto& rowValues        = semanticBuffer->getRowValues( iPlane, iRow );
         auto& rowNotZeroValues = semanticBuffer->getNotZeroValue( iPlane, iRow );
-        auto itZero = rowNotZeroValues.begin();
+        auto itZero            = rowNotZeroValues.begin();
 
-        for ( auto it = rowValues.begin(); it != rowValues.end(); ++it, ++itZero )
+        for( auto it = rowValues.begin(); it != rowValues.end(); ++it, ++itZero )
         {
           semanticValues = it->second;
           cube->setValue( iPlane, it->first, semanticValues, itZero->second );
 
-          for ( PRV_UINT16 iStat = 0; iStat < NUM_SEMANTIC_STATS; ++iStat )
+          for( PRV_UINT16 iStat = 0; iStat < NUM_SEMANTIC_STATS; ++iStat )
           {
             totals->newValue( semanticValues[ iStat ], iStat, it->first, iPlane );
             rowTotals->newValue( semanticValues[ iStat ], iStat, iRow, iPlane );
@@ -1247,18 +1214,18 @@ void KHistogram::finishAllRows()
   else
   {
     THistogramColumn iPlane = 0;
-    for ( TObjectOrder iRow = 0; iRow < rowsTranslator->totalRows(); ++iRow )
+    for( TObjectOrder iRow = 0; iRow < rowsTranslator->totalRows(); ++iRow )
     {
-      auto& rowValues = semanticBuffer->getRowValues( 0, iRow );
+      auto& rowValues        = semanticBuffer->getRowValues( 0, iRow );
       auto& rowNotZeroValues = semanticBuffer->getNotZeroValue( 0, iRow );
-      auto itZero = rowNotZeroValues.begin();
+      auto itZero            = rowNotZeroValues.begin();
 
-      for ( auto it = rowValues.begin(); it != rowValues.end(); ++it, ++itZero )
+      for( auto it = rowValues.begin(); it != rowValues.end(); ++it, ++itZero )
       {
         semanticValues = it->second;
         matrix->setValue( it->first, semanticValues, itZero->second );
 
-        for ( PRV_UINT16 iStat = 0; iStat < NUM_SEMANTIC_STATS; ++iStat )
+        for( PRV_UINT16 iStat = 0; iStat < NUM_SEMANTIC_STATS; ++iStat )
         {
           totals->newValue( semanticValues[ iStat ], iStat, it->first, iPlane );
           rowTotals->newValue( semanticValues[ iStat ], iStat, iRow, iPlane );
@@ -1277,10 +1244,9 @@ void KHistogram::finishAllRows()
 void KHistogram::finishOutLimits()
 {
   controlOutOfLimits = false;
-  for( vector<bool>::iterator it = tmpControlOutOfLimits.begin();
-       it != tmpControlOutOfLimits.end(); ++it )
+  for( vector<bool>::iterator it = tmpControlOutOfLimits.begin(); it != tmpControlOutOfLimits.end(); ++it )
   {
-    if ( *it )
+    if( *it )
     {
       controlOutOfLimits = true;
       break;
@@ -1288,13 +1254,12 @@ void KHistogram::finishOutLimits()
   }
   tmpControlOutOfLimits.clear();
 
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
   {
     xtraOutOfLimits = false;
-    for( vector<bool>::iterator it = tmpXtraOutOfLimits.begin();
-         it != tmpXtraOutOfLimits.end(); ++it )
+    for( vector<bool>::iterator it = tmpXtraOutOfLimits.begin(); it != tmpXtraOutOfLimits.end(); ++it )
     {
-      if ( *it )
+      if( *it )
       {
         xtraOutOfLimits = true;
         break;
@@ -1305,37 +1270,38 @@ void KHistogram::finishOutLimits()
 }
 
 #ifdef PARALLEL_ENABLED
-void KHistogram::parallelExecution( TRecordTime fromTime, TRecordTime toTime,
-                                    TObjectOrder fromRow, TObjectOrder toRow,
+void KHistogram::parallelExecution( TRecordTime fromTime,
+                                    TRecordTime toTime,
+                                    TObjectOrder fromRow,
+                                    TObjectOrder toRow,
                                     std::vector<TObjectOrder>& selectedRows,
-                                    ProgressController *progress )
+                                    ProgressController* progress )
 {
   int currentRow = 0;
   int progressDelta;
   if( progress != nullptr )
     progressDelta = (int)floor( selectedRows.size() * 0.005 );
 
-  #pragma omp parallel
+#  pragma omp parallel
   {
-    #pragma omp single
+#  pragma omp single
     {
       windowCloneManager.update( this );
 
-      for ( TObjectOrder i = fromRow; i <= toRow; ++i )
+      for( TObjectOrder i = fromRow; i <= toRow; ++i )
       {
-        #pragma omp task firstprivate(fromTime, toTime, i) shared(selectedRows, progress, progressDelta)
+#  pragma omp task firstprivate( fromTime, toTime, i ) shared( selectedRows, progress, progressDelta )
         {
-          if( progress == nullptr ||
-              ( progress != nullptr && !progress->getStop() ) )
+          if( progress == nullptr || ( progress != nullptr && !progress->getStop() ) )
             executionTask( fromTime, toTime, i, i, selectedRows, progress );
 
           if( progress != nullptr && numRows > 1 && !progress->getStop() )
           {
-            #pragma omp atomic
+#  pragma omp atomic
             ++currentRow;
             if( selectedRows.size() <= 200 || currentRow % progressDelta == 0 )
             {
-              #pragma omp critical
+#  pragma omp critical
               progress->setCurrentProgress( currentRow );
             }
           }
@@ -1348,47 +1314,52 @@ void KHistogram::parallelExecution( TRecordTime fromTime, TRecordTime toTime,
 }
 
 
-void KHistogram::executionTask( TRecordTime fromTime, TRecordTime toTime,
-                                TObjectOrder fromRow, TObjectOrder toRow,
+void KHistogram::executionTask( TRecordTime fromTime,
+                                TRecordTime toTime,
+                                TObjectOrder fromRow,
+                                TObjectOrder toRow,
                                 std::vector<TObjectOrder>& selectedRows,
-                                ProgressController *progress )
+                                ProgressController* progress )
 {
   vector<bool> needInit( 3, true );
   recursiveExecution( fromTime, toTime, fromRow, toRow, selectedRows, needInit, true, progress );
 }
 #endif
 
-void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
-                                     TObjectOrder fromRow, TObjectOrder toRow,
+void KHistogram::recursiveExecution( TRecordTime fromTime,
+                                     TRecordTime toTime,
+                                     TObjectOrder fromRow,
+                                     TObjectOrder toRow,
                                      vector<TObjectOrder>& selectedRows,
                                      vector<bool>& needInit,
                                      bool calcSemanticStats,
-                                     ProgressController *progress,
-                                     PRV_UINT16 winIndex, CalculateData *data )
+                                     ProgressController* progress,
+                                     PRV_UINT16 winIndex,
+                                     CalculateData* data )
 {
-  Timeline *currentWindow = orderedWindows[ winIndex ];
-  int currentRow = 0;
+  Timeline* currentWindow = orderedWindows[ winIndex ];
+  int currentRow          = 0;
 #ifndef PARALLEL_ENABLED
   int progressDelta;
   if( progress != nullptr )
     progressDelta = (int)floor( selectedRows.size() * 0.005 );
 #endif // PARALLEL_ENABLED
 
-  if ( data == nullptr )
+  if( data == nullptr )
   {
-    data = new CalculateData;
-    data->plane = 0;
+    data            = new CalculateData;
+    data->plane     = 0;
     data->beginTime = 0;
-    data->endTime = 0;
+    data->endTime   = 0;
   }
 
-  for ( TObjectOrder i = fromRow; i <= toRow; ++i )
+  for( TObjectOrder i = fromRow; i <= toRow; ++i )
   {
     TObjectOrder iRow = i;
 
-    if ( winIndex == 0 )
+    if( winIndex == 0 )
     {
-      iRow = selectedRows[ i ];
+      iRow      = selectedRows[ i ];
       data->row = i;
 
       needInit[ 0 ] = true;
@@ -1396,9 +1367,9 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
       needInit[ 2 ] = true;
     }
 
-    if ( currentWindow == controlWindow )
+    if( currentWindow == controlWindow )
       data->controlRow = iRow;
-    if ( currentWindow == dataWindow )
+    if( currentWindow == dataWindow )
       data->dataRow = iRow;
 
     if( needInit[ winIndex ] && ( winIndex == 0 || ( winIndex > 0 && orderedWindows[ winIndex ] != orderedWindows[ winIndex - 1 ] ) ) )
@@ -1411,16 +1382,16 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
       needInit[ winIndex ] = false;
     }
 
-    while ( windowCloneManager( currentWindow )->getEndTime( iRow ) <= fromTime
-            && windowCloneManager( currentWindow )->getBeginTime( iRow ) < currentWindow->getTrace()->getEndTime() )
+    while( windowCloneManager( currentWindow )->getEndTime( iRow ) <= fromTime &&
+           windowCloneManager( currentWindow )->getBeginTime( iRow ) < currentWindow->getTrace()->getEndTime() )
     {
       windowCloneManager( currentWindow )->calcNext( iRow );
     }
 
-    int progressSteps = 0;
+    int progressSteps       = 0;
     TRecordTime tmpLastTime = windowCloneManager( currentWindow )->getBeginTime( iRow );
-    while ( windowCloneManager( currentWindow )->getEndTime( iRow ) < toTime
-            && windowCloneManager( currentWindow )->getBeginTime( iRow ) < currentWindow->getTrace()->getEndTime() )
+    while( windowCloneManager( currentWindow )->getEndTime( iRow ) < toTime &&
+           windowCloneManager( currentWindow )->getBeginTime( iRow ) < currentWindow->getTrace()->getEndTime() )
     {
       if( windowCloneManager( currentWindow )->getBeginTime( iRow ) != windowCloneManager( currentWindow )->getEndTime( iRow ) )
         calculate( iRow, fromTime, toTime, winIndex, data, needInit, calcSemanticStats );
@@ -1436,7 +1407,7 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
           if( progressSteps == 100000 )
           {
             progressSteps = 0;
-            #pragma omp critical
+#pragma omp critical
             {
               progress->setCurrentProgress( progress->getCurrentProgress() );
             }
@@ -1447,7 +1418,7 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
           auto tmpEndTime = windowCloneManager( currentWindow )->getEndTime( iRow );
           if( tmpEndTime - tmpLastTime > ( toTime - fromTime ) / 50 )
           {
-            #pragma omp critical
+#pragma omp critical
             {
               progress->setCurrentProgress( tmpEndTime - beginTime );
             }
@@ -1457,18 +1428,18 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
       }
     }
 
-    if ( windowCloneManager( currentWindow )->getBeginTime( iRow ) < toTime )
+    if( windowCloneManager( currentWindow )->getBeginTime( iRow ) < toTime )
       calculate( iRow, fromTime, toTime, winIndex, data, needInit, calcSemanticStats );
 
-    while ( windowCloneManager( currentWindow )->getBeginTime( iRow ) == windowCloneManager( currentWindow )->getEndTime( iRow ) &&
-            windowCloneManager( currentWindow )->getEndTime( iRow ) <= toTime &&
-            windowCloneManager( currentWindow )->getEndTime( iRow ) < getEndTime() &&
-            windowCloneManager( currentWindow )->getBeginTime( iRow ) < currentWindow->getTrace()->getEndTime() )
+    while( windowCloneManager( currentWindow )->getBeginTime( iRow ) == windowCloneManager( currentWindow )->getEndTime( iRow ) &&
+           windowCloneManager( currentWindow )->getEndTime( iRow ) <= toTime &&
+           windowCloneManager( currentWindow )->getEndTime( iRow ) < getEndTime() &&
+           windowCloneManager( currentWindow )->getBeginTime( iRow ) < currentWindow->getTrace()->getEndTime() )
     {
       windowCloneManager( currentWindow )->calcNext( iRow );
     }
 
-    if ( winIndex == 0 )
+    if( winIndex == 0 )
     {
       finishRow( data );
     }
@@ -1485,10 +1456,9 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
     }
     ++currentRow;
 #endif // PARALLEL_ENABLED
-
   }
 
-  if ( winIndex == 0 )
+  if( winIndex == 0 )
   {
     delete data;
     data = nullptr;
@@ -1497,8 +1467,10 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
 
 
 void KHistogram::calculate( TObjectOrder iRow,
-                            TRecordTime fromTime, TRecordTime toTime,
-                            PRV_UINT16 winIndex, CalculateData *data,
+                            TRecordTime fromTime,
+                            TRecordTime toTime,
+                            PRV_UINT16 winIndex,
+                            CalculateData* data,
                             vector<bool>& needInit,
                             bool calcSemanticStats )
 {
@@ -1506,14 +1478,13 @@ void KHistogram::calculate( TObjectOrder iRow,
   TObjectOrder childToRow;
   TRecordTime childFromTime;
   TRecordTime childToTime;
-  Timeline *currentWindow = orderedWindows[ winIndex ];
+  Timeline* currentWindow = orderedWindows[ winIndex ];
 
-  if ( currentWindow == controlWindow )
+  if( currentWindow == controlWindow )
   {
-    if ( !columnTranslator->getColumn( windowCloneManager( currentWindow )->getValue( iRow ),
-                                       data->column ) )
+    if( !columnTranslator->getColumn( windowCloneManager( currentWindow )->getValue( iRow ), data->column ) )
     {
-      if ( windowCloneManager( currentWindow )->getValue( iRow ) != 0 )
+      if( windowCloneManager( currentWindow )->getValue( iRow ) != 0 )
         tmpControlOutOfLimits[ iRow ] = true;
       calcSemanticStats = false;
     }
@@ -1521,25 +1492,22 @@ void KHistogram::calculate( TObjectOrder iRow,
       calcSemanticStats = true;
     data->rList = windowCloneManager( currentWindow )->getRecordList( iRow );
   }
-  if ( getThreeDimensions() && currentWindow == xtraControlWindow )
+  if( getThreeDimensions() && currentWindow == xtraControlWindow )
   {
-    if ( !planeTranslator->getColumn( windowCloneManager( currentWindow )->getValue( iRow ),
-                                      data->plane ) )
+    if( !planeTranslator->getColumn( windowCloneManager( currentWindow )->getValue( iRow ), data->plane ) )
     {
-      if ( windowCloneManager( currentWindow )->getValue( iRow ) != 0 )
+      if( windowCloneManager( currentWindow )->getValue( iRow ) != 0 )
         tmpXtraOutOfLimits[ iRow ] = true;
       return;
     }
   }
 
-  if ( winIndex == orderedWindows.size() - 1 )
+  if( winIndex == orderedWindows.size() - 1 )
   {
-    data->beginTime = ( fromTime < windowCloneManager( currentWindow )->getBeginTime( iRow ) ) ?
-                      windowCloneManager( currentWindow )->getBeginTime( iRow ) :
-                      fromTime;
-    data->endTime = ( toTime > windowCloneManager( currentWindow )->getEndTime( iRow ) ) ?
-                    windowCloneManager( currentWindow )->getEndTime( iRow ) :
-                    toTime;
+    data->beginTime =
+      ( fromTime < windowCloneManager( currentWindow )->getBeginTime( iRow ) ) ? windowCloneManager( currentWindow )->getBeginTime( iRow ) : fromTime;
+    data->endTime =
+      ( toTime > windowCloneManager( currentWindow )->getEndTime( iRow ) ) ? windowCloneManager( currentWindow )->getEndTime( iRow ) : toTime;
 
     // Communication statistics
     vector<bool> filter;
@@ -1549,9 +1517,7 @@ void KHistogram::calculate( TObjectOrder iRow,
             itComm->getTime() >= getBeginTime() &&
             itComm->getTime() <= getEndTime()*/ )
     {
-      if ( !( itComm->getRecordType() & COMM ) ||
-           !( itComm->getTime() >= getBeginTime() && itComm->getTime() <= getEndTime() )
-         )
+      if( !( itComm->getRecordType() & COMM ) || !( itComm->getTime() >= getBeginTime() && itComm->getTime() <= getEndTime() ) )
       {
         ++itComm;
         continue;
@@ -1559,10 +1525,10 @@ void KHistogram::calculate( TObjectOrder iRow,
 
       data->comm = itComm;
       statistics.executeAllComm( data, commValues );
-      if ( statistics.filterAllComm( data ) )
+      if( statistics.filterAllComm( data ) )
       {
         TObjectOrder column;
-        if ( controlWindow->getLevel() >= TTraceLevel::WORKLOAD && controlWindow->getLevel() <= TTraceLevel::THREAD )
+        if( controlWindow->getLevel() >= TTraceLevel::WORKLOAD && controlWindow->getLevel() <= TTraceLevel::THREAD )
           column = controlWindow->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
         else if( controlWindow->getLevel() >= TTraceLevel::SYSTEM && controlWindow->getLevel() <= TTraceLevel::NODE )
           column = controlWindow->cpuObjectToWindowObject( data->comm->getCommPartnerObject() );
@@ -1571,7 +1537,7 @@ void KHistogram::calculate( TObjectOrder iRow,
 #ifdef PARALLEL_ENABLED
         commBuffer->addValue( data->plane, data->row, column, commValues );
 #else
-        if ( getThreeDimensions() )
+        if( getThreeDimensions() )
           commCube->addValue( data->plane, column, commValues );
         else
           commMatrix->addValue( column, commValues );
@@ -1587,28 +1553,28 @@ void KHistogram::calculate( TObjectOrder iRow,
       return;
 
     bool isNotZeroValue = false;
-    array< TSemanticValue, NUM_SEMANTIC_STATS > semanticValues;
-    
+    array<TSemanticValue, NUM_SEMANTIC_STATS> semanticValues;
+
     // Semantic statistics
-    if ( inclusive )
+    if( inclusive )
     {
       THistogramColumn column;
-      auto *tmp = controlWindow->getFirstSemUsefulFunction()->getStack();
+      auto* tmp = controlWindow->getFirstSemUsefulFunction()->getStack();
       if( tmp->find( data->controlRow ) != tmp->end() )
       {
         vector<TSemanticValue>::iterator it = ( *tmp )[ data->controlRow ].begin();
-        while ( it != ( *tmp )[ data->controlRow ].end() )
+        while( it != ( *tmp )[ data->controlRow ].end() )
         {
-          if ( columnTranslator->getColumn( *it, column ) )
+          if( columnTranslator->getColumn( *it, column ) )
           {
             statistics.executeAll( data, semanticValues, isNotZeroValue );
 
-            if ( statistics.filterAll( data ) )
+            if( statistics.filterAll( data ) )
             {
 #ifdef PARALLEL_ENABLED
               semanticBuffer->addValue( data->plane, data->row, column, semanticValues, isNotZeroValue );
 #else
-              if ( getThreeDimensions() )
+              if( getThreeDimensions() )
                 cube->addValue( data->plane, column, semanticValues );
               else
                 matrix->addValue( column, semanticValues );
@@ -1623,12 +1589,12 @@ void KHistogram::calculate( TObjectOrder iRow,
     {
       statistics.executeAll( data, semanticValues, isNotZeroValue );
 
-      if ( statistics.filterAll( data ) )
+      if( statistics.filterAll( data ) )
       {
 #ifdef PARALLEL_ENABLED
         semanticBuffer->addValue( data->plane, data->row, data->column, semanticValues, isNotZeroValue );
 #else
-        if ( getThreeDimensions() )
+        if( getThreeDimensions() )
           cube->addValue( data->plane, data->column, semanticValues );
         else
           matrix->addValue( data->column, semanticValues );
@@ -1638,51 +1604,46 @@ void KHistogram::calculate( TObjectOrder iRow,
   }
   else
   {
-    childFromTime = ( fromTime < windowCloneManager( currentWindow )->getBeginTime( iRow ) ) ?
-                    windowCloneManager( currentWindow )->getBeginTime( iRow ) :
-                    fromTime;
-    childToTime = ( toTime > windowCloneManager( currentWindow )->getEndTime( iRow ) ) ?
-                  windowCloneManager( currentWindow )->getEndTime( iRow ) :
-                  toTime;
+    childFromTime =
+      ( fromTime < windowCloneManager( currentWindow )->getBeginTime( iRow ) ) ? windowCloneManager( currentWindow )->getBeginTime( iRow ) : fromTime;
+    childToTime =
+      ( toTime > windowCloneManager( currentWindow )->getEndTime( iRow ) ) ? windowCloneManager( currentWindow )->getEndTime( iRow ) : toTime;
     rowsTranslator->getRowChildren( winIndex, iRow, childFromRow, childToRow );
 
-    vector<TObjectOrder> *dummy = nullptr;
-    recursiveExecution( childFromTime, childToTime, childFromRow, childToRow,
-                        *dummy, needInit, calcSemanticStats, nullptr, winIndex + 1, data );
+    vector<TObjectOrder>* dummy = nullptr;
+    recursiveExecution( childFromTime, childToTime, childFromRow, childToRow, *dummy, needInit, calcSemanticStats, nullptr, winIndex + 1, data );
   }
 }
 
 
-void KHistogram::finishRow( CalculateData *data )
+void KHistogram::finishRow( CalculateData* data )
 {
   array<TSemanticValue, NUM_COMM_STATS> commValues;
 
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
   {
-    for ( THistogramColumn iPlane = 0; iPlane < planeTranslator->totalColumns();
-          ++iPlane )
+    for( THistogramColumn iPlane = 0; iPlane < planeTranslator->totalColumns(); ++iPlane )
     {
 #ifdef PARALLEL_ENABLED
       auto& rowValues = commBuffer->getRowValues( iPlane, data->row );
-      for ( auto it = rowValues.begin(); it != rowValues.end(); ++it )
+      for( auto it = rowValues.begin(); it != rowValues.end(); ++it )
       {
-        //values = it->second;
+        // values = it->second;
         commValues = statistics.finishRowAllComm( it->second, it->first, data->row, iPlane );
         commBuffer->setValue( iPlane, data->row, it->first, commValues );
       }
 #else
-      if ( commCube->planeWithValues( iPlane ) )
+      if( commCube->planeWithValues( iPlane ) )
       {
-        for ( TObjectOrder iColumn = 0;
-              iColumn < rowsTranslator->totalRows(); ++iColumn )
+        for( TObjectOrder iColumn = 0; iColumn < rowsTranslator->totalRows(); ++iColumn )
         {
-          if ( commCube->currentCellModified( iPlane, iColumn ) )
+          if( commCube->currentCellModified( iPlane, iColumn ) )
           {
             commValues = commCube->getCurrentValue( iPlane, iColumn );
             commValues = statistics.finishRowAllComm( commValues, iColumn, data->row, iPlane );
 
             commCube->setValue( iPlane, iColumn, commValues );
-            for ( PRV_UINT16 iStat = 0; iStat < NUM_COMM_STATS; ++iStat )
+            for( PRV_UINT16 iStat = 0; iStat < NUM_COMM_STATS; ++iStat )
             {
               commTotals->newValue( commValues[ iStat ], iStat, iColumn, iPlane );
               rowCommTotals->newValue( commValues[ iStat ], iStat, data->row, iPlane );
@@ -1697,23 +1658,22 @@ void KHistogram::finishRow( CalculateData *data )
   {
 #ifdef PARALLEL_ENABLED
     auto& rowValues = commBuffer->getRowValues( 0, data->row );
-    for ( auto it = rowValues.begin(); it != rowValues.end(); ++it )
+    for( auto it = rowValues.begin(); it != rowValues.end(); ++it )
     {
-      //values = it->second;
+      // values = it->second;
       commValues = statistics.finishRowAllComm( it->second, it->first, data->row );
       commBuffer->setValue( 0, data->row, it->first, commValues );
     }
 #else
-    for ( TObjectOrder iColumn = 0;
-          iColumn < rowsTranslator->totalRows(); ++iColumn )
+    for( TObjectOrder iColumn = 0; iColumn < rowsTranslator->totalRows(); ++iColumn )
     {
-      if ( commMatrix->currentCellModified( iColumn ) )
+      if( commMatrix->currentCellModified( iColumn ) )
       {
         commValues = commMatrix->getCurrentValue( iColumn );
         commValues = statistics.finishRowAllComm( commValues, iColumn, data->row );
 
         commMatrix->setValue( iColumn, commValues );
-        for ( PRV_UINT16 iStat = 0; iStat < NUM_COMM_STATS; ++iStat )
+        for( PRV_UINT16 iStat = 0; iStat < NUM_COMM_STATS; ++iStat )
         {
           commTotals->newValue( commValues[ iStat ], iStat, iColumn );
           rowCommTotals->newValue( commValues[ iStat ], iStat, data->row );
@@ -1728,32 +1688,31 @@ void KHistogram::finishRow( CalculateData *data )
 #endif
 
   array<TSemanticValue, NUM_SEMANTIC_STATS> semanticValues;
-  
-  if ( getThreeDimensions() )
+
+  if( getThreeDimensions() )
   {
-    for ( THistogramColumn iPlane = 0; iPlane < planeTranslator->totalColumns(); ++iPlane )
+    for( THistogramColumn iPlane = 0; iPlane < planeTranslator->totalColumns(); ++iPlane )
     {
 #ifdef PARALLEL_ENABLED
       auto& rowValues = semanticBuffer->getRowValues( iPlane, data->row );
-      for ( auto it = rowValues.begin(); it != rowValues.end(); ++it )
+      for( auto it = rowValues.begin(); it != rowValues.end(); ++it )
       {
-        //values = it->second;
+        // values = it->second;
         semanticValues = statistics.finishRowAll( it->second, it->first, data->row, iPlane );
         semanticBuffer->setValue( iPlane, data->row, it->first, semanticValues );
       }
 #else
-      if ( cube->planeWithValues( iPlane ) )
+      if( cube->planeWithValues( iPlane ) )
       {
-        for ( THistogramColumn iColumn = 0;
-              iColumn < columnTranslator->totalColumns(); ++iColumn )
+        for( THistogramColumn iColumn = 0; iColumn < columnTranslator->totalColumns(); ++iColumn )
         {
-          if ( cube->currentCellModified( iPlane, iColumn ) )
+          if( cube->currentCellModified( iPlane, iColumn ) )
           {
             semanticValues = cube->getCurrentValue( iPlane, iColumn );
             semanticValues = statistics.finishRowAll( semanticValues, iColumn, data->row, iPlane );
 
             cube->setValue( iPlane, iColumn, semanticValues );
-            for ( PRV_UINT16 iStat = 0; iStat < NUM_SEMANTIC_STATS; ++iStat )
+            for( PRV_UINT16 iStat = 0; iStat < NUM_SEMANTIC_STATS; ++iStat )
             {
               totals->newValue( semanticValues[ iStat ], iStat, iColumn, iPlane );
               rowTotals->newValue( semanticValues[ iStat ], iStat, data->row, iPlane );
@@ -1768,21 +1727,21 @@ void KHistogram::finishRow( CalculateData *data )
   {
 #ifdef PARALLEL_ENABLED
     auto& rowValues = semanticBuffer->getRowValues( 0, data->row );
-    for ( auto it = rowValues.begin(); it != rowValues.end(); ++it )
+    for( auto it = rowValues.begin(); it != rowValues.end(); ++it )
     {
-      //values = it->second;
+      // values = it->second;
       semanticValues = statistics.finishRowAll( it->second, it->first, data->row );
       semanticBuffer->setValue( 0, data->row, it->first, semanticValues );
     }
 #else
-    for ( THistogramColumn iColumn = 0; iColumn < columnTranslator->totalColumns(); ++iColumn )
+    for( THistogramColumn iColumn = 0; iColumn < columnTranslator->totalColumns(); ++iColumn )
     {
-      if ( matrix->currentCellModified( iColumn ) )
+      if( matrix->currentCellModified( iColumn ) )
       {
         semanticValues = matrix->getCurrentValue( iColumn );
         semanticValues = statistics.finishRowAll( semanticValues, iColumn, data->row );
         matrix->setValue( iColumn, semanticValues );
-        for ( PRV_UINT16 iStat = 0; iStat < NUM_SEMANTIC_STATS; ++iStat )
+        for( PRV_UINT16 iStat = 0; iStat < NUM_SEMANTIC_STATS; ++iStat )
         {
           totals->newValue( semanticValues[ iStat ], iStat, iColumn );
           rowTotals->newValue( semanticValues[ iStat ], iStat, data->row );
@@ -1796,15 +1755,15 @@ void KHistogram::finishRow( CalculateData *data )
   statistics.resetAll();
 
   // Next row
-  if ( createComms() )
+  if( createComms() )
   {
-    if ( getThreeDimensions() )
+    if( getThreeDimensions() )
       commCube->newRow();
     else
       commMatrix->newRow();
   }
 
-  if ( getThreeDimensions() )
+  if( getThreeDimensions() )
     cube->newRow();
   else
     matrix->newRow();
@@ -1831,9 +1790,7 @@ void KHistogram::getGroupsLabels( vector<string>& onVector ) const
   FunctionManagement<HistogramStatistic>::getInstance()->getNameGroups( onVector );
 }
 
-void KHistogram::getStatisticsLabels( vector<string>& onVector,
-                                      PRV_UINT32 whichGroup,
-                                      bool dummy ) const
+void KHistogram::getStatisticsLabels( vector<string>& onVector, PRV_UINT32 whichGroup, bool dummy ) const
 {
   FunctionManagement<HistogramStatistic>::getInstance()->getAll( onVector, whichGroup );
 }
@@ -1841,7 +1798,7 @@ void KHistogram::getStatisticsLabels( vector<string>& onVector,
 string KHistogram::getFirstStatistic() const
 {
   vector<string> v;
-  FunctionManagement<HistogramStatistic>::getInstance()->getAll( v, 1 ); 
+  FunctionManagement<HistogramStatistic>::getInstance()->getAll( v, 1 );
   return v[ 0 ];
 }
 
@@ -1849,7 +1806,7 @@ string KHistogram::getFirstCommStatistic() const
 {
   vector<string> v;
   FunctionManagement<HistogramStatistic>::getInstance()->getAll( v, 0 );
-  return v[ 0 ]; 
+  return v[ 0 ];
 }
 
 bool KHistogram::getControlOutOfLimits() const
@@ -1868,44 +1825,44 @@ TTimeUnit KHistogram::getTimeUnit() const
 }
 
 
-Timeline *KHistogram::getClonedWindow( Timeline *whichWindow ) const
+Timeline* KHistogram::getClonedWindow( Timeline* whichWindow ) const
 {
   return windowCloneManager( whichWindow );
 }
 
 
-KHistogram *KHistogram::clone()
+KHistogram* KHistogram::clone()
 {
-  KHistogram *clonedKHistogram = new KHistogram();
+  KHistogram* clonedKHistogram = new KHistogram();
 
   clonedKHistogram->controlWindow = nullptr;
-  clonedKHistogram->dataWindow = nullptr;
-  if ( clonedKHistogram->xtraControlWindow != nullptr )
+  clonedKHistogram->dataWindow    = nullptr;
+  if( clonedKHistogram->xtraControlWindow != nullptr )
     clonedKHistogram->xtraControlWindow = nullptr;
 
 
   clonedKHistogram->beginTime = beginTime;
-  clonedKHistogram->endTime = endTime;
+  clonedKHistogram->endTime   = endTime;
 
-  clonedKHistogram->numRows = numRows;
-  clonedKHistogram->numCols = numCols;
+  clonedKHistogram->numRows   = numRows;
+  clonedKHistogram->numCols   = numCols;
   clonedKHistogram->numPlanes = numPlanes;
 
-  clonedKHistogram->useFixedDelta = useFixedDelta;
-  clonedKHistogram->controlMin = controlMin;
-  clonedKHistogram->controlMax = controlMax;
-  clonedKHistogram->controlDelta = controlDelta;
-  clonedKHistogram->xtraControlMin = xtraControlMin;
-  clonedKHistogram->xtraControlMax = xtraControlMax;
+  clonedKHistogram->useFixedDelta    = useFixedDelta;
+  clonedKHistogram->controlMin       = controlMin;
+  clonedKHistogram->controlMax       = controlMax;
+  clonedKHistogram->controlDelta     = controlDelta;
+  clonedKHistogram->xtraControlMin   = xtraControlMin;
+  clonedKHistogram->xtraControlMax   = xtraControlMax;
   clonedKHistogram->xtraControlDelta = xtraControlDelta;
-  clonedKHistogram->dataMin = dataMin;
-  clonedKHistogram->dataMax = dataMax;
-  clonedKHistogram->burstMin = burstMin;
-  clonedKHistogram->burstMax = burstMax;
-  clonedKHistogram->commSizeMin = commSizeMin;
-  clonedKHistogram->commSizeMax = commSizeMax;
-  clonedKHistogram->commTagMin = commTagMin;
-  clonedKHistogram->commTagMax = commTagMax;
+  clonedKHistogram->dataMin          = dataMin;
+  clonedKHistogram->dataMax          = dataMax;
+  clonedKHistogram->burstMin         = burstMin;
+  clonedKHistogram->burstMax         = burstMax;
+  clonedKHistogram->commSizeMin      = commSizeMin;
+  clonedKHistogram->commSizeMax      = commSizeMax;
+  clonedKHistogram->commTagMin       = commTagMin;
+  clonedKHistogram->commTagMax       = commTagMax;
 
   clonedKHistogram->inclusive = inclusive;
 
@@ -1917,24 +1874,24 @@ KHistogram *KHistogram::clone()
           it != commStatisticFunctions.end(); it++ )
       clonedKHistogram->commStatisticFunctions.push_back( ( *it )->clone() );*/
 
-  clonedKHistogram->rowsTranslator = new RowsTranslator( *rowsTranslator );
+  clonedKHistogram->rowsTranslator   = new RowsTranslator( *rowsTranslator );
   clonedKHistogram->columnTranslator = new ColumnTranslator( *columnTranslator );
 
-  if ( clonedKHistogram->planeTranslator != nullptr )
+  if( clonedKHistogram->planeTranslator != nullptr )
     clonedKHistogram->planeTranslator = new ColumnTranslator( *planeTranslator );
 
-  if ( cube != nullptr )
+  if( cube != nullptr )
     clonedKHistogram->cube = new Cube<TSemanticValue, NUM_SEMANTIC_STATS>( *cube );
-  if ( matrix != nullptr )
+  if( matrix != nullptr )
     clonedKHistogram->matrix = new Matrix<TSemanticValue, NUM_SEMANTIC_STATS>( *matrix );
-  if ( commCube != nullptr )
+  if( commCube != nullptr )
     clonedKHistogram->commCube = new Cube<TSemanticValue, NUM_COMM_STATS>( *commCube );
-  if ( commMatrix != nullptr )
+  if( commMatrix != nullptr )
     clonedKHistogram->commMatrix = new Matrix<TSemanticValue, NUM_COMM_STATS>( *commMatrix );
 
-  clonedKHistogram->totals = new KHistogramTotals( *totals );
-  clonedKHistogram->rowTotals = new KHistogramTotals( *rowTotals );
-  clonedKHistogram->commTotals = new KHistogramTotals( *commTotals );
+  clonedKHistogram->totals        = new KHistogramTotals( *totals );
+  clonedKHistogram->rowTotals     = new KHistogramTotals( *rowTotals );
+  clonedKHistogram->commTotals    = new KHistogramTotals( *commTotals );
   clonedKHistogram->rowCommTotals = new KHistogramTotals( *rowCommTotals );
 
   clonedKHistogram->orderWindows();
