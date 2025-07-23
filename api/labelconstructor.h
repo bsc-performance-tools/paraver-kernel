@@ -75,6 +75,10 @@ class LabelConstructor
 
     static std::string histoTotalLabel( THistoTotals whichTotal );
 
+    static std::string propertyToLabel (SyncPropertiesType prop);
+
+    static SyncPropertiesType labelToProperty (const std::string &label);
+
     static std::string timeLabel( TTime value, TTimeUnit unit, PRV_UINT32 precision );
 
     static std::string timeLabel( ptime value, PRV_UINT32 precision );

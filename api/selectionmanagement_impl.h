@@ -22,93 +22,82 @@
 \*****************************************************************************/
 
 
-#include <algorithm>
-#include <functional>
-#include "trace.h"
 #include "histogramtotals.h"
 #include "paraverkernelexception.h"
+#include "trace.h"
 
-template < typename SelType, typename LevelType >
-SelectionManagement< SelType, LevelType >::SelectionManagement()
+#include <algorithm>
+#include <functional>
+
+template<typename SelType, typename LevelType>
+SelectionManagement<SelType, LevelType>::SelectionManagement()
 {
 }
 
-template < typename SelType, typename LevelType >
-SelectionManagement< SelType, LevelType >::SelectionManagement( const SelectionManagement& whichSelection )
+template<typename SelType, typename LevelType>
+SelectionManagement<SelType, LevelType>::SelectionManagement( const SelectionManagement &whichSelection )
 {
-  for ( size_t i = 0 ; i < whichSelection.selectedSet.size(); ++i )
+  for( size_t i = 0; i < whichSelection.selectedSet.size(); ++i )
   {
     selectedSet.push_back( whichSelection.selectedSet[ i ] );
   }
-  for ( size_t i = 0 ; i < whichSelection.selected.size(); ++i )
+  for( size_t i = 0; i < whichSelection.selected.size(); ++i )
   {
     selected.push_back( whichSelection.selected[ i ] );
   }
 }
 
 
-template < typename SelType, typename LevelType >
-SelectionManagement< SelType, LevelType >::~SelectionManagement()
+template<typename SelType, typename LevelType>
+SelectionManagement<SelType, LevelType>::~SelectionManagement()
 {
 }
 
 
-template <>
-inline void SelectionManagement< TObjectOrder, TTraceLevel >::init( Trace *trace )
+template<>
+inline void SelectionManagement<TObjectOrder, TTraceLevel>::init( Trace *trace )
 {
   selected.clear();
   selectedSet.clear();
 
-  std::vector< bool > auxSelected;
+  std::vector<bool> auxSelected;
 
-  for ( TTraceLevel level = TTraceLevel::NONE; level <= TTraceLevel::CPU; ++level )
+  for( TTraceLevel level = TTraceLevel::NONE; level <= TTraceLevel::CPU; ++level )
   {
     auxSelected.clear();
-    selected.push_back( std::vector< bool >( ) );
-    selectedSet.push_back( std::vector< TObjectOrder >( ) );
+    selected.push_back( std::vector<bool>() );
+    selectedSet.push_back( std::vector<TObjectOrder>() );
 
-    switch ( level )
+    switch( level )
     {
       case TTraceLevel::APPLICATION:
-        auxSelected.insert( auxSelected.begin(),
-                            ( size_t ) trace->totalApplications(),
-                            true );
+        auxSelected.insert( auxSelected.begin(), (size_t)trace->totalApplications(), true );
         setSelected( auxSelected, level );
         break;
 
       case TTraceLevel::TASK:
-        auxSelected.insert( auxSelected.begin(),
-                            ( size_t ) trace->totalTasks(),
-                            true );
+        auxSelected.insert( auxSelected.begin(), (size_t)trace->totalTasks(), true );
         setSelected( auxSelected, level );
         break;
 
       case TTraceLevel::THREAD:
-        auxSelected.insert( auxSelected.begin(),
-                            ( size_t ) trace->totalThreads(),
-                            true );
+        auxSelected.insert( auxSelected.begin(), (size_t)trace->totalThreads(), true );
         setSelected( auxSelected, level );
         break;
 
       case TTraceLevel::NODE:
-        auxSelected.insert( auxSelected.begin(),
-                            trace->totalNodes(),
-                            true );
+        auxSelected.insert( auxSelected.begin(), trace->totalNodes(), true );
         setSelected( auxSelected, level );
         break;
 
       case TTraceLevel::CPU:
-        auxSelected.insert( auxSelected.begin(),
-                            trace->totalCPUs(),
-                            true );
+        auxSelected.insert( auxSelected.begin(), trace->totalCPUs(), true );
         setSelected( auxSelected, level );
         break;
 
-//    NONE, WORKLOAD, SYSTEM
+        //    NONE, WORKLOAD, SYSTEM
       default:
-        auxSelected.insert( auxSelected.begin(),
-                            1,
-                            true );
+        auxSelected.insert( auxSelected.begin(), 1, true );
         setSelected( auxSelected, level );
         break;
     }
@@ -116,22 +105,22 @@ inline void SelectionManagement< TObjectOrder, TTraceLevel >::init( Trace *trace
 }
 
 
-template < typename SelType, typename LevelType >
-void SelectionManagement< SelType, LevelType >::init( HistogramTotals *totals,
-    PRV_UINT16 idStat,
-    THistogramColumn numColumns,
-    THistogramColumn whichPlane )
+template<typename SelType, typename LevelType>
+void SelectionManagement<SelType, LevelType>::init( HistogramTotals *totals,
+                                                    PRV_UINT16 idStat,
+                                                    THistogramColumn numColumns,
+                                                    THistogramColumn whichPlane )
 {
   selected.clear();
   selectedSet.clear();
 
-  selected.push_back( std::vector< bool >( ) );
-  selectedSet.push_back( std::vector< SelType >( ) );
+  selected.push_back( std::vector<bool>() );
+  selectedSet.push_back( std::vector<SelType>() );
 
-  std::vector< bool > auxSelected;
-  for ( THistogramColumn i = 0; i < numColumns; ++i )
+  std::vector<bool> auxSelected;
+  for( THistogramColumn i = 0; i < numColumns; ++i )
   {
-    if ( totals->getTotal( idStat, i, whichPlane ) == 0 )
+    if( totals->getTotal( idStat, i, whichPlane ) == 0 )
       auxSelected.push_back( false );
     else
       auxSelected.push_back( true );
@@ -141,27 +130,26 @@ void SelectionManagement< SelType, LevelType >::init( HistogramTotals *totals,
 }
 
 
-template < typename SelType, typename LevelType >
+template<typename SelType, typename LevelType>
 void SelectionManagement<SelType, LevelType>::copy( const SelectionManagement &whichSelection )
 {
-  selected = whichSelection.selected;
+  selected    = whichSelection.selected;
   selectedSet = whichSelection.selectedSet;
 }
 
 
-template < typename SelType, typename LevelType >
-bool SelectionManagement<SelType, LevelType>:: operator== ( const SelectionManagement<SelType, LevelType> &whichSelection ) const
+template<typename SelType, typename LevelType>
+bool SelectionManagement<SelType, LevelType>::operator==( const SelectionManagement<SelType, LevelType> &whichSelection ) const
 {
   bool equal = false;
 
-  if ( selected.size()    == whichSelection.selected.size() &&
-       selectedSet.size() == whichSelection.selectedSet.size() )
+  if( selected.size() == whichSelection.selected.size() && selectedSet.size() == whichSelection.selectedSet.size() )
   {
-    std::vector< std::vector< bool > >::const_iterator it1 = whichSelection.selected.begin();
-    for ( std::vector< std::vector< bool > >::const_iterator it2 = selected.begin(); it2 != selected.end(); ++it2 )
+    std::vector<std::vector<bool>>::const_iterator it1 = whichSelection.selected.begin();
+    for( std::vector<std::vector<bool>>::const_iterator it2 = selected.begin(); it2 != selected.end(); ++it2 )
     {
-      equal = std::equal( (*it1).begin(), (*it1).end(), (*it2).begin() );
-      if ( !equal )
+      equal = std::equal( ( *it1 ).begin(), ( *it1 ).end(), ( *it2 ).begin() );
+      if( !equal )
       {
         break;
       }
@@ -171,23 +159,23 @@ bool SelectionManagement<SelType, LevelType>:: operator== ( const SelectionManag
       }
     }
 
-    if ( equal )
+    if( equal )
     {
-      for ( size_t i = 0 ; i < selectedSet.size(); ++i ) // O( selected.size() )
+      for( size_t i = 0; i < selectedSet.size(); ++i ) // O( selected.size() )
       {
         equal = whichSelection.selectedSet[ i ].size() == selectedSet[ i ].size();
-        if ( !equal )
+        if( !equal )
         {
           break;
         }
       }
 
-      if ( equal ) // O( selected.size() * num_elems )
+      if( equal ) // O( selected.size() * num_elems )
       {
-        for ( size_t i = 0 ; i < selectedSet.size(); ++i )
+        for( size_t i = 0; i < selectedSet.size(); ++i )
         {
           equal = std::equal( selectedSet[ i ].begin(), selectedSet[ i ].end(), whichSelection.selectedSet[ i ].begin() );
-          if ( !equal )
+          if( !equal )
           {
             break;
           }
@@ -200,37 +188,35 @@ bool SelectionManagement<SelType, LevelType>:: operator== ( const SelectionManag
 }
 
 
-template < typename SelType, typename LevelType >
-void SelectionManagement< SelType, LevelType >::setSelected( std::vector< bool > &selection, LevelType level )
+template<typename SelType, typename LevelType>
+void SelectionManagement<SelType, LevelType>::setSelected( std::vector<bool> &selection, LevelType level )
 {
   selectedSet[ static_cast<size_t>( level ) ].clear();
-  if ( selected[ static_cast<size_t>( level ) ].size() >= selection.size() )
+  if( selected[ static_cast<size_t>( level ) ].size() >= selection.size() )
   {
     std::copy( selection.begin(), selection.end(), selected[ static_cast<size_t>( level ) ].begin() );
   }
   else
   {
     size_t size = selected[ static_cast<size_t>( level ) ].size();
-    if ( size > 0 )
+    if( size > 0 )
       selected[ static_cast<size_t>( level ) ].resize( size );
     selected[ static_cast<size_t>( level ) ] = selection;
   }
 
-  if ( !selected[ static_cast<size_t>( level ) ].empty() )
+  if( !selected[ static_cast<size_t>( level ) ].empty() )
   {
-    for ( size_t current = 0; current < selected[ static_cast<size_t>( level ) ].size(); ++current )
+    for( size_t current = 0; current < selected[ static_cast<size_t>( level ) ].size(); ++current )
     {
-      if ( selected[ static_cast<size_t>( level ) ][ current ] )
+      if( selected[ static_cast<size_t>( level ) ][ current ] )
         selectedSet[ static_cast<size_t>( level ) ].push_back( current );
     }
   }
 }
 
 
-template < typename SelType, typename LevelType >
-void SelectionManagement< SelType, LevelType >::setSelected( std::vector< SelType > &selection,
-    SelType maxElems,
-    LevelType level )
+template<typename SelType, typename LevelType>
+void SelectionManagement<SelType, LevelType>::setSelected( std::vector<SelType> &selection, SelType maxElems, LevelType level )
 {
   // Prepare vectors for update
   selected[ static_cast<size_t>( level ) ].clear();
@@ -242,16 +228,16 @@ void SelectionManagement< SelType, LevelType >::setSelected( std::vector< SelTyp
   it = std::find_if( selectedSet[ static_cast<size_t>( level ) ].begin(),
                      selectedSet[ static_cast<size_t>( level ) ].end(),
                      std::bind2nd( std::greater_equal<SelType>(), maxElems ) );
-  if ( it != selectedSet[ static_cast<size_t>( level ) ].end() )
+  if( it != selectedSet[ static_cast<size_t>( level ) ].end() )
     selectedSet[ static_cast<size_t>( level ) ].erase( it, selectedSet[ static_cast<size_t>( level ) ].end() );
 
   // Any reamining row?
-  if ( !selectedSet[ static_cast<size_t>( level ) ].empty() )
+  if( !selectedSet[ static_cast<size_t>( level ) ].empty() )
   {
     it = selectedSet[ static_cast<size_t>( level ) ].begin();
-    for ( size_t current = 0; current < ( size_t ) maxElems; ++current )
+    for( size_t current = 0; current < (size_t)maxElems; ++current )
     {
-      if ( it != selectedSet[ static_cast<size_t>( level ) ].end() && current == ( size_t )*it )
+      if( it != selectedSet[ static_cast<size_t>( level ) ].end() && current == (size_t)*it )
       {
         selected[ static_cast<size_t>( level ) ].push_back( true );
         ++it;
@@ -264,130 +250,117 @@ void SelectionManagement< SelType, LevelType >::setSelected( std::vector< SelTyp
   }
 }
 
-template < typename SelType, typename LevelType >
-void SelectionManagement< SelType, LevelType >::setAllSelected( std::vector<std::vector< SelType >> &selection )
+template<typename SelType, typename LevelType>
+void SelectionManagement<SelType, LevelType>::setAllSelected( std::vector<std::vector<SelType>> &selection )
 {
-
-  for ( size_t itSet = 0 ; itSet < selected.size(); ++itSet )
+  for( size_t itSet = 0; itSet < selected.size(); ++itSet )
   {
-    selectedSet[ static_cast<size_t>( itSet ) ] = selection[itSet];
+    selectedSet[ static_cast<size_t>( itSet ) ] = selection[ itSet ];
 
     auto it = selectedSet[ static_cast<size_t>( itSet ) ].begin();
 
-    
-    for ( size_t current = 0; current < ( size_t ) selected[ static_cast<size_t>( itSet ) ].size(); ++current )
+
+    for( size_t current = 0; current < (size_t)selected[ static_cast<size_t>( itSet ) ].size(); ++current )
     {
-      if ( it != selectedSet[ static_cast<size_t>( itSet ) ].end() && current == ( size_t )*it )
+      if( it != selectedSet[ static_cast<size_t>( itSet ) ].end() && current == (size_t)*it )
       {
-        selected[itSet][ static_cast<size_t>( current ) ] =  true ;
+        selected[ itSet ][ static_cast<size_t>( current ) ] = true;
         ++it;
       }
       else
       {
-        selected[itSet][ static_cast<size_t>( current ) ] = false ;
+        selected[ itSet ][ static_cast<size_t>( current ) ] = false;
       }
     }
-
-
   }
 }
 
-template < typename SelType, typename LevelType >
-bool SelectionManagement< SelType, LevelType >::isSelectedPosition( SelType whichSelected,
-    LevelType level ) const
+template<typename SelType, typename LevelType>
+bool SelectionManagement<SelType, LevelType>::isSelectedPosition( SelType whichSelected, LevelType level ) const
 {
   return selected[ static_cast<size_t>( level ) ][ whichSelected ];
 }
 
 
-template < typename SelType, typename LevelType >
-bool SelectionManagement< SelType, LevelType >::areAllSelected( LevelType level ) const
+template<typename SelType, typename LevelType>
+bool SelectionManagement<SelType, LevelType>::areAllSelected( LevelType level ) const
 {
   return selected[ static_cast<size_t>( level ) ].size() == selectedSet[ static_cast<size_t>( level ) ].size();
 }
 
 
-template < typename SelType, typename LevelType >
-void SelectionManagement< SelType, LevelType >::getSelected( std::vector< bool > &whichSelected,
-    LevelType level ) const
+template<typename SelType, typename LevelType>
+void SelectionManagement<SelType, LevelType>::getSelected( std::vector<bool> &whichSelected, LevelType level ) const
 {
   whichSelected = selected[ static_cast<size_t>( level ) ];
 }
 
 
-template < typename SelType, typename LevelType >
-void SelectionManagement< SelType, LevelType >::getSelected( std::vector< bool > &whichSelected,
-    SelType first,
-    SelType last,
-    LevelType level ) const
+template<typename SelType, typename LevelType>
+void SelectionManagement<SelType, LevelType>::getSelected( std::vector<bool> &whichSelected, SelType first, SelType last, LevelType level ) const
 {
   whichSelected.clear();
 
-  for ( SelType i = first; i <= last; ++ i )
+  for( SelType i = first; i <= last; ++i )
     whichSelected.push_back( ( selected[ static_cast<size_t>( level ) ] )[ i ] );
 }
 
-template < typename SelType, typename LevelType >
-void SelectionManagement< SelType, LevelType >::getSelected( std::vector< SelType > &whichSelected,
-    LevelType level ) const
+template<typename SelType, typename LevelType>
+void SelectionManagement<SelType, LevelType>::getSelected( std::vector<SelType> &whichSelected, LevelType level ) const
 {
   whichSelected = selectedSet[ static_cast<size_t>( level ) ];
 }
 
 
-template < typename SelType, typename LevelType >
-void SelectionManagement< SelType, LevelType >::getSelected( std::vector< SelType > &whichSelected,
-    SelType first,
-    SelType last,
-    LevelType level ) const
+template<typename SelType, typename LevelType>
+void SelectionManagement<SelType, LevelType>::getSelected( std::vector<SelType> &whichSelected, SelType first, SelType last, LevelType level ) const
 {
   whichSelected.clear();
-  typename std::vector< SelType >::const_iterator it;
-  for ( it = selectedSet[ static_cast<size_t>( level ) ].begin(); it != selectedSet[ static_cast<size_t>( level ) ].end(); ++it )
+  typename std::vector<SelType>::const_iterator it;
+  for( it = selectedSet[ static_cast<size_t>( level ) ].begin(); it != selectedSet[ static_cast<size_t>( level ) ].end(); ++it )
   {
-    if ( ( *it >= first ) && ( *it <= last ) )
+    if( ( *it >= first ) && ( *it <= last ) )
       whichSelected.push_back( *it );
-    if ( *it == last )
+    if( *it == last )
       break;
   }
 }
 
-template < typename SelType, typename LevelType >
-void SelectionManagement< SelType, LevelType >::getAllSelected( std::vector<std::vector< SelType >> &selection ) const
+template<typename SelType, typename LevelType>
+void SelectionManagement<SelType, LevelType>::getAllSelected( std::vector<std::vector<SelType>> &selection ) const
 {
   selection = selectedSet;
-
 }
 
-template < typename SelType, typename LevelType >
-void SelectionManagement< SelType, LevelType >::setIntersection(const SelectionManagement< SelType, LevelType > &selection)
+template<typename SelType, typename LevelType>
+void SelectionManagement<SelType, LevelType>::setIntersection( const SelectionManagement<SelType, LevelType> &selection )
 {
-
-  for ( size_t itSet = 0 ; itSet < selected.size(); ++itSet )
+  for( size_t itSet = 0; itSet < selected.size(); ++itSet )
   {
-    std::vector< bool > selectionDerived;
-    selection.getSelected(selectionDerived,static_cast<LevelType>( itSet ) );
+    std::vector<bool> selectionDerived;
+    selection.getSelected( selectionDerived, static_cast<LevelType>( itSet ) );
 
-    for ( size_t itSelection = 0 ; itSelection < selected[itSet].size(); ++itSelection )
+    for( size_t itSelection = 0; itSelection < selected[ itSet ].size(); ++itSelection )
     {
-      if( selected[itSet][itSelection] != selectionDerived[itSelection] )
+      if( selected[ itSet ][ itSelection ] != selectionDerived[ itSelection ] )
       {
-        selected[itSet][itSelection] = false;
-        auto& vec = selectedSet[itSet];
-        vec.erase(std::remove(vec.begin(), vec.end(), itSelection), vec.end());
-      }          
+        selected[ itSet ][ itSelection ] = false;
+        auto &vec                        = selectedSet[ itSet ];
+        vec.erase( std::remove( vec.begin(), vec.end(), itSelection ), vec.end() );
+      }
     }
-
   }
 }
 
 
-
-template < typename SelType, typename LevelType >
-SelType SelectionManagement< SelType, LevelType >::shiftFirst( SelType whichFirst, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, LevelType level ) const
+template<typename SelType, typename LevelType>
+SelType SelectionManagement<SelType, LevelType>::shiftFirst( SelType whichFirst,
+                                                             PRV_INT64 shiftAmount,
+                                                             PRV_INT64 &appliedAmount,
+                                                             LevelType level ) const
 {
-  const typename std::vector<SelType>& tmpSelectedSet = selectedSet[ static_cast<size_t>( level ) ];
-  const std::vector<bool>& tmpSelected = selected[ static_cast<size_t>( level ) ];
+  const typename std::vector<SelType> &tmpSelectedSet = selectedSet[ static_cast<size_t>( level ) ];
+  const std::vector<bool> &tmpSelected                = selected[ static_cast<size_t>( level ) ];
 
   if( whichFirst >= tmpSelected.size() )
     throw ParaverKernelException( TErrorCode::indexOutOfRange );
@@ -426,11 +399,14 @@ SelType SelectionManagement< SelType, LevelType >::shiftFirst( SelType whichFirs
 }
 
 
-template < typename SelType, typename LevelType >
-SelType SelectionManagement< SelType, LevelType >::shiftLast( SelType whichLast, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, LevelType level ) const
+template<typename SelType, typename LevelType>
+SelType SelectionManagement<SelType, LevelType>::shiftLast( SelType whichLast,
+                                                            PRV_INT64 shiftAmount,
+                                                            PRV_INT64 &appliedAmount,
+                                                            LevelType level ) const
 {
-  const typename std::vector<SelType>& tmpSelectedSet = selectedSet[ static_cast<size_t>( level ) ];
-  const std::vector<bool>& tmpSelected = selected[ static_cast<size_t>( level ) ];
+  const typename std::vector<SelType> &tmpSelectedSet = selectedSet[ static_cast<size_t>( level ) ];
+  const std::vector<bool> &tmpSelected                = selected[ static_cast<size_t>( level ) ];
 
   if( whichLast >= tmpSelected.size() )
     throw ParaverKernelException( TErrorCode::indexOutOfRange );

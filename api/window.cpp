@@ -84,8 +84,7 @@ TimelineProxy::TimelineProxy()
   init();
 }
 
-TimelineProxy::TimelineProxy( KernelConnection *whichKernel, Trace *whichTrace ):
-  Timeline( whichKernel ), myTrace( whichTrace )
+TimelineProxy::TimelineProxy (KernelConnection *whichKernel, Trace *whichTrace) : Timeline (whichKernel), myTrace (whichTrace)
 {
   parent1 = nullptr;
   parent2 = nullptr;
@@ -94,10 +93,9 @@ TimelineProxy::TimelineProxy( KernelConnection *whichKernel, Trace *whichTrace )
   init();
 }
 
-TimelineProxy::TimelineProxy( KernelConnection *whichKernel,
+TimelineProxy::TimelineProxy (KernelConnection *whichKernel,
                               Timeline *whichParent1,
-                              Timeline *whichParent2 ):
-  Timeline( whichKernel )
+                              Timeline *whichParent2) : Timeline (whichKernel)
 {
   parent1 = whichParent1;
   parent1->setChild( this );
@@ -363,7 +361,7 @@ Timeline *TimelineProxy::clone( bool recursiveClone )
     clonedWindow->sync = sync;
     clonedWindow->syncGroup = syncGroup;
     if( clonedWindow->sync )
-      SyncWindows::getInstance()->addWindow( clonedWindow, syncGroup );
+      SyncWindows::getInstance ()->addWindow ((Timeline *)clonedWindow, syncGroup);
   }
 
   // CFG4D
@@ -432,19 +430,18 @@ set<Histogram *> TimelineProxy::getHistograms() const
   return usedByHistogram;
 }
 
-
-void TimelineProxy::setWindowBeginTime( TRecordTime whichTime, bool isBroadcast )
+void TimelineProxy::setWindowBeginTime (TRecordTime whichTime)
 {
   winBeginTime = whichTime;
-  if( sync && !isBroadcast )
-    SyncWindows::getInstance()->broadcastTime( syncGroup, this, winBeginTime, winEndTime );
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_TIME))
+    SyncWindows::getInstance ()->broadcastTimeAll (syncGroup, winBeginTime, winEndTime);
 }
 
-void TimelineProxy::setWindowEndTime( TRecordTime whichTime, bool isBroadcast )
+void TimelineProxy::setWindowEndTime (TRecordTime whichTime)
 {
   winEndTime = whichTime;
-  if( sync && !isBroadcast )
-    SyncWindows::getInstance()->broadcastTime( syncGroup, this, winBeginTime, winEndTime );
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_TIME))
+    SyncWindows::getInstance ()->broadcastTimeAll (syncGroup, winBeginTime, winEndTime);
 }
 
 TRecordTime TimelineProxy::getWindowBeginTime() const
@@ -640,11 +637,15 @@ bool TimelineProxy::getComputeYMaxOnInit() const
 void TimelineProxy::setMaximumY( TSemanticValue whichMax )
 {
   maximumY = whichMax;
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_MAX))
+    SyncWindows::getInstance ()->broadcastMaxAll (syncGroup, whichMax);
 }
 
 void TimelineProxy::setMinimumY( TSemanticValue whichMin )
 {
   minimumY = whichMin;
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_MIN))
+    SyncWindows::getInstance ()->broadcastMinAll (syncGroup, whichMin);
 }
 
 TSemanticValue TimelineProxy::getMaximumY()
@@ -1087,7 +1088,7 @@ PRV_UINT16 TimelineProxy::getPosX() const
   return posX;
 }
 
-void TimelineProxy::setPosX( PRV_UINT16 whichPos )
+void TimelineProxy::setPosX (PRV_UINT16 whichPos, bool broadcastValue)
 {
   posX = whichPos;
 }
@@ -1097,7 +1098,7 @@ PRV_UINT16 TimelineProxy::getPosY() const
   return posY;
 }
 
-void TimelineProxy::setPosY( PRV_UINT16 whichPos )
+void TimelineProxy::setPosY (PRV_UINT16 whichPos, bool broadcastValue)
 {
   posY = whichPos;
 }
@@ -1107,9 +1108,15 @@ PRV_UINT16 TimelineProxy::getWidth() const
   return width;
 }
 
-void TimelineProxy::setWidth( PRV_UINT16 whichPos )
+void TimelineProxy::setWidth (PRV_UINT16 whichPos, bool broadcastProperty)
 {
-  width = whichPos;
+  if (width != whichPos)
+  {
+    width = whichPos;
+
+    if (sync && broadcastProperty && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_WINDOWS_SIZE))
+      SyncWindows::getInstance ()->broadcastSizeAll (syncGroup, width, height);
+  }
 }
 
 PRV_UINT16 TimelineProxy::getHeight() const
@@ -1117,9 +1124,15 @@ PRV_UINT16 TimelineProxy::getHeight() const
   return height;
 }
 
-void TimelineProxy::setHeight( PRV_UINT16 whichPos )
+void TimelineProxy::setHeight (PRV_UINT16 whichPos, bool broadcastProperty)
 {
-  height = whichPos;
+  if (height != whichPos)
+  {
+    height = whichPos;
+
+    if (sync && broadcastProperty && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_WINDOWS_SIZE))
+      SyncWindows::getInstance ()->broadcastSizeAll (syncGroup, width, height);
+  }
 }
 
 void TimelineProxy::setDrawModeObject( DrawModeMethod method )
@@ -1346,11 +1359,25 @@ bool TimelineProxy::getBackgroundAsZero() const
 void TimelineProxy::setCustomBackgroundColor( rgb whichColor )
 {
   mySemanticColor.setCustomBackgroundColor( whichColor );
+
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_COLOR_PALETTE))
+    SyncWindows::getInstance ()->broadcastColorPaletteAll (syncGroup, std::nullopt, whichColor, std::nullopt, std::nullopt);
 }
 
 void TimelineProxy::setCustomAxisColor( rgb whichColor )
 {
   mySemanticColor.setCustomAxisColor( whichColor );
+
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_COLOR_PALETTE))
+    SyncWindows::getInstance ()->broadcastColorPaletteAll (syncGroup, std::nullopt, std::nullopt, whichColor, std::nullopt);
+}
+
+void TimelineProxy::setCustomPalette (const std::map<TSemanticValue, rgb> &whichPalette)
+{
+  this->getSemanticColor ().setCustomPalette (whichPalette);
+
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_COLOR_PALETTE))
+    SyncWindows::getInstance ()->broadcastColorPaletteAll (syncGroup, whichPalette, std::nullopt, std::nullopt, std::nullopt);
 }
 
 void TimelineProxy::setCustomPunctualColor( rgb whichColor )
@@ -1361,6 +1388,9 @@ void TimelineProxy::setCustomPunctualColor( rgb whichColor )
 void TimelineProxy::setBackgroundAsZero( bool newValue )
 {
   backgroundAsZero = newValue;
+
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_COLOR_PALETTE))
+    SyncWindows::getInstance ()->broadcastColorPaletteAll (syncGroup, std::nullopt, std::nullopt, std::nullopt, newValue);
 }
 
 bool TimelineProxy::getChanged() const
@@ -1442,7 +1472,7 @@ void TimelineProxy::nextZoom()
     TTime nanoBeginTime, nanoEndTime;
     nanoBeginTime = traceUnitsToCustomUnits( zoomHistory.getFirstDimension().first, NS );
     nanoEndTime = traceUnitsToCustomUnits( zoomHistory.getFirstDimension().second, NS );
-    SyncWindows::getInstance()->broadcastTime( syncGroup, this, nanoBeginTime, nanoEndTime );
+    SyncWindows::getInstance ()->broadcastTimeAll (syncGroup, nanoBeginTime, nanoEndTime);
   }
 }
 
@@ -1454,38 +1484,45 @@ void TimelineProxy::prevZoom()
     TTime nanoBeginTime, nanoEndTime;
     nanoBeginTime = traceUnitsToCustomUnits( zoomHistory.getFirstDimension().first, NS );
     nanoEndTime = traceUnitsToCustomUnits( zoomHistory.getFirstDimension().second, NS );
-    SyncWindows::getInstance()->broadcastTime( syncGroup, this, nanoBeginTime, nanoEndTime );
+    SyncWindows::getInstance ()->broadcastTimeAll (syncGroup, nanoBeginTime, nanoEndTime);
   }
 }
 
-void TimelineProxy::addZoom( TTime beginTime, TTime endTime,
-                           TObjectOrder beginObject, TObjectOrder endObject,
-                           bool isBroadCast )
+void TimelineProxy::addZoom (TTime beginTime, TTime endTime,
+                             TObjectOrder beginObject, TObjectOrder endObject)
 {
-  if( sync && !isBroadCast )
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_TIME))
   {
     TTime nanoBeginTime, nanoEndTime;
     nanoBeginTime = traceUnitsToCustomUnits( beginTime, NS );
     nanoEndTime = traceUnitsToCustomUnits( endTime, NS );
-    SyncWindows::getInstance()->broadcastTime( syncGroup, this, nanoBeginTime, nanoEndTime );
+    SyncWindows::getInstance ()->broadcastTimeAll (syncGroup, nanoBeginTime, nanoEndTime);
+  }
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_OBJECT_ZOOM))
+  {
+    SyncWindows::getInstance ()->broadcastObjectZoomAll (syncGroup, beginObject, endObject);
   }
   zoomHistory.addZoom( beginTime, endTime, beginObject, endObject );
 }
 
-void TimelineProxy::addZoom( TTime beginTime, TTime endTime, bool isBroadCast )
+void TimelineProxy::addZoom (TTime beginTime, TTime endTime)
 {
-  if( sync && !isBroadCast )
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_TIME))
   {
     TTime nanoBeginTime, nanoEndTime;
     nanoBeginTime = traceUnitsToCustomUnits( beginTime, NS );
     nanoEndTime = traceUnitsToCustomUnits( endTime, NS );
-    SyncWindows::getInstance()->broadcastTime( syncGroup, this, nanoBeginTime, nanoEndTime );
+    SyncWindows::getInstance ()->broadcastTimeAll (syncGroup, nanoBeginTime, nanoEndTime);
   }
   zoomHistory.addZoom( beginTime, endTime );
 }
 
-void TimelineProxy::addZoom( TObjectOrder beginObject, TObjectOrder endObject )
+void TimelineProxy::addZoom (TObjectOrder beginObject, TObjectOrder endObject)
 {
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_OBJECT_ZOOM))
+  {
+    SyncWindows::getInstance ()->broadcastObjectZoomAll (syncGroup, beginObject, endObject);
+  }
   zoomHistory.addZoom( beginObject, endObject );
 }
 
@@ -1531,16 +1568,16 @@ pair<TObjectOrder, TObjectOrder> TimelineProxy::getNextZoomSecondDimension() con
 
 void TimelineProxy::addToSyncGroup( TGroupId whichGroup )
 {
-  SyncWindows::getInstance()->removeWindow( this, syncGroup );
+  SyncWindows::getInstance ()->removeWindow ((Timeline *)this, syncGroup);
   syncGroup = whichGroup;
-  sync = SyncWindows::getInstance()->addWindow( this, whichGroup );
+  sync = SyncWindows::getInstance ()->addWindow ((Timeline *)this, whichGroup);
 }
 
 void TimelineProxy::removeFromSync()
 {
   if( !sync )
     return;
-  SyncWindows::getInstance()->removeWindow( this, syncGroup );
+  SyncWindows::getInstance ()->removeWindow ((Timeline *)this, syncGroup);
   sync = false;
 }
 
@@ -1564,15 +1601,25 @@ SelectionManagement< TObjectOrder, TTraceLevel > *TimelineProxy::getSelectedRows
   return &selectedRow;
 }
 
-void TimelineProxy::setSelectedRows( TTraceLevel onLevel, vector< bool > &selected )
+void TimelineProxy::setSelectedRows (TTraceLevel onLevel, vector<bool> &selected)
 {
   if( selected.size() == myTrace->getLevelObjects( onLevel ) )
+  {
     selectedRow.setSelected( selected, onLevel );
+
+    if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_OBJECT_SELECTION))
+      SyncWindows::getInstance ()->broadcastObjectSelectionAll (syncGroup, onLevel, selected);
+  }
 }
 
-void TimelineProxy::setSelectedRows( TTraceLevel onLevel, vector< TObjectOrder > &selected )
+void TimelineProxy::setSelectedRows (TTraceLevel onLevel, vector<TObjectOrder> &selected)
 {
   selectedRow.setSelected( selected, myTrace->getLevelObjects( onLevel ), onLevel );
+  vector<bool> tmpSelectedRows;
+  selectedRow.getSelected (tmpSelectedRows, onLevel);
+
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_OBJECT_SELECTION))
+    SyncWindows::getInstance ()->broadcastObjectSelectionAll (syncGroup, onLevel, tmpSelectedRows);
 }
 
 
@@ -2171,6 +2218,33 @@ TCFGS4DGroup TimelineProxy::getCFGS4DGroupLink( std::string originalName ) const
     return it->second;
 
   return NO_GROUP_LINK;
+}
+
+void TimelineProxy::registerResizeFunctionCallback (const std::function<void (int, int)> &callbackFunction)
+{
+  resizeFunctionCallback = callbackFunction;
+}
+
+void TimelineProxy::onResizeFunctionCallback (int height, int width)
+{
+  if (resizeFunctionCallback != nullptr)
+    resizeFunctionCallback (height, width);
+}
+
+void TimelineProxy::registerPositionFunctionCallback (const std::function<void (int, int)> &callbackFunction)
+{
+  positionFunctionCallback = callbackFunction;
+}
+void TimelineProxy::onPositionFunctionCallback (int height, int width)
+{
+  if (positionFunctionCallback != nullptr)
+    positionFunctionCallback (height, width);
+}
+
+void TimelineProxy::addOffsetPosition (int posXDiff, int posYDiff)
+{
+  if (sync && SyncWindows::getInstance ()->isPropertySelected (syncGroup, SyncPropertiesType::SYNC_WINDOWS_POSITION))
+    SyncWindows::getInstance ()->broadcastPositionAll (syncGroup, posYDiff, posXDiff);
 }
 
 #ifdef _MSC_VER

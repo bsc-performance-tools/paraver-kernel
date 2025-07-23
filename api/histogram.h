@@ -52,8 +52,8 @@ class Histogram
     Histogram( KernelConnection *whichKernel );
     virtual ~Histogram() {}
 
-    virtual void setWindowBeginTime( TRecordTime whichTime, bool isBroadcast = false ) {};
-    virtual void setWindowEndTime( TRecordTime whichTime, bool isBroadcast = false ) {};
+    virtual void setWindowBeginTime (TRecordTime whichTime){};
+    virtual void setWindowEndTime (TRecordTime whichTime){};
 
     virtual bool getThreeDimensions() const = 0;
 
@@ -184,28 +184,28 @@ class Histogram
     {
       return 0;
     }
-    virtual void setPosX( PRV_UINT16 whichPos )
+    virtual void setPosX (PRV_UINT16 whichPos, bool broadcastValue = true)
     {}
 
     virtual PRV_UINT16 getPosY() const
     {
       return 0;
     }
-    virtual void setPosY( PRV_UINT16 whichPos )
+    virtual void setPosY (PRV_UINT16 whichPos, bool broadcastValue = true)
     {}
 
     virtual PRV_UINT16 getWidth() const
     {
       return 600;
     }
-    virtual void setWidth( PRV_UINT16 whichPos )
+    virtual void setWidth (PRV_UINT16 whichPos, bool broadcastValue = true)
     {}
 
     virtual PRV_UINT16 getHeight() const
     {
       return 300;
     }
-    virtual void setHeight( PRV_UINT16 whichPos )
+    virtual void setHeight (PRV_UINT16 whichPos, bool broadcastValue = true)
     {}
     virtual HistogramTotals *getTotals( const std::string& whichStat ) const
     {
@@ -351,6 +351,22 @@ class Histogram
     virtual PRV_INT32 getCommSelectedPlane() const
     {
       return 0;
+    }
+    virtual void registerResizeFunctionCallback (const std::function<void (int, int)> &callbackFunction)
+    {
+    }
+    virtual void onResizeFunctionCallback (int height, int width)
+    {
+    }
+
+    virtual void registerPositionFunctionCallback (const std::function<void (int, int)> &callbackFunction)
+    {
+    }
+    virtual void onPositionFunctionCallback (int height, int width)
+    {
+    }
+    virtual void addOffsetPosition (int height, int width)
+    {
     }
     virtual void compute2DScale( ProgressController *progress = nullptr ) {}
     virtual void compute3DScale( ProgressController *progress = nullptr ) {}
@@ -640,10 +656,14 @@ class Histogram
       return std::vector< bool > ();
     }
 
-    virtual void setSelectedRows( std::vector< bool > &selected )
+    virtual void setSelectedRows (std::vector<bool> &selected)
     {}
 
-    virtual void setSelectedRows( std::vector< TObjectOrder > &selected )
+    virtual void setSelectedRows (TTraceLevel onLevel, std::vector<bool> &selected)
+    {
+    }
+
+    virtual void setSelectedRows (std::vector<TObjectOrder> &selected)
     {}
 
     virtual std::vector<int> getCurrentSemanticSort() const
@@ -665,8 +685,8 @@ class HistogramProxy : public Histogram
   public:
     virtual ~HistogramProxy();
 
-    virtual void setWindowBeginTime( TRecordTime whichTime, bool isBroadcast = false ) override;
-    virtual void setWindowEndTime( TRecordTime whichTime, bool isBroadcast = false ) override;
+    virtual void setWindowBeginTime (TRecordTime whichTime) override;
+    virtual void setWindowEndTime (TRecordTime whichTime) override;
 
     virtual bool getThreeDimensions() const override;
     virtual TRecordTime getBeginTime() const override;
@@ -834,6 +854,14 @@ class HistogramProxy : public Histogram
                                               bool hideEmptyColumns,
                                               std::vector<THistogramColumn> &noVoidSemRanges ) const override;
 
+    virtual void registerResizeFunctionCallback (const std::function<void (int, int)> &callbackFunction) override;
+
+    virtual void onResizeFunctionCallback (int height, int width) override;
+
+    virtual void registerPositionFunctionCallback (const std::function<void (int, int)> &callbackFunction) override;
+    virtual void onPositionFunctionCallback (int height, int width) override;
+    virtual void addOffsetPosition (int height, int width) override;
+
     // Zoom history
     virtual bool isZoomEmpty() const override;
     virtual bool emptyPrevZoom() const override;
@@ -890,13 +918,13 @@ class HistogramProxy : public Histogram
     virtual bool getDestroy() const override;
     virtual void setDestroy( bool newValue ) override;
     virtual PRV_UINT16 getPosX() const override;
-    virtual void setPosX( PRV_UINT16 whichPos ) override;
+    virtual void setPosX (PRV_UINT16 whichPos, bool broadcastValue = true) override;
     virtual PRV_UINT16 getPosY() const override;
-    virtual void setPosY( PRV_UINT16 whichPos ) override;
+    virtual void setPosY (PRV_UINT16 whichPos, bool broadcastValue = true) override;
     virtual PRV_UINT16 getWidth() const override;
-    virtual void setWidth( PRV_UINT16 whichPos ) override;
+    virtual void setWidth (PRV_UINT16 whichPos, bool broadcastValue = true) override;
     virtual PRV_UINT16 getHeight() const override;
-    virtual void setHeight( PRV_UINT16 whichPos ) override;
+    virtual void setHeight (PRV_UINT16 whichPos, bool broadcastValue = true) override;
     virtual bool getShowWindow() const override;
     virtual void setShowWindow( bool newValue ) override;
     virtual DrawModeMethod getDrawModeObjects() const override;
@@ -963,8 +991,9 @@ class HistogramProxy : public Histogram
     virtual std::vector< TObjectOrder > getSelectedRows() const override;
     virtual std::vector< TObjectOrder > getSelectedRows( TObjectOrder whichBeginRow, TObjectOrder whichEndRow ) const override;
     virtual std::vector< bool > getSelectedBooleanRows() const override;
-    virtual void setSelectedRows( std::vector< bool > &selected ) override;
-    virtual void setSelectedRows( std::vector< TObjectOrder > &selected ) override;
+    virtual void setSelectedRows (std::vector<bool> &selected) override;
+    virtual void setSelectedRows (TTraceLevel onLevel, std::vector<bool> &selected) override;
+    virtual void setSelectedRows (std::vector<TObjectOrder> &selected) override;
 
     virtual std::vector<int> getCurrentSemanticSort() const override;
     virtual void setCurrentSemanticSort( const std::vector<int>& whichSort ) override;
@@ -978,6 +1007,8 @@ class HistogramProxy : public Histogram
     PRV_UINT16 posY;
     PRV_UINT16 width;
     PRV_UINT16 height;
+    PRV_UINT16 widthClient;
+    PRV_UINT16 heightClient;
 
     bool horizontal;
     bool hideColumns;
@@ -1054,8 +1085,12 @@ class HistogramProxy : public Histogram
     std::map< std::string, TCFGS4DGroup > groupLinkFromPropName;
     TCFGS4DIndexLink globalIndexLink;
 
-    //Selection of rows
-    SelectionManagement< TObjectOrder, TTraceLevel > rowSelection;
+    std::function<void (int, int)> resizeFunctionCallback = nullptr;
+    std::function<void (int, int)> positionFunctionCallback = nullptr;
+
+    // Selection of rows
+    SelectionManagement<TObjectOrder, TTraceLevel>
+        rowSelection;
 
     HistogramProxy( KernelConnection *whichKernel );
 
