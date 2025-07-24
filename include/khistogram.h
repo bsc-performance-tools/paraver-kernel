@@ -587,10 +587,11 @@ void KDerivedHistogram::combineCellValues( const THistogramCoordinates whichMain
                                            THistoCoordsCorrespondence& whichSecondaryParentsCoordinates,
                                            std::array< TSemanticValue, NUM_STATS >& resultSemVals )
 {
-  auto getCellValueForStat = [this]( const size_t parentIndex,
-                                     const size_t currentStat,
-                                     const THistogramCoordinates& coord,
-                                     DerivedHistogramFunctionInfo& foundValues )
+  auto getCellValueForStat =
+    [this]( const size_t parentIndex,
+            const size_t currentStat,
+            const THistogramCoordinates& coord,
+            DerivedHistogramFunctionInfo& foundValues )
     {
       bool foundVal = false;
       TSemanticValue tmpValue = 0.0;
@@ -606,9 +607,10 @@ void KDerivedHistogram::combineCellValues( const THistogramCoordinates whichMain
       return foundVal;
     };
 
-  auto updateTotals = [this]( const TSemanticValue semVal,
-                              const size_t currentStat,
-                              const THistogramCoordinates& coord )
+  auto updateTotals =
+    [this]( const TSemanticValue semVal,
+            const size_t currentStat,
+            const THistogramCoordinates& coord )
     {
         if constexpr( NUM_STATS == NUM_SEMANTIC_STATS )
         {
