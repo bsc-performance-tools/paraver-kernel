@@ -2332,7 +2332,7 @@ void KDerivedHistogram::combineHistograms()
             if ( getThreeDimensions() )
               commCube->newRow( iPlane, iCol, iRow );
             else
-              commMatrix->newRow( iPlane, iCol );
+              commMatrix->newRow( iCol, iRow );
 
             setCommFirstCell( iCol, iPlane );
           }
@@ -2360,7 +2360,7 @@ void KDerivedHistogram::combineHistograms()
               if ( getThreeDimensions() )
                 commCube->newRow( iPlane, iCol, iRow );
               else
-                commMatrix->newRow( iPlane, iCol );
+                commMatrix->newRow( iCol, iRow );
 
               setCommNextCell( iCol, iPlane );
             }
