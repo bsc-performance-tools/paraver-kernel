@@ -3888,15 +3888,9 @@ bool Analyzer2DType::parseLine( KernelConnection *whichKernel,
   if ( type.compare( CFG_VAL_AN2D_TYPE_COMPOSED ) != 0 )
     return false;
 
-  // if ( histograms[ histograms.size() - 1 ] == nullptr )
-  // {
-  //   histograms[ histograms.size() - 1 ] = Histogram::create( whichKernel, nullptr, nullptr );
-  // }
-  // else
-  // {
-  histograms.pop_back();
+  if ( !histograms.empty() )
+    histograms.pop_back();
   histograms.push_back( Histogram::create( whichKernel, {} ) );
-  // }
 
   histograms[ histograms.size() - 1 ]->setCFG4DMode( false );
 
