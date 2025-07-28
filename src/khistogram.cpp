@@ -1943,6 +1943,7 @@ void KDerivedHistogram::clearExtraControlWindow()
 
 void KDerivedHistogram::setUseFixedDelta( bool whichValue )
 {
+  KHistogram::setUseFixedDelta( whichValue );
   std::for_each( parents.begin(), parents.end(), [&whichValue]( auto &parent ){ parent->setUseFixedDelta( whichValue ); } );
 }
 
