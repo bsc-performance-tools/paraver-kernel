@@ -30,6 +30,7 @@
 #include "loadedwindows.h"
 #include "paraverconfig.h"
 #include "paraverlabels.h"
+#include "selectionrowsutils.h"
 #include "syncwindows.h"
 #include "window.h"
 
@@ -571,7 +572,7 @@ HistogramTotals *HistogramProxy::getCommRowTotals() const
   return HistogramTotals::create( myHisto->getCommRowTotals() );
 }
 
-void HistogramProxy::registerResizeFunctionCallback( const std::function<void( int, int )> &callbackFunction )
+void HistogramProxy::registerResizeFunctionCallback( const std::function< void( int, int ) > &callbackFunction )
 {
   resizeFunctionCallback = callbackFunction;
 }
@@ -598,7 +599,10 @@ void HistogramProxy::pushbackStatistic( const string &whichStatistic )
     calcStat.push_back( whichStatistic );
 }
 
-void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime, vector<TObjectOrder> &selectedRows, ProgressController *progress )
+void HistogramProxy::execute( TRecordTime whichBeginTime,
+                              TRecordTime whichEndTime,
+                              vector< TObjectOrder > &selectedRows,
+                              ProgressController *progress )
 {
   winBeginTime = whichBeginTime;
   winEndTime   = whichEndTime;
@@ -932,7 +936,7 @@ SemanticColor &HistogramProxy::getSemanticColor()
 
 void HistogramProxy::recalcGradientLimits()
 {
-  TSemanticValue tmpMin   = std::numeric_limits<TSemanticValue>::max();
+  TSemanticValue tmpMin   = std::numeric_limits< TSemanticValue >::max();
   TSemanticValue tmpMax   = 0.0;
   HistogramTotals *totals = nullptr;
   PRV_UINT32 plane;
@@ -955,7 +959,7 @@ void HistogramProxy::recalcGradientLimits()
   if( !planeWithValues( plane ) )
   {
     minGradient = 0.0;
-    maxGradient = std::numeric_limits<TSemanticValue>::max();
+    maxGradient = std::numeric_limits< TSemanticValue >::max();
     delete totals;
     return;
   }
@@ -970,7 +974,7 @@ void HistogramProxy::recalcGradientLimits()
       tmpMax = curMax;
   }
 
-  if( tmpMin == std::numeric_limits<TSemanticValue>::max() )
+  if( tmpMin == std::numeric_limits< TSemanticValue >::max() )
     minGradient = 0;
   else
     minGradient = tmpMin;
@@ -1044,7 +1048,7 @@ bool HistogramProxy::isNotZeroStat( const string &whichStat ) const
   return myHisto->isNotZeroStat( whichStat );
 }
 
-THistogramColumn HistogramProxy::getSemanticRealColumn( THistogramColumn whichCol, const vector<THistogramColumn> &noVoidSemRanges ) const
+THistogramColumn HistogramProxy::getSemanticRealColumn( THistogramColumn whichCol, const vector< THistogramColumn > &noVoidSemRanges ) const
 {
   THistogramColumn realCol = whichCol;
 
@@ -1177,7 +1181,7 @@ string HistogramProxy::getPlaneLabel( THistogramColumn whichPlane ) const
 
 THistogramColumn HistogramProxy::getPlaneColumns( THistogramColumn iPlane,
                                                   bool hideEmptyColumns, // need to override cfg value
-                                                  vector<THistogramColumn> &noVoidSemRanges ) const
+                                                  vector< THistogramColumn > &noVoidSemRanges ) const
 {
   THistogramColumn numColumns = 0;
 
@@ -1191,7 +1195,7 @@ THistogramColumn HistogramProxy::getPlaneColumns( THistogramColumn iPlane,
     if( hideEmptyColumns )
     {
       // Return only the columns with values
-      SelectionManagement<THistogramColumn, int> columnSelection;
+      SelectionManagement< THistogramColumn, int > columnSelection;
 
       if( commStat )
         columnSelection.init( getCommColumnTotals(), idStat, numColumns, iPlane );
@@ -1258,28 +1262,28 @@ void HistogramProxy::addZoom( TObjectOrder beginObject, TObjectOrder endObject )
   zoomHistory.addZoom( beginObject, endObject );
 }
 
-void HistogramProxy::setZoomFirstDimension( pair<TZoomInfo, TZoomInfo> &zinfo )
+void HistogramProxy::setZoomFirstDimension( pair< TZoomInfo, TZoomInfo > &zinfo )
 {
   zoomHistory.setFirstDimension( zinfo );
 }
 
-void HistogramProxy::setZoomSecondDimension( pair<TObjectOrder, TObjectOrder> &objects )
+void HistogramProxy::setZoomSecondDimension( pair< TObjectOrder, TObjectOrder > &objects )
 {
   zoomHistory.setSecondDimension( objects );
 }
 
-pair<HistogramProxy::TZoomInfo, HistogramProxy::TZoomInfo> HistogramProxy::getZoomFirstDimension() const
+pair< HistogramProxy::TZoomInfo, HistogramProxy::TZoomInfo > HistogramProxy::getZoomFirstDimension() const
 {
   return zoomHistory.getFirstDimension();
 }
 
-pair<TObjectOrder, TObjectOrder> HistogramProxy::getZoomSecondDimension() const
+pair< TObjectOrder, TObjectOrder > HistogramProxy::getZoomSecondDimension() const
 {
   return zoomHistory.getSecondDimension();
 }
-std::vector<TObjectOrder> HistogramProxy::getCurrentZoomRange() const
+std::vector< TObjectOrder > HistogramProxy::getCurrentZoomRange() const
 {
-  vector<TObjectOrder> zoomRange;
+  vector< TObjectOrder > zoomRange;
 
   zoomRange.push_back( getZoomSecondDimension().first );
   zoomRange.push_back( getZoomSecondDimension().second );
@@ -1328,9 +1332,9 @@ void HistogramProxy::setCalculateAll( bool status )
   clearStatistics();
   if( status )
   {
-    vector<string> vStat;
+    vector< string > vStat;
     myKernel->getAllStatistics( vStat );
-    for( vector<string>::iterator it = vStat.begin(); it != vStat.end(); ++it )
+    for( vector< string >::iterator it = vStat.begin(); it != vStat.end(); ++it )
       pushbackStatistic( *it );
   }
   else
@@ -1345,7 +1349,7 @@ bool HistogramProxy::getCalculateAll() const
 bool HistogramProxy::getIdStat( const string &whichStat, PRV_UINT16 &idStat ) const
 {
   idStat = 0;
-  const vector<string> *vStat;
+  const vector< string > *vStat;
 
   if( isCommunicationStat( whichStat ) )
     vStat = &commCalcStat;
@@ -1355,7 +1359,7 @@ bool HistogramProxy::getIdStat( const string &whichStat, PRV_UINT16 &idStat ) co
   if( vStat->begin() == vStat->end() )
     return false;
 
-  for( vector<string>::const_iterator it = vStat->begin(); it != vStat->end(); ++it )
+  for( vector< string >::const_iterator it = vStat->begin(); it != vStat->end(); ++it )
   {
     if( whichStat.compare( *it ) == 0 )
       return true;
@@ -1470,8 +1474,8 @@ Histogram *HistogramProxy::clone()
 
   clonedHistogramProxy->calculateAll = calculateAll;
   clonedHistogramProxy->currentStat  = currentStat;
-  clonedHistogramProxy->calcStat     = vector<string>( calcStat );
-  clonedHistogramProxy->commCalcStat = vector<string>( commCalcStat );
+  clonedHistogramProxy->calcStat     = vector< string >( calcStat );
+  clonedHistogramProxy->commCalcStat = vector< string >( commCalcStat );
 
   if( ParaverConfig::getInstance()->getHistogramKeepSyncGroupClone() )
   {
@@ -1575,7 +1579,7 @@ void HistogramProxy::setHeight( PRV_UINT16 whichPos, bool broadcastValue )
   }
 }
 
-void HistogramProxy::registerPositionFunctionCallback( const std::function<void( int, int )> &callbackFunction )
+void HistogramProxy::registerPositionFunctionCallback( const std::function< void( int, int ) > &callbackFunction )
 {
   positionFunctionCallback = callbackFunction;
 }
@@ -1631,12 +1635,12 @@ void HistogramProxy::setChanged( bool newValue )
   changed = newValue;
 }
 
-void HistogramProxy::getGroupsLabels( vector<string> &onVector ) const
+void HistogramProxy::getGroupsLabels( vector< string > &onVector ) const
 {
   myHisto->getGroupsLabels( onVector );
 }
 
-void HistogramProxy::getStatisticsLabels( vector<string> &onVector, PRV_UINT32 whichGroup, bool getOriginalList ) const
+void HistogramProxy::getStatisticsLabels( vector< string > &onVector, PRV_UINT32 whichGroup, bool getOriginalList ) const
 {
   if( getOriginalList )
   {
@@ -1644,11 +1648,11 @@ void HistogramProxy::getStatisticsLabels( vector<string> &onVector, PRV_UINT32 w
   }
   else
   {
-    vector<string> fullList;
+    vector< string > fullList;
     myHisto->getStatisticsLabels( fullList, whichGroup );
-    map<string, string>::const_iterator itStat;
+    map< string, string >::const_iterator itStat;
 
-    for( vector<string>::iterator it = fullList.begin(); it != fullList.end(); ++it )
+    for( vector< string >::iterator it = fullList.begin(); it != fullList.end(); ++it )
     {
       itStat = statisticsAliasCFG4D.find( *it );
       if( itStat != statisticsAliasCFG4D.end() )
@@ -1821,7 +1825,7 @@ bool HistogramProxy::existsCFG4DAlias( const string &property ) const
 
   if( propertiesAliasCFG4D.size() > 0 )
   {
-    map<string, string>::const_iterator itAlias = propertiesAliasCFG4D.find( property );
+    map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
     if( itAlias != propertiesAliasCFG4D.end() )
     {
       found = true;
@@ -1840,7 +1844,7 @@ bool HistogramProxy::existsCFG4DAlias( const THistogramProperties &propertyIndex
   {
     string property( HistogramPropertyLabels[ propertyIndex ] );
 
-    map<string, string>::const_iterator itAlias = propertiesAliasCFG4D.find( property );
+    map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
     if( itAlias != propertiesAliasCFG4D.end() )
     {
       found = true;
@@ -1857,7 +1861,7 @@ string HistogramProxy::getCFG4DAlias( const string &property ) const
 
   if( propertiesAliasCFG4D.size() > 0 )
   {
-    map<string, string>::const_iterator itAlias = propertiesAliasCFG4D.find( property );
+    map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
     if( itAlias != propertiesAliasCFG4D.end() )
     {
       alias = itAlias->second;
@@ -1876,7 +1880,7 @@ string HistogramProxy::getCFG4DAlias( const THistogramProperties &propertyIndex 
   {
     string property( HistogramPropertyLabels[ propertyIndex ] );
 
-    map<string, string>::const_iterator itAlias = propertiesAliasCFG4D.find( property );
+    map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
     if( itAlias != propertiesAliasCFG4D.end() )
     {
       alias = itAlias->second;
@@ -1898,30 +1902,30 @@ void HistogramProxy::setCFG4DStatisticAlias( const string &statistic, const stri
 }
 
 
-void HistogramProxy::setCFG4DAliasList( const map<string, string> &aliasList )
+void HistogramProxy::setCFG4DAliasList( const map< string, string > &aliasList )
 {
   propertiesAliasCFG4D = aliasList;
 }
 
 
-void HistogramProxy::setCFG4DStatisticsAliasList( const map<string, string> &statisticsAliasList )
+void HistogramProxy::setCFG4DStatisticsAliasList( const map< string, string > &statisticsAliasList )
 {
   statisticsAliasCFG4D = statisticsAliasList;
 }
 
-const map<string, string> HistogramProxy::getCFG4DAliasList() const
+const map< string, string > HistogramProxy::getCFG4DAliasList() const
 {
   return propertiesAliasCFG4D;
 }
 
-const map<string, string> HistogramProxy::getCFG4DStatisticsAliasList() const
+const map< string, string > HistogramProxy::getCFG4DStatisticsAliasList() const
 {
   return statisticsAliasCFG4D;
 }
 
-const vector<string> HistogramProxy::getCFG4DFullTagList()
+const vector< string > HistogramProxy::getCFG4DFullTagList()
 {
-  vector<string> tags;
+  vector< string > tags;
 
   for( int iTag = 0; iTag < TOTAL_HISTOGRAM_PROPERTIES; ++iTag )
   {
@@ -1938,7 +1942,7 @@ void HistogramProxy::setCFGS4DGroupLink( std::string originalName, TCFGS4DGroup 
 
 TCFGS4DGroup HistogramProxy::getCFGS4DGroupLink( std::string originalName ) const
 {
-  map<string, TCFGS4DGroup>::const_iterator it = groupLinkFromPropName.find( originalName );
+  map< string, TCFGS4DGroup >::const_iterator it = groupLinkFromPropName.find( originalName );
   if( it != groupLinkFromPropName.end() )
     return it->second;
 
@@ -1955,41 +1959,61 @@ TCFGS4DIndexLink HistogramProxy::getCFGS4DIndexLink() const
   return globalIndexLink;
 }
 
-SelectionManagement<TObjectOrder, TTraceLevel> *HistogramProxy::getRowSelectionManagement()
+SelectionManagement< TObjectOrder, TTraceLevel > *HistogramProxy::getRowSelectionManagement()
 {
   return &rowSelection;
 }
 
-void HistogramProxy::setRowSelectionManager( SelectionManagement<TObjectOrder, TTraceLevel> &rowSel )
+void HistogramProxy::setRowSelectionManager( SelectionManagement< TObjectOrder, TTraceLevel > &rowSel )
 {
   rowSelection = rowSel;
 }
 
 
-vector<TObjectOrder> HistogramProxy::getSelectedRows() const
+void HistogramProxy::getSelectedRows( vector< TObjectOrder > &selected ) const
 {
-  vector<TObjectOrder> vecRows;
-  rowSelection.getSelected( vecRows, myHisto->getControlWindow()->getLevel() );
-  return vecRows;
+  rowSelection.getSelected( selected, myHisto->getControlWindow()->getLevel() );
+
+  SelectionRowsUtils::getAllLevelsSelectedRows( getTrace(), rowSelection, controlWindow->getLevel(), selected );
 }
 
 
-vector<TObjectOrder> HistogramProxy::getSelectedRows( TObjectOrder whichBeginRow, TObjectOrder whichEndRow ) const
+void HistogramProxy::getSelectedRows( vector< TObjectOrder > &selected, TObjectOrder whichBeginRow, TObjectOrder whichEndRow ) const
 {
-  vector<TObjectOrder> vecRows;
-  rowSelection.getSelected( vecRows, whichBeginRow, whichEndRow, myHisto->getControlWindow()->getLevel() );
-  return vecRows;
+  rowSelection.getSelected( selected, whichBeginRow, whichEndRow, myHisto->getControlWindow()->getLevel() );
+
+  SelectionRowsUtils::getAllLevelsSelectedRows( getTrace(), rowSelection, controlWindow->getLevel(), selected );
 }
 
 
-vector<bool> HistogramProxy::getSelectedBooleanRows() const
+void HistogramProxy::getSelectedRows( vector< bool > &selected ) const
 {
-  vector<bool> vecRows;
-  rowSelection.getSelected( vecRows, myHisto->getControlWindow()->getLevel() );
-  return vecRows;
+  rowSelection.getSelected( selected, myHisto->getControlWindow()->getLevel() );
+
+  TObjectOrder first, last;
+  first = 0;
+  switch( controlWindow->getLevel() )
+  {
+    case TTraceLevel::TASK:
+      last = getTrace()->totalTasks() - 1;
+      break;
+
+    case TTraceLevel::THREAD:
+      last = getTrace()->totalThreads() - 1;
+      break;
+
+    case TTraceLevel::CPU:
+      last = getTrace()->totalCPUs() - 1;
+      break;
+
+    default:
+      break;
+  }
+
+  SelectionRowsUtils::getAllLevelsSelectedRows( getTrace(), rowSelection, controlWindow->getLevel(), first, last, selected );
 }
 
-void HistogramProxy::setSelectedRows( vector<bool> &selected )
+void HistogramProxy::setSelectedRows( vector< bool > &selected )
 {
   auto tmpLevel = myHisto->getControlWindow()->getLevel();
   rowSelection.setSelected( selected, tmpLevel );
@@ -1998,7 +2022,7 @@ void HistogramProxy::setSelectedRows( vector<bool> &selected )
     SyncWindows::getInstance()->broadcastObjectSelectionAll( syncGroup, tmpLevel, selected );
 }
 
-void HistogramProxy::setSelectedRows( TTraceLevel onLevel, std::vector<bool> &selected )
+void HistogramProxy::setSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected )
 {
   rowSelection.setSelected( selected, onLevel );
 
@@ -2006,11 +2030,11 @@ void HistogramProxy::setSelectedRows( TTraceLevel onLevel, std::vector<bool> &se
     SyncWindows::getInstance()->broadcastObjectSelectionAll( syncGroup, onLevel, selected );
 }
 
-void HistogramProxy::setSelectedRows( vector<TObjectOrder> &selected )
+void HistogramProxy::setSelectedRows( vector< TObjectOrder > &selected )
 {
   auto tmpLevel = myHisto->getControlWindow()->getLevel();
   rowSelection.setSelected( selected, myTrace->getLevelObjects( tmpLevel ), tmpLevel );
-  vector<bool> tmpSelectedRows;
+  vector< bool > tmpSelectedRows;
   rowSelection.getSelected( tmpSelectedRows, tmpLevel );
 
   if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_OBJECT_SELECTION ) )
@@ -2075,12 +2099,12 @@ void HistogramProxy::fillSemanticSort()
 }
 
 
-vector<int> HistogramProxy::getCurrentSemanticSort() const
+vector< int > HistogramProxy::getCurrentSemanticSort() const
 {
   return currentSemanticSort;
 }
 
-void HistogramProxy::setCurrentSemanticSort( const vector<int> &whichSort )
+void HistogramProxy::setCurrentSemanticSort( const vector< int > &whichSort )
 {
   currentSemanticSort = whichSort;
   customSemanticSort  = whichSort;

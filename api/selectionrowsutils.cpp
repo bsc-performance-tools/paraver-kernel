@@ -26,43 +26,42 @@
 
 using namespace std;
 
-void SelectionRowsUtils::getAllLevelsSelectedRows( const Trace* whichTrace,
+void SelectionRowsUtils::getAllLevelsSelectedRows( const Trace *whichTrace,
                                                    const SelectionManagement< TObjectOrder, TTraceLevel > &selectedRow,
                                                    TTraceLevel onLevel,
                                                    vector< TObjectOrder > &selected )
 {
   vector< TObjectOrder > allLevelsSelected;
   TObjectOrder iAppl, iTask, globalTask, iNode, aux;
-  switch ( onLevel )
+  switch( onLevel )
   {
     case TTraceLevel::TASK:
-      for ( vector< TObjectOrder >::iterator it = selected.begin(); it != selected.end(); ++it )
+      for( vector< TObjectOrder >::iterator it = selected.begin(); it != selected.end(); ++it )
       {
         whichTrace->getTaskLocation( *it, iAppl, aux );
-        if ( selectedRow.isSelectedPosition( iAppl, TTraceLevel::APPLICATION ) )
+        if( selectedRow.isSelectedPosition( iAppl, TTraceLevel::APPLICATION ) )
           allLevelsSelected.push_back( *it );
       }
 
       break;
 
     case TTraceLevel::THREAD:
-      for ( vector< TObjectOrder >::iterator it = selected.begin(); it != selected.end(); ++it )
+      for( vector< TObjectOrder >::iterator it = selected.begin(); it != selected.end(); ++it )
       {
         whichTrace->getThreadLocation( *it, iAppl, iTask, aux );
         globalTask = whichTrace->getGlobalTask( iAppl, iTask );
 
-        if ( selectedRow.isSelectedPosition( iAppl, TTraceLevel::APPLICATION ) &&
-             selectedRow.isSelectedPosition( globalTask, TTraceLevel::TASK ) )
+        if( selectedRow.isSelectedPosition( iAppl, TTraceLevel::APPLICATION ) && selectedRow.isSelectedPosition( globalTask, TTraceLevel::TASK ) )
           allLevelsSelected.push_back( *it );
       }
 
       break;
 
     case TTraceLevel::CPU:
-      for ( vector< TObjectOrder >::iterator it = selected.begin(); it != selected.end(); ++it )
+      for( vector< TObjectOrder >::iterator it = selected.begin(); it != selected.end(); ++it )
       {
         whichTrace->getCPULocation( *it, iNode, aux );
-        if ( selectedRow.isSelectedPosition( iNode, TTraceLevel::NODE ) )
+        if( selectedRow.isSelectedPosition( iNode, TTraceLevel::NODE ) )
           allLevelsSelected.push_back( *it );
       }
       break;
@@ -71,6 +70,49 @@ void SelectionRowsUtils::getAllLevelsSelectedRows( const Trace* whichTrace,
       break;
   }
 
-  if ( allLevelsSelected.size() > 0 )
+  if( allLevelsSelected.size() > 0 )
     selected.swap( allLevelsSelected );
+}
+
+void SelectionRowsUtils::getAllLevelsSelectedRows( const Trace *whichTrace,
+                                                   const SelectionManagement< TObjectOrder, TTraceLevel > &selectedRow,
+                                                   TTraceLevel onLevel,
+                                                   TObjectOrder firstObject,
+                                                   TObjectOrder lastObject,
+                                                   vector< bool > &selected )
+{
+  TObjectOrder iAppl, jTask, globalTask, iNode, aux;
+  switch( onLevel )
+  {
+    case TTraceLevel::TASK:
+      for( TObjectOrder iTask = firstObject; iTask <= lastObject; ++iTask )
+      {
+        whichTrace->getTaskLocation( iTask, iAppl, aux );
+        selected[ iTask ] = selectedRow.isSelectedPosition( iAppl, TTraceLevel::APPLICATION ) && selected[ iTask ];
+      }
+
+      break;
+
+    case TTraceLevel::THREAD:
+      for( TObjectOrder iThread = firstObject; iThread <= lastObject; ++iThread )
+      {
+        whichTrace->getThreadLocation( iThread, iAppl, jTask, aux );
+        globalTask          = whichTrace->getGlobalTask( iAppl, jTask );
+        selected[ iThread ] = selectedRow.isSelectedPosition( iAppl, TTraceLevel::APPLICATION ) &&
+                              selectedRow.isSelectedPosition( globalTask, TTraceLevel::TASK ) && selected[ iThread ];
+      }
+
+      break;
+
+    case TTraceLevel::CPU:
+      for( TObjectOrder iCPU = firstObject; iCPU <= lastObject; ++iCPU )
+      {
+        whichTrace->getCPULocation( iCPU, iNode, aux );
+        selected[ iCPU ] = selected[ iCPU ] && selectedRow.isSelectedPosition( iNode, TTraceLevel::NODE );
+      }
+      break;
+
+    default:
+      break;
+  }
 }

@@ -25,19 +25,25 @@
 #pragma once
 
 
-#include <vector>
 #include "paraverkerneltypes.h"
 #include "selectionmanagement.h"
+
+#include <vector>
 
 class Trace;
 
 class SelectionRowsUtils
 {
-	public:
-    static void getAllLevelsSelectedRows( const Trace* whichTrace,
+  public:
+    static void getAllLevelsSelectedRows( const Trace *whichTrace,
                                           const SelectionManagement< TObjectOrder, TTraceLevel > &selectedRow,
                                           TTraceLevel onLevel,
                                           std::vector< TObjectOrder > &selected );
+
+    static void getAllLevelsSelectedRows( const Trace *whichTrace,
+                                          const SelectionManagement< TObjectOrder, TTraceLevel > &selectedRow,
+                                          TTraceLevel onLevel,
+                                          TObjectOrder firstObject,
+                                          TObjectOrder lastObject,
+                                          std::vector< bool > &selected );
 };
-
-
