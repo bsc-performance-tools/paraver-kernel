@@ -729,9 +729,19 @@ class Histogram
       return NO_INDEX_LINK;
     }
 
-    virtual SelectionManagement< TObjectOrder, TTraceLevel > *getRowSelectionManagement()
+    virtual TTraceLevel getLevel() const
     {
-      return (SelectionManagement< TObjectOrder, TTraceLevel > *)nullptr;
+      return TTraceLevel::APPLICATION;
+    }
+
+    virtual bool areAllSelectedRows( TTraceLevel onLevel ) const
+    {
+      return true;
+    }
+
+    virtual const SelectionManagement< TObjectOrder, TTraceLevel > &getRowSelectionManager() const
+    {
+      return dummyRowSelection;
     }
 
     virtual void setRowSelectionManager( SelectionManagement< TObjectOrder, TTraceLevel > &rowSel )
@@ -742,11 +752,23 @@ class Histogram
     {
     }
 
-    virtual void getSelectedRows( std::vector< TObjectOrder > &selected, TObjectOrder whichBeginRow, TObjectOrder whichEndRow ) const
+    virtual void getSelectedRows( TTraceLevel whichLevel,
+                                  std::vector< TObjectOrder > &selected,
+                                  TObjectOrder whichBeginRow,
+                                  TObjectOrder whichEndRow,
+                                  bool lookUpLevels = false ) const
     {
     }
 
-    virtual void getSelectedRows( std::vector< bool > &selected ) const
+    virtual void getSelectedRows( TTraceLevel whichLevel, std::vector< bool > &selected, bool lookUpLevels = false ) const
+    {
+    }
+
+    virtual void getSelectedRows( TTraceLevel onLevel,
+                                  std::vector< bool > &selected,
+                                  TObjectOrder first,
+                                  TObjectOrder last,
+                                  bool lookUpLevels = false ) const
     {
     }
 
@@ -773,6 +795,9 @@ class Histogram
 
   protected:
     KernelConnection *myKernel;
+
+  private:
+    SelectionManagement< TObjectOrder, TTraceLevel > dummyRowSelection;
 };
 
 
@@ -1073,12 +1098,24 @@ class HistogramProxy : public Histogram
     virtual void setCFGS4DIndexLink( TCFGS4DIndexLink whichLink ) override;
     virtual TCFGS4DIndexLink getCFGS4DIndexLink() const override;
 
-    virtual SelectionManagement< TObjectOrder, TTraceLevel > *getRowSelectionManagement() override;
+    virtual TTraceLevel getLevel() const override;
+    virtual bool areAllSelectedRows( TTraceLevel onLevel ) const;
+
+    virtual const SelectionManagement< TObjectOrder, TTraceLevel > &getRowSelectionManager() const override;
     virtual void setRowSelectionManager( SelectionManagement< TObjectOrder, TTraceLevel > &rowSel ) override;
 
     virtual void getSelectedRows( std::vector< TObjectOrder > &selected ) const override;
-    virtual void getSelectedRows( std::vector< TObjectOrder > &selected, TObjectOrder whichBeginRow, TObjectOrder whichEndRow ) const override;
-    virtual void getSelectedRows( std::vector< bool > &selected ) const override;
+    virtual void getSelectedRows( TTraceLevel whichLevel,
+                                  std::vector< TObjectOrder > &selected,
+                                  TObjectOrder whichBeginRow,
+                                  TObjectOrder whichEndRow,
+                                  bool lookUpLevels = false ) const override;
+    virtual void getSelectedRows( TTraceLevel whichLevel, std::vector< bool > &selected, bool lookUpLevels = false ) const override;
+    virtual void getSelectedRows( TTraceLevel onLevel,
+                                  std::vector< bool > &selected,
+                                  TObjectOrder first,
+                                  TObjectOrder last,
+                                  bool lookUpLevels = false ) const override;
     virtual void setSelectedRows( std::vector< bool > &selected ) override;
     virtual void setSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected ) override;
     virtual void setSelectedRows( std::vector< TObjectOrder > &selected ) override;

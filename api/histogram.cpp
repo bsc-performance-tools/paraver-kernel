@@ -193,7 +193,7 @@ void HistogramProxy::setControlWindow( Timeline *whichWindow )
   if( controlWindow != nullptr )
     controlWindow->unsetUsedByHistogram( this );
   else
-    rowSelection.copy( *whichWindow->getSelectedRows() );
+    rowSelection.copy( whichWindow->getRowSelectionManager() );
 
   controlWindow = whichWindow;
   controlWindow->setUsedByHistogram( this );
@@ -627,7 +627,7 @@ void HistogramProxy::execute( TRecordTime whichBeginTime,
 
     beginRow = getZoomSecondDimension().first;
     endRow   = getZoomSecondDimension().second;
-    rowSelection.getSelected( selectedRows, beginRow, endRow, controlWindow->getLevel() );
+    // rowSelection.getSelected( selectedRows, beginRow, endRow, controlWindow->getLevel() );
   }
 
 
@@ -1959,9 +1959,19 @@ TCFGS4DIndexLink HistogramProxy::getCFGS4DIndexLink() const
   return globalIndexLink;
 }
 
-SelectionManagement< TObjectOrder, TTraceLevel > *HistogramProxy::getRowSelectionManagement()
+TTraceLevel HistogramProxy::getLevel() const
 {
-  return &rowSelection;
+  return getControlWindow()->getLevel();
+}
+
+bool HistogramProxy::areAllSelectedRows( TTraceLevel onLevel ) const
+{
+  return rowSelection.areAllSelected( onLevel );
+}
+
+const SelectionManagement< TObjectOrder, TTraceLevel > &HistogramProxy::getRowSelectionManager() const
+{
+  return rowSelection;
 }
 
 void HistogramProxy::setRowSelectionManager( SelectionManagement< TObjectOrder, TTraceLevel > &rowSel )
@@ -1978,39 +1988,63 @@ void HistogramProxy::getSelectedRows( vector< TObjectOrder > &selected ) const
 }
 
 
-void HistogramProxy::getSelectedRows( vector< TObjectOrder > &selected, TObjectOrder whichBeginRow, TObjectOrder whichEndRow ) const
+void HistogramProxy::getSelectedRows( TTraceLevel whichLevel,
+                                      vector< TObjectOrder > &selected,
+                                      TObjectOrder whichBeginRow,
+                                      TObjectOrder whichEndRow,
+                                      bool lookUpLevels ) const
 {
-  rowSelection.getSelected( selected, whichBeginRow, whichEndRow, myHisto->getControlWindow()->getLevel() );
+  rowSelection.getSelected( selected, whichBeginRow, whichEndRow, whichLevel );
 
-  SelectionRowsUtils::getAllLevelsSelectedRows( getTrace(), rowSelection, controlWindow->getLevel(), selected );
+  if( lookUpLevels )
+  {
+    SelectionRowsUtils::getAllLevelsSelectedRows( getTrace(), rowSelection, whichLevel, selected );
+  }
 }
 
 
-void HistogramProxy::getSelectedRows( vector< bool > &selected ) const
+void HistogramProxy::getSelectedRows( TTraceLevel whichLevel, std::vector< bool > &selected, bool lookUpLevels ) const
 {
-  rowSelection.getSelected( selected, myHisto->getControlWindow()->getLevel() );
+  rowSelection.getSelected( selected, whichLevel );
 
-  TObjectOrder first, last;
-  first = 0;
-  switch( controlWindow->getLevel() )
+  if( lookUpLevels )
   {
-    case TTraceLevel::TASK:
-      last = getTrace()->totalTasks() - 1;
-      break;
+    TObjectOrder first, last;
+    first = 0;
+    switch( whichLevel )
+    {
+      case TTraceLevel::TASK:
+        last = getTrace()->totalTasks() - 1;
+        break;
 
-    case TTraceLevel::THREAD:
-      last = getTrace()->totalThreads() - 1;
-      break;
+      case TTraceLevel::THREAD:
+        last = getTrace()->totalThreads() - 1;
+        break;
 
-    case TTraceLevel::CPU:
-      last = getTrace()->totalCPUs() - 1;
-      break;
+      case TTraceLevel::CPU:
+        last = getTrace()->totalCPUs() - 1;
+        break;
 
-    default:
-      break;
+      default:
+        break;
+    }
+
+    SelectionRowsUtils::getAllLevelsSelectedRows( getTrace(), rowSelection, whichLevel, first, last, selected );
   }
+}
 
-  SelectionRowsUtils::getAllLevelsSelectedRows( getTrace(), rowSelection, controlWindow->getLevel(), first, last, selected );
+void HistogramProxy::getSelectedRows( TTraceLevel onLevel,
+                                      std::vector< bool > &selected,
+                                      TObjectOrder first,
+                                      TObjectOrder last,
+                                      bool lookUpLevels ) const
+{
+  rowSelection.getSelected( selected, first, last, onLevel );
+
+  if( lookUpLevels )
+  {
+    SelectionRowsUtils::getAllLevelsSelectedRows( getTrace(), rowSelection, onLevel, first, last, selected );
+  }
 }
 
 void HistogramProxy::setSelectedRows( vector< bool > &selected )

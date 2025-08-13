@@ -1578,9 +1578,14 @@ bool TimelineProxy::areAllSelectedRows( TTraceLevel onLevel ) const
   return selectedRow.areAllSelected( onLevel );
 }
 
-SelectionManagement< TObjectOrder, TTraceLevel > *TimelineProxy::getSelectedRows()
+const SelectionManagement< TObjectOrder, TTraceLevel > &TimelineProxy::getRowSelectionManager() const
 {
-  return &selectedRow;
+  return selectedRow;
+}
+
+void TimelineProxy::setRowSelectionManager( const SelectionManagement< TObjectOrder, TTraceLevel > &whichSelectionManagement )
+{
+  selectedRow = whichSelectionManagement;
 }
 
 void TimelineProxy::setSelectedRows( TTraceLevel onLevel, vector< bool > &selected )
@@ -1605,7 +1610,7 @@ void TimelineProxy::setSelectedRows( TTraceLevel onLevel, vector< TObjectOrder >
 }
 
 
-void TimelineProxy::getSelectedRows( TTraceLevel onLevel, vector< bool > &selected, bool lookUpLevels )
+void TimelineProxy::getSelectedRows( TTraceLevel onLevel, vector< bool > &selected, bool lookUpLevels ) const
 {
   selectedRow.getSelected( selected, onLevel );
 
@@ -1635,7 +1640,7 @@ void TimelineProxy::getSelectedRows( TTraceLevel onLevel, vector< bool > &select
   }
 }
 
-void TimelineProxy::getSelectedRows( TTraceLevel onLevel, vector< bool > &selected, TObjectOrder first, TObjectOrder last, bool lookUpLevels )
+void TimelineProxy::getSelectedRows( TTraceLevel onLevel, vector< bool > &selected, TObjectOrder first, TObjectOrder last, bool lookUpLevels ) const
 {
   selectedRow.getSelected( selected, first, last, onLevel );
 
@@ -1646,7 +1651,7 @@ void TimelineProxy::getSelectedRows( TTraceLevel onLevel, vector< bool > &select
 }
 
 
-void TimelineProxy::getSelectedRows( TTraceLevel onLevel, vector< TObjectOrder > &selected, bool lookUpLevels )
+void TimelineProxy::getSelectedRows( TTraceLevel onLevel, vector< TObjectOrder > &selected, bool lookUpLevels ) const
 {
   selectedRow.getSelected( selected, onLevel );
 
@@ -1656,7 +1661,11 @@ void TimelineProxy::getSelectedRows( TTraceLevel onLevel, vector< TObjectOrder >
   }
 }
 
-void TimelineProxy::getSelectedRows( TTraceLevel onLevel, vector< TObjectOrder > &selected, TObjectOrder first, TObjectOrder last, bool lookUpLevels )
+void TimelineProxy::getSelectedRows( TTraceLevel onLevel,
+                                     vector< TObjectOrder > &selected,
+                                     TObjectOrder first,
+                                     TObjectOrder last,
+                                     bool lookUpLevels ) const
 {
   selectedRow.getSelected( selected, first, last, onLevel );
 

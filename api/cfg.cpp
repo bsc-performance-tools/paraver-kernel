@@ -911,7 +911,7 @@ bool CFGLoader::saveCFG( const string &filename,
     Analyzer2DComputeGradient::printLine( cfgFile, options, it );
     Analyzer2DMinimumGradient::printLine( cfgFile, it );
     Analyzer2DMaximumGradient::printLine( cfgFile, it );
-    Analyzer2DObjects::printLine( cfgFile, it );
+    Analyzer2DObject::printLine( cfgFile, it );
     Analyzer2DDrawModeObjects::printLine( cfgFile, it );
     Analyzer2DDrawModeColumns::printLine( cfgFile, it );
     Analyzer2DPixelSize::printLine( cfgFile, it );
@@ -1099,9 +1099,10 @@ void CFGLoader::loadMap()
   cfgTagFunctions[ OLDCFG_TAG_AN2D_COMPUTEGRADIENT ] = new Analyzer2DComputeGradient();
   cfgTagFunctions[ OLDCFG_TAG_AN2D_MINIMUMGRADIENT ] = new Analyzer2DMinimumGradient();
   cfgTagFunctions[ OLDCFG_TAG_AN2D_MAXIMUMGRADIENT ] = new Analyzer2DMaximumGradient();
-  cfgTagFunctions[ CFG_TAG_OBJECTS ]                 = new Analyzer2DObjects();
-  cfgTagFunctions[ CFG_TAG_DRAWMODE_OBJECTS ]        = new Analyzer2DDrawModeObjects();
-  cfgTagFunctions[ CFG_TAG_DRAWMODE_COLUMNS ]        = new Analyzer2DDrawModeColumns();
+  cfgTagFunctions[ CFG_TAG_AN2D_OBJECTS ]            = new Analyzer2DObjects(); // DEPRECATED
+  cfgTagFunctions[ CFG_TAG_AN2D_OBJECT ]             = new Analyzer2DObject();
+  cfgTagFunctions[ CFG_TAG_AN2D_DRAWMODE_OBJECTS ]   = new Analyzer2DDrawModeObjects();
+  cfgTagFunctions[ CFG_TAG_AN2D_DRAWMODE_COLUMNS ]   = new Analyzer2DDrawModeColumns();
   cfgTagFunctions[ OLDCFG_TAG_AN2D_PIXEL_SIZE ]      = new Analyzer2DPixelSize();
   cfgTagFunctions[ OLDCFG_TAG_AN2D_CODE_COLOR ]      = new Analyzer2DCodeColor();
   cfgTagFunctions[ OLDCFG_TAG_AN2D_COLOR_MODE ]      = new Analyzer2DColorMode();
@@ -2451,11 +2452,8 @@ bool genericParseObjects( istringstream &line, TObjectOrder numObjects, TObjectO
 
 string WindowObject::tagCFG = OLDCFG_TAG_WNDW_OBJECT;
 
-bool WindowObject::parseLine( KernelConnection *whichKernel,
-                              istringstream &line,
-                              Trace *whichTrace,
-                              vector< Timeline * > &windows,
-                              vector< Histogram * > &histograms )
+template< typename T >
+bool objectGenericParseLine( KernelConnection *whichKernel, istringstream &line, Trace *whichTrace, T *win )
 {
   string strVoid;
   string strLevel;
@@ -2464,10 +2462,6 @@ bool WindowObject::parseLine( KernelConnection *whichKernel,
   TObjectOrder numObjects;
   vector< bool > selObjects;
   istringstream tmpNumObjects;
-  Timeline *win = windows[ windows.size() - 1 ];
-
-  if( win == nullptr )
-    return false;
 
   getline( line, strLevel, ' ' );
   level = static_cast< TTraceLevel >( stringToLevel( strLevel ) );
@@ -2615,6 +2609,20 @@ bool WindowObject::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
+bool WindowObject::parseLine( KernelConnection *whichKernel,
+                              istringstream &line,
+                              Trace *whichTrace,
+                              vector< Timeline * > &windows,
+                              vector< Histogram * > &histograms )
+{
+  Timeline *win = windows[ windows.size() - 1 ];
+
+  if( win == nullptr )
+    return false;
+
+  return objectGenericParseLine( whichKernel, line, whichTrace, win );
+}
+
 void genericWriteObjects( ofstream &cfgFile, vector< bool > &selected, bool numbers )
 {
   for( vector< bool >::iterator it = selected.begin(); it != selected.end(); ++it )
@@ -2638,17 +2646,19 @@ void genericWriteObjects( ofstream &cfgFile, vector< bool > &selected, bool numb
   }
 }
 
-void writeAppl( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+template< typename T >
+void writeAppl( const std::string &whichTag, ofstream &cfgFile, const T it )
 {
   vector< bool > selectedSet;
 
   ( *it )->getSelectedRows( TTraceLevel::APPLICATION, selectedSet );
-  cfgFile << OLDCFG_TAG_WNDW_OBJECT << " appl { " << selectedSet.size() << ", { ";
+  cfgFile << whichTag << " appl { " << selectedSet.size() << ", { ";
   genericWriteObjects( cfgFile, selectedSet, ( *it )->getLevel() == TTraceLevel::APPLICATION );
   cfgFile << " } }" << endl;
 }
 
-void writeTask( ofstream &cfgFile, const vector< Timeline * >::const_iterator it, TApplOrder whichAppl )
+template< typename T >
+void writeTask( const std::string &whichTag, ofstream &cfgFile, const T it, TApplOrder whichAppl )
 {
   vector< bool > selectedSet;
 
@@ -2656,12 +2666,13 @@ void writeTask( ofstream &cfgFile, const vector< Timeline * >::const_iterator it
                             selectedSet,
                             ( *it )->getTrace()->getFirstTask( whichAppl ),
                             ( *it )->getTrace()->getLastTask( whichAppl ) );
-  cfgFile << OLDCFG_TAG_WNDW_OBJECT << " task { " << whichAppl << ", " << selectedSet.size() << ", { ";
+  cfgFile << whichTag << " task { " << whichAppl << ", " << selectedSet.size() << ", { ";
   genericWriteObjects( cfgFile, selectedSet, ( *it )->getLevel() == TTraceLevel::TASK );
   cfgFile << " } }" << endl;
 }
 
-void writeTasks( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+template< typename T >
+void writeTasks( const std::string &whichTag, ofstream &cfgFile, const T it )
 {
   vector< TTaskOrder > tmpSel;
 
@@ -2671,11 +2682,12 @@ void writeTasks( ofstream &cfgFile, const vector< Timeline * >::const_iterator i
     TTaskOrder last  = ( *it )->getTrace()->getLastTask( iAppl );
     ( *it )->getSelectedRows( TTraceLevel::TASK, tmpSel, begin, last );
     if( tmpSel.size() != (TObjectOrder)( last - begin + 1 ) )
-      writeTask( cfgFile, it, iAppl );
+      writeTask( whichTag, cfgFile, it, iAppl );
   }
 }
 
-void writeThread( ofstream &cfgFile, const vector< Timeline * >::const_iterator it, TApplOrder whichAppl, TTaskOrder whichTask )
+template< typename T >
+void writeThread( const std::string &whichTag, ofstream &cfgFile, const T it, TApplOrder whichAppl, TTaskOrder whichTask )
 {
   vector< bool > selectedSet;
 
@@ -2683,13 +2695,14 @@ void writeThread( ofstream &cfgFile, const vector< Timeline * >::const_iterator 
                             selectedSet,
                             ( *it )->getTrace()->getFirstThread( whichAppl, whichTask ),
                             ( *it )->getTrace()->getLastThread( whichAppl, whichTask ) );
-  cfgFile << OLDCFG_TAG_WNDW_OBJECT << " thread { " << whichAppl << ", ";
+  cfgFile << whichTag << " thread { " << whichAppl << ", ";
   cfgFile << whichTask << ", " << selectedSet.size() << ", { ";
   genericWriteObjects( cfgFile, selectedSet, ( *it )->getLevel() == TTraceLevel::THREAD );
   cfgFile << " } }" << endl;
 }
 
-void writeThreads( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+template< typename T >
+void writeThreads( const std::string &whichTag, ofstream &cfgFile, const T it )
 {
   vector< TObjectOrder > tmpSel;
 
@@ -2706,23 +2719,25 @@ void writeThreads( ofstream &cfgFile, const vector< Timeline * >::const_iterator
       {
         ( *it )->getSelectedRows( TTraceLevel::THREAD, tmpSel, begin, last );
         if( tmpSel.size() != (TObjectOrder)( last - begin + 1 ) )
-          writeThread( cfgFile, it, iAppl, iTask - beginTask );
+          writeThread( whichTag, cfgFile, it, iAppl, iTask - beginTask );
       }
     }
   }
 }
 
-void writeNode( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+template< typename T >
+void writeNode( const std::string &whichTag, ofstream &cfgFile, const T it )
 {
   vector< bool > selectedSet;
 
   ( *it )->getSelectedRows( TTraceLevel::NODE, selectedSet );
-  cfgFile << OLDCFG_TAG_WNDW_OBJECT << " node { " << selectedSet.size() << ", { ";
+  cfgFile << whichTag << " node { " << selectedSet.size() << ", { ";
   genericWriteObjects( cfgFile, selectedSet, ( *it )->getLevel() == TTraceLevel::NODE );
   cfgFile << " } }" << endl;
 }
 
-void writeCPU( ofstream &cfgFile, const vector< Timeline * >::const_iterator it, TNodeOrder whichNode )
+template< typename T >
+void writeCPU( const std::string &whichTag, ofstream &cfgFile, const T it, TNodeOrder whichNode )
 {
   vector< bool > selectedSet;
 
@@ -2730,12 +2745,13 @@ void writeCPU( ofstream &cfgFile, const vector< Timeline * >::const_iterator it,
                             selectedSet,
                             ( *it )->getTrace()->getFirstCPU( whichNode ) - 1,
                             ( *it )->getTrace()->getLastCPU( whichNode ) - 1 );
-  cfgFile << OLDCFG_TAG_WNDW_OBJECT << " cpu { " << whichNode << ", " << selectedSet.size() << ", { ";
+  cfgFile << whichTag << " cpu { " << whichNode << ", " << selectedSet.size() << ", { ";
   genericWriteObjects( cfgFile, selectedSet, ( *it )->getLevel() == TTraceLevel::CPU );
   cfgFile << " } }" << endl;
 }
 
-void writeCPUs( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+template< typename T >
+void writeCPUs( const std::string &whichTag, ofstream &cfgFile, T it )
 {
   vector< TObjectOrder > tmpSel;
 
@@ -2745,30 +2761,29 @@ void writeCPUs( ofstream &cfgFile, const vector< Timeline * >::const_iterator it
     TCPUOrder last  = ( *it )->getTrace()->getLastCPU( iNode );
     ( *it )->getSelectedRows( TTraceLevel::CPU, tmpSel, begin, last );
     if( tmpSel.size() != (TObjectOrder)( last - begin + 1 ) )
-      writeCPU( cfgFile, it, iNode );
+      writeCPU( whichTag, cfgFile, it, iNode );
   }
 }
 
-void WindowObject::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+template< typename T >
+void objectGenericPrintLine( const std::string &whichTag, ofstream &cfgFile, const T it )
 {
-  vector< TObjectOrder > selected;
-
   switch( ( *it )->getLevel() )
   {
     case TTraceLevel::WORKLOAD:
     case TTraceLevel::APPLICATION:
     case TTraceLevel::TASK:
     case TTraceLevel::THREAD:
-      writeAppl( cfgFile, it );
-      writeTasks( cfgFile, it );
-      writeThreads( cfgFile, it );
+      writeAppl( whichTag, cfgFile, it );
+      writeTasks( whichTag, cfgFile, it );
+      writeThreads( whichTag, cfgFile, it );
       break;
 
     case TTraceLevel::SYSTEM:
     case TTraceLevel::NODE:
     case TTraceLevel::CPU:
-      writeNode( cfgFile, it );
-      writeCPUs( cfgFile, it );
+      writeNode( whichTag, cfgFile, it );
+      writeCPUs( whichTag, cfgFile, it );
       break;
 
     default:
@@ -2776,6 +2791,10 @@ void WindowObject::printLine( ofstream &cfgFile, const vector< Timeline * >::con
   }
 }
 
+void WindowObject::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+{
+  objectGenericPrintLine( WindowObject::tagCFG, cfgFile, it );
+}
 
 string WindowBeginTime::tagCFG = OLDCFG_TAG_WNDW_BEGIN_TIME;
 
@@ -5467,7 +5486,8 @@ void Analyzer2DMaximumGradient::printLine( ofstream &cfgFile, const vector< Hist
 }
 
 
-string Analyzer2DObjects::tagCFG = CFG_TAG_OBJECTS;
+// DEPRECATED
+string Analyzer2DObjects::tagCFG = CFG_TAG_AN2D_OBJECTS;
 
 bool Analyzer2DObjects::parseLine( KernelConnection *whichKernel,
                                    istringstream &line,
@@ -5519,7 +5539,7 @@ void Analyzer2DObjects::printLine( ofstream &cfgFile, const vector< Histogram * 
   vector< TObjectOrder > myRows;
   ( *it )->getSelectedRows( myRows );
 
-  cfgFile << CFG_TAG_OBJECTS << " ";
+  cfgFile << CFG_TAG_AN2D_OBJECTS << " ";
 
   TObjectOrder totalRows = ( *it )->getTrace()->getLevelObjects( ( *it )->getControlWindow()->getLevel() );
   if( myRows.size() == (size_t)totalRows )
@@ -5540,7 +5560,32 @@ void Analyzer2DObjects::printLine( ofstream &cfgFile, const vector< Histogram * 
 }
 
 
-string Analyzer2DDrawModeObjects::tagCFG = CFG_TAG_DRAWMODE_OBJECTS;
+string Analyzer2DObject::tagCFG = CFG_TAG_AN2D_OBJECT;
+
+bool Analyzer2DObject::parseLine( KernelConnection *whichKernel,
+                                  istringstream &line,
+                                  Trace *whichTrace,
+                                  vector< Timeline * > &windows,
+                                  vector< Histogram * > &histograms )
+{
+  if( windows[ windows.size() - 1 ] == nullptr )
+    return false;
+
+  Histogram *histo = histograms.back();
+
+  if( histo == nullptr )
+    return false;
+
+  return objectGenericParseLine( whichKernel, line, whichTrace, histo );
+}
+
+void Analyzer2DObject::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+{
+  objectGenericPrintLine( Analyzer2DObject::tagCFG, cfgFile, it );
+}
+
+
+string Analyzer2DDrawModeObjects::tagCFG = CFG_TAG_AN2D_DRAWMODE_OBJECTS;
 
 bool Analyzer2DDrawModeObjects::parseLine( KernelConnection *whichKernel,
                                            istringstream &line,
@@ -5566,11 +5611,11 @@ bool Analyzer2DDrawModeObjects::parseLine( KernelConnection *whichKernel,
 
 void Analyzer2DDrawModeObjects::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
 {
-  cfgFile << CFG_TAG_DRAWMODE_OBJECTS << " " << drawModeTags[ ( *it )->getDrawModeObjects() ] << endl;
+  cfgFile << CFG_TAG_AN2D_DRAWMODE_OBJECTS << " " << drawModeTags[ ( *it )->getDrawModeObjects() ] << endl;
 }
 
 
-string Analyzer2DDrawModeColumns::tagCFG = CFG_TAG_DRAWMODE_COLUMNS;
+string Analyzer2DDrawModeColumns::tagCFG = CFG_TAG_AN2D_DRAWMODE_COLUMNS;
 
 bool Analyzer2DDrawModeColumns::parseLine( KernelConnection *whichKernel,
                                            istringstream &line,
@@ -5596,7 +5641,7 @@ bool Analyzer2DDrawModeColumns::parseLine( KernelConnection *whichKernel,
 
 void Analyzer2DDrawModeColumns::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
 {
-  cfgFile << CFG_TAG_DRAWMODE_COLUMNS << " " << drawModeTags[ ( *it )->getDrawModeColumns() ] << endl;
+  cfgFile << CFG_TAG_AN2D_DRAWMODE_COLUMNS << " " << drawModeTags[ ( *it )->getDrawModeColumns() ] << endl;
 }
 
 

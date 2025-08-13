@@ -41,7 +41,7 @@ SyncWindows *SyncWindows::getInstance()
 SyncWindows::SyncWindows()
 {
   lastNewGroup                                 = 0;
-  syncGroups[ lastNewGroup ].syncGroupsWindows = vector<WindowGenericItem>();
+  syncGroups[ lastNewGroup ].syncGroupsWindows = vector< WindowGenericItem >();
   addProperty( lastNewGroup, SyncPropertiesType::SYNC_TIME );
   removingAll = false;
 }
@@ -50,7 +50,7 @@ SyncWindows::~SyncWindows()
 {
 }
 
-void SyncWindows::initConfigGroup( std::map<TGroupId, TGroupId> &syncRealGroup )
+void SyncWindows::initConfigGroup( std::map< TGroupId, TGroupId > &syncRealGroup )
 {
   bool tmpConfigGroupsCreated = false;
 
@@ -65,7 +65,7 @@ void SyncWindows::initConfigGroup( std::map<TGroupId, TGroupId> &syncRealGroup )
 
     if( itSyncGroups == syncGroups.end() )
     {
-      syncGroups[ tmpIteratorSyncGroups ].syncGroupsWindows = std::vector<WindowGenericItem>();
+      syncGroups[ tmpIteratorSyncGroups ].syncGroupsWindows = std::vector< WindowGenericItem >();
 
       itMapSyncGroups->second = (TGroupId)tmpIteratorSyncGroups;
       itMapSyncGroups++;
@@ -99,7 +99,7 @@ void SyncWindows::changePropertiesGroup( WindowGenericItem genericWindow, TGroup
 
   if( isAdded )
   {
-    if( std::holds_alternative<Timeline *>( genericWindow ) )
+    if( std::holds_alternative< Timeline * >( genericWindow ) )
     {
       if( tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_HISTOGRAMS || tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_MIXED )
         tmpSyncGroup = SyncPropertiesGroup::SYNC_GROUP_MIXED;
@@ -107,7 +107,7 @@ void SyncWindows::changePropertiesGroup( WindowGenericItem genericWindow, TGroup
         tmpSyncGroup = SyncPropertiesGroup::SYNC_GROUP_TIMELINES;
     }
 
-    if( std::holds_alternative<Histogram *>( genericWindow ) )
+    if( std::holds_alternative< Histogram * >( genericWindow ) )
     {
       auto &tmpSyncGroup = syncGroups[ whichGroup ].groupType;
       if( tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_TIMELINES || tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_MIXED )
@@ -122,14 +122,14 @@ void SyncWindows::changePropertiesGroup( WindowGenericItem genericWindow, TGroup
 
     for( auto &window : syncGroups[ whichGroup ].syncGroupsWindows )
     {
-      if( std::holds_alternative<Timeline *>( window ) )
+      if( std::holds_alternative< Timeline * >( window ) )
       {
         if( tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_HISTOGRAMS || tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_MIXED )
           tmpSyncGroup = SyncPropertiesGroup::SYNC_GROUP_MIXED;
         else
           tmpSyncGroup = SyncPropertiesGroup::SYNC_GROUP_TIMELINES;
       }
-      if( std::holds_alternative<Histogram *>( window ) )
+      if( std::holds_alternative< Histogram * >( window ) )
       {
         auto &tmpSyncGroup = syncGroups[ whichGroup ].groupType;
         if( tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_TIMELINES || tmpSyncGroup == SyncPropertiesGroup::SYNC_GROUP_MIXED )
@@ -175,14 +175,14 @@ int SyncWindows::getNumWindows( TGroupId whichGroup )
   return syncGroups[ whichGroup ].syncGroupsWindows.size();
 }
 
-std::vector<Timeline *> SyncWindows::getGroupTimelineWindows( TGroupId whichGroup )
+std::vector< Timeline * > SyncWindows::getGroupTimelineWindows( TGroupId whichGroup )
 {
-  std::vector<Timeline *> tmpTimelineList;
+  std::vector< Timeline * > tmpTimelineList;
   for( auto it = syncGroups[ whichGroup ].syncGroupsWindows.begin(); it != syncGroups[ whichGroup ].syncGroupsWindows.end(); it++ )
   {
-    if( std::holds_alternative<Timeline *>( *it ) )
+    if( std::holds_alternative< Timeline * >( *it ) )
     {
-      tmpTimelineList.push_back( std::get<Timeline *>( *it ) );
+      tmpTimelineList.push_back( std::get< Timeline * >( *it ) );
     }
   }
   return tmpTimelineList;
@@ -201,7 +201,7 @@ TGroupId SyncWindows::newGroup()
     auto it = syncGroups.find( i );
     if( it == syncGroups.end() )
     {
-      syncGroups[ i ].syncGroupsWindows = std::vector<WindowGenericItem>();
+      syncGroups[ i ].syncGroupsWindows = std::vector< WindowGenericItem >();
       addProperty( i, SyncPropertiesType::SYNC_TIME );
       return i;
     }
@@ -210,7 +210,7 @@ TGroupId SyncWindows::newGroup()
   }
 
   ++lastNewGroup;
-  syncGroups[ lastNewGroup ].syncGroupsWindows = std::vector<WindowGenericItem>();
+  syncGroups[ lastNewGroup ].syncGroupsWindows = std::vector< WindowGenericItem >();
   addProperty( lastNewGroup, SyncPropertiesType::SYNC_TIME );
 
   return lastNewGroup;
@@ -286,19 +286,19 @@ void SyncWindows::updateGroupTraceStruct( TGroupId whichGroup )
   }
 }
 
-void SyncWindows::getGroups( vector<TGroupId> &groups ) const
+void SyncWindows::getGroups( vector< TGroupId > &groups ) const
 {
   for( auto it = syncGroups.begin(); it != syncGroups.end(); ++it )
     groups.push_back( it->first );
 }
 
-void SyncWindows::getGroupsProperties( std::map<TGroupId, std::vector<SyncPropertiesType>> &groups ) const
+void SyncWindows::getGroupsProperties( std::map< TGroupId, std::vector< SyncPropertiesType > > &groups ) const
 {
   for( auto it = syncGroups.begin(); it != syncGroups.end(); ++it )
     groups[ it->first ] = it->second.syncGroupsSelectedProperties;
 }
 
-void SyncWindows::getGroupAvailableProperties( TGroupId groupId, std::vector<SyncPropertiesType> &properties )
+void SyncWindows::getGroupAvailableProperties( TGroupId groupId, std::vector< SyncPropertiesType > &properties )
 {
   // TODO: CHECK
 
@@ -411,7 +411,7 @@ void SyncWindows::removeProperty( const TGroupId &whichGroup, SyncPropertiesType
   vec.erase( std::remove( vec.begin(), vec.end(), newProperty ), vec.end() );
 }
 
-void SyncWindows::broadcastTimeAll( TGroupId whichGroup, std::optional<TTime> beginTime, std::optional<TTime> endTime )
+void SyncWindows::broadcastTimeAll( TGroupId whichGroup, std::optional< TTime > beginTime, std::optional< TTime > endTime )
 {
   if( syncGroups.find( whichGroup ) == syncGroups.end() )
     return;
@@ -440,7 +440,7 @@ void SyncWindows::broadcastTimeAll( TGroupId whichGroup, std::optional<TTime> be
   syncGroups[ whichGroup ].isChanging = false;
 }
 
-void SyncWindows::broadcastDeltaAll( TGroupId whichGroup, std::optional<THistogramLimit> whichDelta )
+void SyncWindows::broadcastDeltaAll( TGroupId whichGroup, std::optional< THistogramLimit > whichDelta )
 {
   if( syncGroups.find( whichGroup ) == syncGroups.end() )
     return;
@@ -471,7 +471,7 @@ void SyncWindows::broadcastDeltaAll( TGroupId whichGroup, std::optional<THistogr
   syncGroups[ whichGroup ].isChanging = false;
 }
 
-void SyncWindows::broadcastColumnsAll( TGroupId whichGroup, std::optional<THistogramColumn> whichColumns )
+void SyncWindows::broadcastColumnsAll( TGroupId whichGroup, std::optional< THistogramColumn > whichColumns )
 {
   if( syncGroups.find( whichGroup ) == syncGroups.end() )
     return;
@@ -501,7 +501,7 @@ void SyncWindows::broadcastColumnsAll( TGroupId whichGroup, std::optional<THisto
   syncGroups[ whichGroup ].isChanging = false;
 }
 
-void SyncWindows::broadcastMaxAll( TGroupId whichGroup, std::optional<double> whichMax )
+void SyncWindows::broadcastMaxAll( TGroupId whichGroup, std::optional< double > whichMax )
 {
   if( syncGroups.find( whichGroup ) == syncGroups.end() )
     return;
@@ -532,7 +532,7 @@ void SyncWindows::broadcastMaxAll( TGroupId whichGroup, std::optional<double> wh
   syncGroups[ whichGroup ].isChanging = false;
 }
 
-void SyncWindows::broadcastMinAll( TGroupId whichGroup, std::optional<double> whichMin )
+void SyncWindows::broadcastMinAll( TGroupId whichGroup, std::optional< double > whichMin )
 {
   if( syncGroups.find( whichGroup ) == syncGroups.end() )
     return;
@@ -563,7 +563,7 @@ void SyncWindows::broadcastMinAll( TGroupId whichGroup, std::optional<double> wh
   syncGroups[ whichGroup ].isChanging = false;
 }
 
-void SyncWindows::broadcastSizeAll( TGroupId whichGroup, std::optional<PRV_UINT16> whichPosW, std::optional<PRV_UINT16> whichPosH )
+void SyncWindows::broadcastSizeAll( TGroupId whichGroup, std::optional< PRV_UINT16 > whichPosW, std::optional< PRV_UINT16 > whichPosH )
 {
   if( syncGroups.find( whichGroup ) == syncGroups.end() )
     return;
@@ -621,10 +621,10 @@ void SyncWindows::broadcastPositionAll( TGroupId whichGroup, int whichPosYDiff, 
 }
 
 void SyncWindows::broadcastColorPaletteAll( TGroupId whichGroup,
-                                            std::optional<std::map<TSemanticValue, rgb>> paletteColors,
-                                            std::optional<rgb> backgroundColor,
-                                            std::optional<rgb> axisColor,
-                                            std::optional<bool> backgroundAsZero )
+                                            std::optional< std::map< TSemanticValue, rgb > > paletteColors,
+                                            std::optional< rgb > backgroundColor,
+                                            std::optional< rgb > axisColor,
+                                            std::optional< bool > backgroundAsZero )
 {
   if( syncGroups.find( whichGroup ) == syncGroups.end() )
     return;
@@ -636,7 +636,7 @@ void SyncWindows::broadcastColorPaletteAll( TGroupId whichGroup,
 
   if( paletteColors == std::nullopt && backgroundColor == std::nullopt && axisColor == std::nullopt && backgroundAsZero == std::nullopt )
   {
-    std::map<TSemanticValue, rgb> tmpPaletteColors;
+    std::map< TSemanticValue, rgb > tmpPaletteColors;
     rgb tmpBackgroundColor;
     rgb tmpAxisColor;
     bool tmpBackgroundAsZero;
@@ -662,7 +662,7 @@ void SyncWindows::broadcastColorPaletteAll( TGroupId whichGroup,
   }
   syncGroups[ whichGroup ].isChanging = false;
 }
-void SyncWindows::broadcastObjectZoomAll( TGroupId whichGroup, std::optional<TObjectOrder> beginObject, std::optional<TObjectOrder> endObject )
+void SyncWindows::broadcastObjectZoomAll( TGroupId whichGroup, std::optional< TObjectOrder > beginObject, std::optional< TObjectOrder > endObject )
 {
   if( syncGroups.find( whichGroup ) == syncGroups.end() )
     return;
@@ -694,7 +694,7 @@ void SyncWindows::broadcastObjectZoomAll( TGroupId whichGroup, std::optional<TOb
   syncGroups[ whichGroup ].isChanging = false;
 }
 
-void SyncWindows::broadcastObjectSelectionAll( TGroupId whichGroup, TTraceLevel wichLevel, std::optional<std::vector<bool>> selectedObjects )
+void SyncWindows::broadcastObjectSelectionAll( TGroupId whichGroup, TTraceLevel wichLevel, std::optional< std::vector< bool > > selectedObjects )
 {
   if( syncGroups.find( whichGroup ) == syncGroups.end() )
     return;
@@ -706,7 +706,7 @@ void SyncWindows::broadcastObjectSelectionAll( TGroupId whichGroup, TTraceLevel 
 
   if( selectedObjects == std::nullopt )
   {
-    std::vector<bool> tmpSelectedObjects;
+    std::vector< bool > tmpSelectedObjects;
 
     getSelectObjectZoom( whichGroup, tmpSelectedObjects, wichLevel );
 
@@ -756,8 +756,8 @@ void SyncWindows::broadcastDelta( Histogram *histogram, TGroupId whichGroup, THi
     histogram->setControlDelta( whichDelta );
 
     // modify current zoom directly
-    std::pair<HistogramProxy::TZoomInfo, HistogramProxy::TZoomInfo> zoomInfo = histogram->getZoomFirstDimension();
-    zoomInfo.second.begin                                                    = whichDelta; // delta
+    std::pair< HistogramProxy::TZoomInfo, HistogramProxy::TZoomInfo > zoomInfo = histogram->getZoomFirstDimension();
+    zoomInfo.second.begin                                                      = whichDelta; // delta
     histogram->setZoomFirstDimension( zoomInfo );
     histogram->setCompute2DScale( false );
     histogram->setUseFixedDelta( true );
@@ -783,8 +783,8 @@ void SyncWindows::broadcastSemanticMin( Histogram *whichHistogram, TGroupId whic
     whichHistogram->setControlMin( newHistoMin );
 
     // modify current zoom directly
-    std::pair<HistogramProxy::TZoomInfo, HistogramProxy::TZoomInfo> zoomInfo = whichHistogram->getZoomFirstDimension();
-    zoomInfo.first.begin                                                     = newHistoMin; // minimum
+    std::pair< HistogramProxy::TZoomInfo, HistogramProxy::TZoomInfo > zoomInfo = whichHistogram->getZoomFirstDimension();
+    zoomInfo.first.begin                                                       = newHistoMin; // minimum
     whichHistogram->setZoomFirstDimension( zoomInfo );
 
     whichHistogram->setCompute2DScale( false );
@@ -810,8 +810,8 @@ void SyncWindows::broadcastSemanticMax( Histogram *whichHistogram, TGroupId whic
     whichHistogram->setControlMax( newHistoMax );
 
     // modify current zoom directly
-    std::pair<HistogramProxy::TZoomInfo, HistogramProxy::TZoomInfo> zoomInfo = whichHistogram->getZoomFirstDimension();
-    zoomInfo.first.begin                                                     = newHistoMax; // minimum
+    std::pair< HistogramProxy::TZoomInfo, HistogramProxy::TZoomInfo > zoomInfo = whichHistogram->getZoomFirstDimension();
+    zoomInfo.first.begin                                                       = newHistoMax; // minimum
     whichHistogram->setZoomFirstDimension( zoomInfo );
 
     whichHistogram->setCompute2DScale( false );
@@ -853,9 +853,9 @@ void SyncWindows::broadcastObjectZoom( Histogram *whichWindow, TGroupId whichGro
   }
 }
 
-void SyncWindows::broadcastObjectSelection( Timeline *whichWindow, TGroupId whichGroup, TTraceLevel wichLevel, std::vector<bool> selectedObjects )
+void SyncWindows::broadcastObjectSelection( Timeline *whichWindow, TGroupId whichGroup, TTraceLevel wichLevel, std::vector< bool > selectedObjects )
 {
-  std::vector<bool> tmpSelectedObjects;
+  std::vector< bool > tmpSelectedObjects;
   whichWindow->getSelectedRows( wichLevel, tmpSelectedObjects );
 
   if( tmpSelectedObjects != selectedObjects )
@@ -867,10 +867,10 @@ void SyncWindows::broadcastObjectSelection( Timeline *whichWindow, TGroupId whic
   }
 }
 
-void SyncWindows::broadcastObjectSelection( Histogram *whichWindow, TGroupId whichGroup, TTraceLevel wichLevel, std::vector<bool> selectedObjects )
+void SyncWindows::broadcastObjectSelection( Histogram *whichWindow, TGroupId whichGroup, TTraceLevel wichLevel, std::vector< bool > selectedObjects )
 {
-  std::vector<bool> tmpSelectedObjects;
-  whichWindow->getRowSelectionManagement()->getSelected( tmpSelectedObjects, wichLevel );
+  std::vector< bool > tmpSelectedObjects;
+  whichWindow->getRowSelectionManager().getSelected( tmpSelectedObjects, wichLevel );
 
   if( tmpSelectedObjects != selectedObjects )
   {
@@ -912,10 +912,10 @@ void SyncWindows::broadcastWindowsPosition( Timeline *whichWindow, TGroupId whic
 
 void SyncWindows::broadcastColorPalette( Timeline *whichWindow,
                                          TGroupId whichGroup,
-                                         std::optional<std::map<TSemanticValue, rgb>> paletteColors,
-                                         std::optional<rgb> backgroundColor,
-                                         std::optional<rgb> axisColor,
-                                         std::optional<bool> backgroundAsZero )
+                                         std::optional< std::map< TSemanticValue, rgb > > paletteColors,
+                                         std::optional< rgb > backgroundColor,
+                                         std::optional< rgb > axisColor,
+                                         std::optional< bool > backgroundAsZero )
 {
   if( paletteColors != std::nullopt )
     whichWindow->setCustomPalette( paletteColors.value() );
@@ -1015,17 +1015,17 @@ void SyncWindows::getGroupObjectZoom( TGroupId whichGroup, TObjectOrder &beginOb
 }
 
 void SyncWindows::getGroupColorPalette( TGroupId whichGroup,
-                                        std::map<TSemanticValue, rgb> &paletteColors,
+                                        std::map< TSemanticValue, rgb > &paletteColors,
                                         rgb &backgroundColor,
                                         rgb &axisColor,
                                         bool &backgroundAsZero )
 {
   auto values_getter = overloads{ [ &paletteColors, &backgroundColor, &axisColor, &backgroundAsZero ]( Timeline *t )
                                   {
-                                    paletteColors= t->getSemanticColor().getCustomPalette();
-                                    backgroundColor= t->getBackgroundColor();
-                                    axisColor= t->getAxisColor();
-                                    backgroundAsZero= t->getBackgroundAsZero();
+                                    paletteColors = t->getSemanticColor().getCustomPalette();
+                                    backgroundColor = t->getBackgroundColor();
+                                    axisColor = t->getAxisColor();
+                                    backgroundAsZero = t->getBackgroundAsZero();
                                     return 0;
                                   },
                                   []( Histogram * )
@@ -1041,7 +1041,7 @@ void SyncWindows::getGroupColorPalette( TGroupId whichGroup,
   std::visit( values_getter, firstElement );
 }
 
-void SyncWindows::getSelectObjectZoom( TGroupId whichGroup, std::vector<bool> &selectedObjects, TTraceLevel &objectsLevel )
+void SyncWindows::getSelectObjectZoom( TGroupId whichGroup, std::vector< bool > &selectedObjects, TTraceLevel &objectsLevel )
 {
   auto visitor = overloads{
     [ &selectedObjects, &objectsLevel ]( Timeline *t )
@@ -1051,7 +1051,7 @@ void SyncWindows::getSelectObjectZoom( TGroupId whichGroup, std::vector<bool> &s
     },
     [ &selectedObjects, &objectsLevel ]( Histogram *h )
     {
-      h->getRowSelectionManagement()->getSelected( selectedObjects, objectsLevel );
+      h->getRowSelectionManager().getSelected( selectedObjects, objectsLevel );
       return selectedObjects;
     },
   };
@@ -1101,7 +1101,7 @@ void SyncWindows::getGroupMin( TGroupId whichGroup, double &whichMin )
   applyToFirstWindow( whichGroup, whichMin, visitor );
 }
 
-template<typename T, typename Visitor>
+template< typename T, typename Visitor >
 bool SyncWindows::applyToFirstWindow( TGroupId whichGroup, T &result, Visitor visitor )
 {
   auto it = syncGroups.find( whichGroup );
