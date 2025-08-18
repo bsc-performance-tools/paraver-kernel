@@ -120,17 +120,26 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, Progr
         outputFile << LabelConstructor::objectLabel( i, whichWindow->getLevel(), trace, false, false ) << "\t";
       }
 
+      TRecordTime t0 = whichWindow->getBeginTime( i );
+      TRecordTime t1 = whichWindow->getEndTime( i );
+
+      // Clamp the time range
+      if ( t0 < beginTime )
+        t0 = beginTime;
+      if ( t1 > endTime )
+        t1 = endTime;
+
+      TRecordTime dt = t1 - t0;
+
       if( windowTimeUnits )
       {
-        outputFile << whichWindow->traceUnitsToWindowUnits(
-          whichWindow->getBeginTime( i ) ) << "\t";
-        outputFile << whichWindow->traceUnitsToWindowUnits(
-          whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
+        outputFile << whichWindow->traceUnitsToWindowUnits( t0 ) << "\t";
+        outputFile << whichWindow->traceUnitsToWindowUnits( dt ) << "\t";
       }
       else
       {
-        outputFile << (PRV_UINT64)whichWindow->getBeginTime( i ) << "\t";
-        outputFile << (PRV_UINT64)( whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
+        outputFile << (PRV_UINT64) t0 << "\t";
+        outputFile << (PRV_UINT64) dt << "\t";
       }
 
       if( textualSemantic )
@@ -145,17 +154,27 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, Progr
     {
       outputFile << LabelConstructor::objectLabel( i, whichWindow->getLevel(), trace, false, false ) << "\t";
     }
+
+    TRecordTime t0 = whichWindow->getBeginTime( i );
+    TRecordTime t1 = whichWindow->getEndTime( i );
+
+    // Clamp the time range
+    if ( t0 < beginTime )
+      t0 = beginTime;
+    if ( t1 > endTime )
+      t1 = endTime;
+
+    TRecordTime dt = t1 - t0;
+
     if( windowTimeUnits )
     {
-      outputFile << whichWindow->traceUnitsToWindowUnits(
-        whichWindow->getBeginTime( i ) ) << "\t";
-      outputFile << whichWindow->traceUnitsToWindowUnits(
-        whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
+      outputFile << whichWindow->traceUnitsToWindowUnits( t0 ) << "\t";
+      outputFile << whichWindow->traceUnitsToWindowUnits( dt ) << "\t";
     }
     else
     {
-      outputFile << (PRV_UINT64)whichWindow->getBeginTime( i ) << "\t";
-      outputFile << (PRV_UINT64)( whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
+      outputFile << (PRV_UINT64) t0 << "\t";
+      outputFile << (PRV_UINT64) dt << "\t";
     }
 
     if( textualSemantic )
