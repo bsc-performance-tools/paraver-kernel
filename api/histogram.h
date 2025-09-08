@@ -1099,7 +1099,7 @@ class HistogramProxy : public Histogram
     virtual TCFGS4DIndexLink getCFGS4DIndexLink() const override;
 
     virtual TTraceLevel getLevel() const override;
-    virtual bool areAllSelectedRows( TTraceLevel onLevel ) const;
+    virtual bool areAllSelectedRows( TTraceLevel onLevel ) const override;
 
     virtual const SelectionManagement< TObjectOrder, TTraceLevel > &getRowSelectionManager() const override;
     virtual void setRowSelectionManager( SelectionManagement< TObjectOrder, TTraceLevel > &rowSel ) override;
