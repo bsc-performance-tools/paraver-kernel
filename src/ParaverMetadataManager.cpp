@@ -24,22 +24,22 @@
 \*****************************************************************************/
 
 #include "ParaverMetadataManager.h"
-//#include "Utilities.h"
+// #include "Utilities.h"
 
 #include <sstream>
-using std::ostringstream;
 using std::istringstream;
+using std::ostringstream;
 using std::stringstream;
-#include <iomanip>
 #include <ctime> // date
+#include <iomanip>
 
 int Metadata::FIELD_COUNT = 4;
 
 #include <algorithm>
 #ifdef _WIN32
-#include <functional>
-#include <locale>
-#include <cctype>
+#  include <cctype>
+#  include <functional>
+#  include <locale>
 #endif
 
 class cepba_tools
@@ -47,92 +47,95 @@ class cepba_tools
   public:
     ~cepba_tools();
 
-    static std::string& ltrim(std::string &s);
-    static std::string& rtrim(std::string &s);
-    static std::string& trim(std::string &s);
+    static std::string& ltrim( std::string& s );
+    static std::string& rtrim( std::string& s );
+    static std::string& trim( std::string& s );
 };
 
 // trim from start
-std::string& cepba_tools::ltrim(std::string &s)
+std::string& cepba_tools::ltrim( std::string& s )
 {
-   s.erase(s.begin(), std::find_if(s.begin(), s.end(),
-            std::not1(std::ptr_fun<int, int>(std::isspace))));
-   return s;
+  auto tmpf = []( int c )
+  {
+    return !std::isspace( c );
+  };
+  s.erase( s.begin(), std::find_if( s.begin(), s.end(), tmpf ) );
+  return s;
 }
 
 // trim from end
-std::string& cepba_tools::rtrim(std::string &s)
+std::string& cepba_tools::rtrim( std::string& s )
 {
-   s.erase(std::find_if(s.rbegin(), s.rend(),
-            std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
-   return s;
+  auto tmpf = []( int c )
+  {
+    return !std::isspace( c );
+  };
+  s.erase( std::find_if( s.rbegin(), s.rend(), tmpf ).base(), s.end() );
+  return s;
 }
 
 // trim from both ends
-std::string& cepba_tools::trim(std::string &s)
+std::string& cepba_tools::trim( std::string& s )
 {
-   return ltrim(rtrim(s));
+  return ltrim( rtrim( s ) );
 }
 
 
-Metadata::Metadata(string Date,
-                   string Action,
-                   string Application,
-                   string OriginalTrace):
-Date(Date), Action(Action), Application(Application), OriginalTrace(OriginalTrace)
+Metadata::Metadata( string Date, string Action, string Application, string OriginalTrace )
+  : Date( Date ), Action( Action ), Application( Application ), OriginalTrace( OriginalTrace )
 {
 }
 
-void Metadata::Write(ostream& os) const
+void Metadata::Write( ostream& os ) const
 {
   os << "#" << Date << ":" << Action << ":" << Application << ":" << OriginalTrace << ":";
 
-  FlushSpecificFields(os);
+  FlushSpecificFields( os );
 }
 
-ostream& operator<< (ostream& os, const Metadata& MetadataRecord)
+ostream& operator<<( ostream& os, const Metadata& MetadataRecord )
 {
-  MetadataRecord.Write(os);
+  MetadataRecord.Write( os );
   return os;
 }
 
-int    CutterMetadata::FIELD_COUNT = Metadata::FIELD_COUNT + 3;
-string CutterMetadata::ACTION_ID   = "CUTTER";
-string CutterMetadata::RUNAPP_APPLICATION_ID = "RUNAPP";
+int CutterMetadata::FIELD_COUNT                = Metadata::FIELD_COUNT + 3;
+string CutterMetadata::ACTION_ID               = "CUTTER";
+string CutterMetadata::RUNAPP_APPLICATION_ID   = "RUNAPP";
 string CutterMetadata::ORIGINAL_APPLICATION_ID = "ORIGINAL";
 
 
-CutterMetadata::CutterMetadata (vector<string>& CutterMetadataFields)
+CutterMetadata::CutterMetadata( vector< string >& CutterMetadataFields )
 {
   istringstream Converter;
 
-  if (CutterMetadataFields.size() != CutterMetadata::FIELD_COUNT)
+  if( CutterMetadataFields.size() != CutterMetadata::FIELD_COUNT )
   {
     ostringstream ErrorMessageSStr;
-    ErrorMessageSStr <<  "wrong number of fields value in cutter metadata record (";
-    ErrorMessageSStr <<  CutterMetadataFields.size() << " read, ";
+    ErrorMessageSStr << "wrong number of fields value in cutter metadata record (";
+    ErrorMessageSStr << CutterMetadataFields.size() << " read, ";
     ErrorMessageSStr << CutterMetadata::FIELD_COUNT << " expected)";
 
-    Error = true;
+    Error        = true;
     ErrorMessage = ErrorMessageSStr.str();
   }
 
-  this->Date          = CutterMetadataFields[0];
-  this->Action        = CutterMetadataFields[1];
-  this->Application   = CutterMetadataFields[2];
-  this->OriginalTrace = CutterMetadataFields[3];
+  this->Date          = CutterMetadataFields[ 0 ];
+  this->Action        = CutterMetadataFields[ 1 ];
+  this->Application   = CutterMetadataFields[ 2 ];
+  this->OriginalTrace = CutterMetadataFields[ 3 ];
 
 
   /* FIELD 5: Offset */
   Converter.clear();
-  Converter.str(CutterMetadataFields[4]);
-  if (!(Converter >> this->Offset))
+  Converter.str( CutterMetadataFields[ 4 ] );
+  if( !( Converter >> this->Offset ) )
   {
     ostringstream ErrorMessageSStr;
-    ErrorMessageSStr <<  "wrong offset value in cutter metadata record (";
-    ErrorMessageSStr <<  CutterMetadataFields[4] << ")";
+    ErrorMessageSStr << "wrong offset value in cutter metadata record (";
+    ErrorMessageSStr << CutterMetadataFields[ 4 ] << ")";
 
-    Error = true;
+    Error        = true;
     ErrorMessage = ErrorMessageSStr.str();
 
     return;
@@ -141,14 +144,14 @@ CutterMetadata::CutterMetadata (vector<string>& CutterMetadataFields)
 
   /* FIELD 6: BeginTime */
   Converter.clear();
-  Converter.str(CutterMetadataFields[5]);
-  if (!(Converter >> this->BeginTime))
+  Converter.str( CutterMetadataFields[ 5 ] );
+  if( !( Converter >> this->BeginTime ) )
   {
     ostringstream ErrorMessageSStr;
-    ErrorMessageSStr <<  "wrong cut begin time value in cutter metadata record (";
-    ErrorMessageSStr <<  CutterMetadataFields[5] << ")";
+    ErrorMessageSStr << "wrong cut begin time value in cutter metadata record (";
+    ErrorMessageSStr << CutterMetadataFields[ 5 ] << ")";
 
-    Error = true;
+    Error        = true;
     ErrorMessage = ErrorMessageSStr.str();
 
     return;
@@ -156,14 +159,14 @@ CutterMetadata::CutterMetadata (vector<string>& CutterMetadataFields)
 
   /* FIELD 7: EndTime */
   Converter.clear();
-  Converter.str(CutterMetadataFields[6]);
-  if (!(Converter >> this->EndTime))
+  Converter.str( CutterMetadataFields[ 6 ] );
+  if( !( Converter >> this->EndTime ) )
   {
     ostringstream ErrorMessageSStr;
-    ErrorMessageSStr <<  "wrong cut end time value in cutter metadata record (";
-    ErrorMessageSStr <<  CutterMetadataFields[6] << ")";
+    ErrorMessageSStr << "wrong cut end time value in cutter metadata record (";
+    ErrorMessageSStr << CutterMetadataFields[ 6 ] << ")";
 
-    Error = true;
+    Error        = true;
     ErrorMessage = ErrorMessageSStr.str();
 
     return;
@@ -171,13 +174,8 @@ CutterMetadata::CutterMetadata (vector<string>& CutterMetadataFields)
 }
 
 
-CutterMetadata::CutterMetadata (string Date,
-                                string Application,
-                                string OriginalTrace,
-                                PRV_UINT64 Offset,
-                                PRV_UINT64 BeginTime,
-                                PRV_UINT64 EndTime)
-:Metadata(Date, CutterMetadata::ACTION_ID, Application, OriginalTrace)
+CutterMetadata::CutterMetadata( string Date, string Application, string OriginalTrace, PRV_UINT64 Offset, PRV_UINT64 BeginTime, PRV_UINT64 EndTime )
+  : Metadata( Date, CutterMetadata::ACTION_ID, Application, OriginalTrace )
 {
   this->Offset    = Offset;
   this->BeginTime = BeginTime;
@@ -185,19 +183,19 @@ CutterMetadata::CutterMetadata (string Date,
 }
 
 
-void CutterMetadata::FlushSpecificFields(ostream& os) const
+void CutterMetadata::FlushSpecificFields( ostream& os ) const
 {
   os << Offset << ":" << BeginTime << ":" << EndTime;
 }
 
 
-bool MetadataManager::NewMetadata(string MetadataStr)
+bool MetadataManager::NewMetadata( string MetadataStr )
 {
-  vector<string> MetadataFields;
+  vector< string > MetadataFields;
 
-  PopulateRecord(MetadataFields, MetadataStr, ':');
+  PopulateRecord( MetadataFields, MetadataStr, ':' );
 
-  if (MetadataFields.size() < Metadata::FIELD_COUNT)
+  if( MetadataFields.size() < Metadata::FIELD_COUNT )
   {
     ostringstream ErrorMessageSStr;
     Error = true;
@@ -216,13 +214,13 @@ bool MetadataManager::NewMetadata(string MetadataStr)
    * FIELD 3: Original Trace
    */
 
-  if (MetadataFields[1].compare(CutterMetadata::ACTION_ID) == 0)
+  if( MetadataFields[ 1 ].compare( CutterMetadata::ACTION_ID ) == 0 )
   {
-    CutterMetadata* NewCutterMetadata = new CutterMetadata(MetadataFields);
+    CutterMetadata* NewCutterMetadata = new CutterMetadata( MetadataFields );
 
-    if (NewCutterMetadata->GetError())
+    if( NewCutterMetadata->GetError() )
     {
-      Error = true;
+      Error        = true;
       ErrorMessage = NewCutterMetadata->GetErrorMessage();
 
       delete NewCutterMetadata;
@@ -230,14 +228,14 @@ bool MetadataManager::NewMetadata(string MetadataStr)
       return false;
     }
 
-    TraceMetadataStorage.push_back(NewCutterMetadata);
-    CutterMetadataStorage.push_back(NewCutterMetadata);
+    TraceMetadataStorage.push_back( NewCutterMetadata );
+    CutterMetadataStorage.push_back( NewCutterMetadata );
 
     totalOffset += NewCutterMetadata->GetOffset();
 
-    lastOffset = NewCutterMetadata->GetOffset();
+    lastOffset    = NewCutterMetadata->GetOffset();
     lastBeginTime = NewCutterMetadata->GetBeginTime();
-    lastEndTime = NewCutterMetadata->GetEndTime();
+    lastEndTime   = NewCutterMetadata->GetEndTime();
   }
 
   return true;
@@ -248,19 +246,19 @@ string MetadataManager::GetCurrentDate()
 {
   stringstream currentDate;
 
-  time_t t = time(0);   // get time now
-  struct tm * now = localtime( & t );
+  time_t t       = time( 0 ); // get time now
+  struct tm* now = localtime( &t );
 
-  currentDate << (now->tm_year + 1900);
-  currentDate << std::setw(2) << std::setfill('0');
-  currentDate << (now->tm_mon + 1);
-  currentDate << std::setw(2) << std::setfill('0');
+  currentDate << ( now->tm_year + 1900 );
+  currentDate << std::setw( 2 ) << std::setfill( '0' );
+  currentDate << ( now->tm_mon + 1 );
+  currentDate << std::setw( 2 ) << std::setfill( '0' );
   currentDate << now->tm_mday;
-  currentDate << std::setw(2) << std::setfill('0');
+  currentDate << std::setw( 2 ) << std::setfill( '0' );
   currentDate << now->tm_hour;
-  currentDate << std::setw(2) << std::setfill('0');
+  currentDate << std::setw( 2 ) << std::setfill( '0' );
   currentDate << now->tm_min;
-  currentDate << std::setw(2) << std::setfill('0');
+  currentDate << std::setw( 2 ) << std::setfill( '0' );
   currentDate << now->tm_sec;
 
 
@@ -268,9 +266,7 @@ string MetadataManager::GetCurrentDate()
 }
 
 
-void MetadataManager::PopulateRecord(vector<string> &Record,
-                                     const string   &Line,
-                                     char            Delimiter)
+void MetadataManager::PopulateRecord( vector< string >& Record, const string& Line, char Delimiter )
 {
   int linepos  = 0;
   int inquotes = false;
@@ -280,49 +276,49 @@ void MetadataManager::PopulateRecord(vector<string> &Record,
   string curstring;
   Record.clear();
 
-  while(Line[linepos]!=0 && linepos < linemax)
+  while( Line[ linepos ] != 0 && linepos < linemax )
   {
-    c = Line[linepos];
+    c = Line[ linepos ];
 
-    if (!inquotes && curstring.length()==0 && c=='"')
+    if( !inquotes && curstring.length() == 0 && c == '"' )
     {
-      //beginquotechar
-      inquotes=true;
+      // beginquotechar
+      inquotes = true;
     }
-    else if (inquotes && c=='"')
+    else if( inquotes && c == '"' )
     {
-      //quotechar
-      if ( (linepos+1 <linemax) && (Line[linepos+1]=='"') )
+      // quotechar
+      if( ( linepos + 1 < linemax ) && ( Line[ linepos + 1 ] == '"' ) )
       {
-        //encountered 2 double quotes in a row (resolves to 1 double quote)
-        curstring.push_back(c);
+        // encountered 2 double quotes in a row (resolves to 1 double quote)
+        curstring.push_back( c );
         linepos++;
       }
       else
       {
-        //endquotechar
+        // endquotechar
         inquotes = false;
       }
     }
-    else if (!inquotes && c == Delimiter)
+    else if( !inquotes && c == Delimiter )
     {
-      //end of field
+      // end of field
 
-      Record.push_back( cepba_tools::trim(curstring) );
-      curstring="";
+      Record.push_back( cepba_tools::trim( curstring ) );
+      curstring = "";
     }
-    else if (!inquotes && (c=='\r' || c=='\n') )
+    else if( !inquotes && ( c == '\r' || c == '\n' ) )
     {
-      Record.push_back( cepba_tools::trim(curstring) );
+      Record.push_back( cepba_tools::trim( curstring ) );
       return;
     }
     else
     {
-      curstring.push_back(c);
+      curstring.push_back( c );
     }
     linepos++;
   }
 
-  Record.push_back( cepba_tools::trim(curstring) );
+  Record.push_back( cepba_tools::trim( curstring ) );
   return;
 }
