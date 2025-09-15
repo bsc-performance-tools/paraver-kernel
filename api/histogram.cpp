@@ -2145,7 +2145,7 @@ bool HistogramProxy::haveChildren() const
   return children.size() > 0;
 }
 
-std::set< Histogram * > HistogramProxy::getChildren() const
+std::multiset< Histogram * > HistogramProxy::getChildren() const
 {
   return children;
 }

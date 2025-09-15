@@ -89,7 +89,7 @@ class Histogram
     {
       return false;
     }
-    virtual std::set< Histogram * > getChildren() const
+    virtual std::multiset< Histogram * > getChildren() const
     {
       return {};
     }
@@ -735,7 +735,7 @@ class HistogramProxy : public Histogram
     virtual void addChild( Histogram *whichHistogram ) override;
     virtual void removeChild( Histogram *whichHistogram ) override;
     virtual bool haveChildren() const override;
-    virtual std::set< Histogram * > getChildren() const override;
+    virtual std::multiset< Histogram * > getChildren() const override;
     virtual std::string getDerivedOperation() const override;
     virtual void setDerivedOperation( const std::string& whichOperation ) override;
     virtual void getDerivedOperationGroupsLabels( std::vector<std::string>& onVector ) const override;
@@ -1119,7 +1119,7 @@ class HistogramProxy : public Histogram
     // Derived Histogram
     bool derivedHistogram;
     std::vector< Histogram * > parents {};
-    std::set< Histogram * > children;
+    std::multiset< Histogram * > children;
 
     // CFG4D
     bool isCFG4DEnabled;
