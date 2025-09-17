@@ -201,7 +201,6 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel, const std::vector
 
 HistogramProxy::~HistogramProxy()
 {
-  
   if( controlWindow != nullptr )
     controlWindow->unsetUsedByHistogram( this );
   if( dataWindow != nullptr )
@@ -211,8 +210,17 @@ HistogramProxy::~HistogramProxy()
   
   if( derivedHistogram )
   {
-    std::for_each( parents.begin(), parents.end(), [this]( auto &parent ) { if ( parent != nullptr ) parent->removeChild( this ); } );
-    parents.clear();
+    std::vector< Histogram * > loadedHistograms;
+    LoadedWindows::getInstance()->getAll( loadedHistograms );
+
+    for ( auto& tmpParent : parents )
+    {
+      if ( tmpParent != nullptr &&
+           std::find( loadedHistograms.begin(), loadedHistograms.end(), tmpParent ) != loadedHistograms.end() )
+      {
+        tmpParent->removeChild( this );
+      }
+    }
   }
 
   if( sync )
