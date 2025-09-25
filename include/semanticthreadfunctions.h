@@ -2031,6 +2031,72 @@ class LastSendSize : public SemanticThread
 };
 
 
+class LastStride : public SemanticThread
+{
+  public:
+    typedef enum
+    {
+      MAXPARAM = 0
+    } TParam;
+
+    LastStride()
+    {
+      setDefaultParam();
+    }
+
+    virtual TParamIndex getMaxParam() const override
+    {
+      return MAXPARAM;
+    }
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KTimeline *whichWindow ) override
+    {
+    }
+
+    virtual std::string getName() override
+    {
+      return LastStride::name;
+    }
+
+    virtual SemanticFunction *clone() override
+    {
+      return new LastStride( *this );
+    }
+
+    virtual SemanticInfoType getSemanticInfoType() const override
+    {
+      return NO_TYPE;
+    }
+
+  protected:
+    virtual const TRecordType getValidateMask() override
+    {
+      return validateMask;
+    }
+    virtual const bool getMyInitFromBegin() override
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
+    {
+      if( whichParam >= getMaxParam() )
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+      return (TParamValue)0;
+    }
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
+    {
+      if( whichParam >= getMaxParam() )
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+      return "";
+    }
+
+  private:
+    static const TRecordType validateMask = COMM + LOG;
+    static const bool initFromBegin       = false;
+    static std::string name;
+};
+
+
 class SendBytesInTransit : public SemanticThread
 {
   public:

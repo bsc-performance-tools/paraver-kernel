@@ -1029,6 +1029,38 @@ TSemanticValue LastSendSize::execute( const SemanticInfo *info )
 }
 
 
+string LastStride::name = "Last Stride";
+TSemanticValue LastStride::execute( const SemanticInfo *info )
+{
+  TSemanticValue tmp = 0;
+
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
+
+  if( myInfo->it->getRecordType() == EMPTYREC )
+    return 0;
+
+  TApplOrder dummyAppl;
+  TThreadOrder dummyThread;
+  TTaskOrder receiverTask, senderTask;
+  Trace *tmpTrace = myInfo->callingInterval->getWindow()->getTrace();
+
+  if( myInfo->it->getRecordType() & SEND )
+  {
+    tmpTrace->getThreadLocation( myInfo->it->getOrder(), dummyAppl, senderTask, dummyThread );
+    tmpTrace->getThreadLocation( myInfo->it->getReceiverThread(), dummyAppl, receiverTask, dummyThread );
+  }
+  else if( myInfo->it->getRecordType() & RECV )
+  {
+    tmpTrace->getThreadLocation( myInfo->it->getOrder(), dummyAppl, receiverTask, dummyThread );
+    tmpTrace->getThreadLocation( myInfo->it->getSenderThread(), dummyAppl, senderTask, dummyThread );
+  }
+
+  tmp = (double)receiverTask - (double)senderTask;
+
+  return std::abs( tmp );
+}
+
+
 string SendBytesInTransit::name = "Send Bytes in Transit";
 TSemanticValue SendBytesInTransit::execute( const SemanticInfo *info )
 {
