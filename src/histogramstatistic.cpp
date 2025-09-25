@@ -1061,29 +1061,36 @@ void StatStride::reset()
 
 TSemanticValue StatStride::execute( CalculateData *data, TTimelinesData &timelinesData )
 {
-  if( data->comm->getRecordType() & RECV )
+  TApplOrder dummyAppl;
+  TThreadOrder dummyThread;
+  TTaskOrder receiverTask, senderTask;
+
+  if( data->comm->getRecordType() & SEND )
   {
-    TApplOrder dummyAppl;
-    TThreadOrder dummyThread;
-    TTaskOrder receiverTask, senderTask;
+    controlWin->getTrace()->getThreadLocation( data->comm->getOrder(), dummyAppl, senderTask, dummyThread );
+    controlWin->getTrace()->getThreadLocation( data->comm->getCommPartnerObject(), dummyAppl, receiverTask, dummyThread );
+  }
+  else if( data->comm->getRecordType() & RECV )
+  {
     controlWin->getTrace()->getThreadLocation( data->comm->getOrder(), dummyAppl, receiverTask, dummyThread );
     controlWin->getTrace()->getThreadLocation( data->comm->getCommPartnerObject(), dummyAppl, senderTask, dummyThread );
-    TSemanticValue strideValue = (double)receiverTask - (double)senderTask;
-#ifndef PARALLEL_ENABLED
-    if( numComms[ data->plane ].count( getPartner( data ) ) == 0 )
-      ( numComms[ data->plane ] )[ getPartner( data ) ] = 1.0;
-    else
-      return 0;
-#else
-    std::array< TSemanticValue, 1 > dummyValue;
-    if( numComms->getCellValue( dummyValue, data->plane, data->row, getPartner( data ) ) )
-      return 0;
-
-    numComms->addValue( data->plane, data->row, getPartner( data ), array< TSemanticValue, 1 >{ 1.0 } );
-#endif
-    return strideValue;
   }
-  return 0;
+
+  TSemanticValue strideValue = (double)receiverTask - (double)senderTask;
+#ifndef PARALLEL_ENABLED
+  if( numComms[ data->plane ].count( getPartner( data ) ) == 0 )
+    ( numComms[ data->plane ] )[ getPartner( data ) ] = 1.0;
+  else
+    return 0;
+#else
+  std::array< TSemanticValue, 1 > dummyValue;
+  if( numComms->getCellValue( dummyValue, data->plane, data->row, getPartner( data ) ) )
+    return 0;
+
+  numComms->addValue( data->plane, data->row, getPartner( data ), array< TSemanticValue, 1 >{ 1.0 } );
+#endif
+
+  return std::abs( strideValue );
 }
 
 TSemanticValue StatStride::finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane )
