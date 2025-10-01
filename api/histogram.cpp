@@ -1572,7 +1572,7 @@ void HistogramProxy::setHeight( PRV_UINT16 whichPos, bool broadcastValue )
   if( height != whichPos )
   {
     height = whichPos;
-    onResizeFunctionCallback( width, height );
+    // onResizeFunctionCallback( width, height );
 
     if( sync && broadcastValue && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_WINDOWS_SIZE ) )
       SyncWindows::getInstance()->broadcastSizeAll( syncGroup, width, height );
