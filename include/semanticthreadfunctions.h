@@ -2097,6 +2097,138 @@ class LastStride : public SemanticThread
 };
 
 
+class LateReceiver : public SemanticThread
+{
+  public:
+    typedef enum
+    {
+      MAXPARAM = 0
+    } TParam;
+
+    LateReceiver()
+    {
+      setDefaultParam();
+    }
+
+    virtual TParamIndex getMaxParam() const override
+    {
+      return MAXPARAM;
+    }
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KTimeline *whichWindow ) override
+    {
+    }
+
+    virtual std::string getName() override
+    {
+      return LateReceiver::name;
+    }
+
+    virtual SemanticFunction *clone() override
+    {
+      return new LateReceiver( *this );
+    }
+
+    virtual SemanticInfoType getSemanticInfoType() const override
+    {
+      return TIME_TYPE;
+    }
+
+  protected:
+    virtual const TRecordType getValidateMask() override
+    {
+      return validateMask;
+    }
+    virtual const bool getMyInitFromBegin() override
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
+    {
+      if( whichParam >= getMaxParam() )
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+      return (TParamValue)0;
+    }
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
+    {
+      if( whichParam >= getMaxParam() )
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+      return "";
+    }
+
+  private:
+    static const TRecordType validateMask = EVENT;
+    static const bool initFromBegin       = false;
+    static std::string name;
+};
+
+
+class LateSender : public SemanticThread
+{
+  public:
+    typedef enum
+    {
+      MAXPARAM = 0
+    } TParam;
+
+    LateSender()
+    {
+      setDefaultParam();
+    }
+
+    virtual TParamIndex getMaxParam() const override
+    {
+      return MAXPARAM;
+    }
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KTimeline *whichWindow ) override
+    {
+    }
+
+    virtual std::string getName() override
+    {
+      return LateSender::name;
+    }
+
+    virtual SemanticFunction *clone() override
+    {
+      return new LateSender( *this );
+    }
+
+    virtual SemanticInfoType getSemanticInfoType() const override
+    {
+      return TIME_TYPE;
+    }
+
+  protected:
+    virtual const TRecordType getValidateMask() override
+    {
+      return validateMask;
+    }
+    virtual const bool getMyInitFromBegin() override
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
+    {
+      if( whichParam >= getMaxParam() )
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+      return (TParamValue)0;
+    }
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
+    {
+      if( whichParam >= getMaxParam() )
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+      return "";
+    }
+
+  private:
+    static const TRecordType validateMask = EVENT;
+    static const bool initFromBegin       = false;
+    static std::string name;
+};
+
+
 class SendBytesInTransit : public SemanticThread
 {
   public:

@@ -221,6 +221,30 @@ TSemanticValue getTotalSentCommSize( MemoryTrace::iterator *itBegin, MemoryTrace
   return bytes;
 }
 
+
+template< typename GetterT >
+std::optional< TRecordTime > nextCommPartnerTime( const MemoryTrace::iterator *begin,
+                                                  const MemoryTrace::iterator *end,
+                                                  TRecordType commType,
+                                                  GetterT getterFunc )
+{
+  std::optional< TRecordTime > retValue;
+  std::unique_ptr< MemoryTrace::iterator > beginCopy( begin->clone() );
+
+  while( *beginCopy != *end )
+  {
+    if( beginCopy->getRecordType() & commType )
+    {
+      retValue = getterFunc( beginCopy.get() );
+      break;
+    }
+    ++( *beginCopy );
+  }
+
+  return retValue;
+}
+
+
 /**************************
 ** State functions (Thread)
 ***************************/
@@ -1058,6 +1082,68 @@ TSemanticValue LastStride::execute( const SemanticInfo *info )
   tmp = (double)receiverTask - (double)senderTask;
 
   return std::abs( tmp );
+}
+
+
+string LateReceiver::name = "Late Receiver";
+TSemanticValue LateReceiver::execute( const SemanticInfo *info )
+{
+  TSemanticValue tmp = 0;
+
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
+
+  if( myInfo->it->getRecordType() == EMPTYREC )
+    return 0;
+
+  if( myInfo->it->getEventValueAsIs() == 0 )
+    return 0;
+
+  MemoryTrace::iterator *nextEvent = myInfo->it->clone();
+  getNextEvent( nextEvent, (KSingleWindow *)myInfo->callingInterval->getWindow() );
+
+  std::optional< TRecordTime > logSendTime = nextCommPartnerTime( myInfo->it,
+                                                                  nextEvent,
+                                                                  RECV,
+                                                                  []( MemoryTrace::iterator *it )
+                                                                  {
+                                                                    return it->getLogicalSend();
+                                                                  } );
+
+  if( logSendTime )
+    tmp = myInfo->it->getTime() - *logSendTime;
+
+  return tmp < 0.0 ? 0.0 : tmp;
+}
+
+
+string LateSender::name = "Late Sender";
+TSemanticValue LateSender::execute( const SemanticInfo *info )
+{
+  TSemanticValue tmp = 0;
+
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
+
+  if( myInfo->it->getRecordType() == EMPTYREC )
+    return 0;
+
+  if( myInfo->it->getEventValueAsIs() == 0 )
+    return 0;
+
+  MemoryTrace::iterator *nextEvent = myInfo->it->clone();
+  getNextEvent( nextEvent, (KSingleWindow *)myInfo->callingInterval->getWindow() );
+
+  std::optional< TRecordTime > logRecvTime = nextCommPartnerTime( myInfo->it,
+                                                                  nextEvent,
+                                                                  SEND,
+                                                                  []( MemoryTrace::iterator *it )
+                                                                  {
+                                                                    return it->getLogicalReceive();
+                                                                  } );
+
+  if( logRecvTime )
+    tmp = myInfo->it->getTime() - *logRecvTime;
+
+  return tmp < 0.0 ? 0.0 : tmp;
 }
 
 
