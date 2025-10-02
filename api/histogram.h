@@ -73,6 +73,10 @@ class Histogram
     {
       return true;
     }
+    virtual std::vector< Histogram *> getParents() const
+    {
+      return {};
+    }
     virtual PRV_UINT16 getNumParents() const
     {
       return 0;
@@ -730,7 +734,8 @@ class HistogramProxy : public Histogram
 
     virtual bool isDerivedHistogram() const override;
     virtual bool setParents( const std::vector< Histogram * >& whichParents ) override;
-    virtual PRV_UINT16 getNumParents() const;
+    virtual std::vector< Histogram *> getParents() const override;
+    virtual PRV_UINT16 getNumParents() const override;
     virtual Histogram *getParent( PRV_UINT16 whichParent ) const override;
     virtual void addChild( Histogram *whichHistogram ) override;
     virtual void removeChild( Histogram *whichHistogram ) override;

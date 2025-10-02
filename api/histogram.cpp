@@ -2127,6 +2127,11 @@ Histogram *HistogramProxy::getConcrete() const
   return myHisto;
 }
 
+std::vector< Histogram *> HistogramProxy::getParents() const
+{
+  return parents;
+}
+
 PRV_UINT16 HistogramProxy::getNumParents() const
 {
   return parents.size();
