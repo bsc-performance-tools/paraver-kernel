@@ -25,12 +25,13 @@
 #pragma once
 
 
-#include <string>
-#include <map>
 #include "paraverkerneltypes.h"
 
+#include <map>
+#include <string>
+
 #ifdef PARALLEL_ENABLED
-#include "cubebuffer.h"
+#  include "cubebuffer.h"
 #endif
 
 class KHistogram;
@@ -39,37 +40,38 @@ class Timeline;
 struct CalculateData;
 
 constexpr size_t NUM_SEMANTIC_STATS = 17;
-constexpr size_t NUM_COMM_STATS = 10;
+constexpr size_t NUM_COMM_STATS     = 11;
 
 struct TTimelinesData
 {
-  TRecordTime    controlBeginTime;
-  TRecordTime    controlEndTime;
-  TSemanticValue controlValue;
+    TRecordTime controlBeginTime;
+    TRecordTime controlEndTime;
+    TSemanticValue controlValue;
 
-  TRecordTime    dataBeginTime;
-  TRecordTime    dataEndTime;
-  TSemanticValue dataValue;
+    TRecordTime dataBeginTime;
+    TRecordTime dataEndTime;
+    TSemanticValue dataValue;
 };
 
 class HistogramStatistic
 {
   public:
-    HistogramStatistic() {}
-    virtual ~HistogramStatistic() {}
+    HistogramStatistic()
+    {
+    }
+    virtual ~HistogramStatistic()
+    {
+    }
 
-    virtual bool createComms() const = 0;
+    virtual bool createComms() const                       = 0;
     virtual TObjectOrder getPartner( CalculateData *data ) = 0;
 
-    virtual void init( const KHistogram& whichHistogram ) = 0;
-    virtual void reset() = 0;
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) = 0;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) = 0;
+    virtual void init( const KHistogram &whichHistogram )                                                                               = 0;
+    virtual void reset()                                                                                                                = 0;
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData )                                                = 0;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) = 0;
 
-    virtual std::string getName() const = 0;
+    virtual std::string getName() const                                = 0;
     virtual std::string getUnits( const KHistogram *whichHisto ) const = 0;
     virtual bool isNotZeroStat() const
     {
@@ -77,14 +79,13 @@ class HistogramStatistic
     }
 
     virtual HistogramStatistic *clone() = 0;
-
 };
 
 
 //-------------------------------------------------------------------------
 // Communication statistics
 //-------------------------------------------------------------------------
-class StatNumSends: public HistogramStatistic
+class StatNumSends : public HistogramStatistic
 {
   public:
     StatNumSends() {};
@@ -96,27 +97,24 @@ class StatNumSends: public HistogramStatistic
     }
     virtual TObjectOrder getPartner( CalculateData *data ) override;
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
     Timeline *controlWin;
 };
 
 
-class StatNumReceives: public HistogramStatistic
+class StatNumReceives : public HistogramStatistic
 {
   public:
     StatNumReceives() {};
@@ -128,27 +126,24 @@ class StatNumReceives: public HistogramStatistic
     }
     virtual TObjectOrder getPartner( CalculateData *data ) override;
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
     Timeline *controlWin;
 };
 
 
-class StatBytesSent: public HistogramStatistic
+class StatBytesSent : public HistogramStatistic
 {
   public:
     StatBytesSent() {};
@@ -160,27 +155,24 @@ class StatBytesSent: public HistogramStatistic
     }
     virtual TObjectOrder getPartner( CalculateData *data ) override;
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
     Timeline *controlWin;
 };
 
 
-class StatBytesReceived: public HistogramStatistic
+class StatBytesReceived : public HistogramStatistic
 {
   public:
     StatBytesReceived() {};
@@ -192,27 +184,24 @@ class StatBytesReceived: public HistogramStatistic
     }
     virtual TObjectOrder getPartner( CalculateData *data ) override;
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
     Timeline *controlWin;
 };
 
 
-class StatAvgBytesSent: public HistogramStatistic
+class StatAvgBytesSent : public HistogramStatistic
 {
   public:
     StatAvgBytesSent() {};
@@ -224,32 +213,29 @@ class StatAvgBytesSent: public HistogramStatistic
     }
     virtual TObjectOrder getPartner( CalculateData *data ) override;
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
     Timeline *controlWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer<1> *numComms;
+    CubeBuffer< 1 > *numComms;
 #else
-    std::vector<std::map<TObjectOrder, TSemanticValue> > numComms;
+    std::vector< std::map< TObjectOrder, TSemanticValue > > numComms;
 #endif
 };
 
 
-class StatAvgBytesReceived: public HistogramStatistic
+class StatAvgBytesReceived : public HistogramStatistic
 {
   public:
     StatAvgBytesReceived() {};
@@ -261,32 +247,29 @@ class StatAvgBytesReceived: public HistogramStatistic
     }
     virtual TObjectOrder getPartner( CalculateData *data ) override;
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
     Timeline *controlWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer<1> *numComms;
+    CubeBuffer< 1 > *numComms;
 #else
-    std::vector<std::map<TObjectOrder, TSemanticValue> > numComms;
+    std::vector< std::map< TObjectOrder, TSemanticValue > > numComms;
 #endif
 };
 
 
-class StatMinBytesSent: public HistogramStatistic
+class StatMinBytesSent : public HistogramStatistic
 {
   public:
     StatMinBytesSent() {};
@@ -298,32 +281,29 @@ class StatMinBytesSent: public HistogramStatistic
     }
     virtual TObjectOrder getPartner( CalculateData *data ) override;
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
     Timeline *controlWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer<1> *min;
+    CubeBuffer< 1 > *min;
 #else
-    std::vector<std::map<TObjectOrder, TSemanticValue> > min;
+    std::vector< std::map< TObjectOrder, TSemanticValue > > min;
 #endif
 };
 
 
-class StatMinBytesReceived: public HistogramStatistic
+class StatMinBytesReceived : public HistogramStatistic
 {
   public:
     StatMinBytesReceived() {};
@@ -335,32 +315,29 @@ class StatMinBytesReceived: public HistogramStatistic
     }
     virtual TObjectOrder getPartner( CalculateData *data ) override;
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
     Timeline *controlWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer<1> *min;
+    CubeBuffer< 1 > *min;
 #else
-    std::vector<std::map<TObjectOrder, TSemanticValue> > min;
+    std::vector< std::map< TObjectOrder, TSemanticValue > > min;
 #endif
 };
 
 
-class StatMaxBytesSent: public HistogramStatistic
+class StatMaxBytesSent : public HistogramStatistic
 {
   public:
     StatMaxBytesSent() {};
@@ -372,32 +349,29 @@ class StatMaxBytesSent: public HistogramStatistic
     }
     virtual TObjectOrder getPartner( CalculateData *data ) override;
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
     Timeline *controlWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer<1> *max;
+    CubeBuffer< 1 > *max;
 #else
-    std::vector<std::map<TObjectOrder, TSemanticValue> > max;
+    std::vector< std::map< TObjectOrder, TSemanticValue > > max;
 #endif
 };
 
 
-class StatMaxBytesReceived: public HistogramStatistic
+class StatMaxBytesReceived : public HistogramStatistic
 {
   public:
     StatMaxBytesReceived() {};
@@ -409,35 +383,65 @@ class StatMaxBytesReceived: public HistogramStatistic
     }
     virtual TObjectOrder getPartner( CalculateData *data ) override;
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
     Timeline *controlWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer<1> *max;
+    CubeBuffer< 1 > *max;
 #else
-    std::vector<std::map<TObjectOrder, TSemanticValue> > max;
+    std::vector< std::map< TObjectOrder, TSemanticValue > > max;
 #endif
 };
 
 
+class StatStride : public HistogramStatistic
+{
+  public:
+    StatStride() {};
+    ~StatStride() {};
+
+    virtual bool createComms() const override
+    {
+      return true;
+    }
+    virtual TObjectOrder getPartner( CalculateData *data ) override;
+
+    virtual void init( const KHistogram &whichHistogram ) override;
+    virtual void reset() override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
+
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
+
+  protected:
+  private:
+    static std::string name;
+    Timeline *controlWin;
+#ifdef PARALLEL_ENABLED
+    CubeBuffer< 1 > *numComms;
+#else
+    std::vector< std::map< TObjectOrder, TSemanticValue > > numComms;
+#endif
+};
+
 //-------------------------------------------------------------------------
 // Semantic statistics
 //-------------------------------------------------------------------------
-class StatTime: public HistogramStatistic
+class StatTime : public HistogramStatistic
 {
   public:
     StatTime() {};
@@ -452,27 +456,24 @@ class StatTime: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
     Timeline *controlWin;
 };
 
 
-class StatPercTime: public HistogramStatistic
+class StatPercTime : public HistogramStatistic
 {
   public:
     StatPercTime() {};
@@ -487,31 +488,28 @@ class StatPercTime: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer<1> *rowTotal;
+    CubeBuffer< 1 > *rowTotal;
 #else
-    std::vector<TSemanticValue> rowTotal;
+    std::vector< TSemanticValue > rowTotal;
 #endif
 };
 
 
-class StatPercTimeNotZero: public HistogramStatistic
+class StatPercTimeNotZero : public HistogramStatistic
 {
   public:
     StatPercTimeNotZero() {};
@@ -526,31 +524,28 @@ class StatPercTimeNotZero: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer<1> *rowTotal;
+    CubeBuffer< 1 > *rowTotal;
 #else
-    std::vector<TSemanticValue> rowTotal;
+    std::vector< TSemanticValue > rowTotal;
 #endif
 };
 
 
-class StatPercTimeWindow: public HistogramStatistic
+class StatPercTimeWindow : public HistogramStatistic
 {
   public:
     StatPercTimeWindow() {};
@@ -565,27 +560,24 @@ class StatPercTimeWindow: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
     TRecordTime histogramTotalDuration;
 };
 
 
-class StatNumBursts: public HistogramStatistic
+class StatNumBursts : public HistogramStatistic
 {
   public:
     StatNumBursts() {};
@@ -600,26 +592,23 @@ class StatNumBursts: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
 };
 
 
-class StatPercNumBursts: public HistogramStatistic
+class StatPercNumBursts : public HistogramStatistic
 {
   public:
     StatPercNumBursts() {};
@@ -634,31 +623,28 @@ class StatPercNumBursts: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer<1> *rowTotal;
+    CubeBuffer< 1 > *rowTotal;
 #else
-    std::vector<TSemanticValue> rowTotal;
+    std::vector< TSemanticValue > rowTotal;
 #endif
 };
 
 
-class StatIntegral: public HistogramStatistic
+class StatIntegral : public HistogramStatistic
 {
   public:
     StatIntegral() {};
@@ -673,27 +659,24 @@ class StatIntegral: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
     Timeline *dataWin;
 };
 
 
-class StatAvgValue: public HistogramStatistic
+class StatAvgValue : public HistogramStatistic
 {
   public:
     StatAvgValue() {};
@@ -708,31 +691,28 @@ class StatAvgValue: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer<1> *numValues;
+    CubeBuffer< 1 > *numValues;
 #else
-    std::vector<std::vector<TSemanticValue> > numValues;
+    std::vector< std::vector< TSemanticValue > > numValues;
 #endif
 };
 
 
-class StatMaximum: public HistogramStatistic
+class StatMaximum : public HistogramStatistic
 {
   public:
     StatMaximum() {};
@@ -747,30 +727,27 @@ class StatMaximum: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer<1> *max;
+    CubeBuffer< 1 > *max;
 #else
-    std::vector<std::vector<TSemanticValue> > max;
+    std::vector< std::vector< TSemanticValue > > max;
 #endif
 };
 
-class StatMinimum: public HistogramStatistic
+class StatMinimum : public HistogramStatistic
 {
   public:
     StatMinimum() {};
@@ -785,31 +762,28 @@ class StatMinimum: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer<1> *min;
+    CubeBuffer< 1 > *min;
 #else
-    std::vector<std::vector<TSemanticValue> > min;
+    std::vector< std::vector< TSemanticValue > > min;
 #endif
 };
 
 
-class StatAvgBurstTime: public HistogramStatistic
+class StatAvgBurstTime : public HistogramStatistic
 {
   public:
     StatAvgBurstTime() {};
@@ -824,32 +798,29 @@ class StatAvgBurstTime: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
     Timeline *controlWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer<1> *numValues;
+    CubeBuffer< 1 > *numValues;
 #else
-    std::vector<std::vector<TSemanticValue> > numValues;
+    std::vector< std::vector< TSemanticValue > > numValues;
 #endif
 };
 
 
-class StatStdevBurstTime: public HistogramStatistic
+class StatStdevBurstTime : public HistogramStatistic
 {
   public:
     StatStdevBurstTime() {};
@@ -864,34 +835,31 @@ class StatStdevBurstTime: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
     Timeline *controlWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer<1> *numValues;
-    CubeBuffer<1> *qValues;
+    CubeBuffer< 1 > *numValues;
+    CubeBuffer< 1 > *qValues;
 #else
-    std::vector<std::vector<TSemanticValue> > numValues;
-    std::vector<std::vector<TSemanticValue> > qValues;
+    std::vector< std::vector< TSemanticValue > > numValues;
+    std::vector< std::vector< TSemanticValue > > qValues;
 #endif
 };
 
 
-class StatAvgPerBurst: public HistogramStatistic
+class StatAvgPerBurst : public HistogramStatistic
 {
   public:
     StatAvgPerBurst() {};
@@ -906,31 +874,28 @@ class StatAvgPerBurst: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer<1> *numValues;
+    CubeBuffer< 1 > *numValues;
 #else
-    std::vector<std::vector<TSemanticValue> > numValues;
+    std::vector< std::vector< TSemanticValue > > numValues;
 #endif
 };
 
 
-class StatAvgValueNotZero: public HistogramStatistic
+class StatAvgValueNotZero : public HistogramStatistic
 {
   public:
     StatAvgValueNotZero() {};
@@ -945,14 +910,11 @@ class StatAvgValueNotZero: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
@@ -962,19 +924,19 @@ class StatAvgValueNotZero: public HistogramStatistic
     }
 
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer<1> *numValues;
+    CubeBuffer< 1 > *numValues;
 #else
-    std::vector<std::vector<TSemanticValue> > numValues;
+    std::vector< std::vector< TSemanticValue > > numValues;
 #endif
 };
 
 
-class StatAvgPerBurstNotZero: public HistogramStatistic
+class StatAvgPerBurstNotZero : public HistogramStatistic
 {
   public:
     StatAvgPerBurstNotZero() {};
@@ -989,14 +951,11 @@ class StatAvgPerBurstNotZero: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
@@ -1006,20 +965,19 @@ class StatAvgPerBurstNotZero: public HistogramStatistic
     }
 
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer<1> *numValues;
+    CubeBuffer< 1 > *numValues;
 #else
-    std::vector<std::vector<TSemanticValue> > numValues;
+    std::vector< std::vector< TSemanticValue > > numValues;
 #endif
 };
 
 
-
-class StatNumBurstsNotZero: public HistogramStatistic
+class StatNumBurstsNotZero : public HistogramStatistic
 {
   public:
     StatNumBurstsNotZero() {};
@@ -1034,14 +992,11 @@ class StatNumBurstsNotZero: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
@@ -1051,14 +1006,14 @@ class StatNumBurstsNotZero: public HistogramStatistic
     }
 
     virtual HistogramStatistic *clone() override;
-  protected:
 
+  protected:
   private:
     static std::string name;
 };
 
 
-class StatSumBursts: public HistogramStatistic
+class StatSumBursts : public HistogramStatistic
 {
   public:
     StatSumBursts() {};
@@ -1073,54 +1028,51 @@ class StatSumBursts: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( const KHistogram& whichHistogram ) override;
+    virtual void init( const KHistogram &whichHistogram ) override;
     virtual void reset() override;
-    
-    virtual TSemanticValue execute( CalculateData *data, TTimelinesData& timelinesData ) override;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 ) override;
+
+    virtual TSemanticValue execute( CalculateData *data, TTimelinesData &timelinesData ) override;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue, THistogramColumn column, TObjectOrder row, THistogramColumn plane = 0 ) override;
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
     virtual HistogramStatistic *clone() override;
 
   protected:
-
   private:
     static std::string name;
 };
 
+
 class Statistics
 {
   public:
-    Statistics( const KHistogram& whichHistogram );
-    //Statistics( const KDerivedHistogram& whichHistogram );
+    Statistics( const KHistogram &whichHistogram );
+    // Statistics( const KDerivedHistogram& whichHistogram );
 
 #ifndef PARALLEL_ENABLED
-    static std::vector<TSemanticValue> zeroVector;
-    static std::vector<std::vector<TSemanticValue> > zeroMatrix;
-    static std::vector<std::map<TObjectOrder, TSemanticValue> > zeroCommMatrix;
+    static std::vector< TSemanticValue > zeroVector;
+    static std::vector< std::vector< TSemanticValue > > zeroMatrix;
+    static std::vector< std::map< TObjectOrder, TSemanticValue > > zeroCommMatrix;
 #endif
 
     void initAllComm();
     void resetAllComm();
     bool filterAllComm( CalculateData *data );
-    void executeAllComm( CalculateData *data, std::array<TSemanticValue, NUM_COMM_STATS>& onValues );
-    std::array<TSemanticValue, NUM_COMM_STATS> finishRowAllComm( const std::array<TSemanticValue, NUM_COMM_STATS>& cellValue,
-                                                                 THistogramColumn column,
-                                                                 TObjectOrder row,
-                                                                 THistogramColumn plane = 0 );
+    void executeAllComm( CalculateData *data, std::array< TSemanticValue, NUM_COMM_STATS > &onValues );
+    std::array< TSemanticValue, NUM_COMM_STATS > finishRowAllComm( const std::array< TSemanticValue, NUM_COMM_STATS > &cellValue,
+                                                                   THistogramColumn column,
+                                                                   TObjectOrder row,
+                                                                   THistogramColumn plane = 0 );
 
     void initAll();
     void resetAll();
     bool filterAll( CalculateData *data );
-    void executeAll( CalculateData *data, std::array<TSemanticValue, NUM_SEMANTIC_STATS>& onValues, bool& isNotZeroValue );
-    std::array<TSemanticValue, NUM_SEMANTIC_STATS> finishRowAll( const std::array<TSemanticValue, NUM_SEMANTIC_STATS>& cellValue,
-                                                                 THistogramColumn column,
-                                                                 TObjectOrder row,
-                                                                 THistogramColumn plane = 0 );
+    void executeAll( CalculateData *data, std::array< TSemanticValue, NUM_SEMANTIC_STATS > &onValues, bool &isNotZeroValue );
+    std::array< TSemanticValue, NUM_SEMANTIC_STATS > finishRowAll( const std::array< TSemanticValue, NUM_SEMANTIC_STATS > &cellValue,
+                                                                   THistogramColumn column,
+                                                                   TObjectOrder row,
+                                                                   THistogramColumn plane = 0 );
 
   private:
     const KHistogram &myHistogram;
@@ -1135,6 +1087,7 @@ class Statistics
     StatMinBytesReceived statMinBytesReceived;
     StatMaxBytesSent statMaxBytesSent;
     StatMaxBytesReceived statMaxBytesReceived;
+    StatStride statStride;
 
     StatTime statTime;
     StatPercTime statPercTime;
@@ -1156,5 +1109,3 @@ class Statistics
 
     TTimelinesData fillTimelinesData( CalculateData *data ) const;
 };
-
-

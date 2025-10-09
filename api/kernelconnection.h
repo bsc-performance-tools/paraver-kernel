@@ -76,11 +76,10 @@ class KernelConnection
     virtual Trace *newTrace( const std::string& whichFile, bool noLoad, ProgressController *progress, TTraceSize traceSize = 0 ) const = 0;
     virtual std::string getPCFFileLocation( const std::string& traceFile ) const = 0;
     virtual std::string getROWFileLocation( const std::string& traceFile ) const = 0;
-
     virtual Timeline *newSingleWindow() const = 0;
     virtual Timeline *newSingleWindow( Trace *whichTrace ) const = 0;
     virtual Timeline *newDerivedWindow() const = 0;
-    virtual Timeline *newDerivedWindow( Timeline *window1, Timeline *window2 ) const = 0;
+    virtual Timeline *newDerivedWindow( Timeline *window1, Timeline * window2 ) const = 0;
     virtual Histogram *newHistogram() const = 0;
     virtual Histogram *newDerivedHistogram( std::vector< Histogram * >& parents ) const = 0;
 
@@ -118,7 +117,6 @@ class KernelConnection
                                                  ProgressController *progress = nullptr ) const = 0;
 
     virtual void getAllStatistics( std::vector<std::string>& onVector ) const = 0;
-
     virtual void getAllFilterFunctions( std::vector<std::string>& onVector ) const = 0;
     virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
                                           std::vector<std::string>& onVector ) const = 0;

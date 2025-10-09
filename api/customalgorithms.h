@@ -42,6 +42,8 @@ constexpr void cartesian_product_impl( OutputIt& product,
   }
 }
 
+
+
 template<typename T, class InputIt, class OutputIt, size_t sizeFactors, typename... Targs>
 constexpr void cartesian_product_impl( OutputIt& product,
                                        size_t indexFactor,
@@ -87,4 +89,56 @@ constexpr void cartesian_product( OutputIt product,
     currentElement[ indexFactor ] = *beginInput;
     cartesian_product_impl( product, indexFactor + 1, currentElement, args... );
   }
+}
+
+/******************************************************************************
+******************   matrix_intersection      *********************************
+******************************************************************************/
+
+template<typename T>
+inline std::vector<std::vector<T>> matrix_intersection(const std::vector <std::vector<T>>& product1,
+                                const std::vector <std::vector<T>>& product2)
+{
+  std::vector<std::vector<T>> tmpResult;
+
+  tmpResult.resize(product1.size());
+
+  for (int tmpAux = 0; tmpAux < product1.size(); tmpAux ++)
+  {
+    tmpResult[tmpAux].reserve(product1[tmpAux].size());
+    
+    std::set_intersection (product1[tmpAux].begin (), product1[tmpAux].end (),
+                           product2[tmpAux].begin (), product2[tmpAux].end (),
+                           std::back_inserter (tmpResult[tmpAux]));
+  }
+  return tmpResult;
+}
+
+/******************************************************************************
+******************   calculate_precision      *********************************
+******************************************************************************/
+
+inline int calculate_precision(double value)
+{
+    if (value == 0.0) {
+        return 2;
+    }
+    
+    std::stringstream ss;
+    ss.imbue(std::locale("C")); 
+    ss << std::fixed << value;
+    std::string strValue = ss.str();
+
+    size_t pointPos = strValue.find('.');
+    
+    if (pointPos == std::string::npos) {
+        return 0; 
+    }
+
+    size_t i = strValue.size() - 1;
+    while (i > pointPos && strValue[i] == '0') {
+        --i;
+    }
+
+    return i - pointPos;
 }

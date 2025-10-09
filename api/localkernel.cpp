@@ -25,6 +25,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+
 #include <time.h>
 #include <sys/stat.h>
 #ifdef _WIN32
@@ -133,7 +135,7 @@ LocalKernel::LocalKernel( bool ( *messageFunction )( UserMessageID ) ) :
   char tmpPath[PATH_MAX];
   if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)tmpPath, PATH_MAX))
   {
-      throw ParaverKernelException();
+      throw ParaverKernelException( TErrorCode::  undefined  );
   }
   CFRelease(resourcesURL);
 
@@ -449,13 +451,15 @@ void LocalKernel::getAllStatistics( vector<string>& onVector ) const
 }
 
 
+
 void LocalKernel::getAllFilterFunctions( vector<string>& onVector ) const
 {
   FunctionManagement<FilterFunction>::getInstance()->getAll( onVector );
 }
 
 
-void LocalKernel::getAllSemanticFunctions( TSemanticGroup whichGroup, vector<string>& onVector ) const
+void LocalKernel::getAllSemanticFunctions( TSemanticGroup whichGroup,
+    vector<string>& onVector ) const
 {
   FunctionManagement<SemanticFunction>::getInstance()->getAll( onVector, whichGroup );
 }

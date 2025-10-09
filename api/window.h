@@ -25,22 +25,22 @@
 #pragma once
 
 
-#include <string>
-#include <map>
-
-#include "paraverkerneltypes.h"
-#include "semanticcolor.h"
-#include "drawmode.h"
-#include "zoomhistory.h"
-#include "selectionmanagement.h"
-#include "paraverlabels.h"
-#include "syncwindows.h"
 #include "cfgs4d.h"
+#include "drawmode.h"
+#include "paraverkerneltypes.h"
+#include "paraverlabels.h"
+#include "selectionmanagement.h"
+#include "semanticcolor.h"
+#include "syncwindows.h"
+#include "zoomhistory.h"
+
+#include <map>
+#include <string>
 
 #ifdef _MSC_VER
-#include <hash_set>
+#  include <hash_set>
 #else
-#include  <unordered_set>
+#  include <unordered_set>
 #endif
 
 #ifdef _MSC_VER
@@ -51,61 +51,62 @@ constexpr char PARAM_SEPARATOR = '|';
 
 struct commCoord
 {
-  PRV_INT32 fromTime;
-  PRV_INT32 toTime;
-  PRV_INT32 toRow;
-  TRecordType recType;
+    PRV_INT32 fromTime;
+    PRV_INT32 toTime;
+    PRV_INT32 toRow;
+    TRecordType recType;
 
-  bool operator==( const commCoord& b ) const
-  {
-    return fromTime == b.fromTime &&
-           toTime   == b.toTime   &&
-           toRow    == b.toRow    &&
-           recType  == b.recType;
-  }
+    bool operator==( const commCoord &b ) const
+    {
+      return fromTime == b.fromTime && toTime == b.toTime && toRow == b.toRow && recType == b.recType;
+    }
 
 #ifdef _MSC_VER
-  bool operator<( const commCoord& b ) const
-  {
-    return true;
-  }
+    bool operator<( const commCoord &b ) const
+    {
+      return true;
+    }
 
-  size_t hash() const {
-    return ( ( fromTime + toTime + toRow ) * 100 ) + recType;
-  }
+    size_t hash() const
+    {
+      return ( ( fromTime + toTime + toRow ) * 100 ) + recType;
+    }
 #endif
 };
 
 #ifdef _MSC_VER
-  namespace stdext
-  {
-    template<> class hash_compare<commCoord>
+namespace stdext
+{
+template<>
+class hash_compare< commCoord >
+{
+  public:
+    static const size_t bucket_size = 4;
+    static const size_t min_buckets = 8;
+    hash_compare()
     {
-      public :
-        static const size_t bucket_size = 4;
-        static const size_t min_buckets = 8;
-        hash_compare() { }
+    }
 
-        size_t operator()(const commCoord &cc) const
-        {
-          return cc.hash();
-        }
+    size_t operator()( const commCoord &cc ) const
+    {
+      return cc.hash();
+    }
 
-        bool operator()(const commCoord &cc1, const commCoord &cc2) const
-        {
-          return (cc1 < cc2);
-        }
-    };
-  }
+    bool operator()( const commCoord &cc1, const commCoord &cc2 ) const
+    {
+      return ( cc1 < cc2 );
+    }
+};
+} // namespace stdext
 #endif
 
 #ifndef _MSC_VER
 struct hashCommCoord
 {
-  size_t operator()( const commCoord& x ) const
-  {
-    return ( ( x.fromTime + x.toTime + x.toRow ) * 100 ) + x.recType;
-  }
+    size_t operator()( const commCoord &x ) const
+    {
+      return ( ( x.fromTime + x.toTime + x.toRow ) * 100 ) + x.recType;
+    }
 };
 #endif
 
@@ -137,19 +138,21 @@ enum class TObjectAxisSize
 class Timeline
 {
   public:
-
     // Create Single Timeline
     static Timeline *create( KernelConnection *whichKernel, Trace *whichTrace );
-    //Create Derived Timeline
+    // Create Derived Timeline
     static Timeline *create( KernelConnection *whichKernel );
-    static Timeline *create( KernelConnection *whichKernel, Timeline *whichParent1,
-                           Timeline *whichParent2 );
+    static Timeline *create( KernelConnection *whichKernel, Timeline *whichParent1, Timeline *whichParent2 );
 
     static bool compatibleLevels( Timeline *window1, Timeline *window2 );
 
-    Timeline() {}
+    Timeline()
+    {
+    }
     Timeline( KernelConnection *whichKernel );
-    virtual ~Timeline() {}
+    virtual ~Timeline()
+    {
+    }
 
     KernelConnection *getKernel() const
     {
@@ -163,19 +166,27 @@ class Timeline
       return nullptr;
     }
 
-    //DerivedWindow
-    virtual void setFactor( PRV_UINT16 whichFactor, TSemanticValue newValue ) {}
+    // DerivedWindow
+    virtual void setFactor( PRV_UINT16 whichFactor, TSemanticValue newValue )
+    {
+    }
     virtual TSemanticValue getFactor( PRV_UINT16 whichFactor ) const
     {
       return 1.0;
     }
-    virtual void setShift( PRV_UINT16 whichShift, TSemanticValue newValue ) {}
+    virtual void setShift( PRV_UINT16 whichShift, TSemanticValue newValue )
+    {
+    }
     virtual PRV_INT16 getShift( PRV_UINT16 whichShift ) const
     {
       return 0;
     }
-    virtual void setParent( PRV_UINT16 whichParent, Timeline *whichWindow ) {}
-    virtual void setChild( Timeline *whichWindow ) {}
+    virtual void setParent( PRV_UINT16 whichParent, Timeline *whichWindow )
+    {
+    }
+    virtual void setChild( Timeline *whichWindow )
+    {
+    }
     virtual Timeline *getChild()
     {
       return nullptr;
@@ -187,30 +198,42 @@ class Timeline
 
 
     // Other
-    virtual void setDestroy( bool newValue ) {}
+    virtual void setDestroy( bool newValue )
+    {
+    }
     virtual bool getDestroy() const
     {
       return false;
     }
-    virtual void setReady( bool newValue ) {}
+    virtual void setReady( bool newValue )
+    {
+    }
     virtual bool getReady() const
     {
       return false;
     }
 
-    virtual void setUsedByHistogram( Histogram *whichHisto ) {}
-    virtual void unsetUsedByHistogram( Histogram *whichHisto ) {}
+    virtual void setUsedByHistogram( Histogram *whichHisto )
+    {
+    }
+    virtual void unsetUsedByHistogram( Histogram *whichHisto )
+    {
+    }
     virtual bool getUsedByHistogram() const
     {
       return false;
     }
-    virtual std::set<Histogram *> getHistograms() const
+    virtual std::set< Histogram * > getHistograms() const
     {
-      return std::set<Histogram *>();
+      return std::set< Histogram * >();
     }
 
-    virtual void setWindowBeginTime( TRecordTime whichTime, bool isBroadcast = false ) {}
-    virtual void setWindowEndTime( TRecordTime whichTime, bool isBroadcast = false ) {}
+    virtual void setWindowBeginTime( TRecordTime whichTime )
+    {
+    }
+    virtual void setWindowEndTime( TRecordTime whichTime )
+    {
+    }
     virtual TRecordTime getWindowBeginTime() const
     {
       return 0;
@@ -224,16 +247,28 @@ class Timeline
     {
       return false;
     }
-    virtual void computeYScaleMin() {}
-    virtual void computeYScaleMax() {}
-    virtual void computeYScale( ProgressController *progress = nullptr ) {}
-    virtual void setComputeYMaxOnInit( bool newValue ) {}
+    virtual void computeYScaleMin()
+    {
+    }
+    virtual void computeYScaleMax()
+    {
+    }
+    virtual void computeYScale( ProgressController *progress = nullptr )
+    {
+    }
+    virtual void setComputeYMaxOnInit( bool newValue )
+    {
+    }
     virtual bool getComputeYMaxOnInit() const
     {
       return false;
     }
-    virtual void setMaximumY( TSemanticValue whichMax ) {}
-    virtual void setMinimumY( TSemanticValue whichMin ) {}
+    virtual void setMaximumY( TSemanticValue whichMax )
+    {
+    }
+    virtual void setMinimumY( TSemanticValue whichMin )
+    {
+    }
     virtual TSemanticValue getMaximumY()
     {
       return 18.0;
@@ -248,7 +283,7 @@ class Timeline
       return false;
     }
 
-    virtual Timeline* clone( bool recursiveClone = false )
+    virtual Timeline *clone( bool recursiveClone = false )
     {
       return nullptr;
     }
@@ -259,75 +294,67 @@ class Timeline
     }
 
     //------------------------------------------------------------
-    virtual Trace *getTrace() const = 0;
-    virtual TTraceLevel getLevel() const = 0;
-    virtual void setLevel( TTraceLevel whichLevel ) = 0;
-    virtual TTraceLevel getMinAcceptableLevel() const = 0;
-    virtual void setTimeUnit( TTimeUnit whichUnit ) = 0;
-    virtual TTimeUnit getTimeUnit() const = 0;
-    virtual TWindowLevel getComposeLevel( TTraceLevel whichLevel ) const = 0;
-    virtual bool setLevelFunction( TWindowLevel whichLevel,
-                                   const std::string& whichFunction ) = 0;
-    virtual std::string getLevelFunction( TWindowLevel whichLevel ) const = 0;
-    virtual std::string getFirstUsefulFunction( ) = 0;
-    virtual TWindowLevel getFirstFreeCompose() const = 0;
-    virtual void setFunctionParam( TWindowLevel whichLevel,
-                                   TParamIndex whichParam,
-                                   const TParamValue& newValue ) = 0;
+    virtual Trace *getTrace() const                                                                               = 0;
+    virtual TTraceLevel getLevel() const                                                                          = 0;
+    virtual void setLevel( TTraceLevel whichLevel )                                                               = 0;
+    virtual TTraceLevel getMinAcceptableLevel() const                                                             = 0;
+    virtual void setTimeUnit( TTimeUnit whichUnit )                                                               = 0;
+    virtual TTimeUnit getTimeUnit() const                                                                         = 0;
+    virtual TWindowLevel getComposeLevel( TTraceLevel whichLevel ) const                                          = 0;
+    virtual bool setLevelFunction( TWindowLevel whichLevel, const std::string &whichFunction )                    = 0;
+    virtual std::string getLevelFunction( TWindowLevel whichLevel ) const                                         = 0;
+    virtual std::string getFirstUsefulFunction()                                                                  = 0;
+    virtual TWindowLevel getFirstFreeCompose() const                                                              = 0;
+    virtual void setFunctionParam( TWindowLevel whichLevel, TParamIndex whichParam, const TParamValue &newValue ) = 0;
 
     // Extra composes
-    virtual void addExtraCompose( TWindowLevel whichLevel ) = 0;
-    virtual void removeExtraCompose( TWindowLevel whichLevel ) = 0;
-    virtual size_t getExtraNumPositions( TWindowLevel whichLevel ) const = 0;
-    virtual bool setExtraLevelFunction( TWindowLevel whichLevel,
-                                        size_t whichPosition,
-                                        const std::string& whichFunction ) = 0;
-    virtual std::string getExtraLevelFunction( TWindowLevel whichLevel,
-                                               size_t whichPosition ) = 0;
-    virtual void setExtraFunctionParam( TWindowLevel whichLevel,
-                                        size_t whichPosition,
-                                        TParamIndex whichParam,
-                                        const TParamValue& newValue ) = 0;
-    virtual TParamIndex getExtraFunctionNumParam( TWindowLevel whichLevel, size_t whichPosition ) const = 0;
-    virtual TParamValue getExtraFunctionParam( TWindowLevel whichLevel,
-                                               size_t whichPosition,
-                                               TParamIndex whichParam ) const = 0;
-    virtual std::string getExtraFunctionParamName( TWindowLevel whichLevel,
-                                                   size_t whichPosition,
-                                                   TParamIndex whichParam ) const = 0;
+    virtual void addExtraCompose( TWindowLevel whichLevel )                                                                                  = 0;
+    virtual void removeExtraCompose( TWindowLevel whichLevel )                                                                               = 0;
+    virtual size_t getExtraNumPositions( TWindowLevel whichLevel ) const                                                                     = 0;
+    virtual bool setExtraLevelFunction( TWindowLevel whichLevel, size_t whichPosition, const std::string &whichFunction )                    = 0;
+    virtual std::string getExtraLevelFunction( TWindowLevel whichLevel, size_t whichPosition )                                               = 0;
+    virtual void setExtraFunctionParam( TWindowLevel whichLevel, size_t whichPosition, TParamIndex whichParam, const TParamValue &newValue ) = 0;
+    virtual TParamIndex getExtraFunctionNumParam( TWindowLevel whichLevel, size_t whichPosition ) const                                      = 0;
+    virtual TParamValue getExtraFunctionParam( TWindowLevel whichLevel, size_t whichPosition, TParamIndex whichParam ) const                 = 0;
+    virtual std::string getExtraFunctionParamName( TWindowLevel whichLevel, size_t whichPosition, TParamIndex whichParam ) const             = 0;
 
-    virtual TParamIndex getFunctionNumParam( TWindowLevel whichLevel ) const = 0;
-    virtual TParamValue getFunctionParam( TWindowLevel whichLevel,
-                                          TParamIndex whichParam ) const = 0;
-    virtual std::string getFunctionParamName( TWindowLevel whichLevel,
-                                         TParamIndex whichParam ) const = 0;
-    virtual RecordList *getRecordList( TObjectOrder whichObject ) = 0;
-    virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true ) = 0;
+    virtual TParamIndex getFunctionNumParam( TWindowLevel whichLevel ) const                                             = 0;
+    virtual TParamValue getFunctionParam( TWindowLevel whichLevel, TParamIndex whichParam ) const                        = 0;
+    virtual std::string getFunctionParamName( TWindowLevel whichLevel, TParamIndex whichParam ) const                    = 0;
+    virtual RecordList *getRecordList( TObjectOrder whichObject )                                                        = 0;
+    virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true )                           = 0;
     virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits = true ) = 0;
-    virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create,
-                          TSemanticValue &rowComputedMaxY, TSemanticValue &rowComputedMinY,
-                          int& rowComputedZeros,
+    virtual void initRow( TObjectOrder whichRow,
+                          TRecordTime initialTime,
+                          TCreateList create,
+                          TSemanticValue &rowComputedMaxY,
+                          TSemanticValue &rowComputedMinY,
+                          int &rowComputedZeros,
                           bool updateLimits = true )
-    {}
+    {
+    }
     virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true ) = 0;
     virtual RecordList *calcNext( TObjectOrder whichObject,
-                                  TSemanticValue& rowComputedMaxY, TSemanticValue& rowComputedMinY,
-                                  int& rowComputedZeros,
+                                  TSemanticValue &rowComputedMaxY,
+                                  TSemanticValue &rowComputedMinY,
+                                  int &rowComputedZeros,
                                   bool updateLimits = true )
-    { return nullptr; }
-    virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true ) = 0;
-    virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const = 0;
-    virtual TRecordTime getEndTime( TObjectOrder whichObject ) const = 0;
-    virtual TSemanticValue getValue( TObjectOrder whichObject ) const = 0;
-    virtual bool isDerivedWindow() const = 0;
-    virtual TObjectOrder cpuObjectToWindowObject( TCPUOrder whichCPU ) = 0;
-    virtual TObjectOrder threadObjectToWindowObject( TThreadOrder whichThread ) = 0;
-    virtual TObjectOrder getWindowLevelObjects() const = 0;
+    {
+      return nullptr;
+    }
+    virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true )               = 0;
+    virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const                               = 0;
+    virtual TRecordTime getEndTime( TObjectOrder whichObject ) const                                 = 0;
+    virtual TSemanticValue getValue( TObjectOrder whichObject ) const                                = 0;
+    virtual bool isDerivedWindow() const                                                             = 0;
+    virtual TObjectOrder cpuObjectToWindowObject( TCPUOrder whichCPU )                               = 0;
+    virtual TObjectOrder threadObjectToWindowObject( TThreadOrder whichThread )                      = 0;
+    virtual TObjectOrder getWindowLevelObjects() const                                               = 0;
     virtual TRecordTime customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const = 0;
     virtual TRecordTime traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const = 0;
-    virtual TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime ) const = 0;
-    virtual TRecordTime windowUnitsToTraceUnits( TRecordTime whichTime ) const = 0;
-    virtual SemanticInfoType getSemanticInfoType() const = 0;
+    virtual TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime ) const                       = 0;
+    virtual TRecordTime windowUnitsToTraceUnits( TRecordTime whichTime ) const                       = 0;
+    virtual SemanticInfoType getSemanticInfoType() const                                             = 0;
 
     // Specific functions for WindowProxy
     virtual Timeline *getConcrete() const
@@ -335,8 +362,9 @@ class Timeline
       return nullptr;
     }
 
-    virtual void setName( const std::string& whichName )
-    {}
+    virtual void setName( const std::string &whichName )
+    {
+    }
 
     virtual std::string getName() const
     {
@@ -352,49 +380,50 @@ class Timeline
     {
       return 0;
     }
-    virtual void setPosX( PRV_UINT16 whichPos )
-    {}
+    virtual void setPosX( PRV_UINT16 whichPos, bool broadcastValue = true )
+    {
+    }
 
     virtual PRV_UINT16 getPosY() const
     {
       return 0;
     }
-    virtual void setPosY( PRV_UINT16 whichPos )
-    {}
+    virtual void setPosY( PRV_UINT16 whichPos, bool broadcastValue = true )
+    {
+    }
 
     virtual PRV_UINT16 getWidth() const
     {
       return 0;
     }
-    virtual void setWidth( PRV_UINT16 whichPos )
-    {}
+    virtual void setWidth( PRV_UINT16 whichPos, bool broadcastProperty = true )
+    {
+    }
 
     virtual PRV_UINT16 getHeight() const
     {
       return 0;
     }
-    virtual void setHeight( PRV_UINT16 whichPos )
-    {}
+    virtual void setHeight( PRV_UINT16 whichPos, bool broadcastProperty = true )
+    {
+    }
     virtual void setDrawModeObject( DrawModeMethod method )
-    {}
+    {
+    }
     virtual DrawModeMethod getDrawModeObject() const
     {
       return DrawModeMethod::DRAW_MAXIMUM;
     }
     virtual void setDrawModeTime( DrawModeMethod method )
-    {}
+    {
+    }
     virtual DrawModeMethod getDrawModeTime() const
     {
       return DrawModeMethod::DRAW_MAXIMUM;
     }
-    virtual CodeColor& getCodeColor()
+    virtual SemanticColor &getSemanticColor()
     {
-      CodeColor *tmp = nullptr;
-      return *tmp;
-    }
-    virtual GradientColor& getGradientColor()
-    {
-      GradientColor *tmp = nullptr;
+      SemanticColor *tmp = nullptr;
       return *tmp;
     }
     virtual bool getSemanticScaleMinAtZero()
@@ -406,31 +435,42 @@ class Timeline
       return true;
     }
     virtual void setShowWindow( bool newValue )
-    {}
+    {
+    }
     virtual void setShowChildrenWindow( bool newValue )
-    {}
+    {
+    }
     virtual bool getRaiseWindow() const
     {
       return false;
     }
     virtual void setRaiseWindow( bool newValue )
-    {}
+    {
+    }
     virtual void setCodeColorMode()
-    {}
+    {
+    }
     virtual void setGradientColorMode()
-    {}
+    {
+    }
     virtual void setNotNullGradientColorMode()
-    {}
+    {
+    }
     virtual void setAlternativeGradientColorMode()
-    {}
+    {
+    }
     virtual void setFunctionLineColorMode()
-    {}
+    {
+    }
     virtual void setFusedLinesColorMode()
-    {}
+    {
+    }
     virtual void setPunctualColorMode()
-    {}
+    {
+    }
     virtual void setSemanticScaleMinAtZero( bool newValue )
-    {}
+    {
+    }
 
     virtual bool isCodeColorSet() const
     {
@@ -465,18 +505,22 @@ class Timeline
       return 1;
     }
     virtual void setPixelSize( PRV_UINT16 whichSize )
-    {}
+    {
+    }
     virtual Timeline *getPunctualColorWindow() const
     {
       return nullptr;
     }
     virtual void setPunctualColorWindow( Timeline *whichWindow )
-    {}
+    {
+    }
     virtual void allowOutOfScale( bool activate )
-    {}
+    {
+    }
     virtual void allowOutliers( bool activate )
-    {}
-    virtual rgb calcColor( TSemanticValue whichValue, Timeline& whichWindow )
+    {
+    }
+    virtual rgb calcColor( TSemanticValue whichValue, Timeline &whichWindow )
     {
       rgb tmp = { 0, 0, 0 };
       return tmp;
@@ -489,41 +533,82 @@ class Timeline
     {
       return false;
     }
-    virtual void setUseCustomPalette( bool newValue ) 
-    {}
+    virtual void setUseCustomPalette( bool newValue )
+    {
+    }
+    virtual bool existCustomColors() const
+    {
+      return false;
+    }
+    virtual rgb getBackgroundColor() const
+    {
+      return { 0, 0, 0 };
+    }
+    virtual rgb getAxisColor() const
+    {
+      return { 0, 0, 0 };
+    }
+    virtual rgb getPunctualColor() const
+    {
+      return { 0, 0, 0 };
+    }
+    virtual bool getBackgroundAsZero() const
+    {
+      return true;
+    }
+    virtual void setCustomBackgroundColor( rgb whichColor )
+    {
+    }
+    virtual void setCustomAxisColor( rgb whichColor )
+    {
+    }
+    virtual void setCustomPalette( const std::map< TSemanticValue, rgb > &whichPalette )
+    {
+    }
+    virtual void setCustomPunctualColor( rgb whichColor )
+    {
+    }
+    virtual void setBackgroundAsZero( bool newValue )
+    {
+    }
     virtual bool getChanged() const
     {
       return false;
     }
     virtual void setChanged( bool newValue )
-    {}
+    {
+    }
     virtual bool getRedraw() const
     {
       return false;
     }
     virtual void setRedraw( bool newValue )
-    {}
+    {
+    }
     virtual bool getForceRedraw() const
     {
       return false;
     }
     virtual void setForceRedraw( bool newValue )
-    {}
+    {
+    }
     virtual bool getDrawCommLines() const
     {
       return true;
     }
     virtual void setDrawCommLines( bool newValue )
-    {}
+    {
+    }
     virtual bool getDrawFlags() const
     {
       return false;
     }
     virtual void setDrawFlags( bool newValue )
-    {}
-    virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
-                                          std::vector<std::string>& onVector ) const
-    {}
+    {
+    }
+    virtual void getAllSemanticFunctions( TSemanticGroup whichGroup, std::vector< std::string > &onVector ) const
+    {
+    }
 
     virtual bool emptyPrevZoom() const
     {
@@ -535,47 +620,54 @@ class Timeline
       return true;
     }
 
-    virtual void addZoom( TTime beginTime, TTime endTime,
-                          TObjectOrder beginObject, TObjectOrder endObject,
-                          bool isBroadCast = false )
-    {}
-    virtual void addZoom( TTime beginTime, TTime endTime, bool isBroadCast = false )
-    {}
-    virtual void addZoom( TObjectOrder beginObject, TObjectOrder endObject )
-    {}
-    virtual void nextZoom()
-    {}
-    virtual void prevZoom()
-    {}
-    virtual void setZoomFirstDimension( std::pair<TTime, TTime> &dim )
-    {}
-    virtual void setZoomSecondDimension( std::pair<TObjectOrder, TObjectOrder>  &dim )
-    {}
-    virtual std::pair<TTime, TTime> getZoomFirstDimension() const
+    virtual void addZoom( TTime beginTime, TTime endTime, TObjectOrder beginObject, TObjectOrder endObject )
     {
-      return std::pair<TTime, TTime>();
     }
-    virtual std::pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const
+    virtual void addZoom( TTime beginTime, TTime endTime )
     {
-      return std::pair<TObjectOrder, TObjectOrder>();
+    }
+    virtual void addZoom( TObjectOrder beginObject, TObjectOrder endObject )
+    {
+    }
+    virtual void nextZoom()
+    {
+    }
+    virtual void prevZoom()
+    {
+    }
+    virtual void setZoomFirstDimension( std::pair< TTime, TTime > &dim )
+    {
+    }
+    virtual void setZoomSecondDimension( std::pair< TObjectOrder, TObjectOrder > &dim )
+    {
+    }
+    virtual std::pair< TTime, TTime > getZoomFirstDimension() const
+    {
+      return std::pair< TTime, TTime >();
+    }
+    virtual std::pair< TObjectOrder, TObjectOrder > getZoomSecondDimension() const
+    {
+      return std::pair< TObjectOrder, TObjectOrder >();
     }
     virtual std::vector< TObjectOrder > getCurrentZoomRange() const
     {
       return std::vector< TObjectOrder >{};
     }
-    virtual std::pair<TObjectOrder, TObjectOrder> getPrevZoomSecondDimension() const
+    virtual std::pair< TObjectOrder, TObjectOrder > getPrevZoomSecondDimension() const
     {
-      return std::pair<TObjectOrder, TObjectOrder>();
+      return std::pair< TObjectOrder, TObjectOrder >();
     }
-    virtual std::pair<TObjectOrder, TObjectOrder> getNextZoomSecondDimension() const
+    virtual std::pair< TObjectOrder, TObjectOrder > getNextZoomSecondDimension() const
     {
-      return std::pair<TObjectOrder, TObjectOrder>();
+      return std::pair< TObjectOrder, TObjectOrder >();
     }
 
     virtual void addToSyncGroup( TGroupId whichGroup )
-    {}
+    {
+    }
     virtual void removeFromSync()
-    {}
+    {
+    }
     virtual bool isSync() const
     {
       return false;
@@ -590,30 +682,44 @@ class Timeline
     {
       return true;
     }
-    virtual SelectionManagement< TObjectOrder, TTraceLevel > *getSelectedRows()
+    virtual const SelectionManagement< TObjectOrder, TTraceLevel > &getRowSelectionManager() const
     {
-      return nullptr;
+      return dummyRowSelection;
+    }
+    virtual void setRowSelectionManager( const SelectionManagement< TObjectOrder, TTraceLevel > &whichSelectionManagement )
+    {
     }
     virtual void setSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected )
-    {}
+    {
+    }
     virtual void setSelectedRows( TTraceLevel onLevel, std::vector< TObjectOrder > &selection )
-    {}
-    virtual void getSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected, bool lookUpLevels = false )
-    {}
-    virtual void getSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected,
-                                  TObjectOrder first, TObjectOrder last, bool lookUpLevels = false )
-    {}
-    virtual void getSelectedRows( TTraceLevel onLevel, std::vector< TObjectOrder > &selection, bool lookUpLevels = false )
-    {}
+    {
+    }
+    virtual void getSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected, bool lookUpLevels = false ) const
+    {
+    }
+    virtual void getSelectedRows( TTraceLevel onLevel,
+                                  std::vector< bool > &selected,
+                                  TObjectOrder first,
+                                  TObjectOrder last,
+                                  bool lookUpLevels = false ) const
+    {
+    }
+    virtual void getSelectedRows( TTraceLevel onLevel, std::vector< TObjectOrder > &selection, bool lookUpLevels = false ) const
+    {
+    }
     virtual void getSelectedRows( TTraceLevel onLevel,
                                   std::vector< TObjectOrder > &selection,
-                                  TObjectOrder first, TObjectOrder last, bool lookUpLevels = false )
-    {}
-    virtual TObjectOrder shiftFirst( TObjectOrder whichFirst, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TTraceLevel level ) const
+                                  TObjectOrder first,
+                                  TObjectOrder last,
+                                  bool lookUpLevels = false ) const
+    {
+    }
+    virtual TObjectOrder shiftFirst( TObjectOrder whichFirst, PRV_INT64 shiftAmount, PRV_INT64 &appliedAmount, TTraceLevel level ) const
     {
       return 0;
     }
-    virtual TObjectOrder shiftLast( TObjectOrder whichLast, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TTraceLevel level ) const
+    virtual TObjectOrder shiftLast( TObjectOrder whichLast, PRV_INT64 shiftAmount, PRV_INT64 &appliedAmount, TTraceLevel level ) const
     {
       return 0;
     }
@@ -623,21 +729,23 @@ class Timeline
       return true;
     }
 
-    virtual void getGroupLabels( PRV_UINT32 whichGroup, std::vector<std::string>& onVector ) const = 0;
+    virtual void getGroupLabels( PRV_UINT32 whichGroup, std::vector< std::string > &onVector ) const      = 0;
     virtual bool getParametersOfFunction( std::string whichFunction,
                                           PRV_UINT32 &numParameters,
-                                          std::vector<std::string> &nameParameters,
-                                          std::vector< std::vector< double > >&defaultParameters ) const = 0;
+                                          std::vector< std::string > &nameParameters,
+                                          std::vector< std::vector< double > > &defaultParameters ) const = 0;
 
     virtual void setObjectLabels( TObjectLabels whichLabels )
-    {}
+    {
+    }
     virtual TObjectLabels getObjectLabels() const
     {
       return TObjectLabels::SPACED_LABELS;
     }
 
     virtual void setObjectAxisSize( TObjectAxisSize whichSize )
-    {}
+    {
+    }
     virtual TObjectAxisSize getObjectAxisSize() const
     {
       return TObjectAxisSize::CURRENT_LEVEL;
@@ -645,14 +753,16 @@ class Timeline
 
     // CFG4D
     virtual void setCFG4DEnabled( bool enabled )
-    {}
+    {
+    }
     virtual bool getCFG4DEnabled() const
     {
       return false;
     }
 
     virtual void setCFG4DMode( bool mode )
-    {}
+    {
+    }
     virtual bool getCFG4DMode() const
     {
       return false;
@@ -673,7 +783,8 @@ class Timeline
     }
 
     virtual void setCFG4DAlias( const std::string &property, const std::string &alias )
-    {}
+    {
+    }
 
     virtual std::string getCFG4DAlias( const std::string &property ) const
     {
@@ -688,8 +799,9 @@ class Timeline
       return std::string( "" );
     }
 
-    virtual void setCFG4DAliasList( const std::map< std::string, std::string >& aliasList )
-    {}
+    virtual void setCFG4DAliasList( const std::map< std::string, std::string > &aliasList )
+    {
+    }
 
     virtual const std::map< std::string, std::string > getCFG4DAliasList() const
     {
@@ -705,13 +817,12 @@ class Timeline
     typedef std::map< TParamAliasKey, std::string > TParamAlias;
 
     virtual void setCFG4DParamAlias( const TParamAlias &whichParamAlias )
-    {}
+    {
+    }
 
-    virtual void setCFG4DParamAlias( std::string semanticLevel,
-                                     std::string function,
-                                     PRV_UINT32 numParameter,
-                                     std::string paramAlias )
-    {}
+    virtual void setCFG4DParamAlias( std::string semanticLevel, std::string function, PRV_UINT32 numParameter, std::string paramAlias )
+    {
+    }
 
     virtual const std::vector< TParamAliasKey > getCFG4DCurrentSelectedFullParamList()
     {
@@ -734,7 +845,7 @@ class Timeline
                                           TWindowLevel &semanticLevel,
                                           std::string &function,
                                           TParamIndex &numParameter ) const
-    {      
+    {
     }
 
     virtual const TParamAliasKey buildCFG4DParamAliasKey( const std::string &semanticLevel,
@@ -765,14 +876,16 @@ class Timeline
       return std::string( "" );
     }
 
-    virtual std::vector<Timeline::TParamAliasKey > getCFG4DParamKeysBySemanticLevel( std::string whichSemanticLevel,
-                                                                                   const std::vector< Timeline::TParamAliasKey > &whichParamAlias = std::vector<Timeline::TParamAliasKey >() ) const
+    virtual std::vector< Timeline::TParamAliasKey > getCFG4DParamKeysBySemanticLevel(
+      std::string whichSemanticLevel,
+      const std::vector< Timeline::TParamAliasKey > &whichParamAlias = std::vector< Timeline::TParamAliasKey >() ) const
     {
-      return std::vector<Timeline::TParamAliasKey >();
+      return std::vector< Timeline::TParamAliasKey >();
     }
 
     virtual void setCFGS4DGroupLink( std::string originalName, TCFGS4DGroup whichGroup )
-    {}
+    {
+    }
 
     virtual TCFGS4DGroup getCFGS4DGroupLink( std::string originalName ) const
     {
@@ -780,82 +893,107 @@ class Timeline
     }
 
     virtual void setCFGS4DIndexLink( TCFGS4DIndexLink whichIndex )
-    {}
+    {
+    }
 
     virtual TCFGS4DIndexLink getCFGS4DIndexLink() const
     {
       return NO_INDEX_LINK;
     }
 
+    virtual void registerResizeFunctionCallback( const std::function< void( int, int ) > &callbackFunction )
+    {
+    }
+    virtual void onResizeFunctionCallback( int height, int width )
+    {
+    }
+
+    virtual void registerPositionFunctionCallback( const std::function< void( int, int ) > &callbackFunction )
+    {
+    }
+    virtual void onPositionFunctionCallback( int height, int width )
+    {
+    }
+
+    virtual void addOffsetPosition( int height, int width )
+    {
+    }
+
 #ifdef _MSC_VER
-    virtual void computeSemanticParallel( std::vector< TObjectOrder >& selectedSet,
-                                          std::vector< bool >& selected,
+    virtual void computeSemanticParallel( std::vector< TObjectOrder > &selectedSet,
+                                          std::vector< bool > &selected,
                                           TTime timeStep,
                                           PRV_INT32 timePos,
                                           PRV_INT32 objectAxisPos,
-                                          std::vector< PRV_INT32 >& objectPosList,
+                                          std::vector< PRV_INT32 > &objectPosList,
                                           TObjectOrder maxObj,
-                                          bool& drawCaution,                      // I/O
-                                          std::vector< std::vector< TSemanticValue > >& valuesToDraw, // I/O
-                                          std::vector< hash_set< PRV_INT32 > >& eventsToDraw,    // I/O
-                                          std::vector< hash_set< commCoord > >& commsToDraw,    // I/O
+                                          bool &drawCaution,                                          // I/O
+                                          std::vector< std::vector< TSemanticValue > > &valuesToDraw, // I/O
+                                          std::vector< hash_set< PRV_INT32 > > &eventsToDraw,         // I/O
+                                          std::vector< hash_set< commCoord > > &commsToDraw,          // I/O
                                           ProgressController *progress )
 #else
-    virtual void computeSemanticParallel( std::vector< TObjectOrder >& selectedSet,
-                                          std::vector< bool >& selected,
+    virtual void computeSemanticParallel( std::vector< TObjectOrder > &selectedSet,
+                                          std::vector< bool > &selected,
                                           TTime timeStep,
                                           PRV_INT32 timePos,
                                           PRV_INT32 objectAxisPos,
-                                          std::vector< PRV_INT32 >& objectPosList,
+                                          std::vector< PRV_INT32 > &objectPosList,
                                           TObjectOrder maxObj,
-                                          bool& drawCaution,                                  // I/O
-                                          std::vector< std::vector< TSemanticValue > >& valuesToDraw,             // I/O
-                                          std::vector< std::unordered_set< PRV_INT32 > >& eventsToDraw,                // I/O
-                                          std::vector< std::unordered_set< commCoord, hashCommCoord > >& commsToDraw,    // I/O
+                                          bool &drawCaution,                                                          // I/O
+                                          std::vector< std::vector< TSemanticValue > > &valuesToDraw,                 // I/O
+                                          std::vector< std::unordered_set< PRV_INT32 > > &eventsToDraw,               // I/O
+                                          std::vector< std::unordered_set< commCoord, hashCommCoord > > &commsToDraw, // I/O
                                           ProgressController *progress )
 #endif
-    {}
+    {
+    }
 
-/*******************************************************************************
- EXPERIMENTAL FEATURE FOR PUNCTUAL INFORMATION
-*******************************************************************************/
+    /*******************************************************************************
+     EXPERIMENTAL FEATURE FOR PUNCTUAL INFORMATION
+    *******************************************************************************/
 
 #ifdef _MSC_VER
-    virtual void computeSemanticPunctualParallel( std::vector< TObjectOrder >& selectedSet,
-                                                  std::vector< bool >& selected,
-                                                  TTime timeStep,
-                                                  PRV_INT32 timePos,
-                                                  PRV_INT32 objectAxisPos,
-                                                  std::vector< PRV_INT32 >& objectPosList,
-                                                  TObjectOrder maxObj,
-                                                  bool& drawCaution,                      // I/O
-                                                  std::vector< std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > > >& valuesToDraw, // I/O
-                                                  std::vector< hash_set< PRV_INT32 > >& eventsToDraw,    // I/O
-                                                  std::vector< hash_set< commCoord > >& commsToDraw,    // I/O
-                                                  ProgressController *progress )
+    virtual void computeSemanticPunctualParallel(
+      std::vector< TObjectOrder > &selectedSet,
+      std::vector< bool > &selected,
+      TTime timeStep,
+      PRV_INT32 timePos,
+      PRV_INT32 objectAxisPos,
+      std::vector< PRV_INT32 > &objectPosList,
+      TObjectOrder maxObj,
+      bool &drawCaution,                                                                                      // I/O
+      std::vector< std::vector< std::vector< std::pair< TSemanticValue, TSemanticValue > > > > &valuesToDraw, // I/O
+      std::vector< hash_set< PRV_INT32 > > &eventsToDraw,                                                     // I/O
+      std::vector< hash_set< commCoord > > &commsToDraw,                                                      // I/O
+      ProgressController *progress )
 #else
-    virtual void computeSemanticPunctualParallel( std::vector< TObjectOrder >& selectedSet,
-                                                  std::vector< bool >& selected,
-                                                  TTime timeStep,
-                                                  PRV_INT32 timePos,
-                                                  PRV_INT32 objectAxisPos,
-                                                  std::vector< PRV_INT32 >& objectPosList,
-                                                  TObjectOrder maxObj,
-                                                  bool& drawCaution,                                  // I/O
-                                                  std::vector< std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > > >& valuesToDraw,             // I/O
-                                                  std::vector< std::unordered_set< PRV_INT32 > >& eventsToDraw,                // I/O
-                                                  std::vector< std::unordered_set< commCoord, hashCommCoord > >& commsToDraw,    // I/O
-                                                  ProgressController *progress )
+    virtual void computeSemanticPunctualParallel(
+      std::vector< TObjectOrder > &selectedSet,
+      std::vector< bool > &selected,
+      TTime timeStep,
+      PRV_INT32 timePos,
+      PRV_INT32 objectAxisPos,
+      std::vector< PRV_INT32 > &objectPosList,
+      TObjectOrder maxObj,
+      bool &drawCaution,                                                                                      // I/O
+      std::vector< std::vector< std::vector< std::pair< TSemanticValue, TSemanticValue > > > > &valuesToDraw, // I/O
+      std::vector< std::unordered_set< PRV_INT32 > > &eventsToDraw,                                           // I/O
+      std::vector< std::unordered_set< commCoord, hashCommCoord > > &commsToDraw,                             // I/O
+      ProgressController *progress )
 #endif
-    {}
+    {
+    }
 
   protected:
     KernelConnection *myKernel;
 
+  private:
+    SelectionManagement< TObjectOrder, TTraceLevel > dummyRowSelection;
 };
 
 
-class TimelineProxy: public Timeline
+class TimelineProxy : public Timeline
 {
   public:
     virtual ~TimelineProxy();
@@ -864,7 +1002,7 @@ class TimelineProxy: public Timeline
     // SingleWindow
     virtual Filter *getFilter() const override;
 
-    //DerivedWindow
+    // DerivedWindow
     virtual void setFactor( PRV_UINT16 whichFactor, TSemanticValue newValue ) override;
     virtual TSemanticValue getFactor( PRV_UINT16 whichFactor ) const override;
     virtual void setShift( PRV_UINT16 whichShift, TSemanticValue newValue ) override;
@@ -885,10 +1023,10 @@ class TimelineProxy: public Timeline
     virtual void setUsedByHistogram( Histogram *whichHisto ) override;
     virtual void unsetUsedByHistogram( Histogram *whichHisto ) override;
     virtual bool getUsedByHistogram() const override;
-    virtual std::set<Histogram *> getHistograms() const override;
+    virtual std::set< Histogram * > getHistograms() const override;
 
-    virtual void setWindowBeginTime( TRecordTime whichTime, bool isBroadcast = false ) override;
-    virtual void setWindowEndTime( TRecordTime whichTime, bool isBroadcast = false ) override;
+    virtual void setWindowBeginTime( TRecordTime whichTime ) override;
+    virtual void setWindowEndTime( TRecordTime whichTime ) override;
     virtual TRecordTime getWindowBeginTime() const override;
     virtual TRecordTime getWindowEndTime() const override;
 
@@ -914,52 +1052,41 @@ class TimelineProxy: public Timeline
     virtual void setTimeUnit( TTimeUnit whichUnit ) override;
     virtual TTimeUnit getTimeUnit() const override;
     virtual TWindowLevel getComposeLevel( TTraceLevel whichLevel ) const override;
-    virtual bool setLevelFunction( TWindowLevel whichLevel,
-                                   const std::string& whichFunction ) override;
+    virtual bool setLevelFunction( TWindowLevel whichLevel, const std::string &whichFunction ) override;
     virtual std::string getLevelFunction( TWindowLevel whichLevel ) const override;
-    virtual std::string getFirstUsefulFunction( ) override;
+    virtual std::string getFirstUsefulFunction() override;
     virtual TWindowLevel getFirstFreeCompose() const override;
-    virtual void setFunctionParam( TWindowLevel whichLevel,
-                                   TParamIndex whichParam,
-                                   const TParamValue& newValue ) override;
+    virtual void setFunctionParam( TWindowLevel whichLevel, TParamIndex whichParam, const TParamValue &newValue ) override;
     virtual TParamIndex getFunctionNumParam( TWindowLevel whichLevel ) const override;
-    virtual TParamValue getFunctionParam( TWindowLevel whichLevel,
-                                          TParamIndex whichParam ) const override;
-    virtual std::string getFunctionParamName( TWindowLevel whichLevel,
-                                         TParamIndex whichParam ) const override;
+    virtual TParamValue getFunctionParam( TWindowLevel whichLevel, TParamIndex whichParam ) const override;
+    virtual std::string getFunctionParamName( TWindowLevel whichLevel, TParamIndex whichParam ) const override;
 
     // Extra composes
-    virtual void addExtraCompose( TWindowLevel whichLevel ) override; 
+    virtual void addExtraCompose( TWindowLevel whichLevel ) override;
     virtual void removeExtraCompose( TWindowLevel whichLevel ) override;
     virtual size_t getExtraNumPositions( TWindowLevel whichLevel ) const override;
-    virtual bool setExtraLevelFunction( TWindowLevel whichLevel,
-                                        size_t whichPosition,
-                                        const std::string& whichFunction ) override;
-    virtual std::string getExtraLevelFunction( TWindowLevel whichLevel,
-                                               size_t whichPosition ) override;
-    virtual void setExtraFunctionParam( TWindowLevel whichLevel,
-                                        size_t whichPosition,
-                                        TParamIndex whichParam,
-                                        const TParamValue& newValue ) override;
+    virtual bool setExtraLevelFunction( TWindowLevel whichLevel, size_t whichPosition, const std::string &whichFunction ) override;
+    virtual std::string getExtraLevelFunction( TWindowLevel whichLevel, size_t whichPosition ) override;
+    virtual void setExtraFunctionParam( TWindowLevel whichLevel, size_t whichPosition, TParamIndex whichParam, const TParamValue &newValue ) override;
     virtual TParamIndex getExtraFunctionNumParam( TWindowLevel whichLevel, size_t whichPosition ) const override;
-    virtual TParamValue getExtraFunctionParam( TWindowLevel whichLevel,
-                                               size_t whichPosition,
-                                               TParamIndex whichParam ) const override;
-    virtual std::string getExtraFunctionParamName( TWindowLevel whichLevel,
-                                                   size_t whichPosition,
-                                                   TParamIndex whichParam ) const override;
+    virtual TParamValue getExtraFunctionParam( TWindowLevel whichLevel, size_t whichPosition, TParamIndex whichParam ) const override;
+    virtual std::string getExtraFunctionParamName( TWindowLevel whichLevel, size_t whichPosition, TParamIndex whichParam ) const override;
 
     virtual RecordList *getRecordList( TObjectOrder whichObject ) override;
     virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true ) override;
     virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits = true ) override;
-    virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create,
-                          TSemanticValue &rowComputedMaxY, TSemanticValue &rowComputedMinY,
-                          int& rowComputedZeros,
+    virtual void initRow( TObjectOrder whichRow,
+                          TRecordTime initialTime,
+                          TCreateList create,
+                          TSemanticValue &rowComputedMaxY,
+                          TSemanticValue &rowComputedMinY,
+                          int &rowComputedZeros,
                           bool updateLimits = true ) override;
     virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true ) override;
     virtual RecordList *calcNext( TObjectOrder whichObject,
-                                  TSemanticValue &rowComputedMaxY, TSemanticValue &rowComputedMinY,
-                                  int& rowComputedZeros,
+                                  TSemanticValue &rowComputedMaxY,
+                                  TSemanticValue &rowComputedMinY,
+                                  int &rowComputedZeros,
                                   bool updateLimits = true ) override;
     virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true ) override;
     virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const override;
@@ -974,26 +1101,24 @@ class TimelineProxy: public Timeline
     virtual TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime ) const override;
     virtual TRecordTime windowUnitsToTraceUnits( TRecordTime whichTime ) const override;
     virtual SemanticInfoType getSemanticInfoType() const override;
-    virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
-                                          std::vector<std::string>& onVector ) const override;
+    virtual void getAllSemanticFunctions( TSemanticGroup whichGroup, std::vector< std::string > &onVector ) const override;
 
     virtual Timeline *getConcrete() const override;
-    virtual void setName( const std::string& whichName ) override;
+    virtual void setName( const std::string &whichName ) override;
     virtual std::string getName() const override;
     virtual PRV_UINT16 getPosX() const override;
-    virtual void setPosX( PRV_UINT16 whichPos ) override;
+    virtual void setPosX( PRV_UINT16 whichPos, bool broadcastValue = true ) override;
     virtual PRV_UINT16 getPosY() const override;
-    virtual void setPosY( PRV_UINT16 whichPos ) override;
+    virtual void setPosY( PRV_UINT16 whichPos, bool broadcastValue = true ) override;
     virtual PRV_UINT16 getWidth() const override;
-    virtual void setWidth( PRV_UINT16 whichPos ) override;
+    virtual void setWidth( PRV_UINT16 whichPos, bool broadcastProperty = true ) override;
     virtual PRV_UINT16 getHeight() const override;
-    virtual void setHeight( PRV_UINT16 whichPos ) override;
+    virtual void setHeight( PRV_UINT16 whichPos, bool broadcastProperty = true ) override;
     virtual void setDrawModeObject( DrawModeMethod method ) override;
     virtual DrawModeMethod getDrawModeObject() const override;
     virtual void setDrawModeTime( DrawModeMethod method ) override;
     virtual DrawModeMethod getDrawModeTime() const override;
-    virtual CodeColor& getCodeColor() override;
-    virtual GradientColor& getGradientColor() override;
+    virtual SemanticColor &getSemanticColor() override;
     virtual bool getSemanticScaleMinAtZero() override;
     virtual bool getShowWindow() const override;
     virtual void setShowWindow( bool newValue ) override;
@@ -1022,10 +1147,21 @@ class TimelineProxy: public Timeline
 
     virtual void allowOutOfScale( bool activate ) override;
     virtual void allowOutliers( bool activate ) override;
-    virtual rgb calcColor( TSemanticValue whichValue, Timeline& whichWindow ) override;
+    virtual rgb calcColor( TSemanticValue whichValue, Timeline &whichWindow ) override;
     virtual bool isColorOutlier( rgb whichColor ) const override;
     virtual bool getUseCustomPalette() const override;
     virtual void setUseCustomPalette( bool newValue ) override;
+    virtual bool existCustomColors() const override;
+    virtual rgb getBackgroundColor() const override;
+    virtual rgb getAxisColor() const override;
+    virtual rgb getPunctualColor() const override;
+    virtual bool getBackgroundAsZero() const override;
+    virtual void setCustomBackgroundColor( rgb whichColor ) override;
+    virtual void setCustomAxisColor( rgb whichColor ) override;
+    virtual void setCustomPalette( const std::map< TSemanticValue, rgb > &whichPalette ) override;
+
+    virtual void setCustomPunctualColor( rgb whichColor ) override;
+    virtual void setBackgroundAsZero( bool newValue ) override;
     virtual bool getChanged() const override;
     virtual void setChanged( bool newValue ) override;
     virtual bool getRedraw() const override;
@@ -1039,20 +1175,18 @@ class TimelineProxy: public Timeline
 
     virtual bool emptyPrevZoom() const override;
     virtual bool emptyNextZoom() const override;
-    virtual void addZoom( TTime beginTime, TTime endTime,
-                          TObjectOrder beginObject, TObjectOrder endObject,
-                          bool isBroadCast = false ) override;
-    virtual void addZoom( TTime beginTime, TTime endTime, bool isBroadCast = false ) override;
+    virtual void addZoom( TTime beginTime, TTime endTime, TObjectOrder beginObject, TObjectOrder endObject ) override;
+    virtual void addZoom( TTime beginTime, TTime endTime ) override;
     virtual void addZoom( TObjectOrder beginObject, TObjectOrder endObject ) override;
     virtual void nextZoom() override;
     virtual void prevZoom() override;
-    virtual void setZoomFirstDimension( std::pair<TTime, TTime> &dim ) override;
-    virtual void setZoomSecondDimension( std::pair<TObjectOrder, TObjectOrder>  &dim ) override;
-    virtual std::pair<TTime, TTime> getZoomFirstDimension() const override;
-    virtual std::pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const override;
+    virtual void setZoomFirstDimension( std::pair< TTime, TTime > &dim ) override;
+    virtual void setZoomSecondDimension( std::pair< TObjectOrder, TObjectOrder > &dim ) override;
+    virtual std::pair< TTime, TTime > getZoomFirstDimension() const override;
+    virtual std::pair< TObjectOrder, TObjectOrder > getZoomSecondDimension() const override;
     virtual std::vector< TObjectOrder > getCurrentZoomRange() const override;
-    virtual std::pair<TObjectOrder, TObjectOrder> getPrevZoomSecondDimension() const override;
-    virtual std::pair<TObjectOrder, TObjectOrder> getNextZoomSecondDimension() const override;
+    virtual std::pair< TObjectOrder, TObjectOrder > getPrevZoomSecondDimension() const override;
+    virtual std::pair< TObjectOrder, TObjectOrder > getNextZoomSecondDimension() const override;
 
     virtual void addToSyncGroup( TGroupId whichGroup ) override;
     virtual void removeFromSync() override;
@@ -1060,24 +1194,31 @@ class TimelineProxy: public Timeline
     virtual TGroupId getSyncGroup() const override;
 
     virtual bool areAllSelectedRows( TTraceLevel onLevel ) const override;
-    virtual SelectionManagement< TObjectOrder, TTraceLevel > *getSelectedRows() override;
+    virtual const SelectionManagement< TObjectOrder, TTraceLevel > &getRowSelectionManager() const override;
+    virtual void setRowSelectionManager( const SelectionManagement< TObjectOrder, TTraceLevel > &whichSelectionManagement ) override;
     virtual void setSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected ) override;
     virtual void setSelectedRows( TTraceLevel onLevel, std::vector< TObjectOrder > &selected ) override;
-    virtual void getSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected, bool lookUpLevels = false ) override;
-    virtual void getSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected,
-                                  TObjectOrder first, TObjectOrder last, bool lookUpLevels = false ) override;
-    virtual void getSelectedRows( TTraceLevel onLevel, std::vector< TObjectOrder > &selected, bool lookUpLevels = false ) override;
-    virtual void getSelectedRows( TTraceLevel onLevel, std::vector< TObjectOrder > &selected,
-                                  TObjectOrder first, TObjectOrder last, bool lookUpLevels = false ) override;
-    virtual TObjectOrder shiftFirst( TObjectOrder whichFirst, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TTraceLevel level ) const override;
-    virtual TObjectOrder shiftLast( TObjectOrder whichLast, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TTraceLevel level ) const override;
+    virtual void getSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected, bool lookUpLevels = false ) const override;
+    virtual void getSelectedRows( TTraceLevel onLevel,
+                                  std::vector< bool > &selected,
+                                  TObjectOrder first,
+                                  TObjectOrder last,
+                                  bool lookUpLevels = false ) const override;
+    virtual void getSelectedRows( TTraceLevel onLevel, std::vector< TObjectOrder > &selected, bool lookUpLevels = false ) const override;
+    virtual void getSelectedRows( TTraceLevel onLevel,
+                                  std::vector< TObjectOrder > &selected,
+                                  TObjectOrder first,
+                                  TObjectOrder last,
+                                  bool lookUpLevels = false ) const override;
+    virtual TObjectOrder shiftFirst( TObjectOrder whichFirst, PRV_INT64 shiftAmount, PRV_INT64 &appliedAmount, TTraceLevel level ) const override;
+    virtual TObjectOrder shiftLast( TObjectOrder whichLast, PRV_INT64 shiftAmount, PRV_INT64 &appliedAmount, TTraceLevel level ) const override;
     virtual bool hasLevelSomeSelectedObject( TTraceLevel onLevel ) override;
 
-    virtual void getGroupLabels( PRV_UINT32 whichGroup, std::vector<std::string>& onVector ) const override;
+    virtual void getGroupLabels( PRV_UINT32 whichGroup, std::vector< std::string > &onVector ) const override;
     virtual bool getParametersOfFunction( std::string whichFunction,
                                           PRV_UINT32 &numParameters,
-                                          std::vector<std::string> &nameParameters,
-                                          std::vector< std::vector< double > >&defaultParameters ) const override;
+                                          std::vector< std::string > &nameParameters,
+                                          std::vector< std::vector< double > > &defaultParameters ) const override;
 
     virtual void setObjectLabels( TObjectLabels whichLabels ) override;
     virtual TObjectLabels getObjectLabels() const override;
@@ -1105,7 +1246,7 @@ class TimelineProxy: public Timeline
 
     virtual void setCFG4DAlias( const std::string &property, const std::string &alias ) override;
 
-    virtual void setCFG4DAliasList( const std::map< std::string, std::string >& aliasList ) override;
+    virtual void setCFG4DAliasList( const std::map< std::string, std::string > &aliasList ) override;
     virtual const std::map< std::string, std::string > getCFG4DAliasList() const override;
 
     virtual const std::vector< std::string > getCFG4DFullTagList() override;
@@ -1114,10 +1255,7 @@ class TimelineProxy: public Timeline
     //   of the current selected functions in the visible levels.
     virtual const std::vector< TParamAliasKey > getCFG4DCurrentSelectedFullParamList() override;
     virtual void setCFG4DParamAlias( const TParamAlias &whichParamAlias ) override;
-    virtual void setCFG4DParamAlias( std::string semanticLevel,
-                                     std::string function,
-                                     PRV_UINT32 numParameter,
-                                     std::string paramAlias ) override;
+    virtual void setCFG4DParamAlias( std::string semanticLevel, std::string function, PRV_UINT32 numParameter, std::string paramAlias ) override;
     virtual const TParamAlias getCFG4DParamAliasList() const override;
     virtual void splitCFG4DParamAliasKey( const TParamAliasKey &pk,
                                           std::string &semanticLevel,
@@ -1132,12 +1270,11 @@ class TimelineProxy: public Timeline
     virtual const std::string getCFG4DParamAlias( const TParamAlias::iterator &it ) const override;
     virtual const std::string getCFG4DParamAlias( const TParamAliasKey &pk ) const override;
     virtual std::vector< Timeline::TParamAliasKey > getCFG4DParamKeysBySemanticLevel(
-                    std::string whichSemanticLevel,
-                    const std::vector< Timeline::TParamAliasKey > &whichParamAlias = std::vector<Timeline::TParamAliasKey >()  ) const override;
-    virtual const Timeline::TParamAliasKey buildCFG4DParamAliasKey(
-                                                const std::string &semanticLevel,
-                                                const std::string &function,
-                                                const TParamIndex &numParameter ) const override;
+      std::string whichSemanticLevel,
+      const std::vector< Timeline::TParamAliasKey > &whichParamAlias = std::vector< Timeline::TParamAliasKey >() ) const override;
+    virtual const Timeline::TParamAliasKey buildCFG4DParamAliasKey( const std::string &semanticLevel,
+                                                                    const std::string &function,
+                                                                    const TParamIndex &numParameter ) const override;
     virtual std::string getCFG4DParameterOriginalName( TWindowLevel whichLevel, TParamIndex whichParam ) const override;
 
     virtual void setCFGS4DGroupLink( std::string originalName, TCFGS4DGroup whichGroup ) override;
@@ -1146,67 +1283,77 @@ class TimelineProxy: public Timeline
     virtual void setCFGS4DIndexLink( TCFGS4DIndexLink whichIndex ) override;
     virtual TCFGS4DIndexLink getCFGS4DIndexLink() const override;
 
+    virtual void registerResizeFunctionCallback( const std::function< void( int, int ) > &callbackFunction ) override;
+
+    virtual void onResizeFunctionCallback( int height, int width ) override;
+
+    virtual void registerPositionFunctionCallback( const std::function< void( int, int ) > &callbackFunction ) override;
+    virtual void onPositionFunctionCallback( int height, int width ) override;
+    virtual void addOffsetPosition( int height, int width ) override;
+
 #ifdef _MSC_VER
-    virtual void computeSemanticParallel( std::vector< TObjectOrder >& selectedSet,
-                                          std::vector< bool >& selected,
+    virtual void computeSemanticParallel( std::vector< TObjectOrder > &selectedSet,
+                                          std::vector< bool > &selected,
                                           TTime timeStep,
                                           PRV_INT32 timePos,
                                           PRV_INT32 objectAxisPos,
-                                          std::vector< PRV_INT32 >& objectPosList,
+                                          std::vector< PRV_INT32 > &objectPosList,
                                           TObjectOrder maxObj,
-                                          bool& drawCaution,                      // O
-                                          std::vector< std::vector< TSemanticValue > >& valuesToDraw, // O
-                                          std::vector< hash_set< PRV_INT32 > >& eventsToDraw,    // O
-                                          std::vector< hash_set< commCoord > >& commsToDraw,    // O
+                                          bool &drawCaution,                                          // O
+                                          std::vector< std::vector< TSemanticValue > > &valuesToDraw, // O
+                                          std::vector< hash_set< PRV_INT32 > > &eventsToDraw,         // O
+                                          std::vector< hash_set< commCoord > > &commsToDraw,          // O
                                           ProgressController *progress ) override;
 
 #else
-    virtual void computeSemanticParallel( std::vector< TObjectOrder >& selectedSet,
-                                          std::vector< bool >& selected,
+    virtual void computeSemanticParallel( std::vector< TObjectOrder > &selectedSet,
+                                          std::vector< bool > &selected,
                                           TTime timeStep,
                                           PRV_INT32 timePos,
                                           PRV_INT32 objectAxisPos,
-                                          std::vector< PRV_INT32 >& objectPosList,
+                                          std::vector< PRV_INT32 > &objectPosList,
                                           TObjectOrder maxObj,
-                                          bool& drawCaution,                                                  // I/O
-                                          std::vector< std::vector< TSemanticValue > >& valuesToDraw,         // I/O
-                                          std::vector< std::unordered_set< PRV_INT32 > >& eventsToDraw,                 // I/O
-                                          std::vector< std::unordered_set< commCoord, hashCommCoord > >& commsToDraw,   // I/O
+                                          bool &drawCaution,                                                          // I/O
+                                          std::vector< std::vector< TSemanticValue > > &valuesToDraw,                 // I/O
+                                          std::vector< std::unordered_set< PRV_INT32 > > &eventsToDraw,               // I/O
+                                          std::vector< std::unordered_set< commCoord, hashCommCoord > > &commsToDraw, // I/O
                                           ProgressController *progress ) override;
 #endif // _WIN32
 
 #ifdef _MSC_VER
-    virtual void computeSemanticPunctualParallel( std::vector< TObjectOrder >& selectedSet,
-                                                  std::vector< bool >& selected,
-                                                  TTime timeStep,
-                                                  PRV_INT32 timePos,
-                                                  PRV_INT32 objectAxisPos,
-                                                  std::vector< PRV_INT32 >& objectPosList,
-                                                  TObjectOrder maxObj,
-                                                  bool& drawCaution,                      // I/O
-                                                  std::vector< std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > > >& valuesToDraw, // I/O
-                                                  std::vector< hash_set< PRV_INT32 > >& eventsToDraw,    // I/O
-                                                  std::vector< hash_set< commCoord > >& commsToDraw,    // I/O
-                                                  ProgressController *progress ) override;
+    virtual void computeSemanticPunctualParallel(
+      std::vector< TObjectOrder > &selectedSet,
+      std::vector< bool > &selected,
+      TTime timeStep,
+      PRV_INT32 timePos,
+      PRV_INT32 objectAxisPos,
+      std::vector< PRV_INT32 > &objectPosList,
+      TObjectOrder maxObj,
+      bool &drawCaution,                                                                                      // I/O
+      std::vector< std::vector< std::vector< std::pair< TSemanticValue, TSemanticValue > > > > &valuesToDraw, // I/O
+      std::vector< hash_set< PRV_INT32 > > &eventsToDraw,                                                     // I/O
+      std::vector< hash_set< commCoord > > &commsToDraw,                                                      // I/O
+      ProgressController *progress ) override;
 #else
-    virtual void computeSemanticPunctualParallel( std::vector< TObjectOrder >& selectedSet,
-                                                  std::vector< bool >& selected,
-                                                  TTime timeStep,
-                                                  PRV_INT32 timePos,
-                                                  PRV_INT32 objectAxisPos,
-                                                  std::vector< PRV_INT32 >& objectPosList,
-                                                  TObjectOrder maxObj,
-                                                  bool& drawCaution,                                  // I/O
-                                                  std::vector< std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > > >& valuesToDraw,             // I/O
-                                                  std::vector< std::unordered_set< PRV_INT32 > >& eventsToDraw,                // I/O
-                                                  std::vector< std::unordered_set< commCoord, hashCommCoord > >& commsToDraw,    // I/O
-                                                  ProgressController *progress ) override;
+    virtual void computeSemanticPunctualParallel(
+      std::vector< TObjectOrder > &selectedSet,
+      std::vector< bool > &selected,
+      TTime timeStep,
+      PRV_INT32 timePos,
+      PRV_INT32 objectAxisPos,
+      std::vector< PRV_INT32 > &objectPosList,
+      TObjectOrder maxObj,
+      bool &drawCaution,                                                                                      // I/O
+      std::vector< std::vector< std::vector< std::pair< TSemanticValue, TSemanticValue > > > > &valuesToDraw, // I/O
+      std::vector< std::unordered_set< PRV_INT32 > > &eventsToDraw,                                           // I/O
+      std::vector< std::unordered_set< commCoord, hashCommCoord > > &commsToDraw,                             // I/O
+      ProgressController *progress ) override;
 #endif
 
   private:
     Timeline *myWindow;
 #ifdef PARALLEL_ENABLED
-    std::vector<Timeline *> parallelClone;
+    std::vector< Timeline * > parallelClone;
 #endif // PARALLEL_ENABLED
 
     Trace *myTrace;
@@ -1219,6 +1366,8 @@ class TimelineProxy: public Timeline
     PRV_UINT16 posY;
     PRV_UINT16 width;
     PRV_UINT16 height;
+    PRV_UINT16 widthClient;
+    PRV_UINT16 heightClient;
 
     TRecordTime winBeginTime;
     TRecordTime winEndTime;
@@ -1232,24 +1381,23 @@ class TimelineProxy: public Timeline
     TSemanticValue computedMinY;
     bool computedZeros;
 
-    std::vector<RecordList *> myLists;
+    std::vector< RecordList * > myLists;
 
     // Must store the associated proxies
     Timeline *parent1;
     Timeline *parent2;
     Timeline *child;
 
-    std::set<Histogram *> usedByHistogram;
+    std::set< Histogram * > usedByHistogram;
 
     // GUI related attributes
     std::string name;
-    CodeColor myCodeColor;
-    GradientColor myGradientColor;
-    GradientColor myAltGradientColor{ std::vector<rgb>{ {0,255,0}, {255,255,0}, {255,0,0} } };
-    bool useCustomPalette;
+
+    SemanticColor mySemanticColor;
+    bool backgroundAsZero = true;
+
     DrawModeMethod drawModeObject;
     DrawModeMethod drawModeTime;
-    TColorFunction colorMode;
     bool semanticScaleMinAtZero;
     bool showWindow;
     bool raise;
@@ -1262,7 +1410,7 @@ class TimelineProxy: public Timeline
 
     Timeline *punctualColorWindow;
     // Zoom history
-    ZoomHistory<TTime, TObjectOrder> zoomHistory;
+    ZoomHistory< TTime, TObjectOrder > zoomHistory;
 
     // Synchronize
     bool sync;
@@ -1283,6 +1431,8 @@ class TimelineProxy: public Timeline
     TCFGS4DIndexLink globalIndexLink;
     static std::stringstream sstrCFGS4DOriginalName;
 
+    std::function< void( int, int ) > resizeFunctionCallback   = nullptr;
+    std::function< void( int, int ) > positionFunctionCallback = nullptr;
 
     // For Clone
     TimelineProxy();
@@ -1290,8 +1440,7 @@ class TimelineProxy: public Timeline
     TimelineProxy( KernelConnection *whichKernel, Trace *whichTrace );
     // For Derived Timeline
     TimelineProxy( KernelConnection *whichKernel );
-    TimelineProxy( KernelConnection *whichKernel, Timeline *whichParent1,
-                 Timeline *whichParent2 );
+    TimelineProxy( KernelConnection *whichKernel, Timeline *whichParent1, Timeline *whichParent2 );
 
     int number_of_clones;
 
@@ -1303,38 +1452,38 @@ class TimelineProxy: public Timeline
     void computeSemanticRowPunctualParallel( int numRows,
                                              TObjectOrder firstRow,
                                              TObjectOrder lastRow,
-                                             std::vector< TObjectOrder >& selectedSet,
-                                             std::vector< bool >& selected,
+                                             std::vector< TObjectOrder > &selectedSet,
+                                             std::vector< bool > &selected,
                                              TTime timeStep,
                                              PRV_INT32 timePos,
                                              PRV_INT32 objectAxisPos,
-                                             std::vector< PRV_INT32 >& objectPosList,
-                                             int& drawCaution,  // O
-                                             TSemanticValue& rowComputedMaxY,
-                                             TSemanticValue& rowComputedMinY,
-                                             int& rowComputedZeros,
-                                             std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > >& valuesToDraw, // O
-                                             hash_set< PRV_INT32 >& eventsToDraw,    // O
-                                             hash_set< commCoord >& commsToDraw,
-                                             ProgressController *progress );   // O
+                                             std::vector< PRV_INT32 > &objectPosList,
+                                             int &drawCaution, // O
+                                             TSemanticValue &rowComputedMaxY,
+                                             TSemanticValue &rowComputedMinY,
+                                             int &rowComputedZeros,
+                                             std::vector< std::vector< std::pair< TSemanticValue, TSemanticValue > > > &valuesToDraw, // O
+                                             hash_set< PRV_INT32 > &eventsToDraw,                                                     // O
+                                             hash_set< commCoord > &commsToDraw,
+                                             ProgressController *progress ); // O
 
     void computeSemanticRowParallel( int numRows,
                                      TObjectOrder firstRow,
                                      TObjectOrder lastRow,
-                                     std::vector< TObjectOrder >& selectedSet,
-                                     std::vector< bool >& selected,
+                                     std::vector< TObjectOrder > &selectedSet,
+                                     std::vector< bool > &selected,
                                      TTime timeStep,
                                      PRV_INT32 timePos,
                                      PRV_INT32 objectAxisPos,
-                                     std::vector< PRV_INT32 >& objectPosList,
-                                     int& drawCaution,  // O
+                                     std::vector< PRV_INT32 > &objectPosList,
+                                     int &drawCaution, // O
                                      TSemanticValue &rowComputedMaxY,
                                      TSemanticValue &rowComputedMinY,
-                                     int& rowComputedZeros,
-                                     std::vector< TSemanticValue >& valuesToDraw, // O
-                                     hash_set< PRV_INT32 >& eventsToDraw,    // O
-                                     hash_set< commCoord >& commsToDraw,
-                                     ProgressController *progress );   // O
+                                     int &rowComputedZeros,
+                                     std::vector< TSemanticValue > &valuesToDraw, // O
+                                     hash_set< PRV_INT32 > &eventsToDraw,         // O
+                                     hash_set< commCoord > &commsToDraw,
+                                     ProgressController *progress ); // O
 
     void computeEventsCommsParallel( RecordList *records,
                                      TTime from,
@@ -1342,45 +1491,45 @@ class TimelineProxy: public Timeline
                                      TTime step,
                                      PRV_INT32 timePos,
                                      PRV_INT32 objectAxisPos,
-                                     std::vector< bool >& selected,
-                                     std::vector< PRV_INT32 >& objectPosList,
-                                     hash_set< PRV_INT32 >& eventsToDraw,  // I/O
-                                     hash_set< commCoord >& commsToDraw ); // I/O
+                                     std::vector< bool > &selected,
+                                     std::vector< PRV_INT32 > &objectPosList,
+                                     hash_set< PRV_INT32 > &eventsToDraw,  // I/O
+                                     hash_set< commCoord > &commsToDraw ); // I/O
 #else
     void computeSemanticRowPunctualParallel( int numRows,
                                              TObjectOrder firstRow,
                                              TObjectOrder lastRow,
-                                             std::vector< TObjectOrder >& selectedSet,
-                                             std::vector< bool >& selected,
+                                             std::vector< TObjectOrder > &selectedSet,
+                                             std::vector< bool > &selected,
                                              TTime timeStep,
                                              PRV_INT32 timePos,
                                              PRV_INT32 objectAxisPos,
-                                             std::vector< PRV_INT32 >& objectPosList,
-                                             int& drawCaution,                                    // I/O
-                                             TSemanticValue& rowComputedMaxY,
-                                             TSemanticValue& rowComputedMinY,
-                                             int& rowComputedZeros,
-                                             std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > >& valuesToDraw,         // I/O
-                                             std::unordered_set< PRV_INT32 >& eventsToDraw,                 // I/O
-                                             std::unordered_set< commCoord, hashCommCoord >& commsToDraw,
+                                             std::vector< PRV_INT32 > &objectPosList,
+                                             int &drawCaution, // I/O
+                                             TSemanticValue &rowComputedMaxY,
+                                             TSemanticValue &rowComputedMinY,
+                                             int &rowComputedZeros,
+                                             std::vector< std::vector< std::pair< TSemanticValue, TSemanticValue > > > &valuesToDraw, // I/O
+                                             std::unordered_set< PRV_INT32 > &eventsToDraw,                                           // I/O
+                                             std::unordered_set< commCoord, hashCommCoord > &commsToDraw,
                                              ProgressController *progress ); // I/O
 
     void computeSemanticRowParallel( int numRows,
                                      TObjectOrder firstRow,
                                      TObjectOrder lastRow,
-                                     std::vector< TObjectOrder >& selectedSet,
-                                     std::vector< bool >& selected,
+                                     std::vector< TObjectOrder > &selectedSet,
+                                     std::vector< bool > &selected,
                                      TTime timeStep,
                                      PRV_INT32 timePos,
                                      PRV_INT32 objectAxisPos,
-                                     std::vector< PRV_INT32 >& objectPosList,
-                                     int& drawCaution,                                    // I/O
-                                     TSemanticValue& rowComputedMaxY,
-                                     TSemanticValue& rowComputedMinY,
-                                     int& rowComputedZeros,
-                                     std::vector< TSemanticValue >& valuesToDraw,         // I/O
-                                     std::unordered_set< PRV_INT32 >& eventsToDraw,                 // I/O
-                                     std::unordered_set< commCoord, hashCommCoord >& commsToDraw,
+                                     std::vector< PRV_INT32 > &objectPosList,
+                                     int &drawCaution, // I/O
+                                     TSemanticValue &rowComputedMaxY,
+                                     TSemanticValue &rowComputedMinY,
+                                     int &rowComputedZeros,
+                                     std::vector< TSemanticValue > &valuesToDraw,   // I/O
+                                     std::unordered_set< PRV_INT32 > &eventsToDraw, // I/O
+                                     std::unordered_set< commCoord, hashCommCoord > &commsToDraw,
                                      ProgressController *progress ); // I/O
 
     void computeEventsCommsParallel( RecordList *records,
@@ -1389,15 +1538,13 @@ class TimelineProxy: public Timeline
                                      TTime step,
                                      PRV_INT32 timePos,
                                      PRV_INT32 objectAxisPos,
-                                     std::vector< bool >& selected,
-                                     std::vector< PRV_INT32 >& objectPosList,
-                                     std::unordered_set< PRV_INT32 >& eventsToDraw,                 // I/O
-                                     std::unordered_set< commCoord, hashCommCoord >& commsToDraw ); // I/O
+                                     std::vector< bool > &selected,
+                                     std::vector< PRV_INT32 > &objectPosList,
+                                     std::unordered_set< PRV_INT32 > &eventsToDraw,                 // I/O
+                                     std::unordered_set< commCoord, hashCommCoord > &commsToDraw ); // I/O
 #endif
 
     friend Timeline *Timeline::create( KernelConnection *, Trace * );
     friend Timeline *Timeline::create( KernelConnection * );
     friend Timeline *Timeline::create( KernelConnection *, Timeline *, Timeline * );
 };
-
-

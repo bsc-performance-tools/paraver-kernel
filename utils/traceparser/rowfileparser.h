@@ -51,7 +51,11 @@ class RowFileParser
   protected:
 
   private:
-    // tuple elements are: level name, max length, level objects labels
+    static const size_t LEVEL_NAME = 0;
+    static const size_t LEVEL_MAXLENGTH = 1;
+    static const size_t LEVEL_LABELS = 2;
+
+    // tuple elements are: level name, level max length, level objects labels
     std::map<TTraceLevel, std::tuple< std::string, size_t, std::vector<std::string> > > levelLabels;
 
     size_t globalMaxLength;

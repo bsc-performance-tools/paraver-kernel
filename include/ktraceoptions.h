@@ -25,6 +25,8 @@
 #pragma once
 
 
+#include <sstream>
+#include <type_traits>
 #include <string.h>
 
 #include <libxml/xmlmemory.h>
@@ -98,13 +100,12 @@ class KTraceOptions: public TraceOptions
     bool remLastStates;
     bool keep_boundary_events;
     bool keep_all_events;
-    bool max_cut_time_to_finish_of_first_appl; // PROFET
+    bool max_cut_time_to_finish_of_first_appl; // MESS
     char tasks_list[256];
 
     /* Parameters for software counters */
     bool sc_onInterval;
     bool sc_global_counters;
-    bool sc_acumm_counters;
     bool sc_summarize_states;
     bool sc_only_in_bursts;
     bool sc_remove_states;
@@ -113,8 +114,9 @@ class KTraceOptions: public TraceOptions
     unsigned long long sc_sampling_interval;
     unsigned long long sc_minimum_burst_time;
 
-    char *types;
-    char *types_kept;
+    char *accum_types = nullptr;
+    char *count_types = nullptr;
+    char *types_kept = nullptr;
 
   //  KTraceOptions( const KernelConnection *whichKernel, char *xmldocname );
     KTraceOptions();
@@ -211,7 +213,7 @@ class KTraceOptions: public TraceOptions
       keep_all_events = whichKeepAllEvents;
     }
 
-    // PROFET
+    // MESS
     inline void set_max_cut_time_to_finish_of_first_appl( bool setOptions ) override
     {
       max_cut_time_to_finish_of_first_appl = setOptions;
@@ -288,7 +290,7 @@ class KTraceOptions: public TraceOptions
       return keep_all_events;
     }
 
-    // PROFET
+    // MESS
     inline bool get_max_cut_time_to_finish_of_first_appl() const override
     {
       return max_cut_time_to_finish_of_first_appl;
@@ -470,11 +472,6 @@ class KTraceOptions: public TraceOptions
       sc_global_counters = whichSCGlobalCounters;
     }
 
-    inline void set_sc_acumm_counters( bool whichSCAcummCounters ) override
-    {
-      sc_acumm_counters = whichSCAcummCounters;
-    }
-
     inline void set_sc_summarize_states( bool whichSCSummarizeStates ) override
     {
       sc_summarize_states = whichSCSummarizeStates;
@@ -490,9 +487,14 @@ class KTraceOptions: public TraceOptions
       sc_remove_states = whichSCRemoveStates;
     }
 
-    inline void set_sc_types( char *whichTypes ) override
+    inline void set_sc_accum_types( char *whichTypes ) override
     {
-      types = whichTypes;
+      accum_types = whichTypes;
+    }
+
+    inline void set_sc_count_types( char *whichTypes ) override
+    {
+      count_types = whichTypes;
     }
 
     inline void set_sc_types_kept( char *whichTypesKept ) override
@@ -520,11 +522,6 @@ class KTraceOptions: public TraceOptions
       return sc_global_counters;
     }
 
-    inline bool get_sc_acumm_counters() const override
-    {
-      return sc_acumm_counters;
-    }
-
     inline bool get_sc_summarize_states() const override
     {
       return sc_summarize_states;
@@ -540,26 +537,48 @@ class KTraceOptions: public TraceOptions
       return sc_remove_states;
     }
 
-    inline char *get_sc_types() const override
+    inline char *get_sc_accum_types() const override
     {
-      return strdup( types );
+      if ( accum_types != nullptr )
+        return strdup( accum_types );
+      
+      return nullptr;
+    }
+
+    inline char *get_sc_count_types() const override
+    {
+      if ( count_types != nullptr )
+        return strdup( count_types );
+
+      return nullptr;
     }
 
     inline char *get_sc_types_kept() const override
     {
-      return strdup( types_kept );
+      if ( types_kept != nullptr )
+        return strdup( types_kept );
+      
+      return nullptr;
     }
 
     std::vector< std::string > parseDoc( char *docname ) override;
     bool saveXML( std::vector< std::string > &filterOrder, std::string fileName ) override;
 
   private:
+    static std::stringstream bufferElement;
+
     void init();
     void init_filter_types();
     void parse_type( xmlDocPtr doc,
                      xmlNodePtr cur,
                      struct TraceOptions::allowed_types *types,
                      int &last_type );
+
+    template<typename T, typename std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr >
+    bool parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, T& whichReturnValue );
+    template<typename T, typename std::enable_if_t<std::is_same<T, char *>::value>* = nullptr >
+    bool parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, T& whichReturnValue );
+
     void parse_filter_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cur );
@@ -572,3 +591,45 @@ class KTraceOptions: public TraceOptions
 };
 
 
+template<typename T,
+         typename std::enable_if_t<std::is_arithmetic<T>::value>* >
+bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, T& whichReturnValue )
+{
+  bool done = false;
+
+  if ( !xmlStrcmp( whichNode->name, ( const xmlChar * )whichTag.c_str() ) )
+  {
+    xmlChar *word = xmlNodeListGetString( whichDoc, whichNode->xmlChildrenNode, 1 );
+    done = ( word != nullptr );
+    if ( done )
+    {
+      bufferElement.clear();
+      bufferElement.str( (char *)word );
+
+      if ( !( bufferElement >> whichReturnValue ) )
+        done = false;
+    }
+    xmlFree( word );
+  }
+
+  return done;
+}
+
+template<typename T,
+         typename std::enable_if_t<std::is_same<T, char *>::value>* >
+bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, T& whichReturnValue )
+{
+  bool done = false;
+
+  if ( !xmlStrcmp( whichNode->name, ( const xmlChar * )whichTag.c_str() ) )
+  {
+    xmlChar *word = xmlNodeListGetString( whichDoc, whichNode->xmlChildrenNode, 1 );
+    done = ( word != nullptr );
+    if ( done )
+      whichReturnValue = strdup( ( char *)word );
+
+    xmlFree( word );
+  }
+
+  return done;
+}

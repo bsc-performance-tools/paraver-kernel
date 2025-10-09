@@ -23,22 +23,23 @@
 
 
 #include "semanticthreadfunctions.h"
+
 #include "kwindow.h"
 
 using namespace std;
 
 bool stateOnSameTime( MemoryTrace::iterator *it, KSingleWindow *window )
 {
-  bool finish = false;
-  TRecordTime time = it->getTime();
+  bool finish                      = false;
+  TRecordTime time                 = it->getTime();
   MemoryTrace::iterator *nextState = nullptr;
 
   nextState = it->clone();
 
   ++( *nextState );
-  while ( !finish && !nextState->isNull() && nextState->getTime() == time )
+  while( !finish && !nextState->isNull() && nextState->getTime() == time )
   {
-    if ( nextState->getRecordType() & STATE && nextState->getRecordType() & BEGIN )
+    if( nextState->getRecordType() & STATE && nextState->getRecordType() & BEGIN )
       finish = true;
 
     ++( *nextState );
@@ -51,18 +52,18 @@ bool stateOnSameTime( MemoryTrace::iterator *it, KSingleWindow *window )
 
 TRecordTime timeToNextState( MemoryTrace::iterator *it, KSingleWindow *window )
 {
-  bool finish = false;
-  TRecordTime time = it->getTime();
+  bool finish                      = false;
+  TRecordTime time                 = it->getTime();
   MemoryTrace::iterator *nextState = nullptr;
 
   nextState = it->clone();
 
   ++( *nextState );
-  while ( !finish && !nextState->isNull() )
+  while( !finish && !nextState->isNull() )
   {
-    if ( nextState->getRecordType() & STATE && nextState->getRecordType() & BEGIN )
+    if( nextState->getRecordType() & STATE && nextState->getRecordType() & BEGIN )
     {
-      time = nextState->getTime() - time;
+      time   = nextState->getTime() - time;
       finish = true;
     }
 
@@ -78,25 +79,23 @@ void getNextEvent( MemoryTrace::iterator *it, KSingleWindow *window )
 {
   bool finish = false;
 
-  while ( !finish )
+  while( !finish )
   {
     ++( *it );
-    if ( it->isNull() )
+    if( it->isNull() )
       finish = true;
-    else if ( it->getRecordType() & EVENT )
+    else if( it->getRecordType() & EVENT )
     {
-      if ( window->passFilter( it ) )
+      if( window->passFilter( it ) )
         finish = true;
     }
   }
 }
 
 
-TSemanticValue getTotalCommSize( MemoryTrace::iterator *itBegin,
-                                 MemoryTrace::iterator *itEnd,
-                                 KSingleWindow *window )
+TSemanticValue getTotalCommSize( MemoryTrace::iterator *itBegin, MemoryTrace::iterator *itEnd, KSingleWindow *window )
 {
-  TSemanticValue bytes = 0;
+  TSemanticValue bytes            = 0;
   MemoryTrace::iterator *nextComm = nullptr;
 
   nextComm = itBegin->clone();
@@ -104,22 +103,18 @@ TSemanticValue getTotalCommSize( MemoryTrace::iterator *itBegin,
   /* First we watched if there are previous records of communications
      in the same time of the "record", but only sends */
   --( *nextComm );
-  while ( ( !nextComm->isNull() ) && ( nextComm->getTime() == itBegin->getTime() ) )
+  while( ( !nextComm->isNull() ) && ( nextComm->getTime() == itBegin->getTime() ) )
   {
-    if ( window->getFilter()->getPhysical() && !window->getFilter()->getLogical() &&
-         ( nextComm->getRecordType() & PHY &&
-           nextComm->getRecordType() & COMM &&
-           nextComm->getRecordType() & SEND ) )
+    if( window->getFilter()->getPhysical() && !window->getFilter()->getLogical() &&
+        ( nextComm->getRecordType() & PHY && nextComm->getRecordType() & COMM && nextComm->getRecordType() & SEND ) )
     {
-      if ( window->passFilter( nextComm ) )
+      if( window->passFilter( nextComm ) )
         bytes += window->getTrace()->getCommSize( nextComm->getCommIndex() );
     }
-    else if ( window->getFilter()->getLogical() &&
-              ( nextComm->getRecordType() & LOG &&
-                nextComm->getRecordType() & COMM &&
-                nextComm->getRecordType() & SEND ) )
+    else if( window->getFilter()->getLogical() &&
+             ( nextComm->getRecordType() & LOG && nextComm->getRecordType() & COMM && nextComm->getRecordType() & SEND ) )
     {
-      if ( window->passFilter( nextComm ) )
+      if( window->passFilter( nextComm ) )
         bytes += window->getTrace()->getCommSize( nextComm->getCommIndex() );
     }
     --( *nextComm );
@@ -129,56 +124,45 @@ TSemanticValue getTotalCommSize( MemoryTrace::iterator *itBegin,
   ++( *nextComm );
 
   /* Then go forward, until next event */
-  while ( !nextComm->isNull() && nextComm->getTime() <= itEnd->getTime() )
+  while( !nextComm->isNull() && nextComm->getTime() <= itEnd->getTime() )
   {
-    if ( nextComm->getTime() == itBegin->getTime() )
+    if( nextComm->getTime() == itBegin->getTime() )
     {
-      if ( ( nextComm->getRecordType() & COMM &&
-             nextComm->getRecordType() & SEND ) &&
-           window->passFilter( nextComm ) )
+      if( ( nextComm->getRecordType() & COMM && nextComm->getRecordType() & SEND ) && window->passFilter( nextComm ) )
         bytes += window->getTrace()->getCommSize( nextComm->getCommIndex() );
     }
-    else if ( window->getFilter()->getPhysical() && !window->getFilter()->getLogical() &&
-              ( nextComm->getRecordType() & PHY &&
-                nextComm->getRecordType() & COMM ) )
+    else if( window->getFilter()->getPhysical() && !window->getFilter()->getLogical() &&
+             ( nextComm->getRecordType() & PHY && nextComm->getRecordType() & COMM ) )
     {
-      if ( nextComm->getTime() < itEnd->getTime() ||
-           ( nextComm->getTime() == itEnd->getTime() && ( nextComm->getRecordType() & RECV ) ) )
+      if( nextComm->getTime() < itEnd->getTime() || ( nextComm->getTime() == itEnd->getTime() && ( nextComm->getRecordType() & RECV ) ) )
       {
-        if ( window->passFilter( nextComm ) )
+        if( window->passFilter( nextComm ) )
           bytes += window->getTrace()->getCommSize( nextComm->getCommIndex() );
       }
     }
-    else if ( ( ( nextComm->getRecordType() & COMM ) &&
-                ( window->getFilter()->getLogical() && ( nextComm->getRecordType() & LOG ) ) ) ||
-              ( nextComm->getRecordType() & PHY &&
-                nextComm->getRecordType() & RECV ) )
+    else if( ( ( nextComm->getRecordType() & COMM ) && ( window->getFilter()->getLogical() && ( nextComm->getRecordType() & LOG ) ) ) ||
+             ( nextComm->getRecordType() & PHY && nextComm->getRecordType() & RECV ) )
     {
-      if ( !( window->getFilter()->getLogical() && window->getFilter()->getPhysical() ) ||
-           !( ( nextComm->getRecordType() & LOG &&
-                nextComm->getRecordType() & RECV ) &&
-              window->getTrace()->getPhysicalReceive( nextComm->getCommIndex() )
-              >= window->getTrace()->getLogicalReceive( nextComm->getCommIndex() ) ) )
+      if( !( window->getFilter()->getLogical() && window->getFilter()->getPhysical() ) ||
+          !( ( nextComm->getRecordType() & LOG && nextComm->getRecordType() & RECV ) &&
+             window->getTrace()->getPhysicalReceive( nextComm->getCommIndex() ) >=
+               window->getTrace()->getLogicalReceive( nextComm->getCommIndex() ) ) )
       {
-        if ( nextComm->getTime() < itEnd->getTime() )
+        if( nextComm->getTime() < itEnd->getTime() )
         {
-          if ( window->passFilter( nextComm ) )
+          if( window->passFilter( nextComm ) )
             bytes += window->getTrace()->getCommSize( nextComm->getCommIndex() );
         }
-        else if ( nextComm->getTime() == itEnd->getTime() && nextComm->getRecordType() & RECV )
+        else if( nextComm->getTime() == itEnd->getTime() && nextComm->getRecordType() & RECV )
         {
-          if ( ( ( nextComm->getRecordType() & LOG &&
-                   nextComm->getRecordType() & RECV ) &&
-                 window->getTrace()->getLogicalReceive( nextComm->getCommIndex() ) >
-                 window->getTrace()->getPhysicalReceive( nextComm->getCommIndex() ) )
-               ||
-               ( ( nextComm->getRecordType() & PHY &&
-                   nextComm->getRecordType() & RECV ) &&
-                 window->getTrace()->getPhysicalReceive( nextComm->getCommIndex() ) >=
-                 window->getTrace()->getLogicalReceive( nextComm->getCommIndex() ) )
-             )
+          if( ( ( nextComm->getRecordType() & LOG && nextComm->getRecordType() & RECV ) &&
+                window->getTrace()->getLogicalReceive( nextComm->getCommIndex() ) >
+                  window->getTrace()->getPhysicalReceive( nextComm->getCommIndex() ) ) ||
+              ( ( nextComm->getRecordType() & PHY && nextComm->getRecordType() & RECV ) &&
+                window->getTrace()->getPhysicalReceive( nextComm->getCommIndex() ) >=
+                  window->getTrace()->getLogicalReceive( nextComm->getCommIndex() ) ) )
           {
-            if ( window->passFilter( nextComm ) )
+            if( window->passFilter( nextComm ) )
               bytes += window->getTrace()->getCommSize( nextComm->getCommIndex() );
           }
         }
@@ -193,11 +177,9 @@ TSemanticValue getTotalCommSize( MemoryTrace::iterator *itBegin,
   return bytes;
 }
 
-TSemanticValue getTotalSentCommSize( MemoryTrace::iterator *itBegin,
-                                     MemoryTrace::iterator *itEnd,
-                                     KSingleWindow *window )
+TSemanticValue getTotalSentCommSize( MemoryTrace::iterator *itBegin, MemoryTrace::iterator *itEnd, KSingleWindow *window )
 {
-  TSemanticValue bytes = 0;
+  TSemanticValue bytes            = 0;
   MemoryTrace::iterator *nextComm = nullptr;
 
   nextComm = itBegin->clone();
@@ -205,22 +187,18 @@ TSemanticValue getTotalSentCommSize( MemoryTrace::iterator *itBegin,
   /* First we watched if there are previous records of communications
      in the same time of the "record", but only sends */
   --( *nextComm );
-  while ( ( !nextComm->isNull() ) && ( nextComm->getTime() == itBegin->getTime() ) )
+  while( ( !nextComm->isNull() ) && ( nextComm->getTime() == itBegin->getTime() ) )
   {
-    if ( window->getFilter()->getPhysical() && !window->getFilter()->getLogical() &&
-         ( nextComm->getRecordType() & PHY &&
-           nextComm->getRecordType() & COMM &&
-           nextComm->getRecordType() & SEND ) )
+    if( window->getFilter()->getPhysical() && !window->getFilter()->getLogical() &&
+        ( nextComm->getRecordType() & PHY && nextComm->getRecordType() & COMM && nextComm->getRecordType() & SEND ) )
     {
-      if ( window->passFilter( nextComm ) )
+      if( window->passFilter( nextComm ) )
         bytes += window->getTrace()->getCommSize( nextComm->getCommIndex() );
     }
-    else if ( window->getFilter()->getLogical() &&
-              ( nextComm->getRecordType() & LOG &&
-                nextComm->getRecordType() & COMM &&
-                nextComm->getRecordType() & SEND ) )
+    else if( window->getFilter()->getLogical() &&
+             ( nextComm->getRecordType() & LOG && nextComm->getRecordType() & COMM && nextComm->getRecordType() & SEND ) )
     {
-      if ( window->passFilter( nextComm ) )
+      if( window->passFilter( nextComm ) )
         bytes += window->getTrace()->getCommSize( nextComm->getCommIndex() );
     }
     --( *nextComm );
@@ -230,11 +208,9 @@ TSemanticValue getTotalSentCommSize( MemoryTrace::iterator *itBegin,
   ++( *nextComm );
 
   /* Then go forward, until next event */
-  while ( !nextComm->isNull() && nextComm->getTime() < itEnd->getTime() )
+  while( !nextComm->isNull() && nextComm->getTime() < itEnd->getTime() )
   {
-    if ( ( nextComm->getRecordType() & COMM &&
-           nextComm->getRecordType() & SEND ) &&
-         window->passFilter( nextComm ) )
+    if( ( nextComm->getRecordType() & COMM && nextComm->getRecordType() & SEND ) && window->passFilter( nextComm ) )
       bytes += window->getTrace()->getCommSize( nextComm->getCommIndex() );
 
     ++( *nextComm );
@@ -245,6 +221,30 @@ TSemanticValue getTotalSentCommSize( MemoryTrace::iterator *itBegin,
   return bytes;
 }
 
+
+template< typename GetterT >
+std::optional< TRecordTime > nextCommPartnerTime( const MemoryTrace::iterator *begin,
+                                                  const MemoryTrace::iterator *end,
+                                                  TRecordType commType,
+                                                  GetterT getterFunc )
+{
+  std::optional< TRecordTime > retValue;
+  std::unique_ptr< MemoryTrace::iterator > beginCopy( begin->clone() );
+
+  while( *beginCopy != *end )
+  {
+    if( beginCopy->getRecordType() & commType )
+    {
+      retValue = getterFunc( beginCopy.get() );
+      break;
+    }
+    ++( *beginCopy );
+  }
+
+  return retValue;
+}
+
+
 /**************************
 ** State functions (Thread)
 ***************************/
@@ -252,11 +252,11 @@ TSemanticValue getTotalSentCommSize( MemoryTrace::iterator *itBegin,
 string StateAsIs::name = "State As Is";
 TSemanticValue StateAsIs::execute( const SemanticInfo *info )
 {
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  if ( myInfo->it->getRecordType() & END )
+  if( myInfo->it->getRecordType() & END )
     return IDLE;
   else
     return myInfo->it->getState();
@@ -264,16 +264,16 @@ TSemanticValue StateAsIs::execute( const SemanticInfo *info )
 
 void StateAsIs::init( KTimeline *whichWindow )
 {
-  myWindow = ( KSingleWindow * ) whichWindow;
+  myWindow      = (KSingleWindow *)whichWindow;
   fillStateGaps = myWindow->getTrace()->getFillStateGaps();
 }
 
 bool StateAsIs::validRecord( MemoryTrace::iterator *record )
 {
-  if ( !SemanticThread::validRecord( record ) )
+  if( !SemanticThread::validRecord( record ) )
     return false;
 
-  if ( fillStateGaps && record->getRecordType() & STATE && record->getRecordType() & END )
+  if( fillStateGaps && record->getRecordType() & STATE && record->getRecordType() & END )
     return !stateOnSameTime( record, myWindow );
 
   return true;
@@ -282,11 +282,11 @@ bool StateAsIs::validRecord( MemoryTrace::iterator *record )
 string Useful::name = "Useful";
 TSemanticValue Useful::execute( const SemanticInfo *info )
 {
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  if ( myInfo->it->getRecordType() & END )
+  if( myInfo->it->getRecordType() & END )
     return IDLE;
   else
     return myInfo->it->getState() == RUNNING ? 1 : 0;
@@ -294,16 +294,16 @@ TSemanticValue Useful::execute( const SemanticInfo *info )
 
 void Useful::init( KTimeline *whichWindow )
 {
-  myWindow = ( KSingleWindow * ) whichWindow;
+  myWindow      = (KSingleWindow *)whichWindow;
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
 }
 
 bool Useful::validRecord( MemoryTrace::iterator *record )
 {
-  if ( !SemanticThread::validRecord( record ) )
+  if( !SemanticThread::validRecord( record ) )
     return false;
 
-  if ( fillStateGaps && record->getRecordType() & STATE && record->getRecordType() & END )
+  if( fillStateGaps && record->getRecordType() & STATE && record->getRecordType() & END )
     return !stateOnSameTime( record, myWindow );
 
   return true;
@@ -313,11 +313,11 @@ bool Useful::validRecord( MemoryTrace::iterator *record )
 string StateSign::name = "State Sign";
 TSemanticValue StateSign::execute( const SemanticInfo *info )
 {
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  if ( myInfo->it->getRecordType() & END )
+  if( myInfo->it->getRecordType() & END )
     return IDLE;
   else
     return myInfo->it->getState() != 0 ? 1 : 0;
@@ -325,16 +325,16 @@ TSemanticValue StateSign::execute( const SemanticInfo *info )
 
 void StateSign::init( KTimeline *whichWindow )
 {
-  myWindow = ( KSingleWindow * ) whichWindow;
+  myWindow      = (KSingleWindow *)whichWindow;
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
 }
 
 bool StateSign::validRecord( MemoryTrace::iterator *record )
 {
-  if ( !SemanticThread::validRecord( record ) )
+  if( !SemanticThread::validRecord( record ) )
     return false;
 
-  if ( fillStateGaps && record->getRecordType() & STATE && record->getRecordType() & END )
+  if( fillStateGaps && record->getRecordType() & STATE && record->getRecordType() & END )
     return !stateOnSameTime( record, myWindow );
 
   return true;
@@ -346,17 +346,17 @@ TSemanticValue GivenState::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  if ( myInfo->it->getRecordType() & END )
+  if( myInfo->it->getRecordType() & END )
     return IDLE;
   else
   {
-    for ( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+    for( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
     {
-      if ( myInfo->it->getState() == parameters[ VALUES ][ i ] )
+      if( myInfo->it->getState() == parameters[ VALUES ][ i ] )
       {
         tmp = myInfo->it->getState();
         break;
@@ -369,16 +369,16 @@ TSemanticValue GivenState::execute( const SemanticInfo *info )
 
 void GivenState::init( KTimeline *whichWindow )
 {
-  myWindow = ( KSingleWindow * ) whichWindow;
+  myWindow      = (KSingleWindow *)whichWindow;
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
 }
 
 bool GivenState::validRecord( MemoryTrace::iterator *record )
 {
-  if ( !SemanticThread::validRecord( record ) )
+  if( !SemanticThread::validRecord( record ) )
     return false;
 
-  if ( fillStateGaps && record->getRecordType() & STATE && record->getRecordType() & END )
+  if( fillStateGaps && record->getRecordType() & STATE && record->getRecordType() & END )
     return !stateOnSameTime( record, myWindow );
 
   return true;
@@ -390,20 +390,18 @@ TSemanticValue InState::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  for ( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+  for( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
   {
-    if ( myInfo->it->getRecordType() & END &&
-         parameters[ VALUES ][ i ] == 0 )
+    if( myInfo->it->getRecordType() & END && parameters[ VALUES ][ i ] == 0 )
     {
       tmp = 1;
       break;
     }
-    else if ( !( myInfo->it->getRecordType() & END ) &&
-              myInfo->it->getState() == parameters[ VALUES ][ i ] )
+    else if( !( myInfo->it->getRecordType() & END ) && myInfo->it->getState() == parameters[ VALUES ][ i ] )
     {
       tmp = 1;
       break;
@@ -415,16 +413,16 @@ TSemanticValue InState::execute( const SemanticInfo *info )
 
 void InState::init( KTimeline *whichWindow )
 {
-  myWindow = ( KSingleWindow * ) whichWindow;
+  myWindow      = (KSingleWindow *)whichWindow;
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
 }
 
 bool InState::validRecord( MemoryTrace::iterator *record )
 {
-  if ( !SemanticThread::validRecord( record ) )
+  if( !SemanticThread::validRecord( record ) )
     return false;
 
-  if ( fillStateGaps && record->getRecordType() & STATE && record->getRecordType() & END )
+  if( fillStateGaps && record->getRecordType() & STATE && record->getRecordType() & END )
     return !stateOnSameTime( record, myWindow );
 
   return true;
@@ -436,20 +434,18 @@ TSemanticValue NotInState::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 1;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  for ( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+  for( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
   {
-    if ( myInfo->it->getRecordType() & END &&
-         parameters[ VALUES ][ i ] == 0 )
+    if( myInfo->it->getRecordType() & END && parameters[ VALUES ][ i ] == 0 )
     {
       tmp = 0;
       break;
     }
-    if ( !( myInfo->it->getRecordType() & END ) &&
-         myInfo->it->getState() == parameters[ VALUES ][ i ] )
+    if( !( myInfo->it->getRecordType() & END ) && myInfo->it->getState() == parameters[ VALUES ][ i ] )
     {
       tmp = 0;
       break;
@@ -461,16 +457,16 @@ TSemanticValue NotInState::execute( const SemanticInfo *info )
 
 void NotInState::init( KTimeline *whichWindow )
 {
-  myWindow = ( KSingleWindow * ) whichWindow;
+  myWindow      = (KSingleWindow *)whichWindow;
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
 }
 
 bool NotInState::validRecord( MemoryTrace::iterator *record )
 {
-  if ( !SemanticThread::validRecord( record ) )
+  if( !SemanticThread::validRecord( record ) )
     return false;
 
-  if ( fillStateGaps && record->getRecordType() & STATE && record->getRecordType() & END )
+  if( fillStateGaps && record->getRecordType() & STATE && record->getRecordType() & END )
     return !stateOnSameTime( record, myWindow );
 
   return true;
@@ -482,20 +478,18 @@ TSemanticValue StateRecordDuration::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  for ( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+  for( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
   {
-    if ( myInfo->it->getRecordType() & END &&
-         parameters[ VALUES ][ i ] == 0 )
+    if( myInfo->it->getRecordType() & END && parameters[ VALUES ][ i ] == 0 )
     {
       tmp = timeToNextState( myInfo->it, myWindow );
       break;
     }
-    if ( !( myInfo->it->getRecordType() & END ) &&
-         myInfo->it->getState() == parameters[ VALUES ][ i ] )
+    if( !( myInfo->it->getRecordType() & END ) && myInfo->it->getState() == parameters[ VALUES ][ i ] )
     {
       tmp = myInfo->it->getStateEndTime() - myInfo->it->getTime();
       break;
@@ -509,16 +503,16 @@ TSemanticValue StateRecordDuration::execute( const SemanticInfo *info )
 
 void StateRecordDuration::init( KTimeline *whichWindow )
 {
-  myWindow = ( KSingleWindow * ) whichWindow;
+  myWindow      = (KSingleWindow *)whichWindow;
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
 }
 
 bool StateRecordDuration::validRecord( MemoryTrace::iterator *record )
 {
-  if ( !SemanticThread::validRecord( record ) )
+  if( !SemanticThread::validRecord( record ) )
     return false;
 
-  if ( fillStateGaps && record->getRecordType() & STATE && record->getRecordType() & END )
+  if( fillStateGaps && record->getRecordType() & STATE && record->getRecordType() & END )
     return !stateOnSameTime( record, myWindow );
 
   return true;
@@ -533,8 +527,8 @@ TSemanticValue LastEventType::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
   tmp = myInfo->it->getEventType();
@@ -548,8 +542,8 @@ TSemanticValue LastEventValue::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
   tmp = myInfo->it->getEventValue();
@@ -563,13 +557,13 @@ TSemanticValue LastEventValueWOBursts::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
   tmp = myInfo->it->getEventValue();
 
-  if ( tmp == 0 )
+  if( tmp == 0 )
     tmp = myInfo->callingInterval->getValue();
 
   return tmp;
@@ -581,15 +575,14 @@ TSemanticValue NextEventType::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
   MemoryTrace::iterator *nextEvent = nullptr;
 
   nextEvent = myInfo->it->clone();
 
-  getNextEvent( nextEvent, ( KSingleWindow * )
-                myInfo->callingInterval->getWindow() );
+  getNextEvent( nextEvent, (KSingleWindow *)myInfo->callingInterval->getWindow() );
 
-  if ( nextEvent->isNull() )
+  if( nextEvent->isNull() )
     return 0;
 
   tmp = nextEvent->getEventType();
@@ -604,15 +597,14 @@ TSemanticValue NextEventValue::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
   MemoryTrace::iterator *nextEvent = nullptr;
 
   nextEvent = myInfo->it->clone();
 
-  getNextEvent( nextEvent, ( KSingleWindow * )
-                myInfo->callingInterval->getWindow() );
+  getNextEvent( nextEvent, (KSingleWindow *)myInfo->callingInterval->getWindow() );
 
-  if ( nextEvent->isNull() )
+  if( nextEvent->isNull() )
     return 0;
 
   tmp = nextEvent->getEventValue();
@@ -625,22 +617,21 @@ TSemanticValue NextEventValue::execute( const SemanticInfo *info )
 string AverageNextEventValue::name = "Avg Next Evt Val";
 TSemanticValue AverageNextEventValue::execute( const SemanticInfo *info )
 {
-  TSemanticValue tmp = 0;
+  TSemanticValue tmp     = 0;
   TSemanticValue tmpTime = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
   MemoryTrace::iterator *nextEvent = nullptr;
 
   nextEvent = myInfo->it->clone();
 
-  getNextEvent( nextEvent, ( KSingleWindow * )
-                myInfo->callingInterval->getWindow() );
+  getNextEvent( nextEvent, (KSingleWindow *)myInfo->callingInterval->getWindow() );
 
-  if ( nextEvent->isNull() )
+  if( nextEvent->isNull() )
     return 0;
 
   tmpTime = nextEvent->getTime() - myInfo->it->getTime();
-  if ( tmpTime == 0 )
+  if( tmpTime == 0 )
     return 0;
   tmpTime = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( tmpTime );
 
@@ -652,28 +643,70 @@ TSemanticValue AverageNextEventValue::execute( const SemanticInfo *info )
 }
 
 
+string SumNextEventValues::name = "Sum Next Evt Values";
+
+void SumNextEventValues::init( KTimeline *whichWindow )
+{
+  lastProcessedTime.clear();
+}
+
+TSemanticValue SumNextEventValues::execute( const SemanticInfo *info )
+{
+  TSemanticValue tmp = 0;
+
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
+  MemoryTrace::iterator *nextEvent = nullptr;
+
+  nextEvent = myInfo->it->clone();
+
+  getNextEvent( nextEvent, (KSingleWindow *)myInfo->callingInterval->getWindow() );
+
+  if( nextEvent->isNull() )
+    return 0;
+
+  auto tmpLastProcessedTime = lastProcessedTime.find( myInfo->callingInterval->getOrder() );
+  if( tmpLastProcessedTime == lastProcessedTime.end() )
+    std::tie( tmpLastProcessedTime, std::ignore ) = lastProcessedTime.insert( { myInfo->callingInterval->getOrder(), nextEvent->getTime() } );
+
+  if( tmpLastProcessedTime->second == nextEvent->getTime() )
+    return myInfo->callingInterval->getValue();
+  else
+  {
+    lastProcessedTime[ myInfo->callingInterval->getOrder() ] = nextEvent->getTime();
+    while( nextEvent->getTime() == lastProcessedTime[ myInfo->callingInterval->getOrder() ] )
+    {
+      tmp += nextEvent->getEventValue();
+      getNextEvent( nextEvent, (KSingleWindow *)myInfo->callingInterval->getWindow() );
+    }
+  }
+
+  delete nextEvent;
+
+  return tmp;
+}
+
+
 string AverageLastEventValue::name = "Avg Last Evt Val";
 TSemanticValue AverageLastEventValue::execute( const SemanticInfo *info )
 {
-  TSemanticValue tmp = 0;
+  TSemanticValue tmp     = 0;
   TSemanticValue tmpTime = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
   MemoryTrace::iterator *nextEvent = nullptr;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
   nextEvent = myInfo->it->clone();
 
-  getNextEvent( nextEvent, ( KSingleWindow * )
-                myInfo->callingInterval->getWindow() );
+  getNextEvent( nextEvent, (KSingleWindow *)myInfo->callingInterval->getWindow() );
 
-  if ( nextEvent->isNull() )
+  if( nextEvent->isNull() )
     return 0;
 
   tmpTime = nextEvent->getTime() - myInfo->it->getTime();
-  if ( tmpTime == 0 )
+  if( tmpTime == 0 )
     return 0;
   tmpTime = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( tmpTime );
 
@@ -690,14 +723,14 @@ TSemanticValue GivenEventValue::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  for ( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+  for( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
   {
-    if ( myInfo->it->getEventValue() == parameters[ VALUES ][ i ] )
+    if( myInfo->it->getEventValue() == parameters[ VALUES ][ i ] )
     {
       tmp = myInfo->it->getEventValue();
       break;
@@ -713,14 +746,14 @@ TSemanticValue InEventValue::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  for ( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+  for( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
   {
-    if ( myInfo->it->getEventValue() == parameters[ VALUES ][ i ] )
+    if( myInfo->it->getEventValue() == parameters[ VALUES ][ i ] )
     {
       tmp = 1;
       break;
@@ -736,18 +769,17 @@ TSemanticValue IntervalBetweenEvents::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
   MemoryTrace::iterator *nextEvent = nullptr;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
   nextEvent = myInfo->it->clone();
 
-  getNextEvent( nextEvent, ( KSingleWindow * )
-                myInfo->callingInterval->getWindow() );
+  getNextEvent( nextEvent, (KSingleWindow *)myInfo->callingInterval->getWindow() );
 
-  if ( nextEvent->isNull() )
+  if( nextEvent->isNull() )
     return 0;
 
   tmp = nextEvent->getTime() - myInfo->it->getTime();
@@ -763,14 +795,14 @@ TSemanticValue NotInEventValue::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 1;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  for ( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+  for( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
   {
-    if ( myInfo->it->getEventValue() == parameters[ VALUES ][ i ] )
+    if( myInfo->it->getEventValue() == parameters[ VALUES ][ i ] )
     {
       tmp = 0;
       break;
@@ -786,13 +818,12 @@ TSemanticValue InEventRange::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  if ( myInfo->it->getEventValue() >= parameters[ MINVALUE ][ 0 ] &&
-       myInfo->it->getEventValue() <= parameters[ MAXVALUE ][ 0 ] )
+  if( myInfo->it->getEventValue() >= parameters[ MINVALUE ][ 0 ] && myInfo->it->getEventValue() <= parameters[ MAXVALUE ][ 0 ] )
   {
     tmp = 1;
   }
@@ -806,22 +837,20 @@ TSemanticValue EventBytes::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
   MemoryTrace::iterator *nextEvent = nullptr;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
   nextEvent = myInfo->it->clone();
 
-  getNextEvent( nextEvent, ( KSingleWindow * )
-                myInfo->callingInterval->getWindow() );
+  getNextEvent( nextEvent, (KSingleWindow *)myInfo->callingInterval->getWindow() );
 
-  if ( nextEvent->isNull() )
+  if( nextEvent->isNull() )
     return 0;
 
-  tmp = getTotalCommSize( myInfo->it, nextEvent,
-                          ( KSingleWindow * ) myInfo->callingInterval->getWindow() );
+  tmp = getTotalCommSize( myInfo->it, nextEvent, (KSingleWindow *)myInfo->callingInterval->getWindow() );
 
   delete nextEvent;
 
@@ -834,22 +863,20 @@ TSemanticValue EventSentBytes::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
   MemoryTrace::iterator *nextEvent = nullptr;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
   nextEvent = myInfo->it->clone();
 
-  getNextEvent( nextEvent, ( KSingleWindow * )
-                myInfo->callingInterval->getWindow() );
+  getNextEvent( nextEvent, (KSingleWindow *)myInfo->callingInterval->getWindow() );
 
-  if ( nextEvent->isNull() )
+  if( nextEvent->isNull() )
     return 0;
 
-  tmp = getTotalSentCommSize( myInfo->it, nextEvent,
-                              ( KSingleWindow * ) myInfo->callingInterval->getWindow() );
+  tmp = getTotalSentCommSize( myInfo->it, nextEvent, (KSingleWindow *)myInfo->callingInterval->getWindow() );
 
   delete nextEvent;
 
@@ -865,13 +892,12 @@ TSemanticValue LastTag::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  tmp = myInfo->callingInterval->getWindow()->getTrace()->getCommTag(
-          myInfo->it->getCommIndex() );
+  tmp = myInfo->callingInterval->getWindow()->getTrace()->getCommTag( myInfo->it->getCommIndex() );
   return tmp;
 }
 
@@ -881,13 +907,12 @@ TSemanticValue CommSize::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC || !( myInfo->it->getRecordType() & COMM ) )
+  if( myInfo->it->getRecordType() == EMPTYREC || !( myInfo->it->getRecordType() & COMM ) )
     return 0;
 
-  tmp = myInfo->callingInterval->getWindow()->getTrace()->getCommSize(
-          myInfo->it->getCommIndex() );
+  tmp = myInfo->callingInterval->getWindow()->getTrace()->getCommSize( myInfo->it->getCommIndex() );
   return tmp;
 }
 
@@ -895,12 +920,12 @@ TSemanticValue CommSize::execute( const SemanticInfo *info )
 string CommRecvPartner::name = "Comm Recv. Partner";
 TSemanticValue CommRecvPartner::execute( const SemanticInfo *info )
 {
-  TSemanticValue tmp = 0;
+  TSemanticValue tmp              = 0;
   MemoryTrace::iterator *nextComm = nullptr;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
   nextComm = myInfo->it->clone();
@@ -909,20 +934,12 @@ TSemanticValue CommRecvPartner::execute( const SemanticInfo *info )
   while( !nextComm->isNull() )
   {
     if( ( nextComm->getRecordType() & RECV && nextComm->getRecordType() & LOG &&
-          myInfo->callingInterval->getWindow()->getTrace()->getLogicalReceive(
-            nextComm->getCommIndex() )
-          >=
-          myInfo->callingInterval->getWindow()->getTrace()->getPhysicalReceive(
-            nextComm->getCommIndex() ) )
-        ||
+          myInfo->callingInterval->getWindow()->getTrace()->getLogicalReceive( nextComm->getCommIndex() ) >=
+            myInfo->callingInterval->getWindow()->getTrace()->getPhysicalReceive( nextComm->getCommIndex() ) ) ||
         ( nextComm->getRecordType() & RECV && nextComm->getRecordType() & PHY &&
-          myInfo->callingInterval->getWindow()->getTrace()->getPhysicalReceive(
-            nextComm->getCommIndex() )
-          >
-          myInfo->callingInterval->getWindow()->getTrace()->getLogicalReceive(
-            nextComm->getCommIndex() ) )
-      )
-        break;
+          myInfo->callingInterval->getWindow()->getTrace()->getPhysicalReceive( nextComm->getCommIndex() ) >
+            myInfo->callingInterval->getWindow()->getTrace()->getLogicalReceive( nextComm->getCommIndex() ) ) )
+      break;
 
     ++( *nextComm );
   }
@@ -933,12 +950,10 @@ TSemanticValue CommRecvPartner::execute( const SemanticInfo *info )
     return 0;
   }
 
-  if ( myInfo->callingInterval->getLevel() == THREAD )
-    tmp = myInfo->callingInterval->getWindow()->getTrace()->getSenderThread(
-            nextComm->getCommIndex() );
-  else if ( myInfo->callingInterval->getLevel() == CPU )
-    tmp = myInfo->callingInterval->getWindow()->getTrace()->getSenderCPU(
-            nextComm->getCommIndex() );
+  if( myInfo->callingInterval->getLevel() == THREAD )
+    tmp = myInfo->callingInterval->getWindow()->getTrace()->getSenderThread( nextComm->getCommIndex() );
+  else if( myInfo->callingInterval->getLevel() == CPU )
+    tmp = myInfo->callingInterval->getWindow()->getTrace()->getSenderCPU( nextComm->getCommIndex() );
 
   delete nextComm;
   return tmp + 1;
@@ -950,17 +965,15 @@ TSemanticValue CommPartner::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  if ( myInfo->callingInterval->getLevel() == THREAD )
-    tmp = myInfo->callingInterval->getWindow()->getTrace()->getReceiverThread(
-            myInfo->it->getCommIndex() );
-  else if ( myInfo->callingInterval->getLevel() == CPU )
-    tmp = myInfo->callingInterval->getWindow()->getTrace()->getReceiverCPU(
-            myInfo->it->getCommIndex() );
+  if( myInfo->callingInterval->getLevel() == THREAD )
+    tmp = myInfo->callingInterval->getWindow()->getTrace()->getReceiverThread( myInfo->it->getCommIndex() );
+  else if( myInfo->callingInterval->getLevel() == CPU )
+    tmp = myInfo->callingInterval->getWindow()->getTrace()->getReceiverCPU( myInfo->it->getCommIndex() );
 
   return tmp + 1;
 }
@@ -971,22 +984,15 @@ TSemanticValue LastSendDuration::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  tmp = myInfo->callingInterval->getWindow()->getTrace()->getLogicalReceive(
-          myInfo->it->getCommIndex() )
-        >
-        myInfo->callingInterval->getWindow()->getTrace()->getPhysicalReceive(
-          myInfo->it->getCommIndex() )
-        ?
-        myInfo->callingInterval->getWindow()->getTrace()->getLogicalReceive(
-          myInfo->it->getCommIndex() )
-        :
-        myInfo->callingInterval->getWindow()->getTrace()->getPhysicalReceive(
-          myInfo->it->getCommIndex() );
+  tmp = myInfo->callingInterval->getWindow()->getTrace()->getLogicalReceive( myInfo->it->getCommIndex() ) >
+            myInfo->callingInterval->getWindow()->getTrace()->getPhysicalReceive( myInfo->it->getCommIndex() )
+          ? myInfo->callingInterval->getWindow()->getTrace()->getLogicalReceive( myInfo->it->getCommIndex() )
+          : myInfo->callingInterval->getWindow()->getTrace()->getPhysicalReceive( myInfo->it->getCommIndex() );
 
   tmp = tmp - myInfo->it->getTime();
   tmp = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( tmp );
@@ -998,41 +1004,32 @@ TSemanticValue LastSendDuration::execute( const SemanticInfo *info )
 string NextRecvDuration::name = "Next Recv Dur.";
 TSemanticValue NextRecvDuration::execute( const SemanticInfo *info )
 {
-  TSemanticValue tmp = 0;
+  TSemanticValue tmp              = 0;
   MemoryTrace::iterator *nextComm = nullptr;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
   nextComm = myInfo->it->clone();
 
   ++( *nextComm );
-  while ( !nextComm->isNull() && !( nextComm->getRecordType() & COMM && nextComm->getRecordType() & RECV ) )
+  while( !nextComm->isNull() && !( nextComm->getRecordType() & COMM && nextComm->getRecordType() & RECV ) )
     ++( *nextComm );
 
-  if ( nextComm->isNull() )
+  if( nextComm->isNull() )
   {
     delete nextComm;
     return 0;
   }
 
-  tmp = myInfo->callingInterval->getWindow()->getTrace()->getLogicalReceive(
-          nextComm->getCommIndex() )
-        >
-        myInfo->callingInterval->getWindow()->getTrace()->getPhysicalReceive(
-          nextComm->getCommIndex() )
-        ?
-        myInfo->callingInterval->getWindow()->getTrace()->getLogicalReceive(
-          nextComm->getCommIndex() )
-        :
-        myInfo->callingInterval->getWindow()->getTrace()->getPhysicalReceive(
-          nextComm->getCommIndex() );
+  tmp = myInfo->callingInterval->getWindow()->getTrace()->getLogicalReceive( nextComm->getCommIndex() ) >
+            myInfo->callingInterval->getWindow()->getTrace()->getPhysicalReceive( nextComm->getCommIndex() )
+          ? myInfo->callingInterval->getWindow()->getTrace()->getLogicalReceive( nextComm->getCommIndex() )
+          : myInfo->callingInterval->getWindow()->getTrace()->getPhysicalReceive( nextComm->getCommIndex() );
 
-  tmp = myInfo->callingInterval->getWindow()->getTrace()->getLogicalSend(
-          nextComm->getCommIndex() )
-        - myInfo->it->getTime();
+  tmp = myInfo->callingInterval->getWindow()->getTrace()->getLogicalSend( nextComm->getCommIndex() ) - myInfo->it->getTime();
   tmp = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( tmp );
 
   delete nextComm;
@@ -1045,15 +1042,108 @@ TSemanticValue LastSendSize::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  tmp =  myInfo->callingInterval->getWindow()->getTrace()->getCommSize(
-          myInfo->it->getCommIndex() );
+  tmp = myInfo->callingInterval->getWindow()->getTrace()->getCommSize( myInfo->it->getCommIndex() );
 
   return tmp;
+}
+
+
+string LastStride::name = "Last Stride";
+TSemanticValue LastStride::execute( const SemanticInfo *info )
+{
+  TSemanticValue tmp = 0;
+
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
+
+  if( myInfo->it->getRecordType() == EMPTYREC )
+    return 0;
+
+  TApplOrder dummyAppl;
+  TThreadOrder dummyThread;
+  TTaskOrder receiverTask, senderTask;
+  Trace *tmpTrace = myInfo->callingInterval->getWindow()->getTrace();
+
+  if( myInfo->it->getRecordType() & SEND )
+  {
+    tmpTrace->getThreadLocation( myInfo->it->getOrder(), dummyAppl, senderTask, dummyThread );
+    tmpTrace->getThreadLocation( myInfo->it->getReceiverThread(), dummyAppl, receiverTask, dummyThread );
+  }
+  else if( myInfo->it->getRecordType() & RECV )
+  {
+    tmpTrace->getThreadLocation( myInfo->it->getOrder(), dummyAppl, receiverTask, dummyThread );
+    tmpTrace->getThreadLocation( myInfo->it->getSenderThread(), dummyAppl, senderTask, dummyThread );
+  }
+
+  tmp = (double)receiverTask - (double)senderTask;
+
+  return std::abs( tmp );
+}
+
+
+string LateReceiver::name = "Late Receiver";
+TSemanticValue LateReceiver::execute( const SemanticInfo *info )
+{
+  TSemanticValue tmp = 0;
+
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
+
+  if( myInfo->it->getRecordType() == EMPTYREC )
+    return 0;
+
+  if( myInfo->it->getEventValueAsIs() == 0 )
+    return 0;
+
+  MemoryTrace::iterator *nextEvent = myInfo->it->clone();
+  getNextEvent( nextEvent, (KSingleWindow *)myInfo->callingInterval->getWindow() );
+
+  std::optional< TRecordTime > logSendTime = nextCommPartnerTime( myInfo->it,
+                                                                  nextEvent,
+                                                                  RECV,
+                                                                  []( MemoryTrace::iterator *it )
+                                                                  {
+                                                                    return it->getLogicalSend();
+                                                                  } );
+
+  if( logSendTime )
+    tmp = myInfo->it->getTime() - *logSendTime;
+
+  return tmp < 0.0 ? 0.0 : tmp;
+}
+
+
+string LateSender::name = "Late Sender";
+TSemanticValue LateSender::execute( const SemanticInfo *info )
+{
+  TSemanticValue tmp = 0;
+
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
+
+  if( myInfo->it->getRecordType() == EMPTYREC )
+    return 0;
+
+  if( myInfo->it->getEventValueAsIs() == 0 )
+    return 0;
+
+  MemoryTrace::iterator *nextEvent = myInfo->it->clone();
+  getNextEvent( nextEvent, (KSingleWindow *)myInfo->callingInterval->getWindow() );
+
+  std::optional< TRecordTime > logRecvTime = nextCommPartnerTime( myInfo->it,
+                                                                  nextEvent,
+                                                                  SEND,
+                                                                  []( MemoryTrace::iterator *it )
+                                                                  {
+                                                                    return it->getLogicalReceive();
+                                                                  } );
+
+  if( logRecvTime )
+    tmp = myInfo->it->getTime() - *logRecvTime;
+
+  return tmp < 0.0 ? 0.0 : tmp;
 }
 
 
@@ -1062,47 +1152,41 @@ TSemanticValue SendBytesInTransit::execute( const SemanticInfo *info )
 {
   TSemanticValue size = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
-  KTrace *trace = ( KTrace* )window->getTrace();
-  TCommID id = myInfo->it->getCommIndex();
+  KSingleWindow *window = (KSingleWindow *)myInfo->callingInterval->getWindow();
+  KTrace *trace         = (KTrace *)window->getTrace();
+  TCommID id            = myInfo->it->getCommIndex();
 
   size = myInfo->callingInterval->getValue();
 
-  if ( window->getFilter()->getLogical() )
+  if( window->getFilter()->getLogical() )
   {
     /* If negative communication don't use */
-    if ( ( trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) &&
-           trace->getLogicalReceive( id ) <= trace->getLogicalSend( id ) )
-         ||
-         ( trace->getLogicalReceive( id ) <= trace->getPhysicalReceive( id ) &&
-           trace->getPhysicalReceive( id ) <= trace->getLogicalSend( id ) )
-       )
+    if( ( trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) && trace->getLogicalReceive( id ) <= trace->getLogicalSend( id ) ) ||
+        ( trace->getLogicalReceive( id ) <= trace->getPhysicalReceive( id ) && trace->getPhysicalReceive( id ) <= trace->getLogicalSend( id ) ) )
       return size;
 
-    if ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & SEND )
+    if( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & SEND )
       size += trace->getCommSize( id );
-    else if ( ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RRECV &&
-                trace->getLogicalReceive( id ) >
-                trace->getPhysicalReceive( id ) ) ||
-              ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RRECV &&
-                trace->getPhysicalReceive( id ) >=
-                trace->getLogicalReceive( id ) ) )
+    else if( ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RRECV &&
+               trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) ) ||
+             ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RRECV &&
+               trace->getPhysicalReceive( id ) >= trace->getLogicalReceive( id ) ) )
       size -= trace->getCommSize( id );
   }
   else
   {
     /* If negative communication don't use */
-    if ( trace->getPhysicalReceive( id ) <= trace->getPhysicalSend( id ) )
+    if( trace->getPhysicalReceive( id ) <= trace->getPhysicalSend( id ) )
       return size;
 
-    if ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & SEND )
+    if( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & SEND )
       size += trace->getCommSize( id );
-    else if ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RRECV )
+    else if( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RRECV )
       size -= trace->getCommSize( id );
   }
 
@@ -1115,47 +1199,41 @@ TSemanticValue SendMessagesInTransit::execute( const SemanticInfo *info )
 {
   TSemanticValue msgs = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
-  KTrace *trace = ( KTrace* )window->getTrace();
-  TCommID id = myInfo->it->getCommIndex();
+  KSingleWindow *window = (KSingleWindow *)myInfo->callingInterval->getWindow();
+  KTrace *trace         = (KTrace *)window->getTrace();
+  TCommID id            = myInfo->it->getCommIndex();
 
   msgs = myInfo->callingInterval->getValue();
 
-  if ( window->getFilter()->getLogical() )
+  if( window->getFilter()->getLogical() )
   {
     /* If negative communication don't use */
-    if ( ( trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) &&
-           trace->getLogicalReceive( id ) <= trace->getLogicalSend( id ) )
-         ||
-         ( trace->getLogicalReceive( id ) <= trace->getPhysicalReceive( id ) &&
-           trace->getPhysicalReceive( id ) <= trace->getLogicalSend( id ) )
-       )
+    if( ( trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) && trace->getLogicalReceive( id ) <= trace->getLogicalSend( id ) ) ||
+        ( trace->getLogicalReceive( id ) <= trace->getPhysicalReceive( id ) && trace->getPhysicalReceive( id ) <= trace->getLogicalSend( id ) ) )
       return msgs;
 
-    if ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & SEND )
+    if( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & SEND )
       msgs++;
-    else if ( ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RRECV &&
-                trace->getLogicalReceive( id ) >
-                trace->getPhysicalReceive( id ) ) ||
-              ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RRECV &&
-                trace->getPhysicalReceive( id ) >=
-                trace->getLogicalReceive( id ) ) )
+    else if( ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RRECV &&
+               trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) ) ||
+             ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RRECV &&
+               trace->getPhysicalReceive( id ) >= trace->getLogicalReceive( id ) ) )
       msgs--;
   }
   else
   {
     /* If negative communication don't use */
-    if ( trace->getPhysicalReceive( id ) <= trace->getPhysicalSend( id ) )
+    if( trace->getPhysicalReceive( id ) <= trace->getPhysicalSend( id ) )
       return msgs;
 
-    if ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & SEND )
+    if( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & SEND )
       msgs++;
-    else if ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RRECV )
+    else if( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RRECV )
       msgs--;
   }
 
@@ -1175,14 +1253,14 @@ TSemanticValue SendBandWidth::execute( const SemanticInfo *info )
   TSemanticValue bytes;
   bool changes = true;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
-  KTrace *trace = ( KTrace* )window->getTrace();
-  TCommID id = myInfo->it->getCommIndex();
+  KSingleWindow *window = (KSingleWindow *)myInfo->callingInterval->getWindow();
+  KTrace *trace         = (KTrace *)window->getTrace();
+  TCommID id            = myInfo->it->getCommIndex();
   PRV_INT64 tmp;
 
   if( bandwidth.find( myInfo->callingInterval->getOrder() ) == bandwidth.end() )
@@ -1190,61 +1268,55 @@ TSemanticValue SendBandWidth::execute( const SemanticInfo *info )
 
   tmp = bandwidth[ myInfo->callingInterval->getOrder() ];
 
-  if ( window->getFilter()->getLogical() &&
-       trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) )
+  if( window->getFilter()->getLogical() && trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) )
     time = trace->getLogicalReceive( id ) - trace->getLogicalSend( id );
   else
   {
-    if ( window->getFilter()->getPhysical() )
+    if( window->getFilter()->getPhysical() )
       time = trace->getPhysicalReceive( id ) - trace->getPhysicalSend( id );
     else
       time = trace->getPhysicalReceive( id ) - trace->getLogicalSend( id );
   }
-  if ( time == 0 )
+  if( time == 0 )
     return tmp * 1E-12;
-  if ( time < 0 ) time = ( -time );
+  if( time < 0 )
+    time = ( -time );
   time = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( time );
 
   bytes = trace->getCommSize( id ) / parameters[ FACTOR ][ 0 ];
 
-  if ( window->getFilter()->getLogical() )
+  if( window->getFilter()->getLogical() )
   {
     /* If negative communication don't use */
-    if ( ( trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) &&
-           trace->getLogicalReceive( id ) <= trace->getLogicalSend( id ) )
-         ||
-         ( trace->getLogicalReceive( id ) <= trace->getPhysicalReceive( id ) &&
-           trace->getPhysicalReceive( id ) <= trace->getLogicalSend( id ) )
-       )
+    if( ( trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) && trace->getLogicalReceive( id ) <= trace->getLogicalSend( id ) ) ||
+        ( trace->getLogicalReceive( id ) <= trace->getPhysicalReceive( id ) && trace->getPhysicalReceive( id ) <= trace->getLogicalSend( id ) ) )
       return tmp * 1E-12;
 
-    if ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & SEND )
-      tmp += ( PRV_INT64 ) ( ( bytes / time ) * 1E12 );
-    else if ( ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RRECV &&
-                trace->getLogicalReceive( id ) >
-                trace->getPhysicalReceive( id ) ) ||
-              ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RRECV &&
-                trace->getPhysicalReceive( id ) >=
-                trace->getLogicalReceive( id ) ) )
-      tmp -= ( PRV_INT64 ) ( ( bytes / time ) * 1E12 );
+    if( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & SEND )
+      tmp += (PRV_INT64)( ( bytes / time ) * 1E12 );
+    else if( ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RRECV &&
+               trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) ) ||
+             ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RRECV &&
+               trace->getPhysicalReceive( id ) >= trace->getLogicalReceive( id ) ) )
+      tmp -= (PRV_INT64)( ( bytes / time ) * 1E12 );
     else
       changes = false;
   }
   else
   {
     /* If negative communication don't use */
-    if ( trace->getPhysicalReceive( id ) <= trace->getPhysicalSend( id ) )
+    if( trace->getPhysicalReceive( id ) <= trace->getPhysicalSend( id ) )
       return tmp * 1E-12;
 
-    if ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & SEND )
-      tmp += ( PRV_INT64 ) ( ( bytes / time ) * 1E12 );
-    else if ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RRECV )
-      tmp -= ( PRV_INT64 ) ( ( bytes / time ) * 1E12 );
+    if( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & SEND )
+      tmp += (PRV_INT64)( ( bytes / time ) * 1E12 );
+    else if( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RRECV )
+      tmp -= (PRV_INT64)( ( bytes / time ) * 1E12 );
     else
       changes = false;
   }
 
-  if ( changes )
+  if( changes )
   {
     bandwidth[ myInfo->callingInterval->getOrder() ] = tmp;
     return tmp * 1E-12;
@@ -1259,47 +1331,41 @@ TSemanticValue RecvBytesInTransit::execute( const SemanticInfo *info )
 {
   TSemanticValue size = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
-  KTrace *trace = ( KTrace* )window->getTrace();
-  TCommID id = myInfo->it->getCommIndex();
+  KSingleWindow *window = (KSingleWindow *)myInfo->callingInterval->getWindow();
+  KTrace *trace         = (KTrace *)window->getTrace();
+  TCommID id            = myInfo->it->getCommIndex();
 
   size = myInfo->callingInterval->getValue();
 
-  if ( window->getFilter()->getLogical() )
+  if( window->getFilter()->getLogical() )
   {
     /* If negative communication don't use */
-    if ( ( trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) &&
-           trace->getLogicalReceive( id ) <= trace->getLogicalSend( id ) )
-         ||
-         ( trace->getLogicalReceive( id ) <= trace->getPhysicalReceive( id ) &&
-           trace->getPhysicalReceive( id ) <= trace->getLogicalSend( id ) )
-       )
+    if( ( trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) && trace->getLogicalReceive( id ) <= trace->getLogicalSend( id ) ) ||
+        ( trace->getLogicalReceive( id ) <= trace->getPhysicalReceive( id ) && trace->getPhysicalReceive( id ) <= trace->getLogicalSend( id ) ) )
       return size;
 
-    if ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RSEND )
+    if( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RSEND )
       size += trace->getCommSize( id );
-    else if ( ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RECV &&
-                trace->getLogicalReceive( id ) >
-                trace->getPhysicalReceive( id ) ) ||
-              ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV &&
-                trace->getPhysicalReceive( id ) >=
-                trace->getLogicalReceive( id ) ) )
+    else if( ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RECV &&
+               trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) ) ||
+             ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV &&
+               trace->getPhysicalReceive( id ) >= trace->getLogicalReceive( id ) ) )
       size -= trace->getCommSize( id );
   }
   else
   {
     /* If negative communication don't use */
-    if ( trace->getPhysicalReceive( id ) <= trace->getPhysicalSend( id ) )
+    if( trace->getPhysicalReceive( id ) <= trace->getPhysicalSend( id ) )
       return size;
 
-    if ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RSEND )
+    if( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RSEND )
       size += trace->getCommSize( id );
-    else if ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV )
+    else if( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV )
       size -= trace->getCommSize( id );
   }
 
@@ -1312,47 +1378,41 @@ TSemanticValue RecvMessagesInTransit::execute( const SemanticInfo *info )
 {
   TSemanticValue msgs = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
-  KTrace *trace = ( KTrace* )window->getTrace();
-  TCommID id = myInfo->it->getCommIndex();
+  KSingleWindow *window = (KSingleWindow *)myInfo->callingInterval->getWindow();
+  KTrace *trace         = (KTrace *)window->getTrace();
+  TCommID id            = myInfo->it->getCommIndex();
 
   msgs = myInfo->callingInterval->getValue();
 
-  if ( window->getFilter()->getLogical() )
+  if( window->getFilter()->getLogical() )
   {
     /* If negative communication don't use */
-    if ( ( trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) &&
-           trace->getLogicalReceive( id ) <= trace->getLogicalSend( id ) )
-         ||
-         ( trace->getLogicalReceive( id ) <= trace->getPhysicalReceive( id ) &&
-           trace->getPhysicalReceive( id ) <= trace->getLogicalSend( id ) )
-       )
+    if( ( trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) && trace->getLogicalReceive( id ) <= trace->getLogicalSend( id ) ) ||
+        ( trace->getLogicalReceive( id ) <= trace->getPhysicalReceive( id ) && trace->getPhysicalReceive( id ) <= trace->getLogicalSend( id ) ) )
       return msgs;
 
-    if ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RSEND )
+    if( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RSEND )
       msgs++;
-    else if ( ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RECV &&
-                trace->getLogicalReceive( id ) >
-                trace->getPhysicalReceive( id ) ) ||
-              ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV &&
-                trace->getPhysicalReceive( id ) >=
-                trace->getLogicalReceive( id ) ) )
+    else if( ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RECV &&
+               trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) ) ||
+             ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV &&
+               trace->getPhysicalReceive( id ) >= trace->getLogicalReceive( id ) ) )
       msgs--;
   }
   else
   {
     /* If negative communication don't use */
-    if ( trace->getPhysicalReceive( id ) <= trace->getPhysicalSend( id ) )
+    if( trace->getPhysicalReceive( id ) <= trace->getPhysicalSend( id ) )
       return msgs;
 
-    if ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RSEND )
+    if( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RSEND )
       msgs++;
-    else if ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV )
+    else if( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV )
       msgs--;
   }
 
@@ -1372,14 +1432,14 @@ TSemanticValue RecvBandWidth::execute( const SemanticInfo *info )
   TSemanticValue bytes;
   bool changes = true;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
-  KTrace *trace = ( KTrace* )window->getTrace();
-  TCommID id = myInfo->it->getCommIndex();
+  KSingleWindow *window = (KSingleWindow *)myInfo->callingInterval->getWindow();
+  KTrace *trace         = (KTrace *)window->getTrace();
+  TCommID id            = myInfo->it->getCommIndex();
   PRV_INT64 tmp;
 
   if( bandwidth.find( myInfo->callingInterval->getOrder() ) == bandwidth.end() )
@@ -1387,61 +1447,55 @@ TSemanticValue RecvBandWidth::execute( const SemanticInfo *info )
 
   tmp = bandwidth[ myInfo->callingInterval->getOrder() ];
 
-  if ( window->getFilter()->getLogical() &&
-       trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) )
+  if( window->getFilter()->getLogical() && trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) )
     time = trace->getLogicalReceive( id ) - trace->getLogicalSend( id );
   else
   {
-    if ( window->getFilter()->getPhysical() )
+    if( window->getFilter()->getPhysical() )
       time = trace->getPhysicalReceive( id ) - trace->getPhysicalSend( id );
     else
       time = trace->getPhysicalReceive( id ) - trace->getLogicalSend( id );
   }
-  if ( time == 0 )
+  if( time == 0 )
     return tmp * 1E-12;
-  if ( time < 0 ) time = ( -time );
+  if( time < 0 )
+    time = ( -time );
   time = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( time );
 
   bytes = trace->getCommSize( id ) / parameters[ FACTOR ][ 0 ];
 
-  if ( window->getFilter()->getLogical() )
+  if( window->getFilter()->getLogical() )
   {
     /* If negative communication don't use */
-    if ( ( trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) &&
-           trace->getLogicalReceive( id ) <= trace->getLogicalSend( id ) )
-         ||
-         ( trace->getLogicalReceive( id ) <= trace->getPhysicalReceive( id ) &&
-           trace->getPhysicalReceive( id ) <= trace->getLogicalSend( id ) )
-       )
+    if( ( trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) && trace->getLogicalReceive( id ) <= trace->getLogicalSend( id ) ) ||
+        ( trace->getLogicalReceive( id ) <= trace->getPhysicalReceive( id ) && trace->getPhysicalReceive( id ) <= trace->getLogicalSend( id ) ) )
       return tmp * 1E-12;
 
-    if ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RSEND )
-      tmp += ( PRV_INT64 ) ( ( bytes / time ) * 1E12 );
-    else if ( ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RECV &&
-                trace->getLogicalReceive( id ) >
-                trace->getPhysicalReceive( id ) ) ||
-              ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV &&
-                trace->getPhysicalReceive( id ) >=
-                trace->getLogicalReceive( id ) ) )
-      tmp -= ( PRV_INT64 ) ( ( bytes / time ) * 1E12 );
+    if( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RSEND )
+      tmp += (PRV_INT64)( ( bytes / time ) * 1E12 );
+    else if( ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RECV &&
+               trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) ) ||
+             ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV &&
+               trace->getPhysicalReceive( id ) >= trace->getLogicalReceive( id ) ) )
+      tmp -= (PRV_INT64)( ( bytes / time ) * 1E12 );
     else
       changes = false;
   }
   else
   {
     /* If negative communication don't use */
-    if ( trace->getPhysicalReceive( id ) <= trace->getPhysicalSend( id ) )
+    if( trace->getPhysicalReceive( id ) <= trace->getPhysicalSend( id ) )
       return tmp * 1E-12;
 
-    if ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RSEND )
-      tmp += ( PRV_INT64 ) ( ( bytes / time ) * 1E12 );
-    else if ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV )
-      tmp -= ( PRV_INT64 ) ( ( bytes / time ) * 1E12 );
+    if( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RSEND )
+      tmp += (PRV_INT64)( ( bytes / time ) * 1E12 );
+    else if( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV )
+      tmp -= (PRV_INT64)( ( bytes / time ) * 1E12 );
     else
       changes = false;
   }
 
-  if ( changes )
+  if( changes )
   {
     bandwidth[ myInfo->callingInterval->getOrder() ] = tmp;
     return tmp * 1E-12;
@@ -1456,46 +1510,40 @@ TSemanticValue RecvNegativeMessages::execute( const SemanticInfo *info )
 {
   TSemanticValue msgs = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
-  KTrace *trace = ( KTrace* )window->getTrace();
-  TCommID id = myInfo->it->getCommIndex();
+  KSingleWindow *window = (KSingleWindow *)myInfo->callingInterval->getWindow();
+  KTrace *trace         = (KTrace *)window->getTrace();
+  TCommID id            = myInfo->it->getCommIndex();
 
   msgs = myInfo->callingInterval->getValue();
 
-  if ( window->getFilter()->getLogical() )
+  if( window->getFilter()->getLogical() )
   {
     /* If negative communication use it */
-    if ( ( trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) &&
-           trace->getLogicalReceive( id ) <= trace->getLogicalSend( id ) )
-         ||
-         ( trace->getLogicalReceive( id ) <= trace->getPhysicalReceive( id ) &&
-           trace->getPhysicalReceive( id ) <= trace->getLogicalSend( id ) )
-       )
+    if( ( trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) && trace->getLogicalReceive( id ) <= trace->getLogicalSend( id ) ) ||
+        ( trace->getLogicalReceive( id ) <= trace->getPhysicalReceive( id ) && trace->getPhysicalReceive( id ) <= trace->getLogicalSend( id ) ) )
     {
-      if ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RSEND )
+      if( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RSEND )
         msgs--;
-      else if ( ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RECV &&
-                  trace->getLogicalReceive( id ) >
-                  trace->getPhysicalReceive( id ) ) ||
-                ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV &&
-                  trace->getPhysicalReceive( id ) >=
-                  trace->getLogicalReceive( id ) ) )
+      else if( ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RECV &&
+                 trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) ) ||
+               ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV &&
+                 trace->getPhysicalReceive( id ) >= trace->getLogicalReceive( id ) ) )
         msgs++;
     }
   }
   else
   {
     /* If negative communication use it */
-    if ( trace->getPhysicalReceive( id ) <= trace->getPhysicalSend( id ) )
+    if( trace->getPhysicalReceive( id ) <= trace->getPhysicalSend( id ) )
     {
-      if ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RSEND )
+      if( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RSEND )
         msgs--;
-      else if ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV )
+      else if( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV )
         msgs++;
     }
   }
@@ -1509,46 +1557,40 @@ TSemanticValue RecvNegativeBytes::execute( const SemanticInfo *info )
 {
   TSemanticValue size = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
-  KTrace *trace = ( KTrace* )window->getTrace();
-  TCommID id = myInfo->it->getCommIndex();
+  KSingleWindow *window = (KSingleWindow *)myInfo->callingInterval->getWindow();
+  KTrace *trace         = (KTrace *)window->getTrace();
+  TCommID id            = myInfo->it->getCommIndex();
 
   size = myInfo->callingInterval->getValue();
 
-  if ( window->getFilter()->getLogical() )
+  if( window->getFilter()->getLogical() )
   {
     /* If negative communication use it */
-    if ( ( trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) &&
-           trace->getLogicalReceive( id ) <= trace->getLogicalSend( id ) )
-         ||
-         ( trace->getLogicalReceive( id ) <= trace->getPhysicalReceive( id ) &&
-           trace->getPhysicalReceive( id ) <= trace->getLogicalSend( id ) )
-       )
+    if( ( trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) && trace->getLogicalReceive( id ) <= trace->getLogicalSend( id ) ) ||
+        ( trace->getLogicalReceive( id ) <= trace->getPhysicalReceive( id ) && trace->getPhysicalReceive( id ) <= trace->getLogicalSend( id ) ) )
     {
-      if ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RSEND )
+      if( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RSEND )
         size -= trace->getCommSize( id );
-      else if ( ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RECV &&
-                  trace->getLogicalReceive( id ) >
-                  trace->getPhysicalReceive( id ) ) ||
-                ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV &&
-                  trace->getPhysicalReceive( id ) >=
-                  trace->getLogicalReceive( id ) ) )
+      else if( ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RECV &&
+                 trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) ) ||
+               ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV &&
+                 trace->getPhysicalReceive( id ) >= trace->getLogicalReceive( id ) ) )
         size += trace->getCommSize( id );
     }
   }
   else
   {
     /* If negative communication use it */
-    if ( trace->getPhysicalReceive( id ) <= trace->getPhysicalSend( id ) )
+    if( trace->getPhysicalReceive( id ) <= trace->getPhysicalSend( id ) )
     {
-      if ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RSEND )
+      if( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RSEND )
         size -= trace->getCommSize( id );
-      else if ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV )
+      else if( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV )
         size += trace->getCommSize( id );
     }
   }
@@ -1557,36 +1599,75 @@ TSemanticValue RecvNegativeBytes::execute( const SemanticInfo *info )
 }
 
 
+string NumberSends::name = "Number Of Sends";
+TSemanticValue NumberSends::execute( const SemanticInfo *info )
+{
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
+
+  if( myInfo->it->getRecordType() == EMPTYREC )
+    return 0;
+
+  KSingleWindow *window = (KSingleWindow *)myInfo->callingInterval->getWindow();
+  TCommID id            = myInfo->it->getCommIndex();
+
+  TSemanticValue msgs = myInfo->callingInterval->getValue();
+
+  if( window->getFilter()->getPhysical() && myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & SEND )
+    ++msgs;
+  else if( window->getFilter()->getLogical() && myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & SEND )
+    ++msgs;
+
+  return msgs;
+}
+
+
+string NumberSendBytes::name = "Number Of Send Bytes";
+TSemanticValue NumberSendBytes::execute( const SemanticInfo *info )
+{
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
+
+  if( myInfo->it->getRecordType() == EMPTYREC )
+    return 0;
+
+  KSingleWindow *window = (KSingleWindow *)myInfo->callingInterval->getWindow();
+  KTrace *trace         = (KTrace *)window->getTrace();
+  TCommID id            = myInfo->it->getCommIndex();
+
+  TSemanticValue bytes = myInfo->callingInterval->getValue();
+
+  if( window->getFilter()->getPhysical() && myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & SEND )
+    bytes += trace->getCommSize( id );
+  else if( window->getFilter()->getLogical() && myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & SEND )
+    bytes += trace->getCommSize( id );
+
+  return bytes;
+}
+
+
 string NumberReceives::name = "Number Of Receives";
 TSemanticValue NumberReceives::execute( const SemanticInfo *info )
 {
-  TSemanticValue msgs = 0;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
-  KTrace *trace = ( KTrace* )window->getTrace();
-  TCommID id = myInfo->it->getCommIndex();
+  KSingleWindow *window = (KSingleWindow *)myInfo->callingInterval->getWindow();
+  KTrace *trace         = (KTrace *)window->getTrace();
+  TCommID id            = myInfo->it->getCommIndex();
 
-  msgs = myInfo->callingInterval->getValue();
+  TSemanticValue msgs = myInfo->callingInterval->getValue();
 
-  if ( window->getFilter()->getPhysical() &&
-       myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV )
-    msgs++;
+  if( window->getFilter()->getPhysical() && myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV )
+    ++msgs;
 
-  else if ( window->getFilter()->getLogical() )
+  else if( window->getFilter()->getLogical() )
   {
-    if ( ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RECV &&
-           trace->getLogicalReceive( id ) >
-           trace->getPhysicalReceive( id ) ) ||
-         ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV &&
-           trace->getPhysicalReceive( id ) >=
-           trace->getLogicalReceive( id ) )
-       )
-      msgs++;
+    if( ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RECV &&
+          trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) ) ||
+        ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV &&
+          trace->getPhysicalReceive( id ) >= trace->getLogicalReceive( id ) ) )
+      ++msgs;
   }
 
   return msgs;
@@ -1596,32 +1677,26 @@ TSemanticValue NumberReceives::execute( const SemanticInfo *info )
 string NumberReceiveBytes::name = "Number Of Receive Bytes";
 TSemanticValue NumberReceiveBytes::execute( const SemanticInfo *info )
 {
-  TSemanticValue bytes = 0;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
-  KTrace *trace = ( KTrace* )window->getTrace();
-  TCommID id = myInfo->it->getCommIndex();
+  KSingleWindow *window = (KSingleWindow *)myInfo->callingInterval->getWindow();
+  KTrace *trace         = (KTrace *)window->getTrace();
+  TCommID id            = myInfo->it->getCommIndex();
 
-  bytes = myInfo->callingInterval->getValue();
+  TSemanticValue bytes = myInfo->callingInterval->getValue();
 
-  if ( window->getFilter()->getPhysical() &&
-       myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV )
+  if( window->getFilter()->getPhysical() && myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV )
     bytes += trace->getCommSize( id );
 
-  else if ( window->getFilter()->getLogical() )
+  else if( window->getFilter()->getLogical() )
   {
-    if ( ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RECV &&
-           trace->getLogicalReceive( id ) >
-           trace->getPhysicalReceive( id ) ) ||
-         ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV &&
-           trace->getPhysicalReceive( id ) >=
-           trace->getLogicalReceive( id ) )
-       )
+    if( ( myInfo->it->getRecordType() & LOG && myInfo->it->getRecordType() & RECV &&
+          trace->getLogicalReceive( id ) > trace->getPhysicalReceive( id ) ) ||
+        ( myInfo->it->getRecordType() & PHY && myInfo->it->getRecordType() & RECV &&
+          trace->getPhysicalReceive( id ) >= trace->getLogicalReceive( id ) ) )
       bytes += trace->getCommSize( id );
   }
 
@@ -1641,13 +1716,12 @@ TSemanticValue ApplicationID::execute( const SemanticInfo *info )
   TTaskOrder task;
   TThreadOrder thread;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
   /*if ( myInfo->it->getRecordType() == EMPTYREC )
     return 0;*/
 
-  myInfo->callingInterval->getWindow()->getTrace()->getThreadLocation(
-    myInfo->it->getThread(), appl, task, thread );
+  myInfo->callingInterval->getWindow()->getTrace()->getThreadLocation( myInfo->it->getThread(), appl, task, thread );
   tmp = appl;
 
   return tmp + 1;
@@ -1662,13 +1736,12 @@ TSemanticValue TaskID::execute( const SemanticInfo *info )
   TTaskOrder task;
   TThreadOrder thread;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
   /*if ( myInfo->it->getRecordType() == EMPTYREC )
     return 0;*/
 
-  myInfo->callingInterval->getWindow()->getTrace()->getThreadLocation(
-    myInfo->it->getThread(), appl, task, thread );
+  myInfo->callingInterval->getWindow()->getTrace()->getThreadLocation( myInfo->it->getThread(), appl, task, thread );
   tmp = myInfo->callingInterval->getWindow()->getTrace()->getGlobalTask( appl, task );
 
   return tmp + 1;
@@ -1680,7 +1753,7 @@ TSemanticValue ThreadID::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
   /*if ( myInfo->it->getRecordType() == EMPTYREC )
     return 0;*/
@@ -1698,16 +1771,15 @@ TSemanticValue NodeID::execute( const SemanticInfo *info )
   TNodeOrder node;
   TCPUOrder CPU;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
   if( myInfo->it->getCPU() == 0 )
     return 0;
 
-  myInfo->callingInterval->getWindow()->getTrace()->getCPULocation(
-    myInfo->it->getCPU(), node, CPU );
+  myInfo->callingInterval->getWindow()->getTrace()->getCPULocation( myInfo->it->getCPU(), node, CPU );
   tmp = node + 1;
 
   return tmp;
@@ -1719,9 +1791,9 @@ TSemanticValue CPUID::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
   tmp = myInfo->it->getCPU();
@@ -1738,18 +1810,17 @@ TSemanticValue InApplicationID::execute( const SemanticInfo *info )
   TTaskOrder task;
   TThreadOrder thread;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  myInfo->callingInterval->getWindow()->getTrace()->getThreadLocation(
-    myInfo->it->getThread(), appl, task, thread );
+  myInfo->callingInterval->getWindow()->getTrace()->getThreadLocation( myInfo->it->getThread(), appl, task, thread );
   tmp = appl + 1;
 
-  for ( TObjectOrder i = 0; i < parameters[ OBJECTS ].size(); i++ )
+  for( TObjectOrder i = 0; i < parameters[ OBJECTS ].size(); i++ )
   {
-    if ( tmp == parameters[ OBJECTS ][ i ] )
+    if( tmp == parameters[ OBJECTS ][ i ] )
       return tmp;
   }
 
@@ -1765,18 +1836,17 @@ TSemanticValue InTaskID::execute( const SemanticInfo *info )
   TTaskOrder task;
   TThreadOrder thread;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  myInfo->callingInterval->getWindow()->getTrace()->getThreadLocation(
-    myInfo->it->getThread(), appl, task, thread );
+  myInfo->callingInterval->getWindow()->getTrace()->getThreadLocation( myInfo->it->getThread(), appl, task, thread );
   tmp = myInfo->callingInterval->getWindow()->getTrace()->getGlobalTask( appl, task ) + 1;
 
-  for ( TObjectOrder i = 0; i < parameters[ OBJECTS ].size(); i++ )
+  for( TObjectOrder i = 0; i < parameters[ OBJECTS ].size(); i++ )
   {
-    if ( tmp == parameters[ OBJECTS ][ i ] )
+    if( tmp == parameters[ OBJECTS ][ i ] )
       return tmp;
   }
 
@@ -1789,16 +1859,16 @@ TSemanticValue InThreadID::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
   tmp = myInfo->it->getThread() + 1;
 
-  for ( TObjectOrder i = 0; i < parameters[ OBJECTS ].size(); i++ )
+  for( TObjectOrder i = 0; i < parameters[ OBJECTS ].size(); i++ )
   {
-    if ( tmp == parameters[ OBJECTS ][ i ] )
+    if( tmp == parameters[ OBJECTS ][ i ] )
       return tmp;
   }
 
@@ -1813,18 +1883,17 @@ TSemanticValue InNodeID::execute( const SemanticInfo *info )
   TNodeOrder node;
   TCPUOrder CPU;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
-  myInfo->callingInterval->getWindow()->getTrace()->getCPULocation(
-    myInfo->it->getCPU(), node, CPU );
+  myInfo->callingInterval->getWindow()->getTrace()->getCPULocation( myInfo->it->getCPU(), node, CPU );
   tmp = node;
 
-  for ( TObjectOrder i = 0; i < parameters[ OBJECTS ].size(); i++ )
+  for( TObjectOrder i = 0; i < parameters[ OBJECTS ].size(); i++ )
   {
-    if ( tmp == parameters[ OBJECTS ][ i ] )
+    if( tmp == parameters[ OBJECTS ][ i ] )
       return tmp;
   }
 
@@ -1837,16 +1906,16 @@ TSemanticValue InCPUID::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
-  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *)info;
 
-  if ( myInfo->it->getRecordType() == EMPTYREC )
+  if( myInfo->it->getRecordType() == EMPTYREC )
     return 0;
 
   tmp = myInfo->it->getCPU();
 
-  for ( TObjectOrder i = 0; i < parameters[ OBJECTS ].size(); i++ )
+  for( TObjectOrder i = 0; i < parameters[ OBJECTS ].size(); i++ )
   {
-    if ( tmp == parameters[ OBJECTS ][ i ] )
+    if( tmp == parameters[ OBJECTS ][ i ] )
       return tmp;
   }
 

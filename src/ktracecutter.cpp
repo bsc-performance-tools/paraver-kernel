@@ -65,7 +65,7 @@ KTraceCutter::KTraceCutter( TraceOptions *options,
   notHWCTypesInPCF.insert( whichNotHWCTypes.begin(), whichNotHWCTypes.end() );
   cutterApplicationCaller = CutterMetadata::ORIGINAL_APPLICATION_ID;
   
-  // PROFET
+  // MESS
   firstApplicationFinished = false;
   timeOfFirsApplicationFinished = 0;
 }
@@ -563,16 +563,17 @@ void KTraceCutter::update_queue( unsigned int appl, unsigned int task, unsigned 
                                  unsigned long long type,
                                  unsigned long long value )
 {
-  if( notHWCTypesInPCF.find( type ) != notHWCTypesInPCF.end() )
-    return;
-
   if ( threadsInfo.find( appl, task, thread ) == threadsInfo.end() )
   {
     init_useful_tasks = true;
     ++useful_tasks;
     ThreadInfo newThreadInfo( HWCTypesInPCF );
+    newThreadInfo.without_states = true;
     threadsInfo( appl, task, thread ) = newThreadInfo;
   }
+
+  if( notHWCTypesInPCF.find( type ) != notHWCTypesInPCF.end() )
+    return;
 
   ThreadInfo& tmpInfo = threadsInfo( appl, task, thread );
   bool isHWC = HWCTypesInPCF.find( type ) != HWCTypesInPCF.end();
@@ -652,7 +653,12 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
     switch ( line[0] )
     {
       case '1':
-        prv_atoll_v( itBegin, itEnd, recordType, cpu, appl, task, thread, time_1, time_2, state );
+        if( !prv_atoll_v( itBegin, itEnd, recordType, cpu, appl, task, thread, time_1, time_2, state ) )
+        {
+          std::cerr << "Invalid record: "<<line<<std::endl;
+          break;
+        }
+
 
         time_1 = time_1 - timeOffset;
         time_2 = time_2 - timeOffset;
@@ -664,7 +670,11 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
         break;
 
       case '2':
-        prv_atoll_v( itBegin, itEnd, recordType, cpu, appl, task, thread, time_1 );
+        if( !prv_atoll_v( itBegin, itEnd, recordType, cpu, appl, task, thread, time_1 ) )
+        {
+          std::cerr << "Invalid record: "<<line<<std::endl;
+          break;
+        }
 
         time_1 = time_1 - timeOffset;
 
@@ -677,8 +687,12 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
         break;
 
       case '3':
-        prv_atoll_v( itBegin, itEnd, recordType, cpu,   appl,   task,   thread,   time_1, time_2,
-                                                 cpu_2, appl_2, task_2, thread_2, time_3, time_4 );
+        if( !prv_atoll_v( itBegin, itEnd, recordType, cpu,   appl,   task,   thread,   time_1, time_2,
+                                                      cpu_2, appl_2, task_2, thread_2, time_3, time_4 ) )
+        {
+          std::cerr << "Invalid record: "<<line<<std::endl;
+          break;
+        }
 
         time_1 = time_1 - timeOffset;
         time_2 = time_2 - timeOffset;
@@ -763,7 +777,8 @@ void KTraceCutter::execute( std::string trace_in,
   bool end_parsing = false;
 
   unsigned int id, cpu, appl, task, thread, state, cpu_2, appl_2, task_2, thread_2, size, tag;
-  unsigned long long type, value, time_1, time_2, time_3, time_4;
+  unsigned long long type, time_1, time_2, time_3, time_4;
+  TEventValue value;
   int i;
 
   unsigned long num_iters = 0;
@@ -866,9 +881,13 @@ void KTraceCutter::execute( std::string trace_in,
     switch ( line[0] )
     {
       case '1':
-        prv_atoll_v( itBegin, itEnd, id, cpu, appl, task, thread, time_1, time_2, state );
+        if( !prv_atoll_v( itBegin, itEnd, id, cpu, appl, task, thread, time_1, time_2, state ) )
+        {
+          std::cerr << "Invalid record: "<<line<<std::endl;
+          break;
+        }
 
-        // PROFET
+        // MESS
         if ( exec_options->get_max_cut_time_to_finish_of_first_appl() &&
              firstApplicationFinished &&
              ( time_1 >= timeOfFirsApplicationFinished || 
@@ -908,7 +927,7 @@ void KTraceCutter::execute( std::string trace_in,
             --useful_tasks;
             threadsInfo( appl - 1, task - 1, thread - 1 ).finished = true;
 
-            // PROFET
+            // MESS
             if ( exec_options->get_max_cut_time_to_finish_of_first_appl() )
             {
               if ( appl == 1 && appsInfo[ appl - 1 ].addFinishedThread() )
@@ -932,12 +951,14 @@ void KTraceCutter::execute( std::string trace_in,
           if ( threadInfoIt == threadsInfo.end() )
             initThreadInfo( appl, task, thread, cpu );
 
+          threadsInfo( appl - 1, task - 1, thread - 1 ).without_states = false;
+
           threadsInfo( appl - 1, task - 1, thread - 1 ).lastStateEndTime = time_2;
           if( time_1 < time_max && time_2 > time_max && !remLastStates && !break_states && keep_boundary_events )
           {
             threadsInfo( appl - 1, task - 1, thread - 1 ).finished = true;
 
-            // PROFET
+            // MESS
             if ( exec_options->get_max_cut_time_to_finish_of_first_appl() )
             {
               if ( appl == 1 && appsInfo[ appl - 1 ].addFinishedThread() )
@@ -986,9 +1007,13 @@ void KTraceCutter::execute( std::string trace_in,
         break;
 
       case '2':
-        prv_atoll_v( itBegin, itEnd, id, cpu, appl, task, thread, time_1 );
+        if( !prv_atoll_v( itBegin, itEnd, id, cpu, appl, task, thread, time_1 ) )
+        {
+          std::cerr << "Invalid record: "<<line<<std::endl;
+          break;
+        }
 
-        // PROFET
+        // MESS
         if ( exec_options->get_max_cut_time_to_finish_of_first_appl() &&
              firstApplicationFinished && time_1 >= timeOfFirsApplicationFinished )
           break;
@@ -1053,7 +1078,12 @@ void KTraceCutter::execute( std::string trace_in,
 
           while ( itBegin != itEnd )
           {
-            prv_atoll_v( itBegin, itEnd, type, value );
+            if( !prv_atoll_v( itBegin, itEnd, type, value ) )
+            {
+              std::cerr << "Invalid event: "<<line<<std::endl;
+              continue;
+            }
+
             update_queue( appl - 1, task - 1, thread - 1, type, value );
 
             if( threadInfoIt == threadsInfo.end() )
@@ -1080,12 +1110,16 @@ void KTraceCutter::execute( std::string trace_in,
         break;
 
       case '3':
-        prv_atoll_v( itBegin, itEnd,
-                     id,
-                     cpu,   appl,   task,   thread,   time_1, time_2,
-                     cpu_2, appl_2, task_2, thread_2, time_3, time_4, size, tag );
+        if( !prv_atoll_v( itBegin, itEnd,
+                          id,
+                          cpu,   appl,   task,   thread,   time_1, time_2,
+                          cpu_2, appl_2, task_2, thread_2, time_3, time_4, size, tag ) )
+        {
+          std::cerr << "Invalid record: "<<line<<std::endl;
+          break;
+        }
 
-        // PROFET
+        // MESS
         if ( exec_options->get_max_cut_time_to_finish_of_first_appl() &&
              firstApplicationFinished &&
              ( time_1 >= timeOfFirsApplicationFinished ||

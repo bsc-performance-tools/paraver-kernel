@@ -220,7 +220,7 @@ void ControlDerivedEnumerate::init( KTimeline *whichWindow )
 string ControlDerivedAverage::name = "controlled: average";
 TSemanticValue ControlDerivedAverage::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = static_cast< const SemanticHighInfo * >( info );
   TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
 
   if ( totalValue.find( tmpOrder ) == totalValue.end() || myInfo->newControlBurst )
@@ -229,7 +229,9 @@ TSemanticValue ControlDerivedAverage::execute( const SemanticInfo *info )
     totalTime[ tmpOrder ] = 0.0;
   }
 
-  TRecordTime tmpBurstDuration = myInfo->dataEndTime - myInfo->dataBeginTime;
+  auto tmpBeginTime = myInfo->dataBeginTime >= myInfo->controlBeginTime ? myInfo->dataBeginTime : myInfo->controlBeginTime;
+  auto tmpEndTime = myInfo->dataEndTime <= myInfo->controlEndTime ? myInfo->dataEndTime : myInfo->controlEndTime;
+  TRecordTime tmpBurstDuration = tmpEndTime - tmpBeginTime;
   totalValue[ tmpOrder ] += myInfo->values[ 1 ] * tmpBurstDuration;
   totalTime[ tmpOrder ] += tmpBurstDuration;
 

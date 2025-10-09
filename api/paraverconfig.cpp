@@ -112,7 +112,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
   char tmpPath[PATH_MAX];
   if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)tmpPath, PATH_MAX))
   {
-      throw ParaverKernelException();
+      throw ParaverKernelException( TErrorCode::  undefined  );
   }
   CFRelease(resourcesURL);
 
@@ -179,7 +179,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlTimeline.viewCommunicationsLines = true;
   //DEPRECATED
   xmlTimeline.viewFunctionAsColor = true;
-  xmlTimeline.color = TColorFunction::COLOR;
+  xmlTimeline.color = TColorFunction::CODE_COLOR;
   xmlTimeline.drawmodeTime = DrawModeMethod::DRAW_MAXIMUM;
   xmlTimeline.drawmodeObjects = DrawModeMethod::DRAW_MAXIMUM;
   xmlTimeline.gradientFunction = TGradientFunction::LINEAR;

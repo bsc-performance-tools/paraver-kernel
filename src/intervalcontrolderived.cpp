@@ -69,6 +69,8 @@ KRecordList *IntervalControlDerived::init( TRecordTime initialTime, TCreateList 
     childIntervals[ 0 ]->calcNext( displayList );
 
   info.newControlBurst = true;
+  info.controlBeginTime = begin->getTime();
+  info.controlEndTime = end->getTime();
   if ( childIntervals[ 0 ]->getEnd()->getTime() > begin->getTime() )
   {
     info.values.clear();
@@ -78,9 +80,9 @@ KRecordList *IntervalControlDerived::init( TRecordTime initialTime, TCreateList 
     info.dataBeginTime = childIntervals[ 0 ]->getBegin()->getTime();
     info.dataEndTime = childIntervals[ 0 ]->getEnd()->getTime();
     currentValue = function->execute( &info );
+    info.newControlBurst = false;
   }
 
-  info.newControlBurst = false;
   while ( childIntervals[ 0 ]->getEnd()->getTime() < end->getTime() )
   {
     childIntervals[ 0 ]->calcNext( displayList );
@@ -91,6 +93,7 @@ KRecordList *IntervalControlDerived::init( TRecordTime initialTime, TCreateList 
     info.dataBeginTime = childIntervals[ 0 ]->getBegin()->getTime();
     info.dataEndTime = childIntervals[ 0 ]->getEnd()->getTime();
     currentValue = function->execute( &info );
+    info.newControlBurst = false;
   }
 
   while ( end->getTime() < initialTime )
@@ -122,6 +125,8 @@ KRecordList *IntervalControlDerived::calcNext( KRecordList *displayList, bool in
   while ( childIntervals[ 0 ]->getEnd()->getTime() <= begin->getTime() )
     childIntervals[ 0 ]->calcNext( displayList );
 
+  info.controlBeginTime = begin->getTime();
+  info.controlEndTime = end->getTime();
   info.newControlBurst = true;
   if ( childIntervals[ 0 ]->getEnd()->getTime() > begin->getTime() )
   {
@@ -132,9 +137,9 @@ KRecordList *IntervalControlDerived::calcNext( KRecordList *displayList, bool in
     info.dataBeginTime = childIntervals[ 0 ]->getBegin()->getTime();
     info.dataEndTime = childIntervals[ 0 ]->getEnd()->getTime();
     currentValue = function->execute( &info );
+    info.newControlBurst = false;
   }
 
-  info.newControlBurst = false;
   while ( childIntervals[ 0 ]->getEnd()->getTime() < end->getTime() )
   {
     childIntervals[ 0 ]->calcNext( displayList );
@@ -145,6 +150,7 @@ KRecordList *IntervalControlDerived::calcNext( KRecordList *displayList, bool in
     info.dataBeginTime = childIntervals[ 0 ]->getBegin()->getTime();
     info.dataEndTime = childIntervals[ 0 ]->getEnd()->getTime();
     currentValue = function->execute( &info );
+    info.newControlBurst = false;
   }
 
   return displayList;
@@ -180,9 +186,9 @@ KRecordList *IntervalControlDerived::calcPrev( KRecordList *displayList, bool in
     info.dataBeginTime = childIntervals[ 0 ]->getBegin()->getTime();
     info.dataEndTime = childIntervals[ 0 ]->getEnd()->getTime();
     currentValue = function->execute( &info );
+    info.newControlBurst = false;
   }
 
-  info.newControlBurst = false;
   while ( childIntervals[ 0 ]->getEnd()->getTime() < end->getTime() )
   {
     childIntervals[ 0 ]->calcPrev( displayList );
@@ -193,6 +199,7 @@ KRecordList *IntervalControlDerived::calcPrev( KRecordList *displayList, bool in
     info.dataBeginTime = childIntervals[ 0 ]->getBegin()->getTime();
     info.dataEndTime = childIntervals[ 0 ]->getEnd()->getTime();
     currentValue = function->execute( &info );
+    info.newControlBurst = false;
   }
 
   return displayList;

@@ -23,21 +23,22 @@
 
 
 #include "textoutput.h"
-#include "window.h"
+
 #include "histogram.h"
 #include "labelconstructor.h"
+#include "window.h"
 
 using namespace std;
 
-TextOutput::TextOutput()
-    : multipleFiles( false ), windowTimeUnits( true ),
-      textualSemantic( false ), minTime( 0.0 )
-{}
+TextOutput::TextOutput() : multipleFiles( false ), windowTimeUnits( true ), textualSemantic( false ), minTime( 0.0 )
+{
+}
 
 TextOutput::~TextOutput()
-{}
+{
+}
 
-void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, ProgressController *progress )
+void TextOutput::dumpWindow( Timeline *whichWindow, string &strOutputFile, ProgressController *progress )
 {
   static short int progressSteps = 0;
 
@@ -49,18 +50,18 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, Progr
   ofstream outputFile;
 
   ParaverConfig *config = ParaverConfig::getInstance();
-  Trace *trace = whichWindow->getTrace();
+  Trace *trace          = whichWindow->getTrace();
 
   beginTime = whichWindow->getWindowBeginTime();
-  endTime = whichWindow->getWindowEndTime();
+  endTime   = whichWindow->getWindowEndTime();
 
   whichWindow->setComputeYMaxOnInit( false );
   whichWindow->init( beginTime, NOCREATE );
 
-  if ( endTime > trace->getEndTime() )
+  if( endTime > trace->getEndTime() )
     endTime = trace->getEndTime();
 
-  if ( !multipleFiles )
+  if( !multipleFiles )
     outputFile.open( strOutputFile.c_str() );
 
   maxTime = 0.0;
@@ -69,27 +70,27 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, Progr
   std::string previousMessage;
   if( progress != nullptr )
   {
-    //previousMessage = progress->getMessage();
-    //progress->setMessage( strOutputFile );
-    if ( whichWindow->getWindowLevelObjects() > 1 )
+    // previousMessage = progress->getMessage();
+    // progress->setMessage( strOutputFile );
+    if( whichWindow->getWindowLevelObjects() > 1 )
       progress->setEndLimit( whichWindow->getWindowLevelObjects() - 1 );
     else
       progress->setEndLimit( endTime - beginTime );
     progress->setCurrentProgress( 0 );
   }
 
-  for ( TObjectOrder i = 0; i < whichWindow->getWindowLevelObjects(); ++i )
+  for( TObjectOrder i = 0; i < whichWindow->getWindowLevelObjects(); ++i )
   {
     if( progress != nullptr )
     {
-      if ( whichWindow->getWindowLevelObjects() > 1 )
+      if( whichWindow->getWindowLevelObjects() > 1 )
         progress->setCurrentProgress( i );
     }
 
-    if ( multipleFiles )
+    if( multipleFiles )
     {
       ostringstream tmpName;
-      tmpName << strOutputFile  << "_" << setw( 5 ) << setfill( '0' ) << i + 1;
+      tmpName << strOutputFile << "_" << setw( 5 ) << setfill( '0' ) << i + 1;
       outputFile.open( tmpName.str().c_str() );
     }
 
@@ -100,11 +101,11 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, Progr
     if( i == 0 || whichWindow->getBeginTime( i ) < minTime )
       minTime = whichWindow->getBeginTime( i );
 
-    while ( whichWindow->getEndTime( i ) < endTime )
+    while( whichWindow->getEndTime( i ) < endTime )
     {
       if( progress != nullptr )
       {
-        if ( whichWindow->getWindowLevelObjects() == 1 )
+        if( whichWindow->getWindowLevelObjects() == 1 )
         {
           if( ++progressSteps >= 100 )
           {
@@ -115,17 +116,15 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, Progr
       }
 
       outputFile << setprecision( config->getTimelinePrecision() );
-      if ( !multipleFiles )
+      if( !multipleFiles )
       {
         outputFile << LabelConstructor::objectLabel( i, whichWindow->getLevel(), trace, false, false ) << "\t";
       }
 
       if( windowTimeUnits )
       {
-        outputFile << whichWindow->traceUnitsToWindowUnits(
-          whichWindow->getBeginTime( i ) ) << "\t";
-        outputFile << whichWindow->traceUnitsToWindowUnits(
-          whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
+        outputFile << whichWindow->traceUnitsToWindowUnits( whichWindow->getBeginTime( i ) ) << "\t";
+        outputFile << whichWindow->traceUnitsToWindowUnits( whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
       }
       else
       {
@@ -141,16 +140,14 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, Progr
       whichWindow->calcNext( i );
     }
     outputFile << setprecision( config->getTimelinePrecision() );
-    if ( !multipleFiles )
+    if( !multipleFiles )
     {
       outputFile << LabelConstructor::objectLabel( i, whichWindow->getLevel(), trace, false, false ) << "\t";
     }
     if( windowTimeUnits )
     {
-      outputFile << whichWindow->traceUnitsToWindowUnits(
-        whichWindow->getBeginTime( i ) ) << "\t";
-      outputFile << whichWindow->traceUnitsToWindowUnits(
-        whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
+      outputFile << whichWindow->traceUnitsToWindowUnits( whichWindow->getBeginTime( i ) ) << "\t";
+      outputFile << whichWindow->traceUnitsToWindowUnits( whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
     }
     else
     {
@@ -166,11 +163,11 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, Progr
     if( whichWindow->getEndTime( i ) > maxTime )
       maxTime = whichWindow->getEndTime( i );
 
-    if ( multipleFiles )
+    if( multipleFiles )
       outputFile.close();
   }
 
-  if ( multipleFiles )
+  if( multipleFiles )
     cout << strOutputFile << "_* files written." << endl;
   else
   {
@@ -178,18 +175,18 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, Progr
     cout << strOutputFile << " file written." << endl;
   }
 
-  if ( !multipleFiles )
+  if( !multipleFiles )
     outputFile.close();
 
-  //if( progress != nullptr )
+  // if( progress != nullptr )
   //{
-  //  progress->setMessage( previousMessage );
-  //}
+  //   progress->setMessage( previousMessage );
+  // }
 }
 
 
 void TextOutput::dumpHistogram( Histogram *whichHisto,
-                                string& strOutputFile,
+                                string &strOutputFile,
                                 bool onlySelectedPlane,
                                 bool hideEmptyColumns,
                                 bool withLabels,
@@ -204,11 +201,10 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
   PRV_UINT16 currentStat;
   ofstream outputFile;
 
-  vector<TObjectOrder> selectedRows;
+  vector< TObjectOrder > selectedRows;
   TObjectOrder beginRow = whichHisto->getControlWindow()->getZoomSecondDimension().first;
-  TObjectOrder endRow =  whichHisto->getControlWindow()->getZoomSecondDimension().second;
-  whichHisto->getControlWindow()->getSelectedRows( whichHisto->getControlWindow()->getLevel(),
-      selectedRows, beginRow, endRow );
+  TObjectOrder endRow   = whichHisto->getControlWindow()->getZoomSecondDimension().second;
+  whichHisto->getControlWindow()->getSelectedRows( whichHisto->getControlWindow()->getLevel(), selectedRows, beginRow, endRow );
 
   if( recalcHisto )
     whichHisto->execute( whichHisto->getBeginTime(), whichHisto->getEndTime(), selectedRows, progress );
@@ -222,30 +218,30 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
   else
     outputFile.precision( 10 );
 
-  numPlanes = whichHisto->getNumPlanes();
+  numPlanes  = whichHisto->getNumPlanes();
   numColumns = whichHisto->getNumColumns();
-  numRows = whichHisto->getNumRows();
+  numRows    = whichHisto->getNumRows();
 
   // Column vector for normal behavior (print all columns)
-  vector<THistogramColumn> printedColumns;
+  vector< THistogramColumn > printedColumns;
   // if !hideEmptyColumns, histogram preferences are used.
   hideEmptyColumns = hideEmptyColumns || whichHisto->getHideColumns();
 
   whichHisto->getIdStat( whichHisto->getCurrentStat(), currentStat );
 
   bool isCommStatistic = whichHisto->isCommunicationStat( whichHisto->getCurrentStat() );
-  if ( !isCommStatistic )
+  if( !isCommStatistic )
   {
-    if ( onlySelectedPlane )
+    if( onlySelectedPlane )
       iPlane = whichHisto->getSelectedPlane();
     else
       iPlane = 0;
 
-    while ( iPlane < numPlanes )
+    while( iPlane < numPlanes )
     {
-      if ( whichHisto->planeWithValues( iPlane ) )
+      if( whichHisto->planeWithValues( iPlane ) )
       {
-        if ( numPlanes > 1 && withLabels )
+        if( numPlanes > 1 && withLabels )
           outputFile << whichHisto->getPlaneLabel( iPlane ) << endl;
 
         outputFile << "\t";
@@ -254,16 +250,16 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
         printedColumns.clear();
         numColumns = whichHisto->getPlaneColumns( iPlane, hideEmptyColumns, printedColumns );
 
-        for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+        for( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
         {
           whichHisto->setFirstCell( whichHisto->getSemanticRealColumn( iColumn, printedColumns ), iPlane );
-          if ( whichHisto->getHorizontal() && withLabels )
+          if( whichHisto->getHorizontal() && withLabels )
             outputFile << whichHisto->getColumnLabel( whichHisto->getSemanticRealColumn( iColumn, printedColumns ) ) << "\t";
         }
 
         // Dump data
         HistogramTotals *totals = nullptr;
-        if ( whichHisto->getHorizontal() )
+        if( whichHisto->getHorizontal() )
         {
           dumpMatrixHorizontal( whichHisto, numRows, numColumns, currentStat, printedColumns, iPlane, outputFile, withLabels );
 
@@ -272,12 +268,62 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
           if( withLabels )
           {
             totals = whichHisto->getColumnTotals();
-            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( TOTAL ),     &HistogramTotals::getTotal,     currentStat, printedColumns, iPlane, outputFile );
-            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( AVERAGE ),   &HistogramTotals::getAverage,   currentStat, printedColumns, iPlane, outputFile );
-            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( MAXIMUM ),   &HistogramTotals::getMaximum,   currentStat, printedColumns, iPlane, outputFile );
-            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( MINIMUM ),   &HistogramTotals::getMinimum,   currentStat, printedColumns, iPlane, outputFile );
-            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( STDEV ),     &HistogramTotals::getStdev,     currentStat, printedColumns, iPlane, outputFile );
-            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( AVGDIVMAX ), &HistogramTotals::getAvgDivMax, currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( whichHisto,
+                              totals,
+                              LabelConstructor::histoTotalLabel( NUM_CELLS ),
+                              &HistogramTotals::getNumCells,
+                              currentStat,
+                              printedColumns,
+                              iPlane,
+                              outputFile );
+            dumpTotalColumns( whichHisto,
+                              totals,
+                              LabelConstructor::histoTotalLabel( TOTAL ),
+                              &HistogramTotals::getTotal,
+                              currentStat,
+                              printedColumns,
+                              iPlane,
+                              outputFile );
+            dumpTotalColumns( whichHisto,
+                              totals,
+                              LabelConstructor::histoTotalLabel( AVERAGE ),
+                              &HistogramTotals::getAverage,
+                              currentStat,
+                              printedColumns,
+                              iPlane,
+                              outputFile );
+            dumpTotalColumns( whichHisto,
+                              totals,
+                              LabelConstructor::histoTotalLabel( MAXIMUM ),
+                              &HistogramTotals::getMaximum,
+                              currentStat,
+                              printedColumns,
+                              iPlane,
+                              outputFile );
+            dumpTotalColumns( whichHisto,
+                              totals,
+                              LabelConstructor::histoTotalLabel( MINIMUM ),
+                              &HistogramTotals::getMinimum,
+                              currentStat,
+                              printedColumns,
+                              iPlane,
+                              outputFile );
+            dumpTotalColumns( whichHisto,
+                              totals,
+                              LabelConstructor::histoTotalLabel( STDEV ),
+                              &HistogramTotals::getStdev,
+                              currentStat,
+                              printedColumns,
+                              iPlane,
+                              outputFile );
+            dumpTotalColumns( whichHisto,
+                              totals,
+                              LabelConstructor::histoTotalLabel( AVGDIVMAX ),
+                              &HistogramTotals::getAvgDivMax,
+                              currentStat,
+                              printedColumns,
+                              iPlane,
+                              outputFile );
           }
         }
         else
@@ -289,12 +335,43 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
           if( withLabels )
           {
             totals = whichHisto->getRowTotals();
-            dumpTotalRows( totals, LabelConstructor::histoTotalLabel( TOTAL ),     &HistogramTotals::getTotal,     currentStat, numRows, iPlane, outputFile );
-            dumpTotalRows( totals, LabelConstructor::histoTotalLabel( AVERAGE ),   &HistogramTotals::getAverage,   currentStat, numRows, iPlane, outputFile );
-            dumpTotalRows( totals, LabelConstructor::histoTotalLabel( MAXIMUM ),   &HistogramTotals::getMaximum,   currentStat, numRows, iPlane, outputFile );
-            dumpTotalRows( totals, LabelConstructor::histoTotalLabel( MINIMUM ),   &HistogramTotals::getMinimum,   currentStat, numRows, iPlane, outputFile );
-            dumpTotalRows( totals, LabelConstructor::histoTotalLabel( STDEV ),     &HistogramTotals::getStdev,     currentStat, numRows, iPlane, outputFile );
-            dumpTotalRows( totals, LabelConstructor::histoTotalLabel( AVGDIVMAX ), &HistogramTotals::getAvgDivMax, currentStat, numRows, iPlane, outputFile );
+            dumpTotalRows( totals,
+                           LabelConstructor::histoTotalLabel( NUM_CELLS ),
+                           &HistogramTotals::getNumCells,
+                           currentStat,
+                           numRows,
+                           iPlane,
+                           outputFile );
+            dumpTotalRows( totals, LabelConstructor::histoTotalLabel( TOTAL ), &HistogramTotals::getTotal, currentStat, numRows, iPlane, outputFile );
+            dumpTotalRows( totals,
+                           LabelConstructor::histoTotalLabel( AVERAGE ),
+                           &HistogramTotals::getAverage,
+                           currentStat,
+                           numRows,
+                           iPlane,
+                           outputFile );
+            dumpTotalRows( totals,
+                           LabelConstructor::histoTotalLabel( MAXIMUM ),
+                           &HistogramTotals::getMaximum,
+                           currentStat,
+                           numRows,
+                           iPlane,
+                           outputFile );
+            dumpTotalRows( totals,
+                           LabelConstructor::histoTotalLabel( MINIMUM ),
+                           &HistogramTotals::getMinimum,
+                           currentStat,
+                           numRows,
+                           iPlane,
+                           outputFile );
+            dumpTotalRows( totals, LabelConstructor::histoTotalLabel( STDEV ), &HistogramTotals::getStdev, currentStat, numRows, iPlane, outputFile );
+            dumpTotalRows( totals,
+                           LabelConstructor::histoTotalLabel( AVGDIVMAX ),
+                           &HistogramTotals::getAvgDivMax,
+                           currentStat,
+                           numRows,
+                           iPlane,
+                           outputFile );
           }
         }
 
@@ -303,7 +380,7 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
         outputFile << endl;
       } // plane whith values
 
-      if ( onlySelectedPlane )
+      if( onlySelectedPlane )
         iPlane = numPlanes; // this will end the external loop
       else
         ++iPlane;
@@ -311,15 +388,15 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
   }
   else // Communications statistic
   {
-    if ( onlySelectedPlane )
+    if( onlySelectedPlane )
       iPlane = whichHisto->getCommSelectedPlane();
     else
       iPlane = 0;
-    while ( iPlane < numPlanes )
+    while( iPlane < numPlanes )
     {
-      if ( whichHisto->planeCommWithValues( iPlane ) )
+      if( whichHisto->planeCommWithValues( iPlane ) )
       {
-        if ( numPlanes > 1 && withLabels )
+        if( numPlanes > 1 && withLabels )
           outputFile << whichHisto->getPlaneLabel( iPlane ) << endl;
 
         outputFile << "\t";
@@ -328,15 +405,15 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
         printedColumns.clear();
         numColumns = whichHisto->getPlaneColumns( iPlane, hideEmptyColumns, printedColumns );
 
-        for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+        for( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
         {
           whichHisto->setCommFirstCell( printedColumns[ iColumn ], iPlane );
-          if ( whichHisto->getHorizontal() && withLabels )
+          if( whichHisto->getHorizontal() && withLabels )
             outputFile << whichHisto->getColumnLabel( printedColumns[ iColumn ] ) << "\t";
         }
 
         HistogramTotals *totals = nullptr;
-        if ( whichHisto->getHorizontal() )
+        if( whichHisto->getHorizontal() )
         {
           dumpMatrixCommHorizontal( whichHisto, numRows, numColumns, currentStat, printedColumns, iPlane, outputFile, withLabels );
 
@@ -345,12 +422,62 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
           if( withLabels )
           {
             totals = whichHisto->getCommColumnTotals();
-            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( TOTAL ),     &HistogramTotals::getTotal,     currentStat, printedColumns, iPlane, outputFile );
-            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( AVERAGE ),   &HistogramTotals::getAverage,   currentStat, printedColumns, iPlane, outputFile );
-            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( MAXIMUM ),   &HistogramTotals::getMaximum,   currentStat, printedColumns, iPlane, outputFile );
-            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( MINIMUM ),   &HistogramTotals::getMinimum,   currentStat, printedColumns, iPlane, outputFile );
-            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( STDEV ),     &HistogramTotals::getStdev,     currentStat, printedColumns, iPlane, outputFile );
-            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( AVGDIVMAX ), &HistogramTotals::getAvgDivMax, currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( whichHisto,
+                              totals,
+                              LabelConstructor::histoTotalLabel( NUM_CELLS ),
+                              &HistogramTotals::getNumCells,
+                              currentStat,
+                              printedColumns,
+                              iPlane,
+                              outputFile );
+            dumpTotalColumns( whichHisto,
+                              totals,
+                              LabelConstructor::histoTotalLabel( TOTAL ),
+                              &HistogramTotals::getTotal,
+                              currentStat,
+                              printedColumns,
+                              iPlane,
+                              outputFile );
+            dumpTotalColumns( whichHisto,
+                              totals,
+                              LabelConstructor::histoTotalLabel( AVERAGE ),
+                              &HistogramTotals::getAverage,
+                              currentStat,
+                              printedColumns,
+                              iPlane,
+                              outputFile );
+            dumpTotalColumns( whichHisto,
+                              totals,
+                              LabelConstructor::histoTotalLabel( MAXIMUM ),
+                              &HistogramTotals::getMaximum,
+                              currentStat,
+                              printedColumns,
+                              iPlane,
+                              outputFile );
+            dumpTotalColumns( whichHisto,
+                              totals,
+                              LabelConstructor::histoTotalLabel( MINIMUM ),
+                              &HistogramTotals::getMinimum,
+                              currentStat,
+                              printedColumns,
+                              iPlane,
+                              outputFile );
+            dumpTotalColumns( whichHisto,
+                              totals,
+                              LabelConstructor::histoTotalLabel( STDEV ),
+                              &HistogramTotals::getStdev,
+                              currentStat,
+                              printedColumns,
+                              iPlane,
+                              outputFile );
+            dumpTotalColumns( whichHisto,
+                              totals,
+                              LabelConstructor::histoTotalLabel( AVGDIVMAX ),
+                              &HistogramTotals::getAvgDivMax,
+                              currentStat,
+                              printedColumns,
+                              iPlane,
+                              outputFile );
           }
         }
         else
@@ -362,12 +489,43 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
           if( withLabels )
           {
             totals = whichHisto->getCommRowTotals();
-            dumpTotalRows( totals, LabelConstructor::histoTotalLabel( TOTAL ),     &HistogramTotals::getTotal,     currentStat, numRows, iPlane, outputFile );
-            dumpTotalRows( totals, LabelConstructor::histoTotalLabel( AVERAGE ),   &HistogramTotals::getAverage,   currentStat, numRows, iPlane, outputFile );
-            dumpTotalRows( totals, LabelConstructor::histoTotalLabel( MAXIMUM ),   &HistogramTotals::getMaximum,   currentStat, numRows, iPlane, outputFile );
-            dumpTotalRows( totals, LabelConstructor::histoTotalLabel( MINIMUM ),   &HistogramTotals::getMinimum,   currentStat, numRows, iPlane, outputFile );
-            dumpTotalRows( totals, LabelConstructor::histoTotalLabel( STDEV ),     &HistogramTotals::getStdev,     currentStat, numRows, iPlane, outputFile );
-            dumpTotalRows( totals, LabelConstructor::histoTotalLabel( AVGDIVMAX ), &HistogramTotals::getAvgDivMax, currentStat, numRows, iPlane, outputFile );
+            dumpTotalRows( totals,
+                           LabelConstructor::histoTotalLabel( NUM_CELLS ),
+                           &HistogramTotals::getNumCells,
+                           currentStat,
+                           numRows,
+                           iPlane,
+                           outputFile );
+            dumpTotalRows( totals, LabelConstructor::histoTotalLabel( TOTAL ), &HistogramTotals::getTotal, currentStat, numRows, iPlane, outputFile );
+            dumpTotalRows( totals,
+                           LabelConstructor::histoTotalLabel( AVERAGE ),
+                           &HistogramTotals::getAverage,
+                           currentStat,
+                           numRows,
+                           iPlane,
+                           outputFile );
+            dumpTotalRows( totals,
+                           LabelConstructor::histoTotalLabel( MAXIMUM ),
+                           &HistogramTotals::getMaximum,
+                           currentStat,
+                           numRows,
+                           iPlane,
+                           outputFile );
+            dumpTotalRows( totals,
+                           LabelConstructor::histoTotalLabel( MINIMUM ),
+                           &HistogramTotals::getMinimum,
+                           currentStat,
+                           numRows,
+                           iPlane,
+                           outputFile );
+            dumpTotalRows( totals, LabelConstructor::histoTotalLabel( STDEV ), &HistogramTotals::getStdev, currentStat, numRows, iPlane, outputFile );
+            dumpTotalRows( totals,
+                           LabelConstructor::histoTotalLabel( AVGDIVMAX ),
+                           &HistogramTotals::getAvgDivMax,
+                           currentStat,
+                           numRows,
+                           iPlane,
+                           outputFile );
           }
         }
 
@@ -376,7 +534,7 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
         outputFile << endl;
       } // plane whith values
 
-      if ( onlySelectedPlane )
+      if( onlySelectedPlane )
         iPlane = numPlanes; // this will end the external loop
       else
         ++iPlane;
@@ -391,16 +549,17 @@ void TextOutput::dumpMatrixHorizontal( Histogram *whichHisto,
                                        TObjectOrder numRows,
                                        THistogramColumn numColumns,
                                        PRV_UINT16 currentStat,
-                                       vector<THistogramColumn> printedColumns,
+                                       vector< THistogramColumn > printedColumns,
                                        THistogramColumn iPlane,
                                        ofstream &outputFile,
                                        bool withLabels,
                                        ProgressController *progress )
 {
   outputFile << endl;
-  vector< TObjectOrder > objSelection = whichHisto->getSelectedRows();
+  vector< TObjectOrder > objSelection;
+  whichHisto->getSelectedRows( objSelection );
 
-  for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
+  for( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
   {
     if( withLabels )
       outputFile << whichHisto->getRowLabel( objSelection[ iRow ] ) << "\t";
@@ -408,15 +567,15 @@ void TextOutput::dumpMatrixHorizontal( Histogram *whichHisto,
     // progress advanced by rows (external loop)
     if( progress != nullptr )
     {
-      if ( numRows > 1 )
+      if( numRows > 1 )
         progress->setCurrentProgress( (int)iRow );
     }
 
-    for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+    for( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
     {
-      if ( !whichHisto->endCell( whichHisto->getSemanticRealColumn( iColumn, printedColumns ), iPlane ) )
+      if( !whichHisto->endCell( whichHisto->getSemanticRealColumn( iColumn, printedColumns ), iPlane ) )
       {
-        if ( whichHisto->getCurrentRow( whichHisto->getSemanticRealColumn( iColumn, printedColumns ), iPlane ) == iRow )
+        if( whichHisto->getCurrentRow( whichHisto->getSemanticRealColumn( iColumn, printedColumns ), iPlane ) == iRow )
         {
           outputFile << whichHisto->getCurrentValue( whichHisto->getSemanticRealColumn( iColumn, printedColumns ), currentStat, iPlane ) << "\t";
           whichHisto->setNextCell( whichHisto->getSemanticRealColumn( iColumn, printedColumns ), iPlane );
@@ -436,22 +595,23 @@ void TextOutput::dumpMatrixVertical( Histogram *whichHisto,
                                      TObjectOrder numRows,
                                      THistogramColumn numColumns,
                                      PRV_UINT16 currentStat,
-                                     vector<THistogramColumn> printedColumns,
+                                     vector< THistogramColumn > printedColumns,
                                      THistogramColumn iPlane,
                                      ofstream &outputFile,
                                      bool withLabels,
                                      ProgressController *progress )
 {
-  vector< TObjectOrder > objSelection = whichHisto->getSelectedRows();
+  vector< TObjectOrder > objSelection;
+  whichHisto->getSelectedRows( objSelection );
 
   if( withLabels )
   {
-    for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
+    for( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
       outputFile << whichHisto->getRowLabel( objSelection[ iRow ] ) << "\t";
   }
 
   outputFile << endl;
-  for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+  for( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
   {
     if( withLabels )
       outputFile << whichHisto->getColumnLabel( whichHisto->getSemanticRealColumn( iColumn, printedColumns ) ) << "\t";
@@ -459,15 +619,15 @@ void TextOutput::dumpMatrixVertical( Histogram *whichHisto,
     // progress advanced by columns (external loop)
     if( progress != nullptr )
     {
-      if ( numColumns > 1 )
+      if( numColumns > 1 )
         progress->setCurrentProgress( (int)iColumn );
     }
 
-    for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
+    for( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
     {
-      if ( !whichHisto->endCell( whichHisto->getSemanticRealColumn( iColumn, printedColumns ), iPlane ) )
+      if( !whichHisto->endCell( whichHisto->getSemanticRealColumn( iColumn, printedColumns ), iPlane ) )
       {
-        if ( whichHisto->getCurrentRow( whichHisto->getSemanticRealColumn( iColumn, printedColumns ), iPlane ) == iRow )
+        if( whichHisto->getCurrentRow( whichHisto->getSemanticRealColumn( iColumn, printedColumns ), iPlane ) == iRow )
         {
           outputFile << whichHisto->getCurrentValue( whichHisto->getSemanticRealColumn( iColumn, printedColumns ), currentStat, iPlane ) << "\t";
           whichHisto->setNextCell( whichHisto->getSemanticRealColumn( iColumn, printedColumns ), iPlane );
@@ -487,16 +647,17 @@ void TextOutput::dumpMatrixCommHorizontal( Histogram *whichHisto,
                                            TObjectOrder numRows,
                                            THistogramColumn numColumns,
                                            PRV_UINT16 currentStat,
-                                           vector<THistogramColumn> printedColumns,
+                                           vector< THistogramColumn > printedColumns,
                                            THistogramColumn iPlane,
                                            ofstream &outputFile,
                                            bool withLabels,
                                            ProgressController *progress )
 {
   outputFile << endl;
-  vector< TObjectOrder > objSelection = whichHisto->getSelectedRows();
+  vector< TObjectOrder > objSelection;
+  whichHisto->getSelectedRows( objSelection );
 
-  for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
+  for( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
   {
     if( withLabels )
       outputFile << whichHisto->getRowLabel( objSelection[ iRow ] ) << "\t";
@@ -504,15 +665,15 @@ void TextOutput::dumpMatrixCommHorizontal( Histogram *whichHisto,
     // progress advanced by rows (external loop)
     if( progress != nullptr )
     {
-      if ( numRows > 1 )
+      if( numRows > 1 )
         progress->setCurrentProgress( (int)iRow );
     }
 
-    for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+    for( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
     {
-      if ( !whichHisto->endCommCell( printedColumns[ iColumn ], iPlane ) )
+      if( !whichHisto->endCommCell( printedColumns[ iColumn ], iPlane ) )
       {
-        if ( whichHisto->getCommCurrentRow( printedColumns[ iColumn ], iPlane ) == iRow )
+        if( whichHisto->getCommCurrentRow( printedColumns[ iColumn ], iPlane ) == iRow )
         {
           outputFile << whichHisto->getCommCurrentValue( printedColumns[ iColumn ], currentStat, iPlane ) << "\t";
           whichHisto->setCommNextCell( printedColumns[ iColumn ], iPlane );
@@ -532,22 +693,23 @@ void TextOutput::dumpMatrixCommVertical( Histogram *whichHisto,
                                          TObjectOrder numRows,
                                          THistogramColumn numColumns,
                                          PRV_UINT16 currentStat,
-                                         vector<THistogramColumn> printedColumns,
+                                         vector< THistogramColumn > printedColumns,
                                          THistogramColumn iPlane,
                                          ofstream &outputFile,
                                          bool withLabels,
                                          ProgressController *progress )
 {
-  vector< TObjectOrder > objSelection = whichHisto->getSelectedRows();
+  vector< TObjectOrder > objSelection;
+  whichHisto->getSelectedRows( objSelection );
 
   if( withLabels )
   {
-    for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
+    for( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
       outputFile << whichHisto->getRowLabel( objSelection[ iRow ] ) << "\t";
   }
 
   outputFile << endl;
-  for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+  for( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
   {
     if( withLabels )
       outputFile << whichHisto->getColumnLabel( printedColumns[ iColumn ] ) << "\t";
@@ -555,15 +717,15 @@ void TextOutput::dumpMatrixCommVertical( Histogram *whichHisto,
     // progress advanced by columns (external loop)
     if( progress != nullptr )
     {
-      if ( numColumns > 1 )
+      if( numColumns > 1 )
         progress->setCurrentProgress( (int)iColumn );
     }
 
-    for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
+    for( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
     {
-      if ( !whichHisto->endCommCell( printedColumns[ iColumn ], iPlane ) )
+      if( !whichHisto->endCommCell( printedColumns[ iColumn ], iPlane ) )
       {
-        if ( whichHisto->getCommCurrentRow( printedColumns[ iColumn ], iPlane ) == iRow )
+        if( whichHisto->getCommCurrentRow( printedColumns[ iColumn ], iPlane ) == iRow )
         {
           outputFile << whichHisto->getCommCurrentValue( printedColumns[ iColumn ], currentStat, iPlane ) << "\t";
           whichHisto->setCommNextCell( printedColumns[ iColumn ], iPlane );
@@ -584,7 +746,7 @@ void TextOutput::dumpTotalColumns( Histogram *whichHisto,
                                    string totalName,
                                    THistogramTotalsMethod totalFunction,
                                    PRV_UINT16 currentStat,
-                                   vector<THistogramColumn> printedColumns,
+                                   vector< THistogramColumn > printedColumns,
                                    THistogramColumn iPlane,
                                    ofstream &outputFile,
                                    ProgressController *progress )
@@ -592,16 +754,19 @@ void TextOutput::dumpTotalColumns( Histogram *whichHisto,
   THistogramColumn numColumns = (THistogramColumn)printedColumns.size();
 
   outputFile << totalName << "\t";
-  for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+  for( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
   {
     // progress advanced by columns (external loop)
     if( progress != nullptr )
     {
-      if ( numColumns > 1 )
+      if( numColumns > 1 )
         progress->setCurrentProgress( (int)iColumn );
     }
 
-    outputFile << (totals->*totalFunction)( currentStat, whichHisto->getSemanticSortedColumn( whichHisto->getSemanticRealColumn( iColumn, printedColumns ) ), iPlane ) << "\t";
+    outputFile << ( totals->*totalFunction )( currentStat,
+                                              whichHisto->getSemanticSortedColumn( whichHisto->getSemanticRealColumn( iColumn, printedColumns ) ),
+                                              iPlane )
+               << "\t";
   }
 
   outputFile << endl;
@@ -618,16 +783,16 @@ void TextOutput::dumpTotalRows( HistogramTotals *totals,
                                 ProgressController *progress )
 {
   outputFile << totalName << "\t";
-  for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
+  for( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
   {
     // progress advanced by rows (external loop)
     if( progress != nullptr )
     {
-      if ( numRows > 1 )
+      if( numRows > 1 )
         progress->setCurrentProgress( (int)iRow );
     }
 
-    outputFile << (totals->*totalFunction)( currentStat, iRow, iPlane ) << "\t";
+    outputFile << ( totals->*totalFunction )( currentStat, iRow, iPlane ) << "\t";
   }
 
   outputFile << endl;
@@ -673,4 +838,3 @@ TTime TextOutput::getMaxTime() const
 {
   return maxTime;
 }
-

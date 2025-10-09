@@ -12,13 +12,14 @@
       <by_intervals_vs_by_states>0</by_intervals_vs_by_states>
       <sampling_interval>100000</sampling_interval>
       <minimum_burst_time>1000000</minimum_burst_time>
-      <events>50000001;50000003:3,10;50000004</events>
+      <accum_events>50000001;50000003:3,10;50000004</accum_events>
+      <!--empty count_events list-->
+      <!--<count_events></count_events>-->
     </range>
     <algorithm>
-      <count_events_vs_acummulate_values>0</count_events_vs_acummulate_values>
-      <remove_states>0</remove_states>
-      <summarize_useful_states>0</summarize_useful_states>
-      <global_counters>0</global_counters>
+      <remove_states>1</remove_states>
+      <summarize_useful_states>1</summarize_useful_states>
+      <global_counters>1</global_counters>
       <only_in_burst_counting>0</only_in_burst_counting>
       <keep_events>40000001;40000003;40000006;40000010</keep_events>
     </algorithm>

@@ -765,21 +765,29 @@ void loadCFGs( KernelConnection *myKernel )
     currentCFG = it;
     if ( CFGLoader::loadCFG( myKernel, it->first, trace, windows, histograms, options ) )
     {
-      TextOutput output;
-      output.setMultipleFiles( option[ MANY_FILES ].active );
-      output.setWindowTimeUnits( !option[ TIMELINE_TRACE_UNITS ].active );
+      if( !CFGLoader::errorLine.empty() )
+      {
+        std::cerr << "  [Warning] File '" << it->first << "'  with error in: \n'"  + CFGLoader::errorLine  +  "'" << std::endl;
+      }
+      else
+      {
+        TextOutput output;
+        output.setMultipleFiles( option[ MANY_FILES ].active );
+        output.setWindowTimeUnits( !option[ TIMELINE_TRACE_UNITS ].active );
 
-      if ( histograms.begin() != histograms.end() &&
-           histograms[ histograms.size() - 1 ] != nullptr )
-        output.dumpHistogram( histograms[ histograms.size() - 1 ],
-                              it->second,
-                              option[ PRINT_PLANE ].active,
-                              option[ EMPTY_COLUMNS ].active,
-                              true,
-                              !option[ PREFERENCES_PRECISION ].active );
-      else if( windows.begin() != windows.end() &&
-               windows[ windows.size() - 1 ] != nullptr )
-        output.dumpWindow( windows[ windows.size() - 1 ], it->second );
+        if ( histograms.begin() != histograms.end() &&
+            histograms[ histograms.size() - 1 ] != nullptr )
+          output.dumpHistogram( histograms[ histograms.size() - 1 ],
+                                it->second,
+                                option[ PRINT_PLANE ].active,
+                                option[ EMPTY_COLUMNS ].active,
+                                true,
+                                !option[ PREFERENCES_PRECISION ].active );
+        else if( windows.begin() != windows.end() &&
+                windows[ windows.size() - 1 ] != nullptr )
+          output.dumpWindow( windows[ windows.size() - 1 ], it->second );
+        std::cerr << "Correcty loaded file: '" << it->first << "'" << std::endl;
+      }
     }
     else
       std::cerr << "  [Warning] Cannot load '" << it->first << "' file." << std::endl;

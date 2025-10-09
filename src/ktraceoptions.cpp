@@ -22,12 +22,12 @@
 \*****************************************************************************/
 
 #include <iostream>
-#include <string.h>
+
 #include <ctype.h>
 #include <stdlib.h>
+#include <string.h>
 
-#include <iostream>
-using namespace std;
+#include <libxml/encoding.h>
 
 #include "ktraceoptions.h"
 #include "paraverconfig.h"
@@ -35,14 +35,15 @@ using namespace std;
 #include "tracefilter.h"
 #include "tracesoftwarecounters.h"
 
-#include <libxml/encoding.h>
-
+using namespace std;
 
 #ifdef _WIN32
 #define atoll _atoi64
 #endif
 
 constexpr char FILTER_XML_ENCODING[] = "UTF-8";
+
+stringstream KTraceOptions::bufferElement;
 
 KTraceOptions::KTraceOptions()
 {
@@ -77,7 +78,7 @@ KTraceOptions::KTraceOptions( const KTraceOptions *whichTraceOptions )
   set_keep_boundary_events( whichTraceOptions->get_keep_boundary_events() );
   set_keep_all_events( whichTraceOptions->get_keep_all_events() );
 
-  // PROFET
+  // MESS
   set_max_cut_time_to_finish_of_first_appl( whichTraceOptions->get_max_cut_time_to_finish_of_first_appl() );
 
   // Filter Default Options: states
@@ -115,9 +116,9 @@ KTraceOptions::KTraceOptions( const KTraceOptions *whichTraceOptions )
   else
     set_sc_minimum_burst_time( whichTraceOptions->get_sc_minimum_burst_time() );
 
-  set_sc_types( whichTraceOptions->get_sc_types() );
+  set_sc_accum_types( whichTraceOptions->get_sc_accum_types() );
+  set_sc_count_types( whichTraceOptions->get_sc_count_types() );
 
-  set_sc_acumm_counters( whichTraceOptions->get_sc_acumm_counters() ); // accumulate or count?
   set_sc_remove_states( whichTraceOptions->get_sc_remove_states() );
   set_sc_summarize_states( whichTraceOptions->get_sc_summarize_states() );
   set_sc_global_counters( whichTraceOptions->get_sc_global_counters() );
@@ -166,7 +167,7 @@ void KTraceOptions::init()
   set_remFirstStates( ParaverConfig::getInstance()->getCutterRemoveFirstStates() );
   set_remLastStates( ParaverConfig::getInstance()->getCutterRemoveLastStates() );
   set_keep_boundary_events( ParaverConfig::getInstance()->getCutterKeepEvents() );
-  set_keep_all_events( false );
+  set_keep_all_events( true );
   set_max_cut_time_to_finish_of_first_appl( false );
 
   // Filter Default Options
@@ -192,9 +193,6 @@ void KTraceOptions::init()
   set_sc_sampling_interval( ParaverConfig::getInstance()->getSoftwareCountersSamplingInterval() );
   set_sc_minimum_burst_time( ParaverConfig::getInstance()->getSoftwareCountersMinimumBurstTime() );
 
-  set_sc_types( (char *)ParaverConfig::getInstance()->getSoftwareCountersTypes().c_str() );
-
-  set_sc_acumm_counters( ParaverConfig::getInstance()->getSoftwareCountersCountEventsOrAcummulateValues() ); // accumulate or count?
   set_sc_remove_states( ParaverConfig::getInstance()->getSoftwareCountersRemoveStates() );
   set_sc_summarize_states( ParaverConfig::getInstance()->getSoftwareCountersSummarizeStates() );
   set_sc_global_counters( ParaverConfig::getInstance()->getSoftwareCountersGlobalCounters() );
@@ -261,6 +259,37 @@ void KTraceOptions::parse_type( xmlDocPtr doc,
   types[last_type].last_value = index;
   last_type++;
 }
+
+
+// bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, bool& whichValue  )
+// {
+//   return ( parseContentImpl( whichDoc, whichNode, whichTag,
+//                              [](const std::string& tmpStr){ return (bool)std::stoi(tmpStr); },
+//                              whichValue ) );
+// }
+// #include <functional>
+
+// bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, int& whichValue )
+// {
+//   return ( parseContentImpl( whichDoc, whichNode, whichTag,
+//                            //  [](const std::string& tmpStr){ return std::stoi(tmpStr); },
+//                              static_cast< std::function<int(const std::string&, std::size_t*, int) > >(std::stoi),
+//                              whichValue ) );
+// }
+
+
+// bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, unsigned long long& whichValue )
+// {
+//   return ( parseContentImpl( whichDoc, whichNode, whichTag,
+//                              [](const std::string& tmpStr){ return std::stoull(tmpStr); },
+//                              whichValue ) );
+// }
+
+
+// bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, char*& whichValue )
+// {
+//   return ( parseContentImpl( whichDoc, whichNode, whichTag, strdup, whichValue ) );
+// }
 
 
 void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
@@ -357,8 +386,6 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
         else
         {
           state_names[0] = strdup( word_aux );
-//cout << "KTraceOptions::parse_filter_params->" << word_aux << "|" <<endl;
-//cout << "KTraceOptions::parse_filter_params->" << state_names[0] << "|" <<endl;
           if ( !onlyOneState )
           {
             for ( i = 1; i < MAXSTATES; i++ )
@@ -382,38 +409,18 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
 
       if ( child != nullptr )
       {
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"min_state_time" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          min_state_time = atoll( ( char * )word );
-          xmlFree( word );
-        }
+        parseContent( doc, child, "min_state_time", min_state_time ); 
       }
     }
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"discard_states" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      discardStates = atoi( ( char * )word );
-      xmlFree( word );
+    if ( parseContent( doc, cur, "discard_states", discardStates ) )
       foundDiscardStatesTag = true;
-    }
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"discard_events" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      discardEvents = atoi( ( char * )word );
-      xmlFree( word );
+    if ( parseContent( doc, cur, "discard_events", discardEvents ) )
       foundDiscardEventsTag = true;
-    }
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"discard_communications" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      discardCommunications = atoi( ( char * )word );
-      xmlFree( word );
+    if ( parseContent( doc, cur, "discard_communications", discardCommunications ) )
       foundDiscardCommunicationsTag = true;
-    }
 
     cur = cur->next;
   }
@@ -435,7 +442,6 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
 void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
 {
   xmlChar *word;
-//  stringstream auxStr;
 
   while ( cur != nullptr )
   {
@@ -447,86 +453,17 @@ void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
       xmlFree( word );
     }
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"original_time" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      original_time = (bool)atoi( ( char * )word );
-      xmlFree( word );
-    }
-
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"max_trace_size" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      max_trace_size = atoll( ( char * )word );
-      //max_trace_size = atoi( ( char * )word );
-      xmlFree( word );
-    }
-
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"by_time" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      by_time = (bool)atoi( ( char * )word );
-      xmlFree( word );
-    }
-
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"minimum_time" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-//      auxStr.str( "");
-//      auxStr << (char *)word;
-      //min_cutting_time = atoi( ( char * )word );
-      min_cutting_time = atoll( ( char * )word );
-      xmlFree( word );
-    }
-
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"maximum_time" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      max_cutting_time = atoll( ( char * )word );
-      xmlFree( word );
-    }
-
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"minimum_time_percentage" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      min_percentage = atoi( ( char * )word );
-      xmlFree( word );
-    }
-
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"maximum_time_percentage" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      max_percentage = atoi( ( char * )word );
-      xmlFree( word );
-    }
-
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"break_states" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      break_states = (bool)atoi( ( char * )word );
-      xmlFree( word );
-    }
-
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"remove_first_states" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      remFirstStates = (bool)atoi( ( char * )word );
-      xmlFree( word );
-    }
-
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"remove_last_states" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      remLastStates = (bool)atoi( ( char * )word );
-      xmlFree( word );
-    }
-
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"keep_events" ) )
-    {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      keep_boundary_events = (bool)atoi( ( char * )word );
-      xmlFree( word );
-    }
+    parseContent( doc, cur, "original_time", original_time ); 
+    parseContent( doc, cur, "max_trace_size", max_trace_size );
+    parseContent( doc, cur, "by_time", by_time ); 
+    parseContent( doc, cur, "minimum_time", min_cutting_time ); 
+    parseContent( doc, cur, "maximum_time", max_cutting_time ); 
+    parseContent( doc, cur, "minimum_time_percentage", min_percentage ); 
+    parseContent( doc, cur, "maximum_time_percentage", max_percentage ); 
+    parseContent( doc, cur, "break_states", break_states ); 
+    parseContent( doc, cur, "remove_first_states", remFirstStates ); 
+    parseContent( doc, cur, "remove_last_states", remLastStates ); 
+    parseContent( doc, cur, "keep_events", keep_boundary_events ); 
 
     cur = cur->next;
   }
@@ -536,13 +473,11 @@ void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
 void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cur )
 {
   xmlNodePtr child;
-  xmlChar *word;
 
-/* PARAMETERS TO FILL
-    int sc_global_counters;
-    unsigned long long sc_interval;
-    int sc_frequency;
-*/
+  // Compatibility variables with previous versions of XML
+  char *tmp_compat_types = nullptr;
+  bool tmp_compat_accum_counters = true;
+
   while ( cur != nullptr )
   {
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"range" ) )
@@ -553,34 +488,12 @@ void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cu
 
       while ( child != nullptr )
       {
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"by_intervals_vs_by_states" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          sc_onInterval = (bool)atoi( ( char * )word );
-          xmlFree( word );
-        }
-
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"sampling_interval" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          sc_sampling_interval = atoll( ( char * )word );
-          xmlFree( word );
-        }
-
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"minimum_burst_time" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          sc_minimum_burst_time = atoll( ( char * )word );
-          xmlFree( word );
-        }
-
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"events" ) )
-        {
-          /* Navigate throug nodes */
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          types = strdup( (char *)word );
-          xmlFree( word );
-        }
+        parseContent( doc, child, "by_intervals_vs_by_states", sc_onInterval );
+        parseContent( doc, child, "sampling_interval", sc_sampling_interval );
+        parseContent( doc, child, "minimum_burst_time", sc_minimum_burst_time );
+        parseContent( doc, child, "events", tmp_compat_types ); 
+        parseContent( doc, child, "accum_events", accum_types ); 
+        parseContent( doc, child, "count_events", count_types ); 
 
         child = child->next;
       }
@@ -594,53 +507,28 @@ void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cu
 
       while ( child != nullptr )
       {
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"count_events_vs_acummulate_values" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          sc_acumm_counters = (bool)atoi( ( char * )word );
-          xmlFree( word );
-        }
+        // Deprecated element - kept for retrocompatibility
+        parseContent( doc, child, "count_events_vs_acummulate_values", tmp_compat_accum_counters );
 
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"remove_states" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          sc_remove_states = (bool)atoi( ( char * )word );
-          xmlFree( word );
-        }
-
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"summarize_useful_states" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          sc_summarize_states = (bool)atoi( ( char * )word );
-          xmlFree( word );
-        }
-
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"global_counters" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          sc_global_counters = (bool)atoi( ( char * )word );
-          xmlFree( word );
-        }
-
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"only_in_burst_counting" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          sc_only_in_bursts = (bool)atoi( ( char * )word );
-          xmlFree( word );
-        }
-
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"keep_events" ) )
-        {
-          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          types_kept = strdup ( (char *)word );
-          xmlFree( word );
-        }
+        parseContent( doc, child, "remove_states", sc_remove_states ); 
+        parseContent( doc, child, "summarize_useful_states", sc_summarize_states ); 
+        parseContent( doc, child, "global_counters", sc_global_counters ); 
+        parseContent( doc, child, "only_in_burst_counting", sc_only_in_bursts ); 
+        parseContent( doc, child, "keep_events", types_kept ); 
 
         child = child->next;
       }
     }
 
     cur = cur->next;
+  }
+
+  if( tmp_compat_types != nullptr )
+  {
+    if( tmp_compat_accum_counters )
+      accum_types = tmp_compat_types;
+    else
+      count_types = tmp_compat_types;
   }
 }
 
@@ -823,8 +711,6 @@ void KTraceOptions::saveXMLFilter( xmlTextWriterPtr &writer )
     string auxStates;
     get_state_names( auxStates );
     //rc = xmlTextWriterWriteElement( writer, BAD_CAST "states", BAD_CAST auxStates.c_str() );
-//cout << "KTraceOptions::saveXMLFilter->" << auxStates << "|" <<endl;
-//cout << "KTraceOptions::saveXMLFilter->" << auxStates.c_str() << "|" <<endl;
     rc = xmlTextWriterWriteFormatRaw( writer, "%s\n",BAD_CAST auxStates.c_str() );
   }
 
@@ -891,6 +777,21 @@ void KTraceOptions::saveXMLSoftwareCounters( xmlTextWriterPtr &writer )
 {
   int rc;
 
+  auto writeEvents = [this, &writer, &rc]( auto getEvents, const std::string& tag )
+                     {
+                       char *tmpStr = (this->*getEvents)();
+                       if ( tmpStr != nullptr && !string( tmpStr ).empty() )
+                       {
+                         rc = xmlTextWriterWriteElement( writer, BAD_CAST tag.c_str(), BAD_CAST tmpStr );
+                         free( tmpStr );
+                       }
+                       else
+                       {
+                         rc = xmlTextWriterWriteComment( writer, BAD_CAST string( "empty " + tag + " list" ).c_str() );
+                         rc = xmlTextWriterWriteComment( writer, BAD_CAST string( "<" + tag + "></" + tag + ">" ).c_str() );
+                       }
+                     };
+
   rc = xmlTextWriterWriteComment( writer, BAD_CAST " SOFTWARE COUNTERS OPTIONS " );
   rc = xmlTextWriterStartElement( writer, BAD_CAST "software_counters");
 
@@ -899,27 +800,21 @@ void KTraceOptions::saveXMLSoftwareCounters( xmlTextWriterPtr &writer )
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "by_intervals_vs_by_states", "%d", (int)get_sc_onInterval() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "sampling_interval", "%lld", get_sc_sampling_interval() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "minimum_burst_time", "%lld", get_sc_minimum_burst_time() );
-  rc = xmlTextWriterWriteElement( writer, BAD_CAST "events", BAD_CAST get_sc_types() );
+  
+
+  writeEvents( &KTraceOptions::get_sc_accum_types, string( "accum_events" ) );
+  writeEvents( &KTraceOptions::get_sc_count_types, string( "count_events" ) );
 
   rc = xmlTextWriterEndElement( writer ); // range
 
   rc = xmlTextWriterStartElement( writer, BAD_CAST "algorithm" );
 
-  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "count_events_vs_acummulate_values", "%d", (int)get_sc_acumm_counters() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "remove_states", "%d", (int)get_sc_remove_states() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "summarize_useful_states", "%d", (int)get_sc_summarize_states() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "global_counters", "%d", (int)get_sc_global_counters() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "only_in_burst_counting", "%d", (int)get_sc_only_in_bursts() );
 
-  if ( string( get_sc_types_kept() ).length() > 0 )
-  {
-    rc = xmlTextWriterWriteElement( writer, BAD_CAST "keep_events", BAD_CAST get_sc_types_kept() );
-  }
-  else
-  {
-    rc = xmlTextWriterWriteComment( writer, BAD_CAST "empty keep_events list" );
-    rc = xmlTextWriterWriteComment( writer, BAD_CAST "<keep_events></keep_events>" );
-  }
+  writeEvents( &KTraceOptions::get_sc_types_kept, string( "keep_events" ) );
 
   rc = xmlTextWriterEndElement( writer ); // algorithm
   rc = xmlTextWriterEndElement( writer ); // software_counters

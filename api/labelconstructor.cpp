@@ -286,6 +286,8 @@ string LabelConstructor::histoTotalLabel( THistoTotals whichTotal )
 {
   switch ( whichTotal )
   {
+    case NUM_CELLS:
+      return "Num. Cells";
     case TOTAL:
       return "Total";
     case AVERAGE:
@@ -303,6 +305,65 @@ string LabelConstructor::histoTotalLabel( THistoTotals whichTotal )
   }
 
   return "";
+}
+
+string LabelConstructor::propertyToLabel (SyncPropertiesType prop)
+{
+  switch (prop)
+  {
+  case SyncPropertiesType::SYNC_TIME:
+    return CFG_VAL_SYNC_TIME;
+  case SyncPropertiesType::SYNC_HISTOGRAM_COLUMNS:
+    return CFG_VAL_SYNC_HISTO_COLUMNS;
+  case SyncPropertiesType::SYNC_HISTOGRAM_DELTA:
+    return CFG_VAL_SYNC_HISTO_DELTA;
+  case SyncPropertiesType::SYNC_MIN:
+    return CFG_VAL_SYNC_SEM_MIN;
+  case SyncPropertiesType::SYNC_MAX:
+    return CFG_VAL_SYNC_SEM_MAX;
+  case SyncPropertiesType::SYNC_OBJECT_ZOOM:
+    return CFG_VAL_SYNC_OBJ_ZOOM;
+  case SyncPropertiesType::SYNC_OBJECT_SELECTION:
+    return CFG_VAL_SYNC_OBJ_SEL;
+  case SyncPropertiesType::SYNC_WINDOWS_SIZE:
+    return CFG_VAL_SYNC_WIN_SIZE;
+  case SyncPropertiesType::SYNC_WINDOWS_POSITION:
+    return CFG_VAL_SYNC_WIN_POSITION;
+  case SyncPropertiesType::SYNC_COLOR_PALETTE:
+    return CFG_VAL_SYNC_COLOR_PALETTE;
+  case SyncPropertiesType::SYNC_INFO_PANEL:
+    return CFG_VAL_SYNC_INFO_PANEL;
+  default:
+    return "";
+  }
+}
+SyncPropertiesType LabelConstructor::labelToProperty (const std::string &label)
+{
+
+  if (label == CFG_VAL_SYNC_TIME)
+    return SyncPropertiesType::SYNC_TIME;
+  else if (label == CFG_VAL_SYNC_HISTO_COLUMNS)
+    return SyncPropertiesType::SYNC_HISTOGRAM_COLUMNS;
+  else if (label == CFG_VAL_SYNC_HISTO_DELTA)
+    return SyncPropertiesType::SYNC_HISTOGRAM_DELTA;
+  else if (label == CFG_VAL_SYNC_SEM_MIN)
+    return SyncPropertiesType::SYNC_MIN;
+  else if (label == CFG_VAL_SYNC_SEM_MAX)
+    return SyncPropertiesType::SYNC_MAX;
+  else if (label == CFG_VAL_SYNC_OBJ_ZOOM)
+    return SyncPropertiesType::SYNC_OBJECT_ZOOM;
+  else if (label == CFG_VAL_SYNC_OBJ_SEL)
+    return SyncPropertiesType::SYNC_OBJECT_SELECTION;
+  else if (label == CFG_VAL_SYNC_WIN_SIZE)
+    return SyncPropertiesType::SYNC_WINDOWS_SIZE;
+  else if (label == CFG_VAL_SYNC_WIN_POSITION)
+    return SyncPropertiesType::SYNC_WINDOWS_POSITION;
+  else if (label == CFG_VAL_SYNC_COLOR_PALETTE)
+    return SyncPropertiesType::SYNC_COLOR_PALETTE;
+  else if (label == CFG_VAL_SYNC_INFO_PANEL)
+    return SyncPropertiesType::SYNC_INFO_PANEL;
+  else
+    return SyncPropertiesType::SYNC_INIT;
 }
 
 // TODO: precision not used!

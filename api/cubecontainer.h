@@ -21,9 +21,7 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-
 #pragma once
-
 
 #include <map>
 
@@ -41,8 +39,8 @@ class CubeContainer
       bool operator<( const Index& whichIndex ) const;
     };
 
-    typedef typename std::map<Index, T>::iterator iterator;
-    typedef typename std::map<Index, T>::iterator const_iterator;
+    using iterator = typename std::map<Index, T>::iterator;
+    using const_iterator = typename std::map<Index, T>::const_iterator;
 
     T& operator()( const Dimension1& dim1, const Dimension2& dim2, const Dimension3& dim3 );
     const T& operator()( const Dimension1& dim1, const Dimension2& dim2, const Dimension3& dim3 ) const;
@@ -53,6 +51,8 @@ class CubeContainer
 
     typename CubeContainer::iterator begin();
     typename CubeContainer::iterator end();
+
+    typename CubeContainer::iterator erase( typename CubeContainer::iterator it );
 
   private:
     std::map<Index, T> cube;

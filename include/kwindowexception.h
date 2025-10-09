@@ -46,6 +46,9 @@ class KWindowException: public ParaverKernelException
       auxMessage = whichAuxMessage;
       file = whichFile;
       line = whichLine;
+    
+      initMessage();
+
     }
 
   protected:

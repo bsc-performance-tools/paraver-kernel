@@ -48,12 +48,14 @@ class Filter
     {}
 
     virtual void setLogical( bool newValue ) = 0;
-
     virtual void setPhysical( bool newValue ) = 0;
-
     virtual bool getLogical() = 0;
-
     virtual bool getPhysical() = 0;
+
+    virtual void setIntraCommsFilter( bool newValue ) = 0;
+    virtual void setInterCommsFilter( bool newValue ) = 0;
+    virtual bool getIntraCommsFilter() = 0;
+    virtual bool getInterCommsFilter() = 0;
 
     virtual void clearCommFrom() = 0;
     virtual void insertCommFrom( TObjectOrder value ) = 0;
@@ -141,12 +143,14 @@ class FilterProxy : public Filter
     {}
 
     virtual void setLogical( bool newValue ) override;
-
     virtual void setPhysical( bool newValue ) override;
-
     virtual bool getLogical() override;
-
     virtual bool getPhysical() override;
+
+    virtual void setIntraCommsFilter( bool newValue ) override;
+    virtual void setInterCommsFilter( bool newValue ) override;
+    virtual bool getIntraCommsFilter() override;
+    virtual bool getInterCommsFilter() override;
 
     virtual void clearCommFrom() override;
     virtual void insertCommFrom( TObjectOrder value ) override;

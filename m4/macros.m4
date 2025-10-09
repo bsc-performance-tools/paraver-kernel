@@ -212,10 +212,12 @@ AC_DEFUN([AX_PROG_ENABLE_MINGW],
 
    MINGW_CPPFLAGS=""
    MINGW_LIBS=""
+   MINGW_LDFLAGS=""
 
    if test "${enable_mingw}" = "yes" ; then
       MINGW_CPPFLAGS="-Wa,-mbig-obj"
       MINGW_LIBS="-lshlwapi"
+      MINGW_LDFLAGS="-static"
    fi
 
    AM_CONDITIONAL([MINGW_ENABLED], test "${enable_mingw}" = "yes")

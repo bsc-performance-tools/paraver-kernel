@@ -134,7 +134,7 @@ void KTraceFilter::parseInHeaderAndDumpOut( TraceStream *whichFile, std::fstream
 int KTraceFilter::filter_allowed_type(  int appl, int task, int thread,
                                         unsigned long long time,
                                         unsigned long long type,
-                                        unsigned long long value )
+                                        TEventValue value )
 {
   int i, j, type_allowed;
 
@@ -317,7 +317,7 @@ void KTraceFilter::dump_buffer()
 }
 
 
-void KTraceFilter::translateEvent( unsigned long long &type, unsigned long long &value )
+void KTraceFilter::translateEvent( unsigned long long &type, TEventValue &value )
 {
   if ( translationTable.size() > 0 )
   {
@@ -339,7 +339,8 @@ void KTraceFilter::execute( char *trace_in, char *trace_out, ProgressController 
   int i, j, k, state, size;
   int recordType, appl, task, thread, cpu;
   int  appl_2, task_2, thread_2, cpu_2;
-  unsigned long long time_1, time_2, time_3, time_4, type, value;
+  unsigned long long time_1, time_2, time_3, time_4, type;
+  TEventValue value;
   char *c;
   char *pcf_file;
   unsigned long num_iters = 0;
@@ -374,6 +375,8 @@ void KTraceFilter::execute( char *trace_in, char *trace_out, ProgressController 
 
   inFile = TraceStream::openFile( trace_in );
   outfile.open( trace_out, ios_base::out );
+
+  is_zip_filter = inFile->isCompressed();
 
   initFilterProgressBar( traceIn, progress);
 
@@ -435,7 +438,11 @@ void KTraceFilter::execute( char *trace_in, char *trace_out, ProgressController 
         if ( !show_states )
           break;
 
-        prv_atoll_v( itBegin, itEnd, recordType, cpu, appl, task, thread, time_1, time_2, state );
+        if( !prv_atoll_v( itBegin, itEnd, recordType, cpu, appl, task, thread, time_1, time_2, state ) )
+        {
+          std::cerr << "Invalid record: "<<line<<std::endl;
+          break;
+        }
 
         if ( !all_states )
         {
@@ -490,7 +497,11 @@ void KTraceFilter::execute( char *trace_in, char *trace_out, ProgressController 
           break;
         }
 
-        prv_atoll_v( itBegin, itEnd, recordType, cpu, appl, task, thread, time_1 );
+        if( !prv_atoll_v( itBegin, itEnd, recordType, cpu, appl, task, thread, time_1 ) )
+        {
+          std::cerr << "Invalid record: "<<line<<std::endl;
+          break;
+        }
 
         event_record.clear();
         event_record.str( "" );
@@ -500,7 +511,12 @@ void KTraceFilter::execute( char *trace_in, char *trace_out, ProgressController 
         dump_event_buffer = false;
         print_record = false;
         
-        prv_atoll_v( itBegin, itEnd, type, value );        
+        if( !prv_atoll_v( itBegin, itEnd, type, value ) )
+        {
+          std::cerr << "Invalid event: "<<line<<std::endl;
+          break;
+        }
+
         translateEvent( type, value );
 
         if ( ( i = filter_allowed_type( appl, task, thread, time_1, type, value ) ) > 0 )
@@ -599,8 +615,13 @@ void KTraceFilter::execute( char *trace_in, char *trace_out, ProgressController 
 
         if ( exec_options->min_comm_size > 0 )
         {
-          prv_atoll_v( itBegin, itEnd, recordType, cpu,   appl,   task,   thread,   time_1, time_2,
-                                                   cpu_2, appl_2, task_2, thread_2, time_3, time_4, size );
+          if( !prv_atoll_v( itBegin, itEnd, recordType, cpu,   appl,   task,   thread,   time_1, time_2,
+                                                        cpu_2, appl_2, task_2, thread_2, time_3, time_4, size ) )
+          {
+            std::cerr << "Invalid record: "<<line<<std::endl;
+            break;
+          }
+
           if ( size < exec_options->min_comm_size )
             break;
         }

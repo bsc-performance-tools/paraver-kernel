@@ -92,7 +92,7 @@ bool WorkspaceManager::existWorkspace( std::string name, TWorkspaceSet whichSet 
       break;
 
     default:
-      throw ParaverKernelException();
+      throw ParaverKernelException( TErrorCode::  undefined  );
       break;
   }
 
@@ -121,7 +121,7 @@ vector<string> WorkspaceManager::getWorkspaces( TWorkspaceSet whichSet ) const
       break;
 
     default:
-      throw ParaverKernelException();
+      throw ParaverKernelException( TErrorCode::  undefined  );
       break;
   }
 
@@ -207,7 +207,7 @@ Workspace& WorkspaceManager::getWorkspace( std::string name, TWorkspaceSet which
       break;
 
     default:
-      throw ParaverKernelException();
+      throw ParaverKernelException( TErrorCode::  undefined  );
       break;
   }
 
@@ -254,7 +254,7 @@ void WorkspaceManager::loadXML()
     char tmpPath[PATH_MAX];
     if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)tmpPath, PATH_MAX))
     {
-        throw ParaverKernelException();
+        throw ParaverKernelException( TErrorCode::  undefined  );
     }
     CFRelease(resourcesURL);
 

@@ -49,6 +49,8 @@ namespace NoLoad
         auxMessage = whichAuxMessage;
         file = whichFile;
         line = whichLine;
+
+        initMessage();
       }
 
     protected:
