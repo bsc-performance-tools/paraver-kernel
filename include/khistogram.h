@@ -166,13 +166,6 @@ class KHistogram : public Histogram
     void setExtraControlDelta( THistogramLimit whichDelta ) override;
     void setDataMin( TSemanticValue whichMin ) override;
     void setDataMax( TSemanticValue whichMax ) override;
-    void setBurstMin( TRecordTime whichTime ) override;
-    void setBurstMax( TRecordTime whichTime ) override;
-    void setCommSizeMin( TCommSize whichSize ) override;
-    void setCommSizeMax( TCommSize whichSize ) override;
-    void setCommTagMin( TCommTag whichTag ) override;
-    void setCommTagMax( TCommTag whichTag ) override;
-
 
     bool getUseFixedDelta() const override;
     THistogramLimit getControlMin() const override;
@@ -183,12 +176,6 @@ class KHistogram : public Histogram
     THistogramLimit getExtraControlDelta() const override;
     TSemanticValue getDataMin() const override;
     TSemanticValue getDataMax() const override;
-    TRecordTime getBurstMin() const override;
-    TRecordTime getBurstMax() const override;
-    TCommSize getCommSizeMin() const override;
-    TCommSize getCommSizeMax() const override;
-    TCommTag getCommTagMin() const override;
-    TCommTag getCommTagMax() const override;
 
     bool getInclusiveEnabled() const override;
     void setInclusive( bool newValue ) override;

@@ -39,20 +39,12 @@ using namespace std;
 //-------------------------------------------------------------------------
 inline bool filterCommunication( RecordList::iterator &comm, const KHistogram &histogram )
 {
-  TCommSize size = comm->getCommSize();
-  TCommTag tag   = comm->getCommTag();
-  return size >= histogram.getCommSizeMin() && size <= histogram.getCommSizeMax() && tag >= histogram.getCommTagMin() &&
-         tag <= histogram.getCommTagMax();
+  return true; // TODO: delete this
 }
 
 inline bool filterSemanticValue( TSemanticValue value, KHistogram *histogram )
 {
   return value >= histogram->getDataMin() && value <= histogram->getDataMax();
-}
-
-inline bool filterBurstTime( TRecordTime burstTime, KHistogram *histogram )
-{
-  return burstTime >= histogram->getBurstMin() && burstTime <= histogram->getBurstMax();
 }
 
 #ifndef PARALLEL_ENABLED

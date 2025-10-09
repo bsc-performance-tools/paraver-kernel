@@ -298,37 +298,6 @@ void HistogramProxy::setDataMax( TSemanticValue whichMax )
   myHisto->setDataMax( whichMax );
 }
 
-void HistogramProxy::setBurstMin( TRecordTime whichTime )
-{
-  myHisto->setBurstMin( whichTime );
-}
-
-void HistogramProxy::setBurstMax( TRecordTime whichTime )
-{
-  myHisto->setBurstMax( whichTime );
-}
-
-void HistogramProxy::setCommSizeMin( TCommSize whichSize )
-{
-  myHisto->setCommSizeMin( whichSize );
-}
-
-void HistogramProxy::setCommSizeMax( TCommSize whichSize )
-{
-  myHisto->setCommSizeMax( whichSize );
-}
-
-void HistogramProxy::setCommTagMin( TCommTag whichTag )
-{
-  myHisto->setCommTagMin( whichTag );
-}
-
-void HistogramProxy::setCommTagMax( TCommTag whichTag )
-{
-  myHisto->setCommTagMax( whichTag );
-}
-
-
 bool HistogramProxy::getUseFixedDelta() const
 {
   return myHisto->getUseFixedDelta();
@@ -374,35 +343,6 @@ TSemanticValue HistogramProxy::getDataMax() const
   return myHisto->getDataMax();
 }
 
-TRecordTime HistogramProxy::getBurstMin() const
-{
-  return myHisto->getBurstMin();
-}
-
-TRecordTime HistogramProxy::getBurstMax() const
-{
-  return myHisto->getBurstMax();
-}
-
-TCommSize HistogramProxy::getCommSizeMin() const
-{
-  return myHisto->getCommSizeMin();
-}
-
-TCommSize HistogramProxy::getCommSizeMax() const
-{
-  return myHisto->getCommSizeMax();
-}
-
-TCommTag HistogramProxy::getCommTagMin() const
-{
-  return myHisto->getCommTagMin();
-}
-
-TCommTag HistogramProxy::getCommTagMax() const
-{
-  return myHisto->getCommTagMax();
-}
 
 bool HistogramProxy::getInclusiveEnabled() const
 {

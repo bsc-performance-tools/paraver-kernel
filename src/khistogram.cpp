@@ -253,12 +253,6 @@ KHistogram::KHistogram() : statistics( *this )
   xtraControlDelta = 1;
   dataMin          = -std::numeric_limits<TSemanticValue>::max();
   dataMax          = std::numeric_limits<TSemanticValue>::max();
-  burstMin         = -std::numeric_limits<TRecordTime>::max();
-  burstMax         = std::numeric_limits<TRecordTime>::max();
-  commSizeMin      = std::numeric_limits<TCommSize>::min();
-  commSizeMax      = std::numeric_limits<TCommSize>::max();
-  commTagMin       = std::numeric_limits<TCommTag>::min();
-  commTagMax       = std::numeric_limits<TCommTag>::max();
 
   controlOutOfLimits = false;
   xtraOutOfLimits    = false;
@@ -449,42 +443,6 @@ inline void KHistogram::setDataMax( TSemanticValue whichMax )
 }
 
 
-inline void KHistogram::setBurstMin( TRecordTime whichTime )
-{
-  burstMin = whichTime;
-}
-
-
-inline void KHistogram::setBurstMax( TRecordTime whichTime )
-{
-  burstMax = whichTime;
-}
-
-
-inline void KHistogram::setCommSizeMin( TCommSize whichSize )
-{
-  commSizeMin = whichSize;
-}
-
-
-inline void KHistogram::setCommSizeMax( TCommSize whichSize )
-{
-  commSizeMax = whichSize;
-}
-
-
-inline void KHistogram::setCommTagMin( TCommTag whichTag )
-{
-  commTagMin = whichTag;
-}
-
-
-inline void KHistogram::setCommTagMax( TCommTag whichTag )
-{
-  commTagMax = whichTag;
-}
-
-
 inline bool KHistogram::getUseFixedDelta() const
 {
   return useFixedDelta;
@@ -535,42 +493,6 @@ inline TSemanticValue KHistogram::getDataMin() const
 inline TSemanticValue KHistogram::getDataMax() const
 {
   return dataMax;
-}
-
-
-inline TRecordTime KHistogram::getBurstMin() const
-{
-  return burstMin;
-}
-
-
-inline TRecordTime KHistogram::getBurstMax() const
-{
-  return burstMax;
-}
-
-
-inline TCommSize KHistogram::getCommSizeMin() const
-{
-  return commSizeMin;
-}
-
-
-inline TCommSize KHistogram::getCommSizeMax() const
-{
-  return commSizeMax;
-}
-
-
-inline TCommTag KHistogram::getCommTagMin() const
-{
-  return commTagMin;
-}
-
-
-inline TCommTag KHistogram::getCommTagMax() const
-{
-  return commTagMax;
 }
 
 
