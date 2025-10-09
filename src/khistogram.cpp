@@ -1798,8 +1798,7 @@ KHistogram* KHistogram::clone()
 
   clonedKHistogram->rowsTranslator   = new RowsTranslator( *rowsTranslator );
   clonedKHistogram->columnTranslator = new ColumnTranslator( *columnTranslator );
-
-  if( clonedKHistogram->planeTranslator != nullptr )
+  if( planeTranslator != nullptr )
     clonedKHistogram->planeTranslator = new ColumnTranslator( *planeTranslator );
 
   if( cube != nullptr )
