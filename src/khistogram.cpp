@@ -1757,6 +1757,8 @@ KHistogram* KHistogram::clone()
 {
   KHistogram* clonedKHistogram = new KHistogram();
 
+  clonedKHistogram->myTimeUnit = getTimeUnit();
+
   clonedKHistogram->controlWindow = nullptr;
   clonedKHistogram->dataWindow    = nullptr;
   if( clonedKHistogram->xtraControlWindow != nullptr )

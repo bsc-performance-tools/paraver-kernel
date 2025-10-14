@@ -33,12 +33,14 @@ KHistogramTotals::KHistogramTotals( const KHistogramTotals& source )
 {
   columns = source.columns;
   stats = source.stats;
-
+  
+  numCells = source.numCells;
   total = source.total;
   average = source.average;
   maximum = source.maximum;
   minimum = source.minimum;
   stdev = source.stdev;
+  
 
   sort = nullptr;
   if( source.sort != nullptr )
