@@ -1112,7 +1112,7 @@ TSemanticValue LateReceiver::execute( const SemanticInfo *info )
   if( logSendTime )
     tmp = myInfo->it->getTime() - *logSendTime;
 
-  return tmp < 0.0 ? 0.0 : tmp;
+  return tmp < 0.0 ? 0.0 : info->callingInterval->getWindow()->traceUnitsToWindowUnits( tmp );
 }
 
 
@@ -1143,7 +1143,7 @@ TSemanticValue LateSender::execute( const SemanticInfo *info )
   if( logRecvTime )
     tmp = myInfo->it->getTime() - *logRecvTime;
 
-  return tmp < 0.0 ? 0.0 : tmp;
+  return tmp < 0.0 ? 0.0 : info->callingInterval->getWindow()->traceUnitsToWindowUnits( tmp );
 }
 
 
