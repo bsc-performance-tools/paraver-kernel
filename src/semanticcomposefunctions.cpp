@@ -23,18 +23,19 @@
 
 
 #include "semanticcomposefunctions.h"
+
 #include "kwindow.h"
 
-#include <cmath>
 #include <cerrno>
 #include <cfenv>
+#include <cmath>
 
 using namespace std;
 
 string ComposeAsIs::name = "As Is";
 TSemanticValue ComposeAsIs::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
   return myInfo->values[ 0 ];
 }
 
@@ -42,9 +43,9 @@ TSemanticValue ComposeAsIs::execute( const SemanticInfo *info )
 string ComposeSign::name = "Sign";
 TSemanticValue ComposeSign::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
-  if ( myInfo->values[ 0 ] != 0 )
+  if( myInfo->values[ 0 ] != 0 )
     return 1;
   return 0;
 }
@@ -53,11 +54,11 @@ TSemanticValue ComposeSign::execute( const SemanticInfo *info )
 string ComposeUnsign::name = "1-Sign";
 TSemanticValue ComposeUnsign::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   TSemanticValue tmp;
 
-  if ( myInfo->values[ 0 ] != 0 )
+  if( myInfo->values[ 0 ] != 0 )
     tmp = 1;
   else
     tmp = 0;
@@ -69,11 +70,11 @@ TSemanticValue ComposeUnsign::execute( const SemanticInfo *info )
 string ComposeMod::name = "Mod";
 TSemanticValue ComposeMod::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   TSemanticValue remainder = 0, divider;
 
-  if ( parameters[ DIVIDER ][ 0 ] != 0 )
+  if( parameters[ DIVIDER ][ 0 ] != 0 )
     divider = parameters[ DIVIDER ][ 0 ];
   else
     divider = 1;
@@ -87,11 +88,11 @@ TSemanticValue ComposeMod::execute( const SemanticInfo *info )
 string ComposeModPlus1::name = "Mod+1";
 TSemanticValue ComposeModPlus1::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   TSemanticValue remainder = 0, divider;
 
-  if ( parameters[ DIVIDER ][ 0 ] != 0 )
+  if( parameters[ DIVIDER ][ 0 ] != 0 )
     divider = parameters[ DIVIDER ][ 0 ];
   else
     divider = 1;
@@ -105,15 +106,15 @@ TSemanticValue ComposeModPlus1::execute( const SemanticInfo *info )
 string ComposeDivide::name = "Div";
 TSemanticValue ComposeDivide::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   TSemanticValue quotient = 0, divider;
 
-  if ( parameters[ DIVIDER ][ 0 ] != 0 )
+  if( parameters[ DIVIDER ][ 0 ] != 0 )
     quotient = myInfo->values[ 0 ] / parameters[ DIVIDER ][ 0 ];
   else
   {
-    divider = 1;
+    divider  = 1;
     quotient = fmod( myInfo->values[ 0 ], divider );
   }
   return quotient;
@@ -123,7 +124,7 @@ TSemanticValue ComposeDivide::execute( const SemanticInfo *info )
 string ComposeProduct::name = "Prod";
 TSemanticValue ComposeProduct::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   return myInfo->values[ 0 ] * parameters[ FACTOR ][ 0 ];
 }
@@ -132,7 +133,7 @@ TSemanticValue ComposeProduct::execute( const SemanticInfo *info )
 string ComposeAdding::name = "Add";
 TSemanticValue ComposeAdding::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   return myInfo->values[ 0 ] + parameters[ FACTOR ][ 0 ];
 }
@@ -141,7 +142,7 @@ TSemanticValue ComposeAdding::execute( const SemanticInfo *info )
 string ComposeSubstract::name = "Subs";
 TSemanticValue ComposeSubstract::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   return myInfo->values[ 0 ] - parameters[ FACTOR ][ 0 ];
 }
@@ -150,7 +151,7 @@ TSemanticValue ComposeSubstract::execute( const SemanticInfo *info )
 string ComposeComplement::name = "Complement";
 TSemanticValue ComposeComplement::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   return parameters[ MINUEND ][ 0 ] - myInfo->values[ 0 ];
 }
@@ -159,21 +160,20 @@ TSemanticValue ComposeComplement::execute( const SemanticInfo *info )
 string ComposeInverseDiv::name = "Inverse Div";
 TSemanticValue ComposeInverseDiv::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   TSemanticValue quotient = 0;
-  if ( myInfo->values[ 0 ] != 0 )
+  if( myInfo->values[ 0 ] != 0 )
     quotient = parameters[ FACTOR ][ 0 ] / myInfo->values[ 0 ];
-  
+
   return quotient;
 }
-
 
 
 string ComposeSelectRange::name = "Select Range";
 TSemanticValue ComposeSelectRange::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   TSemanticValue tmp = 0;
   TParamIndex paramSize;
@@ -184,8 +184,7 @@ TSemanticValue ComposeSelectRange::execute( const SemanticInfo *info )
 
   for( TParamIndex i = 0; i < paramSize; ++i )
   {
-    if ( myInfo->values[ 0 ] <= parameters[ MAXVALUE ][ i ] &&
-         myInfo->values[ 0 ] >= parameters[ MINVALUE ][ i ] )
+    if( myInfo->values[ 0 ] <= parameters[ MAXVALUE ][ i ] && myInfo->values[ 0 ] >= parameters[ MINVALUE ][ i ] )
     {
       tmp = myInfo->values[ 0 ];
       break;
@@ -199,7 +198,7 @@ TSemanticValue ComposeSelectRange::execute( const SemanticInfo *info )
 string ComposeSelectRangeOpen::name = "Select Range [)";
 TSemanticValue ComposeSelectRangeOpen::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   TSemanticValue tmp = 0;
   TParamIndex paramSize;
@@ -210,8 +209,7 @@ TSemanticValue ComposeSelectRangeOpen::execute( const SemanticInfo *info )
 
   for( TParamIndex i = 0; i < paramSize; ++i )
   {
-    if ( myInfo->values[ 0 ] < parameters[ MAXVALUE ][ i ] &&
-         myInfo->values[ 0 ] >= parameters[ MINVALUE ][ i ] )
+    if( myInfo->values[ 0 ] < parameters[ MAXVALUE ][ i ] && myInfo->values[ 0 ] >= parameters[ MINVALUE ][ i ] )
     {
       tmp = myInfo->values[ 0 ];
       break;
@@ -225,7 +223,7 @@ TSemanticValue ComposeSelectRangeOpen::execute( const SemanticInfo *info )
 string ComposeIsInRange::name = "Is In Range";
 TSemanticValue ComposeIsInRange::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   TSemanticValue tmp = 0;
 
@@ -237,8 +235,7 @@ TSemanticValue ComposeIsInRange::execute( const SemanticInfo *info )
 
   for( TParamIndex i = 0; i < paramSize; ++i )
   {
-    if ( myInfo->values[ 0 ] <= parameters[ MAXVALUE ][ i ] &&
-         myInfo->values[ 0 ] >= parameters[ MINVALUE ][ i ] )
+    if( myInfo->values[ 0 ] <= parameters[ MAXVALUE ][ i ] && myInfo->values[ 0 ] >= parameters[ MINVALUE ][ i ] )
     {
       tmp = 1;
       break;
@@ -252,7 +249,7 @@ TSemanticValue ComposeIsInRange::execute( const SemanticInfo *info )
 string ComposeIsInRangeOpen::name = "Is In Range [)";
 TSemanticValue ComposeIsInRangeOpen::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   TSemanticValue tmp = 0;
   TParamIndex paramSize;
@@ -263,8 +260,7 @@ TSemanticValue ComposeIsInRangeOpen::execute( const SemanticInfo *info )
 
   for( TParamIndex i = 0; i < paramSize; ++i )
   {
-    if ( myInfo->values[ 0 ] < parameters[ MAXVALUE ][ i ] &&
-         myInfo->values[ 0 ] >= parameters[ MINVALUE ][ i ] )
+    if( myInfo->values[ 0 ] < parameters[ MAXVALUE ][ i ] && myInfo->values[ 0 ] >= parameters[ MINVALUE ][ i ] )
     {
       tmp = 1;
       break;
@@ -278,13 +274,13 @@ TSemanticValue ComposeIsInRangeOpen::execute( const SemanticInfo *info )
 string ComposeIsEqual::name = "Is Equal";
 TSemanticValue ComposeIsEqual::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   TSemanticValue tmp = 0;
 
-  for ( TParamIndex i = 0; i < parameters[ VALUES ].size(); ++i )
+  for( TParamIndex i = 0; i < parameters[ VALUES ].size(); ++i )
   {
-    if ( myInfo->values[ 0 ] == parameters[ VALUES ][ i ] )
+    if( myInfo->values[ 0 ] == parameters[ VALUES ][ i ] )
     {
       tmp = myInfo->values[ 0 ];
       break;
@@ -298,13 +294,13 @@ TSemanticValue ComposeIsEqual::execute( const SemanticInfo *info )
 string ComposeIsEqualSign::name = "Is Equal (Sign)";
 TSemanticValue ComposeIsEqualSign::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   TSemanticValue tmp = 0;
 
-  for ( TParamIndex i = 0; i < parameters[ VALUES ].size(); ++i )
+  for( TParamIndex i = 0; i < parameters[ VALUES ].size(); ++i )
   {
-    if ( myInfo->values[ 0 ] == parameters[ VALUES ][ i ] )
+    if( myInfo->values[ 0 ] == parameters[ VALUES ][ i ] )
     {
       tmp = 1;
       break;
@@ -318,7 +314,7 @@ TSemanticValue ComposeIsEqualSign::execute( const SemanticInfo *info )
 string ComposeFloor::name = "Floor";
 TSemanticValue ComposeFloor::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
   return floor( myInfo->values[ 0 ] );
 }
 
@@ -326,24 +322,24 @@ TSemanticValue ComposeFloor::execute( const SemanticInfo *info )
 string ComposeCeil::name = "Ceil";
 TSemanticValue ComposeCeil::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
   return ceil( myInfo->values[ 0 ] );
 }
 
 
 #ifdef _WIN32
-inline double rint(double nr)
+inline double rint( double nr )
 {
-  double f = floor(nr);
-  double c = ceil(nr);
-  return (((c-nr) >= (nr-f)) ? f :c);
+  double f = floor( nr );
+  double c = ceil( nr );
+  return ( ( ( c - nr ) >= ( nr - f ) ) ? f : c );
 }
 #endif
 
 string ComposeRound::name = "Round";
 TSemanticValue ComposeRound::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
   return rint( myInfo->values[ 0 ] );
 }
 
@@ -351,7 +347,7 @@ TSemanticValue ComposeRound::execute( const SemanticInfo *info )
 string ComposeAbs::name = "Abs";
 TSemanticValue ComposeAbs::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
   return abs( myInfo->values[ 0 ] );
 }
 
@@ -365,22 +361,22 @@ void ComposeStackedValue::init( KTimeline *whichWindow )
 string ComposeStackedValue::name = "Stacked Val";
 TSemanticValue ComposeStackedValue::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
 
   if( myStack.find( tmpOrder ) == myStack.end() )
-    myStack[ tmpOrder ] = std::vector<TSemanticValue>{};
+    myStack[ tmpOrder ] = std::vector< TSemanticValue >{};
 
-  if ( myInfo->values[ 0 ] != 0 )
+  if( myInfo->values[ 0 ] != 0 )
     myStack[ tmpOrder ].push_back( myInfo->values[ 0 ] );
   else
   {
-    if ( !myStack[ tmpOrder ].empty() )
+    if( !myStack[ tmpOrder ].empty() )
       myStack[ tmpOrder ].pop_back();
   }
 
-  if ( myStack[ tmpOrder ].empty() )
+  if( myStack[ tmpOrder ].empty() )
     return 0;
 
   return myStack[ tmpOrder ].back();
@@ -396,26 +392,34 @@ void ComposeInStackedValue::init( KTimeline *whichWindow )
 string ComposeInStackedValue::name = "In Stacked Val";
 TSemanticValue ComposeInStackedValue::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
 
   if( myStack.find( tmpOrder ) == myStack.end() )
-    myStack[ tmpOrder ] = std::vector<TSemanticValue>{};
+    myStack[ tmpOrder ] = std::vector< TSemanticValue >{};
 
-  if ( myInfo->values[ 0 ] != 0 )
+  if( myInfo->values[ 0 ] != 0 )
     myStack[ tmpOrder ].push_back( myInfo->values[ 0 ] );
   else
   {
-    if ( !myStack[ tmpOrder ].empty() )
+    if( !myStack[ tmpOrder ].empty() )
       myStack[ tmpOrder ].pop_back();
   }
 
-  if ( myStack[ tmpOrder ].empty() )
-    return 0;
+  if( myStack[ tmpOrder ].empty() )
+    return 0.0;
 
-  return myStack[ tmpOrder ].back() == parameters[ VALUE ][ 0 ] ?
-         myStack[ tmpOrder ].back() : 0;
+  if( parameters[ TOP_OR_ALL ][ 0 ] == 0.0 ) // Only look for the value on top of stack
+    return myStack[ tmpOrder ].back() == parameters[ VALUE ][ 0 ] ? myStack[ tmpOrder ].back() : 0;
+  else if( parameters[ TOP_OR_ALL ][ 0 ] == 1.0 ) // Look for the value in all stack levels
+    return std::find( myStack[ tmpOrder ].begin(), myStack[ tmpOrder ].end(), parameters[ VALUE ][ 0 ] ) != myStack[ tmpOrder ].end()
+             ? parameters[ VALUE ][ 0 ]
+             : 0;
+
+  throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+
+  return 0.0;
 }
 
 
@@ -428,14 +432,14 @@ void ComposeNestingLevel::init( KTimeline *whichWindow )
 string ComposeNestingLevel::name = "Nesting level";
 TSemanticValue ComposeNestingLevel::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
 
-  if ( myStack.find( tmpOrder ) == myStack.end() )
+  if( myStack.find( tmpOrder ) == myStack.end() )
     myStack[ tmpOrder ] = 0;
 
-  if ( myInfo->values[ 0 ] != 0 )
+  if( myInfo->values[ 0 ] != 0 )
     ++myStack[ tmpOrder ];
   else if( myStack[ tmpOrder ] > 0 )
     --myStack[ tmpOrder ];
@@ -453,24 +457,24 @@ void ComposeLRUDepth::init( KTimeline *whichWindow )
 string ComposeLRUDepth::name = "LRU Depth";
 TSemanticValue ComposeLRUDepth::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   if( myInfo->values[ 0 ] == 0.0 )
     return 0.0;
 
   TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
-  size_t stackSize = parameters[ STACK_SIZE ][ 0 ];
+  size_t stackSize      = parameters[ STACK_SIZE ][ 0 ];
 
   if( LRUStack.find( tmpOrder ) == LRUStack.end() )
-    LRUStack[ tmpOrder ] = std::list<TSemanticValue>{};
+    LRUStack[ tmpOrder ] = std::list< TSemanticValue >{};
 
   unsigned int depth = 1;
-  list<TSemanticValue>::iterator it;
+  list< TSemanticValue >::iterator it;
   for( it = LRUStack[ tmpOrder ].begin(); it != LRUStack[ tmpOrder ].end(); ++it )
   {
     if( *it == myInfo->values[ 0 ] )
       break;
-      
+
     ++depth;
   }
 
@@ -494,17 +498,16 @@ TSemanticValue ComposeLRUDepth::execute( const SemanticInfo *info )
 
 void ComposeEnumerate::init( KTimeline *whichWindow )
 {
-
 }
 
 
 string ComposeEnumerate::name = "Enumerate";
 TSemanticValue ComposeEnumerate::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   TObjectOrder newInfoVal = myInfo->callingInterval->getValue();
-  if ( myInfo->values[ 0 ] != 0 )
+  if( myInfo->values[ 0 ] != 0 )
     return ++newInfoVal;
 
   return newInfoVal;
@@ -518,12 +521,10 @@ void ComposeAccumulate::init( KTimeline *whichWindow )
 string ComposeAccumulate::name = "Accumulate";
 TSemanticValue ComposeAccumulate::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   return myInfo->callingInterval->getValue() + myInfo->values[ 0 ];
 }
-
-
 
 
 void ComposeDelta::init( KTimeline *whichWindow )
@@ -535,7 +536,7 @@ void ComposeDelta::init( KTimeline *whichWindow )
 string ComposeDelta::name = "Delta";
 TSemanticValue ComposeDelta::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
   TSemanticValue result = 0.0;
@@ -543,7 +544,7 @@ TSemanticValue ComposeDelta::execute( const SemanticInfo *info )
   if( semPrevValue.find( tmpOrder ) == semPrevValue.end() )
     semPrevValue[ tmpOrder ] = 0;
 
-  if ( myInfo->values[ 0 ] != semPrevValue[ tmpOrder ] )
+  if( myInfo->values[ 0 ] != semPrevValue[ tmpOrder ] )
     result = myInfo->values[ 0 ] - semPrevValue[ tmpOrder ];
 
   semPrevValue[ tmpOrder ] = myInfo->values[ 0 ];
@@ -555,10 +556,9 @@ TSemanticValue ComposeDelta::execute( const SemanticInfo *info )
 string ComposeBurstTime::name = "Burst Time";
 TSemanticValue ComposeBurstTime::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
-  TSemanticValue result = myInfo->callingInterval->getEnd()->getTime() -
-                          myInfo->callingInterval->getBegin()->getTime();
-  result = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( result );
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
+  TSemanticValue result          = myInfo->callingInterval->getEnd()->getTime() - myInfo->callingInterval->getBegin()->getTime();
+  result                         = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( result );
   return result;
 }
 
@@ -566,22 +566,21 @@ TSemanticValue ComposeBurstTime::execute( const SemanticInfo *info )
 string ComposeDivideByBurstTime::name = "Divide by Burst Time";
 TSemanticValue ComposeDivideByBurstTime::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
-  TSemanticValue duration = myInfo->callingInterval->getEnd()->getTime() -
-                            myInfo->callingInterval->getBegin()->getTime();
-  if ( duration == 0.0 )
+  TSemanticValue duration = myInfo->callingInterval->getEnd()->getTime() - myInfo->callingInterval->getBegin()->getTime();
+  if( duration == 0.0 )
     return 0.0;
 
   duration = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( duration );
-  return myInfo->values[0] / duration;
+  return myInfo->values[ 0 ] / duration;
 }
 
 
 string ComposeJoinBursts::name = "Join Bursts";
 TSemanticValue ComposeJoinBursts::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   return myInfo->values[ 0 ];
 }
@@ -590,7 +589,7 @@ TSemanticValue ComposeJoinBursts::execute( const SemanticInfo *info )
 string ComposeTimer::name = "Timer";
 TSemanticValue ComposeTimer::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   return myInfo->values[ 0 ];
 }
@@ -599,9 +598,9 @@ TSemanticValue ComposeTimer::execute( const SemanticInfo *info )
 string ComposeBeginTime::name = "Begin Time";
 TSemanticValue ComposeBeginTime::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
-  TSemanticValue result = myInfo->callingInterval->getBegin()->getTime();
-  result = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( result );
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
+  TSemanticValue result          = myInfo->callingInterval->getBegin()->getTime();
+  result                         = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( result );
   return result;
 }
 
@@ -609,9 +608,9 @@ TSemanticValue ComposeBeginTime::execute( const SemanticInfo *info )
 string ComposeEndTime::name = "End Time";
 TSemanticValue ComposeEndTime::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
-  TSemanticValue result = myInfo->callingInterval->getEnd()->getTime();
-  result = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( result );
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
+  TSemanticValue result          = myInfo->callingInterval->getEnd()->getTime();
+  result                         = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( result );
   return result;
 }
 
@@ -619,12 +618,12 @@ TSemanticValue ComposeEndTime::execute( const SemanticInfo *info )
 string ComposeTranslate::name = "Translate";
 TSemanticValue ComposeTranslate::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   TParamValue &myList = parameters[ TRANSLATION_LIST ];
-  for ( PRV_UINT16 i = 0; i < myList.size(); i = i + 2 )
+  for( PRV_UINT16 i = 0; i < myList.size(); i = i + 2 )
   {
-    if ( myList[ i ] == myInfo->values[ 0 ] )
+    if( myList[ i ] == myInfo->values[ 0 ] )
     {
       return myList[ i + 1 ];
     }
@@ -637,7 +636,7 @@ TSemanticValue ComposeTranslate::execute( const SemanticInfo *info )
 string ComposeSine::name = "sin";
 TSemanticValue ComposeSine::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
   return sin( myInfo->values[ 0 ] );
 }
 
@@ -645,7 +644,7 @@ TSemanticValue ComposeSine::execute( const SemanticInfo *info )
 string ComposeCosine::name = "cos";
 TSemanticValue ComposeCosine::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
   return cos( myInfo->values[ 0 ] );
 }
 
@@ -653,7 +652,7 @@ TSemanticValue ComposeCosine::execute( const SemanticInfo *info )
 string ComposeSqrtAbs::name = "sqrt (abs)";
 TSemanticValue ComposeSqrtAbs::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
   return sqrt( fabs( myInfo->values[ 0 ] ) );
 }
 
@@ -661,7 +660,7 @@ TSemanticValue ComposeSqrtAbs::execute( const SemanticInfo *info )
 string ComposeArcTan::name = "arc tan";
 TSemanticValue ComposeArcTan::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
   return atan( myInfo->values[ 0 ] );
 }
 
@@ -669,9 +668,9 @@ TSemanticValue ComposeArcTan::execute( const SemanticInfo *info )
 string ComposeLogN::name = "log N";
 TSemanticValue ComposeLogN::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
-  TSemanticValue logVal = log( myInfo->values[ 0 ] ) / log( parameters[ BASE ][ 0 ] );
-  if ( myInfo->values[ 0 ] <= 0 || logVal < 0.0 )
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
+  TSemanticValue logVal          = log( myInfo->values[ 0 ] ) / log( parameters[ BASE ][ 0 ] );
+  if( myInfo->values[ 0 ] <= 0 || logVal < 0.0 )
   {
     return 0;
   }
@@ -682,15 +681,15 @@ TSemanticValue ComposeLogN::execute( const SemanticInfo *info )
 string ComposeExponential::name = "exp";
 TSemanticValue ComposeExponential::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   errno = 0;
   std::feclearexcept( FE_ALL_EXCEPT );
 
   TSemanticValue expVal = pow( parameters[ BASE ][ 0 ], myInfo->values[ 0 ] );
-  
-  if ( errno == EDOM || std::fetestexcept( FE_INVALID ) || std::fetestexcept( FE_DIVBYZERO ) )
+
+  if( errno == EDOM || std::fetestexcept( FE_INVALID ) || std::fetestexcept( FE_DIVBYZERO ) )
     expVal = 0.0;
-  
+
   return expVal;
 }

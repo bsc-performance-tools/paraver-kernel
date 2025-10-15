@@ -25,14 +25,14 @@
 #pragma once
 
 
+#include "semanticcompose.h"
+
 #include <cmath>
 #include <list>
 #include <stack>
 #include <unordered_map>
 
-#include "semanticcompose.h"
-
-class ComposeAsIs: public SemanticCompose
+class ComposeAsIs : public SemanticCompose
 {
   public:
     typedef enum
@@ -46,7 +46,8 @@ class ComposeAsIs: public SemanticCompose
     }
 
     ~ComposeAsIs()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -56,7 +57,8 @@ class ComposeAsIs: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -80,23 +82,24 @@ class ComposeAsIs: public SemanticCompose
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
+
   private:
     static const bool initFromBegin = false;
     static std::string name;
 };
 
 
-class ComposeSign: public SemanticCompose
+class ComposeSign : public SemanticCompose
 {
   public:
     typedef enum
@@ -110,7 +113,8 @@ class ComposeSign: public SemanticCompose
     }
 
     ~ComposeSign()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -120,7 +124,8 @@ class ComposeSign: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -139,13 +144,13 @@ class ComposeSign: public SemanticCompose
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
@@ -153,11 +158,10 @@ class ComposeSign: public SemanticCompose
   private:
     static const bool initFromBegin = false;
     static std::string name;
-
 };
 
 
-class ComposeUnsign: public SemanticCompose
+class ComposeUnsign : public SemanticCompose
 {
   public:
     typedef enum
@@ -171,7 +175,8 @@ class ComposeUnsign: public SemanticCompose
     }
 
     ~ComposeUnsign()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -181,7 +186,8 @@ class ComposeUnsign: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -200,13 +206,13 @@ class ComposeUnsign: public SemanticCompose
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
@@ -214,11 +220,10 @@ class ComposeUnsign: public SemanticCompose
   private:
     static const bool initFromBegin = false;
     static std::string name;
-
 };
 
 
-class ComposeMod: public SemanticCompose
+class ComposeMod : public SemanticCompose
 {
   public:
     typedef enum
@@ -233,7 +238,8 @@ class ComposeMod: public SemanticCompose
     }
 
     ~ComposeMod()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -243,7 +249,8 @@ class ComposeMod: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -264,15 +271,15 @@ class ComposeMod: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      else if ( whichParam == DIVIDER )
+      else if( whichParam == DIVIDER )
         tmp.push_back( 1 );
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Divider";
     }
@@ -280,11 +287,10 @@ class ComposeMod: public SemanticCompose
   private:
     static const bool initFromBegin = false;
     static std::string name;
-
 };
 
 
-class ComposeModPlus1: public SemanticCompose
+class ComposeModPlus1 : public SemanticCompose
 {
   public:
     typedef enum
@@ -299,7 +305,8 @@ class ComposeModPlus1: public SemanticCompose
     }
 
     ~ComposeModPlus1()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -309,7 +316,8 @@ class ComposeModPlus1: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -331,15 +339,15 @@ class ComposeModPlus1: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      else if ( whichParam == DIVIDER )
+      else if( whichParam == DIVIDER )
         tmp.push_back( 1 );
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Divider";
     }
@@ -347,11 +355,10 @@ class ComposeModPlus1: public SemanticCompose
   private:
     static const bool initFromBegin = false;
     static std::string name;
-
 };
 
 
-class ComposeDivide: public SemanticCompose
+class ComposeDivide : public SemanticCompose
 {
   public:
     typedef enum
@@ -366,7 +373,8 @@ class ComposeDivide: public SemanticCompose
     }
 
     ~ComposeDivide()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -376,7 +384,8 @@ class ComposeDivide: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -397,15 +406,15 @@ class ComposeDivide: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      else if ( whichParam == DIVIDER )
+      else if( whichParam == DIVIDER )
         tmp.push_back( 1 );
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Divider";
     }
@@ -413,11 +422,10 @@ class ComposeDivide: public SemanticCompose
   private:
     static const bool initFromBegin = false;
     static std::string name;
-
 };
 
 
-class ComposeProduct: public SemanticCompose
+class ComposeProduct : public SemanticCompose
 {
   public:
     typedef enum
@@ -432,7 +440,8 @@ class ComposeProduct: public SemanticCompose
     }
 
     ~ComposeProduct()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -442,7 +451,8 @@ class ComposeProduct: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -464,15 +474,15 @@ class ComposeProduct: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      else if ( whichParam == FACTOR )
+      else if( whichParam == FACTOR )
         tmp.push_back( 0 );
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Factor";
     }
@@ -480,11 +490,10 @@ class ComposeProduct: public SemanticCompose
   private:
     static const bool initFromBegin = false;
     static std::string name;
-
 };
 
 
-class ComposeAdding: public SemanticCompose
+class ComposeAdding : public SemanticCompose
 {
   public:
     typedef enum
@@ -499,7 +508,8 @@ class ComposeAdding: public SemanticCompose
     }
 
     ~ComposeAdding()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -509,7 +519,8 @@ class ComposeAdding: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -530,15 +541,15 @@ class ComposeAdding: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      else if ( whichParam == FACTOR )
+      else if( whichParam == FACTOR )
         tmp.push_back( 0 );
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Value";
     }
@@ -546,11 +557,10 @@ class ComposeAdding: public SemanticCompose
   private:
     static const bool initFromBegin = false;
     static std::string name;
-
 };
 
 
-class ComposeSubstract: public SemanticCompose
+class ComposeSubstract : public SemanticCompose
 {
   public:
     typedef enum
@@ -565,7 +575,8 @@ class ComposeSubstract: public SemanticCompose
     }
 
     ~ComposeSubstract()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -575,7 +586,8 @@ class ComposeSubstract: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -597,15 +609,15 @@ class ComposeSubstract: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      else if ( whichParam == FACTOR )
+      else if( whichParam == FACTOR )
         tmp.push_back( 0 );
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Value";
     }
@@ -613,11 +625,10 @@ class ComposeSubstract: public SemanticCompose
   private:
     static const bool initFromBegin = false;
     static std::string name;
-
 };
 
 
-class ComposeComplement: public SemanticCompose
+class ComposeComplement : public SemanticCompose
 {
   public:
     typedef enum
@@ -632,7 +643,8 @@ class ComposeComplement: public SemanticCompose
     }
 
     ~ComposeComplement()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -642,7 +654,8 @@ class ComposeComplement: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -664,15 +677,15 @@ class ComposeComplement: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      else if ( whichParam == MINUEND )
+      else if( whichParam == MINUEND )
         tmp.push_back( 0 );
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Minuend";
     }
@@ -680,12 +693,10 @@ class ComposeComplement: public SemanticCompose
   private:
     static const bool initFromBegin = false;
     static std::string name;
-
 };
 
 
-
-class ComposeInverseDiv: public SemanticCompose
+class ComposeInverseDiv : public SemanticCompose
 {
   public:
     typedef enum
@@ -700,7 +711,8 @@ class ComposeInverseDiv: public SemanticCompose
     }
 
     ~ComposeInverseDiv()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -710,7 +722,8 @@ class ComposeInverseDiv: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -732,15 +745,15 @@ class ComposeInverseDiv: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      else if ( whichParam == FACTOR )
+      else if( whichParam == FACTOR )
         tmp.push_back( 1 );
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Factor";
     }
@@ -748,11 +761,10 @@ class ComposeInverseDiv: public SemanticCompose
   private:
     static const bool initFromBegin = false;
     static std::string name;
-
 };
 
 
-class ComposeSelectRange: public SemanticCompose
+class ComposeSelectRange : public SemanticCompose
 {
   public:
     typedef enum
@@ -768,7 +780,8 @@ class ComposeSelectRange: public SemanticCompose
     }
 
     ~ComposeSelectRange()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -778,7 +791,8 @@ class ComposeSelectRange: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -804,18 +818,18 @@ class ComposeSelectRange: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      else if ( whichParam == MAXVALUE )
+      else if( whichParam == MAXVALUE )
         tmp.push_back( 1 );
-      else if ( whichParam == MINVALUE )
+      else if( whichParam == MINVALUE )
         tmp.push_back( 0 );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       if( whichParam == MAXVALUE )
         return "Max value";
@@ -830,7 +844,7 @@ class ComposeSelectRange: public SemanticCompose
 };
 
 
-class ComposeSelectRangeOpen: public SemanticCompose
+class ComposeSelectRangeOpen : public SemanticCompose
 {
   public:
     typedef enum
@@ -846,7 +860,8 @@ class ComposeSelectRangeOpen: public SemanticCompose
     }
 
     ~ComposeSelectRangeOpen()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -856,7 +871,8 @@ class ComposeSelectRangeOpen: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -882,18 +898,18 @@ class ComposeSelectRangeOpen: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      else if ( whichParam == MAXVALUE )
+      else if( whichParam == MAXVALUE )
         tmp.push_back( 1 );
-      else if ( whichParam == MINVALUE )
+      else if( whichParam == MINVALUE )
         tmp.push_back( 0 );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       if( whichParam == MAXVALUE )
         return "Max value";
@@ -908,7 +924,7 @@ class ComposeSelectRangeOpen: public SemanticCompose
 };
 
 
-class ComposeIsInRange: public SemanticCompose
+class ComposeIsInRange : public SemanticCompose
 {
   public:
     typedef enum
@@ -924,7 +940,8 @@ class ComposeIsInRange: public SemanticCompose
     }
 
     ~ComposeIsInRange()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -934,7 +951,8 @@ class ComposeIsInRange: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -956,18 +974,18 @@ class ComposeIsInRange: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      else if ( whichParam == MAXVALUE )
+      else if( whichParam == MAXVALUE )
         tmp.push_back( 1 );
-      else if ( whichParam == MINVALUE )
+      else if( whichParam == MINVALUE )
         tmp.push_back( 0 );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       if( whichParam == MAXVALUE )
         return "Max value";
@@ -979,11 +997,10 @@ class ComposeIsInRange: public SemanticCompose
   private:
     static const bool initFromBegin = false;
     static std::string name;
-
 };
 
 
-class ComposeIsInRangeOpen: public SemanticCompose
+class ComposeIsInRangeOpen : public SemanticCompose
 {
   public:
     typedef enum
@@ -999,7 +1016,8 @@ class ComposeIsInRangeOpen: public SemanticCompose
     }
 
     ~ComposeIsInRangeOpen()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -1009,7 +1027,8 @@ class ComposeIsInRangeOpen: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -1031,18 +1050,18 @@ class ComposeIsInRangeOpen: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      else if ( whichParam == MAXVALUE )
+      else if( whichParam == MAXVALUE )
         tmp.push_back( 1 );
-      else if ( whichParam == MINVALUE )
+      else if( whichParam == MINVALUE )
         tmp.push_back( 0 );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       if( whichParam == MAXVALUE )
         return "Max value";
@@ -1057,7 +1076,7 @@ class ComposeIsInRangeOpen: public SemanticCompose
 };
 
 
-class ComposeIsEqual: public SemanticCompose
+class ComposeIsEqual : public SemanticCompose
 {
   public:
     typedef enum
@@ -1072,7 +1091,8 @@ class ComposeIsEqual: public SemanticCompose
     }
 
     ~ComposeIsEqual()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -1082,7 +1102,8 @@ class ComposeIsEqual: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -1108,16 +1129,16 @@ class ComposeIsEqual: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      else if ( whichParam == VALUES )
+      else if( whichParam == VALUES )
         tmp.push_back( 1 );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Values";
     }
@@ -1125,11 +1146,10 @@ class ComposeIsEqual: public SemanticCompose
   private:
     static const bool initFromBegin = false;
     static std::string name;
-
 };
 
 
-class ComposeIsEqualSign: public SemanticCompose
+class ComposeIsEqualSign : public SemanticCompose
 {
   public:
     typedef enum
@@ -1144,7 +1164,8 @@ class ComposeIsEqualSign: public SemanticCompose
     }
 
     ~ComposeIsEqualSign()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -1154,7 +1175,8 @@ class ComposeIsEqualSign: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -1177,9 +1199,9 @@ class ComposeIsEqualSign: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      else if ( whichParam == VALUES )
+      else if( whichParam == VALUES )
         tmp.push_back( 1 );
 
       return tmp;
@@ -1187,7 +1209,7 @@ class ComposeIsEqualSign: public SemanticCompose
 
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Values";
     }
@@ -1195,11 +1217,10 @@ class ComposeIsEqualSign: public SemanticCompose
   private:
     static const bool initFromBegin = false;
     static std::string name;
-
 };
 
 
-class ComposeFloor: public SemanticCompose
+class ComposeFloor : public SemanticCompose
 {
   public:
     typedef enum
@@ -1213,7 +1234,8 @@ class ComposeFloor: public SemanticCompose
     }
 
     ~ComposeFloor()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -1223,7 +1245,8 @@ class ComposeFloor: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -1247,23 +1270,24 @@ class ComposeFloor: public SemanticCompose
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
+
   private:
     static const bool initFromBegin = false;
     static std::string name;
 };
 
 
-class ComposeCeil: public SemanticCompose
+class ComposeCeil : public SemanticCompose
 {
   public:
     typedef enum
@@ -1277,7 +1301,8 @@ class ComposeCeil: public SemanticCompose
     }
 
     ~ComposeCeil()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -1287,7 +1312,8 @@ class ComposeCeil: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -1311,23 +1337,24 @@ class ComposeCeil: public SemanticCompose
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
+
   private:
     static const bool initFromBegin = false;
     static std::string name;
 };
 
 
-class ComposeRound: public SemanticCompose
+class ComposeRound : public SemanticCompose
 {
   public:
     typedef enum
@@ -1341,7 +1368,8 @@ class ComposeRound: public SemanticCompose
     }
 
     ~ComposeRound()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -1351,7 +1379,8 @@ class ComposeRound: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -1375,23 +1404,24 @@ class ComposeRound: public SemanticCompose
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
+
   private:
     static const bool initFromBegin = false;
     static std::string name;
 };
 
 
-class ComposeAbs: public SemanticCompose
+class ComposeAbs : public SemanticCompose
 {
   public:
     typedef enum
@@ -1405,7 +1435,8 @@ class ComposeAbs: public SemanticCompose
     }
 
     ~ComposeAbs()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -1415,7 +1446,8 @@ class ComposeAbs: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -1439,23 +1471,24 @@ class ComposeAbs: public SemanticCompose
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
+
   private:
     static const bool initFromBegin = false;
     static std::string name;
 };
 
 
-class ComposeStackedValue: public SemanticCompose
+class ComposeStackedValue : public SemanticCompose
 {
   public:
     typedef enum
@@ -1469,7 +1502,8 @@ class ComposeStackedValue: public SemanticCompose
     }
 
     ~ComposeStackedValue()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -1504,19 +1538,19 @@ class ComposeStackedValue: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
-    virtual std::unordered_map<TObjectOrder, std::vector<TSemanticValue> > *getStack() override
+    virtual std::unordered_map< TObjectOrder, std::vector< TSemanticValue > > *getStack() override
     {
       return &myStack;
     }
@@ -1525,16 +1559,17 @@ class ComposeStackedValue: public SemanticCompose
     static const bool initFromBegin = true;
     static std::string name;
 
-    std::unordered_map<TObjectOrder, std::vector<TSemanticValue> > myStack;
+    std::unordered_map< TObjectOrder, std::vector< TSemanticValue > > myStack;
 };
 
 
-class ComposeInStackedValue: public SemanticCompose
+class ComposeInStackedValue : public SemanticCompose
 {
   public:
     typedef enum
     {
       VALUE = 0,
+      TOP_OR_ALL,
       MAXPARAM
     } TParam;
 
@@ -1544,7 +1579,8 @@ class ComposeInStackedValue: public SemanticCompose
     }
 
     ~ComposeInStackedValue()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -1571,25 +1607,50 @@ class ComposeInStackedValue: public SemanticCompose
     {
       return initFromBegin;
     }
+
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
+      switch( whichParam )
+      {
+        case VALUE:
+          tmp.push_back( 1.0 );
+          break;
 
-      if ( whichParam >= getMaxParam() )
-        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      else if ( whichParam == VALUE )
-        tmp.push_back( 1 );
+        case TOP_OR_ALL:
+          tmp.push_back( 1.0 );
+          break;
+
+        default:
+          throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+          break;
+      }
 
       return tmp;
     }
+
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
-        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return "Value";
+      std::string_view retStr;
+      switch( whichParam )
+      {
+        case VALUE:
+          retStr = "Value";
+          break;
+
+        case TOP_OR_ALL:
+          retStr = "Top(0) / All(1)";
+          break;
+
+        default:
+          throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+          break;
+      }
+
+      return retStr.data();
     }
 
-    virtual std::unordered_map<TObjectOrder, std::vector<TSemanticValue> > *getStack() override
+    virtual std::unordered_map< TObjectOrder, std::vector< TSemanticValue > > *getStack() override
     {
       return &myStack;
     }
@@ -1598,11 +1659,11 @@ class ComposeInStackedValue: public SemanticCompose
     static const bool initFromBegin = true;
     static std::string name;
 
-    std::unordered_map<TObjectOrder, std::vector<TSemanticValue> > myStack;
+    std::unordered_map< TObjectOrder, std::vector< TSemanticValue > > myStack;
 };
 
 
-class ComposeNestingLevel: public SemanticCompose
+class ComposeNestingLevel : public SemanticCompose
 {
   public:
     typedef enum
@@ -1616,7 +1677,8 @@ class ComposeNestingLevel: public SemanticCompose
     }
 
     ~ComposeNestingLevel()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -1647,14 +1709,14 @@ class ComposeNestingLevel: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
@@ -1663,10 +1725,10 @@ class ComposeNestingLevel: public SemanticCompose
     static const bool initFromBegin = true;
     static std::string name;
 
-    std::unordered_map<TObjectOrder, TSemanticValue> myStack;
+    std::unordered_map< TObjectOrder, TSemanticValue > myStack;
 };
 
-class ComposeLRUDepth: public SemanticCompose
+class ComposeLRUDepth : public SemanticCompose
 {
   public:
     typedef enum
@@ -1681,7 +1743,8 @@ class ComposeLRUDepth: public SemanticCompose
     }
 
     ~ComposeLRUDepth()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -1713,9 +1776,9 @@ class ComposeLRUDepth: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      else if ( whichParam == STACK_SIZE )
+      else if( whichParam == STACK_SIZE )
         tmp.push_back( 256 );
 
       return tmp;
@@ -1723,7 +1786,7 @@ class ComposeLRUDepth: public SemanticCompose
 
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Stack size";
     }
@@ -1732,11 +1795,11 @@ class ComposeLRUDepth: public SemanticCompose
     static const bool initFromBegin = true;
     static std::string name;
 
-    std::unordered_map<TObjectOrder, std::list< TSemanticValue > > LRUStack;
+    std::unordered_map< TObjectOrder, std::list< TSemanticValue > > LRUStack;
 };
 
 
-class ComposeEnumerate: public SemanticCompose
+class ComposeEnumerate : public SemanticCompose
 {
   public:
     typedef enum
@@ -1750,7 +1813,8 @@ class ComposeEnumerate: public SemanticCompose
     }
 
     ~ComposeEnumerate()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -1781,14 +1845,14 @@ class ComposeEnumerate: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
@@ -1799,8 +1863,7 @@ class ComposeEnumerate: public SemanticCompose
 };
 
 
-
-class ComposeAccumulate: public SemanticCompose
+class ComposeAccumulate : public SemanticCompose
 {
   public:
     typedef enum
@@ -1814,7 +1877,8 @@ class ComposeAccumulate: public SemanticCompose
     }
 
     ~ComposeAccumulate()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -1845,14 +1909,14 @@ class ComposeAccumulate: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
@@ -1863,7 +1927,7 @@ class ComposeAccumulate: public SemanticCompose
 };
 
 
-class ComposeDelta: public SemanticCompose
+class ComposeDelta : public SemanticCompose
 {
   public:
     typedef enum
@@ -1877,7 +1941,8 @@ class ComposeDelta: public SemanticCompose
     }
 
     ~ComposeDelta()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -1907,14 +1972,14 @@ class ComposeDelta: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
@@ -1923,11 +1988,11 @@ class ComposeDelta: public SemanticCompose
     static const bool initFromBegin = true;
     static std::string name;
 
-    std::unordered_map<TObjectOrder, TSemanticValue> semPrevValue;
+    std::unordered_map< TObjectOrder, TSemanticValue > semPrevValue;
 };
 
 
-class ComposeBurstTime: public SemanticCompose
+class ComposeBurstTime : public SemanticCompose
 {
   public:
     typedef enum
@@ -1941,7 +2006,8 @@ class ComposeBurstTime: public SemanticCompose
     }
 
     ~ComposeBurstTime()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -1951,7 +2017,8 @@ class ComposeBurstTime: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -1977,14 +2044,14 @@ class ComposeBurstTime: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
@@ -1992,10 +2059,9 @@ class ComposeBurstTime: public SemanticCompose
   private:
     static const bool initFromBegin = false;
     static std::string name;
-
 };
 
-class ComposeDivideByBurstTime: public SemanticCompose
+class ComposeDivideByBurstTime : public SemanticCompose
 {
   public:
     typedef enum
@@ -2009,7 +2075,8 @@ class ComposeDivideByBurstTime: public SemanticCompose
     }
 
     ~ComposeDivideByBurstTime()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -2019,7 +2086,8 @@ class ComposeDivideByBurstTime: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -2045,14 +2113,14 @@ class ComposeDivideByBurstTime: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
@@ -2062,7 +2130,7 @@ class ComposeDivideByBurstTime: public SemanticCompose
     static std::string name;
 };
 
-class ComposeJoinBursts: public SemanticCompose
+class ComposeJoinBursts : public SemanticCompose
 {
   public:
     typedef enum
@@ -2076,7 +2144,8 @@ class ComposeJoinBursts: public SemanticCompose
     }
 
     ~ComposeJoinBursts()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -2086,7 +2155,8 @@ class ComposeJoinBursts: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -2112,14 +2182,14 @@ class ComposeJoinBursts: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
@@ -2127,10 +2197,9 @@ class ComposeJoinBursts: public SemanticCompose
   private:
     static const bool initFromBegin = true;
     static std::string name;
-
 };
 
-class ComposeTimer: public SemanticCompose
+class ComposeTimer : public SemanticCompose
 {
   public:
     typedef enum
@@ -2145,7 +2214,8 @@ class ComposeTimer: public SemanticCompose
     }
 
     ~ComposeTimer()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -2155,7 +2225,8 @@ class ComposeTimer: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -2181,9 +2252,9 @@ class ComposeTimer: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      else if ( whichParam == DELTA_TIME )
+      else if( whichParam == DELTA_TIME )
         tmp.push_back( 1 );
 
       return tmp;
@@ -2191,7 +2262,7 @@ class ComposeTimer: public SemanticCompose
 
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Delta time";
     }
@@ -2201,7 +2272,7 @@ class ComposeTimer: public SemanticCompose
     static std::string name;
 };
 
-class ComposeBeginTime: public SemanticCompose
+class ComposeBeginTime : public SemanticCompose
 {
   public:
     typedef enum
@@ -2215,7 +2286,8 @@ class ComposeBeginTime: public SemanticCompose
     }
 
     ~ComposeBeginTime()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -2225,7 +2297,8 @@ class ComposeBeginTime: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -2251,14 +2324,14 @@ class ComposeBeginTime: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
@@ -2266,10 +2339,9 @@ class ComposeBeginTime: public SemanticCompose
   private:
     static const bool initFromBegin = false;
     static std::string name;
-
 };
 
-class ComposeEndTime: public SemanticCompose
+class ComposeEndTime : public SemanticCompose
 {
   public:
     typedef enum
@@ -2283,7 +2355,8 @@ class ComposeEndTime: public SemanticCompose
     }
 
     ~ComposeEndTime()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -2293,7 +2366,8 @@ class ComposeEndTime: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -2319,14 +2393,14 @@ class ComposeEndTime: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
@@ -2334,11 +2408,10 @@ class ComposeEndTime: public SemanticCompose
   private:
     static const bool initFromBegin = false;
     static std::string name;
-
 };
 
 
-class ComposeTranslate: public SemanticCompose
+class ComposeTranslate : public SemanticCompose
 {
   public:
     typedef enum
@@ -2353,7 +2426,8 @@ class ComposeTranslate: public SemanticCompose
     }
 
     ~ComposeTranslate()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -2363,7 +2437,8 @@ class ComposeTranslate: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -2389,14 +2464,14 @@ class ComposeTranslate: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Translation List";
     }
@@ -2404,11 +2479,10 @@ class ComposeTranslate: public SemanticCompose
   private:
     static const bool initFromBegin = false;
     static std::string name;
-
 };
 
 
-class ComposeSine: public SemanticCompose
+class ComposeSine : public SemanticCompose
 {
   public:
     typedef enum
@@ -2422,7 +2496,8 @@ class ComposeSine: public SemanticCompose
     }
 
     ~ComposeSine()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -2432,7 +2507,8 @@ class ComposeSine: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
 
     virtual std::string getName() override
@@ -2457,23 +2533,24 @@ class ComposeSine: public SemanticCompose
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
+
   private:
     static const bool initFromBegin = false;
     static std::string name;
 };
 
 
-class ComposeCosine: public SemanticCompose
+class ComposeCosine : public SemanticCompose
 {
   public:
     typedef enum
@@ -2487,7 +2564,8 @@ class ComposeCosine: public SemanticCompose
     }
 
     ~ComposeCosine()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -2497,7 +2575,8 @@ class ComposeCosine: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -2521,23 +2600,24 @@ class ComposeCosine: public SemanticCompose
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
+
   private:
     static const bool initFromBegin = false;
     static std::string name;
 };
 
 
-class ComposeSqrtAbs: public SemanticCompose
+class ComposeSqrtAbs : public SemanticCompose
 {
   public:
     typedef enum
@@ -2551,7 +2631,8 @@ class ComposeSqrtAbs: public SemanticCompose
     }
 
     ~ComposeSqrtAbs()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -2561,7 +2642,8 @@ class ComposeSqrtAbs: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -2585,23 +2667,24 @@ class ComposeSqrtAbs: public SemanticCompose
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
+
   private:
     static const bool initFromBegin = false;
     static std::string name;
 };
 
 
-class ComposeArcTan: public SemanticCompose
+class ComposeArcTan : public SemanticCompose
 {
   public:
     typedef enum
@@ -2615,7 +2698,8 @@ class ComposeArcTan: public SemanticCompose
     }
 
     ~ComposeArcTan()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -2625,7 +2709,8 @@ class ComposeArcTan: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -2649,25 +2734,24 @@ class ComposeArcTan: public SemanticCompose
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
+
   private:
     static const bool initFromBegin = false;
     static std::string name;
 };
 
 
-
-
-class ComposeLogN: public SemanticCompose
+class ComposeLogN : public SemanticCompose
 {
   public:
     typedef enum
@@ -2682,7 +2766,8 @@ class ComposeLogN: public SemanticCompose
     }
 
     ~ComposeLogN()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -2692,7 +2777,8 @@ class ComposeLogN: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -2713,15 +2799,15 @@ class ComposeLogN: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      else if ( whichParam == BASE )
+      else if( whichParam == BASE )
         tmp.push_back( exp( 1 ) );
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Base";
     }
@@ -2729,13 +2815,10 @@ class ComposeLogN: public SemanticCompose
   private:
     static const bool initFromBegin = false;
     static std::string name;
-
 };
 
 
-
-
-class ComposeExponential: public SemanticCompose
+class ComposeExponential : public SemanticCompose
 {
   public:
     typedef enum
@@ -2750,7 +2833,8 @@ class ComposeExponential: public SemanticCompose
     }
 
     ~ComposeExponential()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -2760,7 +2844,8 @@ class ComposeExponential: public SemanticCompose
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -2786,22 +2871,21 @@ class ComposeExponential: public SemanticCompose
     {
       TParamValue tmp;
 
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      else if ( whichParam == BASE )
+      else if( whichParam == BASE )
         tmp.push_back( exp( 1 ) );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Base";
     }
+
   private:
     static const bool initFromBegin = false;
     static std::string name;
 };
-
-
