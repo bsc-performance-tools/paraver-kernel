@@ -368,7 +368,8 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
 
       bool onlyOneState = ( strstr( (char *)word, "," ) == nullptr );
 
-      word_aux = strtok( ( char * )word, "," );
+      char *tmpWord_r = nullptr;
+      word_aux = strtok_r( ( char * )word, ",", &tmpWord_r );
 
       if ( strstr( word_aux, "All" ) != nullptr )
         all_states = true;
@@ -390,7 +391,7 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
           {
             for ( i = 1; i < MAXSTATES; i++ )
             {
-              if ( ( word_aux = strtok( nullptr, "," ) ) == nullptr )
+              if ( ( word_aux = strtok_r( nullptr, ",", &tmpWord_r ) ) == nullptr )
                 break;
 
               if ( !strcmp( word_aux, "All" ) )
