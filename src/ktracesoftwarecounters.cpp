@@ -110,28 +110,31 @@ void KTraceSoftwareCounters::parse_types( char* whichTypes, std::vector<type_val
   if ( whichTypes != nullptr && strlen( whichTypes ) > 0 )
   {
     all_types = false;
-    words[0] = strtok( whichTypes, ";" );
+    char *tmpTypes_r = nullptr;
+    words[0] = strtok_r( whichTypes, ";", &tmpTypes_r );
 
     i = 1;
-    while ( ( words[i] = strtok( nullptr, ";" ) ) != nullptr )
+    while ( ( words[i] = strtok_r( nullptr, ";", &tmpTypes_r ) ) != nullptr )
       i++;
 
     k = 0;
+    char *tmpTypeValues_r = nullptr;
     while ( k < i )
     {
       auto itCurrentType = onTypes.insert( onTypes.end(), type_values() );
-      word_type = strtok( words[k], ":" );
+      word_type = strtok_r( words[k], ":", &tmpTypeValues_r );
       itCurrentType->type = atoll( word_type );
-      if ( ( word_values = strtok( nullptr, ":" ) ) == nullptr )
+      if ( ( word_values = strtok_r( nullptr, ":", &tmpTypeValues_r ) ) == nullptr )
       {
         itCurrentType->all_values = true;
       }
       else
       {
-        word_value = strtok( word_values, "," );
+        char *tmpValues_r = nullptr;
+        word_value = strtok_r( word_values, ",", &tmpValues_r );
         itCurrentType->all_values = false;
         itCurrentType->values.push_back( atoll( word_value ) );
-        while ( ( word_value = strtok( nullptr, "," ) ) != nullptr )
+        while ( ( word_value = strtok_r( nullptr, ",", &tmpValues_r ) ) != nullptr )
         {
           itCurrentType->values.push_back( atoll( word_value ) );
         }
@@ -174,10 +177,11 @@ void KTraceSoftwareCounters::read_sc_args()
 
   if ( strlen( exec_options->types_kept ) > 0 )
   {
-    words[0] = strtok( exec_options->types_kept, ";" );
+    char *tmpTypesKept_r = nullptr;
+    words[0] = strtok_r( exec_options->types_kept, ";", &tmpTypesKept_r );
     keep_types.push_back( atoll( words[0] ) );
 
-    while ( ( words[0] = strtok( nullptr, ";" ) ) != nullptr )
+    while ( ( words[0] = strtok_r( nullptr, ";", &tmpTypesKept_r ) ) != nullptr )
     {
       keep_types.push_back( atoll( words[0] ) );
     }

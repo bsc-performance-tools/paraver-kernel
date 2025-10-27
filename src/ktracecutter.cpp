@@ -153,12 +153,14 @@ void KTraceCutter::read_cutter_params()
   min_perc = exec_options->min_percentage;
   max_perc = exec_options->max_percentage;
   originalTime = exec_options->original_time;
+
   if ( exec_options->tasks_list[0] != '\0' )
   {
     cut_tasks = true;
     int j = 0;
 
-    word = strtok( exec_options->tasks_list, "," );
+    char *tmpTasksLists_r = nullptr;
+    word = strtok_r( exec_options->tasks_list, ",", &tmpTasksLists_r );
     do
     {
       if ( ( buffer = strchr( word, '-' ) ) != nullptr )
@@ -176,7 +178,7 @@ void KTraceCutter::read_cutter_params()
 
       j++;
     }
-    while ( ( word = strtok( nullptr, "," ) ) != nullptr );
+    while ( ( word = strtok_r( nullptr, ",", &tmpTasksLists_r ) ) != nullptr );
   }
 
   if ( exec_options->max_trace_size != 0 )
@@ -277,11 +279,12 @@ void KTraceCutter::proces_cutter_header( const std::string& header, TraceStream 
 
   // PARSE variable header
   // #Paraver (12/03/2018 at 16:11:35.687574899):
-  word = strtok( tmpHeader, ")" );
+  char *tmpHeader_r = nullptr;
+  word = strtok_r( tmpHeader, ")", &tmpHeader_r );
   current_size += fprintf( outfile, "%s):", word );
 
   /* Obtaining the trace total time */
-  word = strtok( nullptr, ":" );
+  word = strtok_r( nullptr, ":", &tmpHeader_r );
   if ( strstr( word, "_ns" ) )
   {
     word[ strlen( word ) - 3 ] = '\0';
@@ -323,7 +326,7 @@ void KTraceCutter::proces_cutter_header( const std::string& header, TraceStream 
   }
 
   /* Obtaining the number of communicators */
-  word = strtok( nullptr, "\n" ); // put in word the rest of the line
+  word = strtok_r( nullptr, "\n", &tmpHeader_r ); // put in word the rest of the line
   current_size += fprintf( outfile, "%s\n", word );
 
   // Do I have some "," looking back?
@@ -332,11 +335,11 @@ void KTraceCutter::proces_cutter_header( const std::string& header, TraceStream 
   {
     // Is it because some "1:1,1:1)\n" or the expected "1:1,1:1),16\n" ?
     //                       -^-                               -^-
-    strcpy( tmpHeader, word + 1 ); // Copy "1:1)" or "16" in header
-    if ( strchr( tmpHeader, ')' ) == nullptr ) // Do I have some ")"?
+    strcpy( tmpHeader_r, word + 1 ); // Copy "1:1)" or "16" in header
+    if ( strchr( tmpHeader_r, ')' ) == nullptr ) // Do I have some ")"?
     {
       // Hope it's a number and it fits the number of communicator lines...
-      num_comms = atoi( tmpHeader );
+      num_comms = atoi( tmpHeader_r );
       while ( num_comms > 0 )
       {
         whichFile->getline( auxLine );
