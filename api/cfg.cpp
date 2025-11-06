@@ -1241,6 +1241,8 @@ void SyncWindowsGroups::printLine( ofstream &cfgFile )
       firstGroup = false;
     }
   }
+
+  cfgFile << endl;
 }
 
 string WindowName::tagCFG = OLDCFG_TAG_WNDW_NAME;
