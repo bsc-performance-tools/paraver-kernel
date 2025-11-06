@@ -240,16 +240,16 @@ constexpr char OLDCFG_VAL_LIMIT_ALLWINDOW[] = "Allwindow";
 constexpr char OLDCFG_VAL_LIMIT_REGION[]    = "Region";
 
 constexpr char CFG_VAL_SYNC_TIME[]          = "Time";
-constexpr char CFG_VAL_SYNC_HISTO_COLUMNS[] = "Histogram Columns";
-constexpr char CFG_VAL_SYNC_HISTO_DELTA[]   = "Histogram Delta";
-constexpr char CFG_VAL_SYNC_SEM_MIN[]       = "Semantic Min";
-constexpr char CFG_VAL_SYNC_SEM_MAX[]       = "Semantic Max";
-constexpr char CFG_VAL_SYNC_OBJ_ZOOM[]      = "Object Zoom";
-constexpr char CFG_VAL_SYNC_OBJ_SEL[]       = "Object Selection";
-constexpr char CFG_VAL_SYNC_WIN_SIZE[]      = "Windows Size";
-constexpr char CFG_VAL_SYNC_WIN_POSITION[]  = "Windows Position";
-constexpr char CFG_VAL_SYNC_COLOR_PALETTE[] = "Color Palette";
-constexpr char CFG_VAL_SYNC_INFO_PANEL[]    = "Info Panel";
+constexpr char CFG_VAL_SYNC_HISTO_COLUMNS[] = "Histogram_Columns";
+constexpr char CFG_VAL_SYNC_HISTO_DELTA[]   = "Histogram_Delta";
+constexpr char CFG_VAL_SYNC_SEM_MIN[]       = "Semantic_Min";
+constexpr char CFG_VAL_SYNC_SEM_MAX[]       = "Semantic_Max";
+constexpr char CFG_VAL_SYNC_OBJ_ZOOM[]      = "Object_Zoom";
+constexpr char CFG_VAL_SYNC_OBJ_SEL[]       = "Object_Selection";
+constexpr char CFG_VAL_SYNC_WIN_SIZE[]      = "Windows_Size";
+constexpr char CFG_VAL_SYNC_WIN_POSITION[]  = "Windows_Position";
+constexpr char CFG_VAL_SYNC_COLOR_PALETTE[] = "Color_Palette";
+constexpr char CFG_VAL_SYNC_INFO_PANEL[]    = "Info_Panel";
 
 constexpr char OLDCFG_VAL_AN2D_ACCUM_SEMANTIC[] = "Semantic";
 
