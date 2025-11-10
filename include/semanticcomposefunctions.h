@@ -1997,7 +1997,8 @@ class ComposeBurstTime : public SemanticCompose
   public:
     typedef enum
     {
-      MAXPARAM = 0
+      NOT_NULL = 0,
+      MAXPARAM
     } TParam;
 
     ComposeBurstTime()
@@ -2044,14 +2045,18 @@ class ComposeBurstTime : public SemanticCompose
     {
       TParamValue tmp;
 
-      if( whichParam >= getMaxParam() )
+      if( whichParam == TParam::NOT_NULL )
+        tmp.push_back( 0.0 );
+      else if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if( whichParam >= getMaxParam() )
+      if( whichParam == TParam::NOT_NULL )
+        return "Not Null";
+      else if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }

@@ -557,8 +557,12 @@ string ComposeBurstTime::name = "Burst Time";
 TSemanticValue ComposeBurstTime::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
-  TSemanticValue result          = myInfo->callingInterval->getEnd()->getTime() - myInfo->callingInterval->getBegin()->getTime();
-  result                         = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( result );
+
+  if( parameters[ NOT_NULL ][ 0 ] == 1.0 && myInfo->values[ 0 ] == 0.0 )
+    return 0.0;
+
+  TSemanticValue result = myInfo->callingInterval->getEnd()->getTime() - myInfo->callingInterval->getBegin()->getTime();
+  result                = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( result );
   return result;
 }
 
