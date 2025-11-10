@@ -24,31 +24,33 @@
 #pragma once
 
 #include <array>
+#include <sstream>
 #include <stddef.h>
 
 /******************************************************************************
 ******************   cartesian_product      ***********************************
 ******************************************************************************/
-template<typename T, class InputIt, class OutputIt, size_t sizeFactors, typename... Targs>
+template< typename T, class InputIt, class OutputIt, size_t sizeFactors, typename... Targs >
 constexpr void cartesian_product_impl( OutputIt& product,
                                        size_t indexFactor,
-                                       std::array<T, sizeFactors>& currentElement,
-                                       InputIt beginInput, InputIt endInput )
+                                       std::array< T, sizeFactors >& currentElement,
+                                       InputIt beginInput,
+                                       InputIt endInput )
 {
   for( ; beginInput != endInput; ++beginInput )
   {
     currentElement[ indexFactor ] = *beginInput;
-    *product++ = currentElement;
+    *product++                    = currentElement;
   }
 }
 
 
-
-template<typename T, class InputIt, class OutputIt, size_t sizeFactors, typename... Targs>
+template< typename T, class InputIt, class OutputIt, size_t sizeFactors, typename... Targs >
 constexpr void cartesian_product_impl( OutputIt& product,
                                        size_t indexFactor,
-                                       std::array<T, sizeFactors>& currentElement,
-                                       InputIt beginInput, InputIt endInput, 
+                                       std::array< T, sizeFactors >& currentElement,
+                                       InputIt beginInput,
+                                       InputIt endInput,
                                        Targs... args )
 {
   for( ; beginInput != endInput; ++beginInput )
@@ -60,7 +62,7 @@ constexpr void cartesian_product_impl( OutputIt& product,
 
 // Makes cartesian product of containers 'args' using their begin/end iterators
 // over 'product' iterator.
-// 'product' must be a container of std::array<T, numContainers> 
+// 'product' must be a container of std::array<T, numContainers>
 // where 'numContainers' is the number of containers to combine.
 // Example of use:
 //   constexpr int SIZE_ARR1 = 3;
@@ -75,13 +77,11 @@ constexpr void cartesian_product_impl( OutputIt& product,
 
 //   cartesian_product( product_char_array.begin(), arr1.begin(), arr1.end(), arr2.begin(), arr2.end(), arr3.begin(), arr3.end() );
 
-template<class InputIt, class OutputIt, typename... Targs>
-constexpr void cartesian_product( OutputIt product,
-                                  InputIt beginInput, InputIt endInput, 
-                                  Targs... args )
+template< class InputIt, class OutputIt, typename... Targs >
+constexpr void cartesian_product( OutputIt product, InputIt beginInput, InputIt endInput, Targs... args )
 {
-  using T = typename std::iterator_traits<InputIt>::value_type;
-  std::array<T, ( sizeof...( Targs ) / 2 ) + 1 > currentElement;
+  using T = typename std::iterator_traits< InputIt >::value_type;
+  std::array< T, ( sizeof...( Targs ) / 2 ) + 1 > currentElement;
   size_t indexFactor = 0;
 
   for( ; beginInput != endInput; ++beginInput )
@@ -95,21 +95,23 @@ constexpr void cartesian_product( OutputIt product,
 ******************   matrix_intersection      *********************************
 ******************************************************************************/
 
-template<typename T>
-inline std::vector<std::vector<T>> matrix_intersection(const std::vector <std::vector<T>>& product1,
-                                const std::vector <std::vector<T>>& product2)
+template< typename T >
+inline std::vector< std::vector< T > > matrix_intersection( const std::vector< std::vector< T > >& product1,
+                                                            const std::vector< std::vector< T > >& product2 )
 {
-  std::vector<std::vector<T>> tmpResult;
+  std::vector< std::vector< T > > tmpResult;
 
-  tmpResult.resize(product1.size());
+  tmpResult.resize( product1.size() );
 
-  for (int tmpAux = 0; tmpAux < product1.size(); tmpAux ++)
+  for( int tmpAux = 0; tmpAux < product1.size(); tmpAux++ )
   {
-    tmpResult[tmpAux].reserve(product1[tmpAux].size());
-    
-    std::set_intersection (product1[tmpAux].begin (), product1[tmpAux].end (),
-                           product2[tmpAux].begin (), product2[tmpAux].end (),
-                           std::back_inserter (tmpResult[tmpAux]));
+    tmpResult[ tmpAux ].reserve( product1[ tmpAux ].size() );
+
+    std::set_intersection( product1[ tmpAux ].begin(),
+                           product1[ tmpAux ].end(),
+                           product2[ tmpAux ].begin(),
+                           product2[ tmpAux ].end(),
+                           std::back_inserter( tmpResult[ tmpAux ] ) );
   }
   return tmpResult;
 }
@@ -118,27 +120,30 @@ inline std::vector<std::vector<T>> matrix_intersection(const std::vector <std::v
 ******************   calculate_precision      *********************************
 ******************************************************************************/
 
-inline int calculate_precision(double value)
+inline int calculate_precision( double value )
 {
-    if (value == 0.0) {
-        return 2;
-    }
-    
-    std::stringstream ss;
-    ss.imbue(std::locale("C")); 
-    ss << std::fixed << value;
-    std::string strValue = ss.str();
+  if( value == 0.0 )
+  {
+    return 2;
+  }
 
-    size_t pointPos = strValue.find('.');
-    
-    if (pointPos == std::string::npos) {
-        return 0; 
-    }
+  std::stringstream ss;
+  ss.imbue( std::locale( "C" ) );
+  ss << std::fixed << value;
+  std::string strValue = ss.str();
 
-    size_t i = strValue.size() - 1;
-    while (i > pointPos && strValue[i] == '0') {
-        --i;
-    }
+  size_t pointPos = strValue.find( '.' );
 
-    return i - pointPos;
+  if( pointPos == std::string::npos )
+  {
+    return 0;
+  }
+
+  size_t i = strValue.size() - 1;
+  while( i > pointPos && strValue[ i ] == '0' )
+  {
+    --i;
+  }
+
+  return i - pointPos;
 }
