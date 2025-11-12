@@ -24,11 +24,11 @@
 
 #pragma once
 
-#include <unordered_map>
-
 #include "semanticderived.h"
 
-class DerivedAdd: public SemanticDerived
+#include <unordered_map>
+
+class DerivedAdd : public SemanticDerived
 {
   public:
     typedef enum
@@ -42,7 +42,8 @@ class DerivedAdd: public SemanticDerived
     }
 
     ~DerivedAdd()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -57,7 +58,8 @@ class DerivedAdd: public SemanticDerived
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -76,25 +78,25 @@ class DerivedAdd: public SemanticDerived
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
   private:
-    static const bool initFromBegin = false;
+    static const bool initFromBegin  = false;
     static const bool controlDerived = false;
     static std::string name;
 };
 
 
-class DerivedProduct: public SemanticDerived
+class DerivedProduct : public SemanticDerived
 {
   public:
     typedef enum
@@ -108,7 +110,8 @@ class DerivedProduct: public SemanticDerived
     }
 
     ~DerivedProduct()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -123,7 +126,8 @@ class DerivedProduct: public SemanticDerived
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -143,26 +147,25 @@ class DerivedProduct: public SemanticDerived
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
   private:
-    static const bool initFromBegin = false;
+    static const bool initFromBegin  = false;
     static const bool controlDerived = false;
     static std::string name;
-
 };
 
 
-class DerivedSubstract: public SemanticDerived
+class DerivedSubstract : public SemanticDerived
 {
   public:
     typedef enum
@@ -176,7 +179,8 @@ class DerivedSubstract: public SemanticDerived
     }
 
     ~DerivedSubstract()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -191,7 +195,8 @@ class DerivedSubstract: public SemanticDerived
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -211,26 +216,25 @@ class DerivedSubstract: public SemanticDerived
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
   private:
-    static const bool initFromBegin = false;
+    static const bool initFromBegin  = false;
     static const bool controlDerived = false;
     static std::string name;
-
 };
 
 
-class DerivedDivide: public SemanticDerived
+class DerivedDivide : public SemanticDerived
 {
   public:
     typedef enum
@@ -244,7 +248,8 @@ class DerivedDivide: public SemanticDerived
     }
 
     ~DerivedDivide()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -258,7 +263,8 @@ class DerivedDivide: public SemanticDerived
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -278,26 +284,25 @@ class DerivedDivide: public SemanticDerived
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
   private:
-    static const bool initFromBegin = false;
+    static const bool initFromBegin  = false;
     static const bool controlDerived = false;
     static std::string name;
-
 };
 
 
-class DerivedMaximum: public SemanticDerived
+class DerivedMaximum : public SemanticDerived
 {
   public:
     typedef enum
@@ -311,7 +316,8 @@ class DerivedMaximum: public SemanticDerived
     }
 
     ~DerivedMaximum()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -325,7 +331,8 @@ class DerivedMaximum: public SemanticDerived
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -345,26 +352,25 @@ class DerivedMaximum: public SemanticDerived
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
   private:
-    static const bool initFromBegin = false;
+    static const bool initFromBegin  = false;
     static const bool controlDerived = false;
     static std::string name;
-
 };
 
 
-class DerivedMinimum: public SemanticDerived
+class DerivedMinimum : public SemanticDerived
 {
   public:
     typedef enum
@@ -378,7 +384,8 @@ class DerivedMinimum: public SemanticDerived
     }
 
     ~DerivedMinimum()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -392,7 +399,8 @@ class DerivedMinimum: public SemanticDerived
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -412,26 +420,25 @@ class DerivedMinimum: public SemanticDerived
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
   private:
-    static const bool initFromBegin = false;
+    static const bool initFromBegin  = false;
     static const bool controlDerived = false;
     static std::string name;
-
 };
 
 
-class DerivedDifferent: public SemanticDerived
+class DerivedDifferent : public SemanticDerived
 {
   public:
     typedef enum
@@ -445,7 +452,8 @@ class DerivedDifferent: public SemanticDerived
     }
 
     ~DerivedDifferent()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -459,7 +467,8 @@ class DerivedDifferent: public SemanticDerived
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -479,26 +488,25 @@ class DerivedDifferent: public SemanticDerived
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
   private:
-    static const bool initFromBegin = false;
+    static const bool initFromBegin  = false;
     static const bool controlDerived = false;
     static std::string name;
-
 };
 
 
-class ControlDerivedClearBy: public SemanticDerived
+class ControlDerivedClearBy : public SemanticDerived
 {
   public:
     typedef enum
@@ -512,7 +520,8 @@ class ControlDerivedClearBy: public SemanticDerived
     }
 
     ~ControlDerivedClearBy()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -545,29 +554,28 @@ class ControlDerivedClearBy: public SemanticDerived
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
   private:
-    static const bool initFromBegin = true;
+    static const bool initFromBegin  = true;
     static const bool controlDerived = false;
     static std::string name;
 
-    std::unordered_map<TObjectOrder, TSemanticValue> lastControlValue;
-    std::unordered_map<TObjectOrder, TRecordTime> lastDataBeginTime;
-
+    std::unordered_map< TObjectOrder, TSemanticValue > lastControlValue;
+    std::unordered_map< TObjectOrder, TRecordTime > lastDataBeginTime;
 };
 
 
-class ControlDerivedMaximum: public SemanticDerived
+class ControlDerivedMaximum : public SemanticDerived
 {
   public:
     typedef enum
@@ -581,7 +589,8 @@ class ControlDerivedMaximum: public SemanticDerived
     }
 
     ~ControlDerivedMaximum()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -595,7 +604,8 @@ class ControlDerivedMaximum: public SemanticDerived
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -615,26 +625,25 @@ class ControlDerivedMaximum: public SemanticDerived
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
   private:
-    static const bool initFromBegin = false;
+    static const bool initFromBegin  = false;
     static const bool controlDerived = true;
     static std::string name;
-
 };
 
 
-class ControlDerivedAdd: public SemanticDerived
+class ControlDerivedMinimum : public SemanticDerived
 {
   public:
     typedef enum
@@ -642,13 +651,14 @@ class ControlDerivedAdd: public SemanticDerived
       MAXPARAM = 0
     } TParam;
 
-    ControlDerivedAdd()
+    ControlDerivedMinimum()
     {
       setDefaultParam();
     }
 
-    ~ControlDerivedAdd()
-    {}
+    ~ControlDerivedMinimum()
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -662,7 +672,76 @@ class ControlDerivedAdd: public SemanticDerived
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KTimeline *whichWindow ) override
-    {}
+    {
+    }
+
+    virtual std::string getName() override
+    {
+      return ControlDerivedMinimum::name;
+    }
+
+    virtual SemanticFunction *clone() override
+    {
+      return new ControlDerivedMinimum( *this );
+    }
+
+
+  protected:
+    virtual const bool getMyInitFromBegin() override
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
+    {
+      if( whichParam >= getMaxParam() )
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+      return (TParamValue)0;
+    }
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
+    {
+      if( whichParam >= getMaxParam() )
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+      return "";
+    }
+
+  private:
+    static const bool initFromBegin  = false;
+    static const bool controlDerived = true;
+    static std::string name;
+};
+
+
+class ControlDerivedAdd : public SemanticDerived
+{
+  public:
+    typedef enum
+    {
+      MAXPARAM = 0
+    } TParam;
+
+    ControlDerivedAdd()
+    {
+      setDefaultParam();
+    }
+
+    ~ControlDerivedAdd()
+    {
+    }
+
+    virtual TParamIndex getMaxParam() const override
+    {
+      return MAXPARAM;
+    }
+
+    virtual bool isControlDerived() override
+    {
+      return controlDerived;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KTimeline *whichWindow ) override
+    {
+    }
 
     virtual std::string getName() override
     {
@@ -682,26 +761,25 @@ class ControlDerivedAdd: public SemanticDerived
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
   private:
-    static const bool initFromBegin = false;
+    static const bool initFromBegin  = false;
     static const bool controlDerived = true;
     static std::string name;
-
 };
 
 
-class ControlDerivedEnumerate: public SemanticDerived
+class ControlDerivedEnumerate : public SemanticDerived
 {
   public:
     typedef enum
@@ -715,7 +793,8 @@ class ControlDerivedEnumerate: public SemanticDerived
     }
 
     ~ControlDerivedEnumerate()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -752,30 +831,29 @@ class ControlDerivedEnumerate: public SemanticDerived
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
   private:
-    static const bool initFromBegin = true;
+    static const bool initFromBegin  = true;
     static const bool controlDerived = false;
     static std::string name;
 
-    std::unordered_map<TObjectOrder, TSemanticValue> prevControlValue;
-    std::unordered_map<TObjectOrder, TRecordTime> prevDataTime;
-    std::unordered_map<TObjectOrder, TSemanticValue> myEnumerate;
-
+    std::unordered_map< TObjectOrder, TSemanticValue > prevControlValue;
+    std::unordered_map< TObjectOrder, TRecordTime > prevDataTime;
+    std::unordered_map< TObjectOrder, TSemanticValue > myEnumerate;
 };
 
 
-class ControlDerivedAverage: public SemanticDerived
+class ControlDerivedAverage : public SemanticDerived
 {
   public:
     typedef enum
@@ -789,7 +867,8 @@ class ControlDerivedAverage: public SemanticDerived
     }
 
     ~ControlDerivedAverage()
-    {}
+    {
+    }
 
     virtual TParamIndex getMaxParam() const override
     {
@@ -826,25 +905,22 @@ class ControlDerivedAverage: public SemanticDerived
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      return (TParamValue)0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if ( whichParam >= getMaxParam() )
+      if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
   private:
-    static const bool initFromBegin = false;
+    static const bool initFromBegin  = false;
     static const bool controlDerived = true;
     static std::string name;
 
-    std::unordered_map<TObjectOrder, TSemanticValue> totalValue;
-    std::unordered_map<TObjectOrder, TRecordTime> totalTime;
-
+    std::unordered_map< TObjectOrder, TSemanticValue > totalValue;
+    std::unordered_map< TObjectOrder, TRecordTime > totalTime;
 };
-
-
