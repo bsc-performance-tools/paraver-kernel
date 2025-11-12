@@ -23,6 +23,7 @@
 
 
 #include "semanticderivedfunctions.h"
+
 #include "kwindow.h"
 
 using namespace std;
@@ -30,8 +31,8 @@ using namespace std;
 string DerivedAdd::name = "add";
 TSemanticValue DerivedAdd::execute( const SemanticInfo *info )
 {
-  TSemanticValue tmp = 0;
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  TSemanticValue tmp             = 0;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   tmp = myInfo->values[ 0 ] + myInfo->values[ 1 ];
 
@@ -42,8 +43,8 @@ TSemanticValue DerivedAdd::execute( const SemanticInfo *info )
 string DerivedProduct::name = "product";
 TSemanticValue DerivedProduct::execute( const SemanticInfo *info )
 {
-  TSemanticValue tmp = 0;
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  TSemanticValue tmp             = 0;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   tmp = myInfo->values[ 0 ] * myInfo->values[ 1 ];
 
@@ -54,8 +55,8 @@ TSemanticValue DerivedProduct::execute( const SemanticInfo *info )
 string DerivedSubstract::name = "substract";
 TSemanticValue DerivedSubstract::execute( const SemanticInfo *info )
 {
-  TSemanticValue tmp = 0;
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  TSemanticValue tmp             = 0;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   tmp = myInfo->values[ 0 ] - myInfo->values[ 1 ];
 
@@ -66,8 +67,8 @@ TSemanticValue DerivedSubstract::execute( const SemanticInfo *info )
 string DerivedDivide::name = "divide";
 TSemanticValue DerivedDivide::execute( const SemanticInfo *info )
 {
-  TSemanticValue tmp = 0.0;
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  TSemanticValue tmp             = 0.0;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   if( myInfo->values[ 1 ] == 0 )
     return 0.0;
@@ -81,12 +82,10 @@ TSemanticValue DerivedDivide::execute( const SemanticInfo *info )
 string DerivedMaximum::name = "maximum";
 TSemanticValue DerivedMaximum::execute( const SemanticInfo *info )
 {
-  TSemanticValue tmp = 0;
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  TSemanticValue tmp             = 0;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
-  tmp = myInfo->values[ 0 ] > myInfo->values[ 1 ] ?
-        myInfo->values[ 0 ] :
-        myInfo->values[ 1 ];
+  tmp = myInfo->values[ 0 ] > myInfo->values[ 1 ] ? myInfo->values[ 0 ] : myInfo->values[ 1 ];
 
   return tmp;
 }
@@ -95,12 +94,10 @@ TSemanticValue DerivedMaximum::execute( const SemanticInfo *info )
 string DerivedMinimum::name = "minimum";
 TSemanticValue DerivedMinimum::execute( const SemanticInfo *info )
 {
-  TSemanticValue tmp = 0;
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  TSemanticValue tmp             = 0;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
-  tmp = myInfo->values[ 0 ] < myInfo->values[ 1 ] ?
-        myInfo->values[ 0 ] :
-        myInfo->values[ 1 ];
+  tmp = myInfo->values[ 0 ] < myInfo->values[ 1 ] ? myInfo->values[ 0 ] : myInfo->values[ 1 ];
 
   return tmp;
 }
@@ -109,12 +106,10 @@ TSemanticValue DerivedMinimum::execute( const SemanticInfo *info )
 string DerivedDifferent::name = "different";
 TSemanticValue DerivedDifferent::execute( const SemanticInfo *info )
 {
-  TSemanticValue tmp = 0;
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  TSemanticValue tmp             = 0;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
-  tmp = myInfo->values[ 0 ] != myInfo->values[ 1 ] ?
-        1 :
-        0;
+  tmp = myInfo->values[ 0 ] != myInfo->values[ 1 ] ? 1 : 0;
 
   return tmp;
 }
@@ -124,20 +119,20 @@ string ControlDerivedClearBy::name = "controlled: clear by";
 TSemanticValue ControlDerivedClearBy::execute( const SemanticInfo *info )
 {
   static const int controlWindow = 1;
-  static const int dataWindow = 0;
-  TSemanticValue result = 0;
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
-  TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
+  static const int dataWindow    = 0;
+  TSemanticValue result          = 0;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
+  TObjectOrder tmpOrder          = myInfo->callingInterval->getOrder();
 
-  if ( lastControlValue.find( tmpOrder ) == lastControlValue.end() )
+  if( lastControlValue.find( tmpOrder ) == lastControlValue.end() )
   {
-    lastControlValue[ tmpOrder ] = 0;
+    lastControlValue[ tmpOrder ]  = 0;
     lastDataBeginTime[ tmpOrder ] = 0;
   }
 
   if( myInfo->values[ controlWindow ] < lastControlValue[ tmpOrder ] )
   {
-    result = 0;
+    result                        = 0;
     lastDataBeginTime[ tmpOrder ] = myInfo->dataBeginTime;
   }
   else
@@ -161,12 +156,25 @@ void ControlDerivedClearBy::init( KTimeline *whichWindow )
 string ControlDerivedMaximum::name = "controlled: maximum";
 TSemanticValue ControlDerivedMaximum::execute( const SemanticInfo *info )
 {
-  TSemanticValue tmp = 0;
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  TSemanticValue tmp             = 0;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
-  tmp = myInfo->values[ 0 ] > myInfo->values[ 1 ] ?
-        myInfo->values[ 0 ] :
-        myInfo->values[ 1 ];
+  tmp = myInfo->values[ 0 ] > myInfo->values[ 1 ] ? myInfo->values[ 0 ] : myInfo->values[ 1 ];
+
+  return tmp;
+}
+
+
+string ControlDerivedMinimum::name = "controlled: minimum != 0";
+TSemanticValue ControlDerivedMinimum::execute( const SemanticInfo *info )
+{
+  TSemanticValue tmp             = 0;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
+
+  if( myInfo->newControlBurst || myInfo->values[ 0 ] == 0.0 )
+    tmp = myInfo->values[ 1 ];
+  else
+    tmp = myInfo->values[ 0 ] < myInfo->values[ 1 ] ? myInfo->values[ 0 ] : myInfo->values[ 1 ];
 
   return tmp;
 }
@@ -175,8 +183,8 @@ TSemanticValue ControlDerivedMaximum::execute( const SemanticInfo *info )
 string ControlDerivedAdd::name = "controlled: add";
 TSemanticValue ControlDerivedAdd::execute( const SemanticInfo *info )
 {
-  TSemanticValue tmp = 0;
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  TSemanticValue tmp             = 0;
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
   tmp = myInfo->values[ 0 ] + myInfo->values[ 1 ];
 
@@ -187,14 +195,14 @@ TSemanticValue ControlDerivedAdd::execute( const SemanticInfo *info )
 string ControlDerivedEnumerate::name = "controlled: enumerate";
 TSemanticValue ControlDerivedEnumerate::execute( const SemanticInfo *info )
 {
-  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
-  TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
+  TObjectOrder tmpOrder          = myInfo->callingInterval->getOrder();
 
-  if ( prevControlValue.find( tmpOrder ) == prevControlValue.end() )
+  if( prevControlValue.find( tmpOrder ) == prevControlValue.end() )
   {
-    myEnumerate[ tmpOrder ] = 0;
+    myEnumerate[ tmpOrder ]      = 0;
     prevControlValue[ tmpOrder ] = 0;
-    prevDataTime[ tmpOrder ] = 0;
+    prevDataTime[ tmpOrder ]     = 0;
   }
 
   if( myInfo->values[ 1 ] < prevControlValue[ tmpOrder ] )
@@ -203,7 +211,7 @@ TSemanticValue ControlDerivedEnumerate::execute( const SemanticInfo *info )
     ++myEnumerate[ tmpOrder ];
 
   prevControlValue[ tmpOrder ] = myInfo->values[ 1 ];
-  prevDataTime[ tmpOrder ] = myInfo->dataBeginTime;
+  prevDataTime[ tmpOrder ]     = myInfo->dataBeginTime;
 
   return myEnumerate[ tmpOrder ];
 }
@@ -221,21 +229,21 @@ string ControlDerivedAverage::name = "controlled: average";
 TSemanticValue ControlDerivedAverage::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = static_cast< const SemanticHighInfo * >( info );
-  TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
+  TObjectOrder tmpOrder          = myInfo->callingInterval->getOrder();
 
-  if ( totalValue.find( tmpOrder ) == totalValue.end() || myInfo->newControlBurst )
+  if( totalValue.find( tmpOrder ) == totalValue.end() || myInfo->newControlBurst )
   {
     totalValue[ tmpOrder ] = 0.0;
-    totalTime[ tmpOrder ] = 0.0;
+    totalTime[ tmpOrder ]  = 0.0;
   }
 
-  auto tmpBeginTime = myInfo->dataBeginTime >= myInfo->controlBeginTime ? myInfo->dataBeginTime : myInfo->controlBeginTime;
-  auto tmpEndTime = myInfo->dataEndTime <= myInfo->controlEndTime ? myInfo->dataEndTime : myInfo->controlEndTime;
+  auto tmpBeginTime            = myInfo->dataBeginTime >= myInfo->controlBeginTime ? myInfo->dataBeginTime : myInfo->controlBeginTime;
+  auto tmpEndTime              = myInfo->dataEndTime <= myInfo->controlEndTime ? myInfo->dataEndTime : myInfo->controlEndTime;
   TRecordTime tmpBurstDuration = tmpEndTime - tmpBeginTime;
   totalValue[ tmpOrder ] += myInfo->values[ 1 ] * tmpBurstDuration;
   totalTime[ tmpOrder ] += tmpBurstDuration;
 
-  if ( totalTime[ tmpOrder ] == 0.0 )
+  if( totalTime[ tmpOrder ] == 0.0 )
     return 0.0;
 
   return totalValue[ tmpOrder ] / totalTime[ tmpOrder ];
