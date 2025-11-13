@@ -23,9 +23,11 @@
 
 #pragma once
 
+#include <algorithm>
 #include <array>
 #include <sstream>
 #include <stddef.h>
+#include <vector>
 
 /******************************************************************************
 ******************   cartesian_product      ***********************************
