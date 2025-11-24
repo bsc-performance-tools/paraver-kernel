@@ -356,7 +356,7 @@ class SyncWindowsGroups : public TagFunction
     }
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream &line, Trace *whichTrace );
 
-    static void printLine( std::ofstream &cfgFile );
+    static void printLine( std::ofstream &cfgFile, const std::vector< Timeline * > &windows, const std::vector< Histogram * > &histograms );
 
     static const std::string &getTagCFG()
     {
