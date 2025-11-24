@@ -809,7 +809,7 @@ bool CFGLoader::saveCFG( const string &filename,
   cfgFile << options.description << endl;
   cfgFile << CFG_HEADER_END_DESCRIPTION << endl;
 
-  SyncWindowsGroups::printLine( cfgFile );
+  SyncWindowsGroups::printLine( cfgFile, windows, histograms );
 
   if( options.enabledCFG4DMode )
     cfgFile << CFG_TAG_CFG4D_ENABLED << endl;
@@ -1241,7 +1241,7 @@ bool SyncWindowsGroups::parseLine( KernelConnection *whichKernel, istringstream 
   return true;
 }
 
-void SyncWindowsGroups::printLine( ofstream &cfgFile )
+void SyncWindowsGroups::printLine( ofstream &cfgFile, const vector< Timeline * > &windows, const vector< Histogram * > &histograms )
 {
   cfgFile << CFG_HEADER_SYNC_GROUPS << " ";
 
@@ -1250,31 +1250,50 @@ void SyncWindowsGroups::printLine( ofstream &cfgFile )
   SyncWindows::getInstance()->getGroupsProperties( groups );
 
   bool firstGroup = true;
+  std::set< TGroupId > groupList;
 
-  for( auto &group : groups )
+  for( auto &window : windows )
   {
-    if( SyncWindows::getInstance()->getNumWindows( group.first ) != 0 )
+    if( window->isSync() )
     {
-      if( !firstGroup )
-        cfgFile << ";"; // separator between groups
+      groupList.insert( window->getSyncGroup() );
+    }
+  }
+  for( auto &histogram : histograms )
+  {
+    if( histogram->isSync() )
+    {
+      groupList.insert( histogram->getSyncGroup() );
+    }
+  }
 
-      cfgFile << group.first << ":";
+  for( auto &group : groupList )
+  {
+    if( !firstGroup )
+      cfgFile << ";"; // separator between groups
 
-      bool firstProperty = true;
+    cfgFile << group << ":";
 
-      for( auto &property : group.second )
+    bool firstProperty = true;
+
+    std::vector< SyncPropertiesType > properties;
+
+    SyncWindows::getInstance()->getGroupAvailableProperties( group, properties );
+
+    for( auto &property : properties )
+    {
+      if( SyncWindows::getInstance()->isPropertySelected( group, property ))
       {
         if( !firstProperty )
           cfgFile << ",";
         cfgFile << LabelConstructor::propertyToLabel( property );
         firstProperty = false;
       }
-
-      firstGroup = false;
     }
-  }
 
-  cfgFile << endl;
+    firstGroup = false;
+  }
+    cfgFile << endl;
 }
 
 string WindowName::tagCFG = OLDCFG_TAG_WNDW_NAME;
