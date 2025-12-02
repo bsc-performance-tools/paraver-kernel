@@ -1459,8 +1459,8 @@ Histogram *HistogramProxy::clone()
   {
     clonedHistogramProxy->createLinkToParents( parents );
 
-    // TODO: think: is a clone of an intermediate derived histogram
-    // clonedHistogramProxy->children = children; // TODO: not sure; seems copying is wrong
+    // Commented on purpose: histogram SHOULD NOT clone its children
+    // clonedHistogramProxy->children = children;
 
     clonedHistogramProxy->setDerivedOperation( getDerivedOperation() );
   }
