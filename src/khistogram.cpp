@@ -1831,9 +1831,9 @@ KHistogram* KHistogram::clone()
   if( commMatrix != nullptr )
     clonedKHistogram->commMatrix = new Matrix<TSemanticValue, NUM_COMM_STATS>( *commMatrix );
 
-  clonedKHistogram->totals = new KHistogramTotals( *totals );
-  clonedKHistogram->rowTotals = new KHistogramTotals( *rowTotals );
-  clonedKHistogram->commTotals = new KHistogramTotals( *commTotals );
+  clonedKHistogram->totals        = new KHistogramTotals( *totals );
+  clonedKHistogram->rowTotals     = new KHistogramTotals( *rowTotals );
+  clonedKHistogram->commTotals    = new KHistogramTotals( *commTotals );
   clonedKHistogram->rowCommTotals = new KHistogramTotals( *rowCommTotals );
 
   clonedKHistogram->orderWindows();
