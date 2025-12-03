@@ -162,13 +162,13 @@ class CFGLoader
 
     static void loadMap();
     static void unLoadMap();
-    static void pushbackWindow( Timeline *whichWindow, std::vector< Timeline * > &allWindows );
-    static void pushbackAllWindows( const std::vector< Timeline * > &selected,
-                                    const std::vector< Histogram * > &selectedHistos,
-                                    std::vector< Timeline * > &allWindows,
-                                    std::vector< Timeline * > &forcedOpenWindows );
-    static void pushbackHistogram( Histogram *whichHistogram, std::vector< Histogram * > &allHistograms );
-    static void pushbackAllHistograms( const std::vector< Histogram * > &selectedHistos, std::vector< Histogram * > &allHistograms );
+    static void pushbackWindow( Timeline *whichWindow, std::vector< Timeline * >& allWindows );
+    static void pushbackAllWindows( const std::vector< Timeline * >& selected,
+                                    const std::vector< Histogram * >& selectedHistos,
+                                    std::vector< Timeline * >& allWindows,
+                                    std::vector< Timeline * >& forcedOpenWindows );
+    static void pushbackHistogram( Histogram *whichHistogram, std::vector< Histogram * >& allHistograms );
+    static void pushbackAllHistograms( const std::vector< Histogram * >& selectedHistos, std::vector< Histogram * >& allHistograms );
 
   public:
     static bool hasCFGExtension( const std::string &filename );
