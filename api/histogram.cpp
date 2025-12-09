@@ -1616,10 +1616,11 @@ PRV_UINT16 HistogramProxy::getWidth() const
 
 void HistogramProxy::setWidth( PRV_UINT16 whichPos, bool broadcastValue )
 {
+
   if( width != whichPos )
   {
     width = whichPos;
-    onResizeFunctionCallback( width, height );
+    // onResizeFunctionCallback( width, height );
 
     if( sync && broadcastValue && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_WINDOWS_SIZE ) )
       SyncWindows::getInstance()->broadcastSizeAll( syncGroup, width, height );
