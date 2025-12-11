@@ -1053,8 +1053,8 @@ TSemanticValue LastSendSize::execute( const SemanticInfo *info )
 }
 
 
-string LastStride::name = "Last Stride";
-TSemanticValue LastStride::execute( const SemanticInfo *info )
+string LastSendStride::name = "Last Send Stride";
+TSemanticValue LastSendStride::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
 
@@ -1068,16 +1068,8 @@ TSemanticValue LastStride::execute( const SemanticInfo *info )
   TTaskOrder receiverTask, senderTask;
   Trace *tmpTrace = myInfo->callingInterval->getWindow()->getTrace();
 
-  if( myInfo->it->getRecordType() & SEND )
-  {
-    tmpTrace->getThreadLocation( myInfo->it->getOrder(), dummyAppl, senderTask, dummyThread );
-    tmpTrace->getThreadLocation( myInfo->it->getReceiverThread(), dummyAppl, receiverTask, dummyThread );
-  }
-  else if( myInfo->it->getRecordType() & RECV )
-  {
-    tmpTrace->getThreadLocation( myInfo->it->getOrder(), dummyAppl, receiverTask, dummyThread );
-    tmpTrace->getThreadLocation( myInfo->it->getSenderThread(), dummyAppl, senderTask, dummyThread );
-  }
+  tmpTrace->getThreadLocation( myInfo->it->getOrder(), dummyAppl, senderTask, dummyThread );
+  tmpTrace->getThreadLocation( myInfo->it->getReceiverThread(), dummyAppl, receiverTask, dummyThread );
 
   tmp = (double)receiverTask - (double)senderTask;
 

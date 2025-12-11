@@ -2031,7 +2031,7 @@ class LastSendSize : public SemanticThread
 };
 
 
-class LastStride : public SemanticThread
+class LastSendStride : public SemanticThread
 {
   public:
     typedef enum
@@ -2039,7 +2039,7 @@ class LastStride : public SemanticThread
       MAXPARAM = 0
     } TParam;
 
-    LastStride()
+    LastSendStride()
     {
       setDefaultParam();
     }
@@ -2055,12 +2055,12 @@ class LastStride : public SemanticThread
 
     virtual std::string getName() override
     {
-      return LastStride::name;
+      return LastSendStride::name;
     }
 
     virtual SemanticFunction *clone() override
     {
-      return new LastStride( *this );
+      return new LastSendStride( *this );
     }
 
     virtual SemanticInfoType getSemanticInfoType() const override
@@ -2091,7 +2091,7 @@ class LastStride : public SemanticThread
     }
 
   private:
-    static const TRecordType validateMask = COMM + LOG;
+    static const TRecordType validateMask = COMM + LOG + SEND;
     static const bool initFromBegin       = false;
     static std::string name;
 };

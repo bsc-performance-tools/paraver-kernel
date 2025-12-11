@@ -191,7 +191,7 @@ void createSemantic()
   functions[ 6 ].push_back( new LastSendDuration() );
   functions[ 6 ].push_back( new NextRecvDuration() );
   functions[ 6 ].push_back( new LastSendSize() );
-  functions[ 6 ].push_back( new LastStride() );
+  functions[ 6 ].push_back( new LastSendStride() );
   functions[ 6 ].push_back( new LateReceiver() );
   functions[ 6 ].push_back( new LateSender() );
   functions[ 6 ].push_back( new SendBytesInTransit() );
