@@ -1871,24 +1871,61 @@ bool KHistogram::isReady() const
 /***************************************************************
 ***                     KDerivedHistogram                    ***
 ****************************************************************/
-KDerivedHistogram::KDerivedHistogram( std::vector< KHistogram * > &whichParents )
+KDerivedHistogram::KDerivedHistogram()
 {
-  parents = whichParents;
-
   numRows   = 0;
   numPlanes = 0;
-  numCols   = parents[ MAIN ]->getNumColumns();
+  numCols   = 0;
+
+  parents = {};
+
+  KHistogram::setControlMin( 0.0 );
+  KHistogram::setControlMax( 0.0 );
+  KHistogram::setControlDelta( 0.0 );
+  KHistogram::setExtraControlDelta( 0.0 );
+}
+
+KDerivedHistogram::KDerivedHistogram( std::vector< KHistogram * > &whichParents )
+{
+  numRows   = 0;
+  numPlanes = 0;
+  
+  parents = whichParents;
+  setProperties();
+}
+
+KDerivedHistogram::~KDerivedHistogram()
+{
+}
+
+bool KDerivedHistogram::setParents( const std::vector< Histogram * > &whichParents )
+{
+  std::vector< KHistogram * > tmpParents;
+
+  std::transform( whichParents.cbegin(), whichParents.cend(), std::back_inserter( tmpParents ), []( auto &p ){ return (KHistogram *)p; } );
+  parents = tmpParents;
+
+  return true;
+}
+
+std::vector< KHistogram * >  KDerivedHistogram::getParents()
+{
+  return parents;
+}
+
+
+void KDerivedHistogram::setProperties()
+{
+  if( parents.empty() )
+    return;
+
+  numCols = parents[ MAIN ]->getNumColumns();
   // numCommCols = parents[ MAIN ]->getCommNumColumns();
 
   KHistogram::setControlMin( parents[ MAIN ]->getControlMin() );
   KHistogram::setControlMax( parents[ MAIN ]->getControlMax() );
   KHistogram::setControlDelta( parents[ MAIN ]->getControlDelta() );
   KHistogram::setExtraControlDelta( parents[ MAIN ]->getExtraControlDelta() );
-}
-
-
-KDerivedHistogram::~KDerivedHistogram()
-{
 }
 
 inline bool KDerivedHistogram::getThreeDimensions() const
@@ -1984,6 +2021,7 @@ void KDerivedHistogram::setUseFixedDelta( bool whichValue )
 
 void KDerivedHistogram::setControlMin( THistogramLimit whichMin )
 {
+  KHistogram::setControlMin( whichMin );
   std::for_each( parents.begin(),
                  parents.end(),
                  [ &whichMin ]( auto &parent )
@@ -1994,6 +2032,7 @@ void KDerivedHistogram::setControlMin( THistogramLimit whichMin )
 
 void KDerivedHistogram::setControlMax( THistogramLimit whichMax )
 {
+  KHistogram::setControlMax( whichMax );
   std::for_each( parents.begin(),
                  parents.end(),
                  [ &whichMax ]( auto &parent )
@@ -2004,6 +2043,7 @@ void KDerivedHistogram::setControlMax( THistogramLimit whichMax )
 
 void KDerivedHistogram::setControlDelta( THistogramLimit whichDelta )
 {
+  KHistogram::setControlDelta( whichDelta );
   std::for_each( parents.begin(),
                  parents.end(),
                  [ &whichDelta ]( auto &parent )
@@ -2014,6 +2054,7 @@ void KDerivedHistogram::setControlDelta( THistogramLimit whichDelta )
 
 void KDerivedHistogram::setExtraControlMin( THistogramLimit whichMin )
 {
+  KHistogram::setExtraControlMin( whichMin );
   std::for_each( parents.begin(),
                  parents.end(),
                  [ &whichMin ]( auto &parent )
@@ -2024,6 +2065,7 @@ void KDerivedHistogram::setExtraControlMin( THistogramLimit whichMin )
 
 void KDerivedHistogram::setExtraControlMax( THistogramLimit whichMax )
 {
+  KHistogram::setExtraControlMax( whichMax );
   std::for_each( parents.begin(),
                  parents.end(),
                  [ &whichMax ]( auto &parent )
@@ -2034,6 +2076,7 @@ void KDerivedHistogram::setExtraControlMax( THistogramLimit whichMax )
 
 void KDerivedHistogram::setExtraControlDelta( THistogramLimit whichDelta )
 {
+  KHistogram::setExtraControlDelta( whichDelta );
   std::for_each( parents.begin(),
                  parents.end(),
                  [ &whichDelta ]( auto &parent )
@@ -2560,35 +2603,11 @@ TTimeUnit KDerivedHistogram::getTimeUnit() const
   return parents[ MAIN ]->getTimeUnit();
 }
 
+// This clone can be called without parents assigned
+// Equivalent sequence: 1) clone 2) setParents 3) setProperties 4) completeClone
 KHistogram *KDerivedHistogram::clone()
 {
-  std::vector< KHistogram * > clonedParents;
-  std::transform( parents.cbegin(),
-                  parents.cend(),
-                  std::back_inserter( clonedParents ),
-                  []( auto &parent )
-                  {
-                    return parent->clone();
-                  } );
-  KDerivedHistogram *clonedKDerivedHistogram = new KDerivedHistogram( clonedParents );
-
-  clonedKDerivedHistogram->numRows   = numRows;
-  clonedKDerivedHistogram->numCols   = numCols;
-  clonedKDerivedHistogram->numPlanes = numPlanes;
-
-  clonedKDerivedHistogram->setUseFixedDelta( getUseFixedDelta() );
-
-  clonedKDerivedHistogram->setControlMin( getControlMin() );
-  clonedKDerivedHistogram->setControlMax( getControlMax() );
-  clonedKDerivedHistogram->setControlDelta( getControlDelta() );
-  clonedKDerivedHistogram->setExtraControlMin( getExtraControlMin() );
-  clonedKDerivedHistogram->setExtraControlMax( getExtraControlMax() );
-  clonedKDerivedHistogram->setExtraControlDelta( getExtraControlDelta() );
-
-  // if ( cube != nullptr )
-  //  clonedKDerivedHistogram->cube = new CubeBuffer<NUM_SEMANTIC_STATS>( *cube );
-  // if ( commCube != nullptr )
-  //  clonedKDerivedHistogram->commCube = new CubeBuffer<NUM_COMM_STATS>( *commCube );
+  KDerivedHistogram *clonedKDerivedHistogram = new KDerivedHistogram();
 
   if( cube != nullptr )
     clonedKDerivedHistogram->cube = new Cube< TSemanticValue, NUM_SEMANTIC_STATS >( *cube );
@@ -2604,13 +2623,29 @@ KHistogram *KDerivedHistogram::clone()
   clonedKDerivedHistogram->commTotals    = new KHistogramTotals( *commTotals );
   clonedKDerivedHistogram->rowCommTotals = new KHistogramTotals( *rowCommTotals );
 
-  clonedKDerivedHistogram->rowSelection = rowSelection;
-
-  clonedKDerivedHistogram->currentDerivedOperation = currentDerivedOperation;
-  clonedKDerivedHistogram->cellCorrespondence      = cellCorrespondence;
-  clonedKDerivedHistogram->cellCommCorrespondence  = cellCommCorrespondence;
-
   return clonedKDerivedHistogram;
+}
+
+// PRECOND: !parents.empty()
+void KDerivedHistogram::completeClone( Histogram *whichSourceHistogram )
+{
+  numRows = whichSourceHistogram->getNumRows();
+  setNumColumns( whichSourceHistogram->getNumColumns() );
+  numPlanes = whichSourceHistogram->getNumPlanes();
+
+  setUseFixedDelta( whichSourceHistogram->getUseFixedDelta() );
+
+  setControlMin( whichSourceHistogram->getControlMin() );
+  setControlMax( whichSourceHistogram->getControlMax() );
+  setControlDelta( whichSourceHistogram->getControlDelta() );
+  setExtraControlMin( whichSourceHistogram->getExtraControlMin() );
+  setExtraControlMax( whichSourceHistogram->getExtraControlMax() );
+  setExtraControlDelta( whichSourceHistogram->getExtraControlDelta() );
+
+  rowSelection            = ( ( KDerivedHistogram * )whichSourceHistogram )->rowSelection;
+  currentDerivedOperation = ( ( KDerivedHistogram * )whichSourceHistogram )->currentDerivedOperation;
+  cellCorrespondence      = ( ( KDerivedHistogram * )whichSourceHistogram )->cellCorrespondence;
+  cellCommCorrespondence  = ( ( KDerivedHistogram * )whichSourceHistogram )->cellCommCorrespondence;
 }
 
 bool KDerivedHistogram::isDerivedHistogram() const

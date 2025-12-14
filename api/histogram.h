@@ -102,6 +102,12 @@ class Histogram
     {
       return {};
     }
+    virtual void setProperties()
+    {
+    }
+    virtual void completeClone( Histogram *clonedHistogram )
+    {
+    }
     virtual std::string getDerivedOperation() const
     {
       return {};

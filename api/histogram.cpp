@@ -1448,7 +1448,7 @@ Histogram *HistogramProxy::clone()
   bool createHistogram                 = false;
   HistogramProxy *clonedHistogramProxy = new HistogramProxy( myKernel, createHistogram );
   // delete clonedHistogramProxy->myHisto;
-  clonedHistogramProxy->myHisto = myHisto->clone();
+  clonedHistogramProxy->myHisto = myHisto->clone(); // not recursive in case of derived histogram
 
   std::ostringstream tmp;
   tmp << ++number_of_clones;
@@ -1457,12 +1457,44 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->derivedHistogram = derivedHistogram;
   if( derivedHistogram )
   {
-    clonedHistogramProxy->createLinkToParents( parents );
+    // Clone parents
+    auto recursiveCloneHistogramProxies = []( auto &whichParent )
+                                          {
+                                            return whichParent->clone();
+                                          };
+
+    std::vector< Histogram * > clonedParents;
+    std::transform( parents.cbegin(), parents.cend(), std::back_inserter( clonedParents ), recursiveCloneHistogramProxies );
+    std::for_each( clonedParents.begin(),
+                   clonedParents.end(),
+                   [ &clonedHistogramProxy ]( auto &whichParent )
+                   {
+                     whichParent->addChild( clonedHistogramProxy );
+                   } );
+
+    auto getKHistoParent = []( auto &whichParent )
+                           {
+                             return whichParent->getConcrete();
+                           };
+    std::vector< Histogram * > clonedKParents;
+    std::transform( clonedParents.cbegin(), clonedParents.cend(), std::back_inserter( clonedKParents ), getKHistoParent );
+
+    clonedHistogramProxy->parents = clonedParents;
+
+    clonedHistogramProxy->myHisto->setParents( clonedKParents );
+    clonedHistogramProxy->myHisto->setProperties();
+    clonedHistogramProxy->myHisto->completeClone( myHisto );
 
     // Commented on purpose: histogram SHOULD NOT clone its children
     // clonedHistogramProxy->children = children;
 
     clonedHistogramProxy->setDerivedOperation( getDerivedOperation() );
+
+    // extracted from setParents
+    // clonedHistogramProxy->setParents( clonedParents );
+    Histogram *mainHistogram = parents.front();
+
+    clonedHistogramProxy->myTrace = mainHistogram->getTrace(); // Only for further queries, may not be necessary
   }
 
   clonedHistogramProxy->posX   = posX;

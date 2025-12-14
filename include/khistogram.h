@@ -419,8 +419,13 @@ struct THistogramCoordinates
 class KDerivedHistogram : public KHistogram
 {
   public:
+    KDerivedHistogram();
     KDerivedHistogram( std::vector< KHistogram * >& whichParents );
     ~KDerivedHistogram();
+    
+    bool setParents( const std::vector< Histogram * > &whichParents ) override;
+    std::vector< KHistogram * > getParents();
+    virtual void setProperties() override;
 
     bool getThreeDimensions() const override;
 
@@ -524,8 +529,8 @@ class KDerivedHistogram : public KHistogram
     TTimeUnit getTimeUnit() const override;
 
     virtual KHistogram *clone() override;
-
-    
+    virtual void completeClone( Histogram *whichSourceHistogram ) override;
+        
     // Derived histogram specific methods
     //virtual Histogram *getParent( PRV_UINT16 whichParent ) const override;
     virtual bool isDerivedHistogram() const override;
@@ -546,18 +551,19 @@ class KDerivedHistogram : public KHistogram
 
 
   protected:
-
-  private:
     using THistogramParentID = size_t;
     using THistoCoordsCorrespondence = std::vector< std::pair< THistogramParentID, THistogramCoordinates > >;
     using THistoCoordsCorrespondenceIndex = CubeContainer< TPlaneOrder, TObjectOrder, THistogramColumn, THistoCoordsCorrespondence >;
     THistoCoordsCorrespondenceIndex cellCorrespondence {};
     THistoCoordsCorrespondenceIndex cellCommCorrespondence {};
 
+    std::string currentDerivedOperation = "add";
+
+  private:
+
     const THistogramParentID MAIN = 0;
 
     std::vector< KHistogram * > parents = {};
-    std::string currentDerivedOperation = "add";
 
 
     void fillCellCorrespondences();
