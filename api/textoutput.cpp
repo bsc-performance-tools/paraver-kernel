@@ -206,8 +206,20 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
   TObjectOrder endRow   = whichHisto->getControlWindow()->getZoomSecondDimension().second;
   whichHisto->getControlWindow()->getSelectedRows( whichHisto->getControlWindow()->getLevel(), selectedRows, beginRow, endRow );
 
-  if( recalcHisto )
-    whichHisto->execute( whichHisto->getBeginTime(), whichHisto->getEndTime(), selectedRows, progress );
+  std::function< void( Histogram * ) > parentsExecute;
+  parentsExecute = [ &whichHisto, &recalcHisto, &selectedRows, &progress, &parentsExecute ]( Histogram *currentHisto )
+                   {
+                     for( auto& parent: currentHisto->getParents() )
+                     {
+                       if( recalcHisto )
+                         parentsExecute( parent );
+                     }
+                     
+                     if( recalcHisto )
+                       currentHisto->execute( whichHisto->getBeginTime(), whichHisto->getEndTime(), selectedRows, progress );
+                   };
+
+  parentsExecute( whichHisto );
 
   outputFile.open( strOutputFile.c_str() );
 
