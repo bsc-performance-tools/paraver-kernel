@@ -877,12 +877,12 @@ class HistogramProxy : public Histogram
     virtual TRecordTime getEndTime() const override;
     virtual Trace *getTrace() const override;
 
-    Histogram *getConcrete() const;
+    Histogram *getConcrete() const override;
 
     virtual bool isDerivedHistogram() const override;
     virtual bool setParents( const std::vector< Histogram * > &whichParents ) override;
     virtual std::vector< Histogram * > getParents() const override;
-    virtual PRV_UINT16 getNumParents() const;
+    virtual PRV_UINT16 getNumParents() const override;
     virtual Histogram *getParent( PRV_UINT16 whichParent ) const override;
     virtual void addChild( Histogram *whichHistogram ) override;
     virtual void removeChild( Histogram *whichHistogram ) override;
