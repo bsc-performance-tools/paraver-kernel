@@ -7,6 +7,7 @@ noinst_HEADERS = \
                           cube_impl.h \
                           cubebuffer.h\
                           cubebuffer_impl.h \
+                          derivedhistogrammanagement.h\
                           filtermanagement.h\
                           functionmanagement.h\
                           functionmanagement_impl.h \
@@ -58,6 +59,8 @@ noinst_HEADERS = \
                           semanticcpu.h\
                           semanticderivedfunctions.h\
                           semanticderived.h\
+                          semanticderivedhistogram.h\
+                          semanticderivedhistogramfunctions.h\
                           semanticexception.h\
                           semanticfunction.h\
                           semantichigh.h\

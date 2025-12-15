@@ -48,6 +48,7 @@ class Histogram
 {
   public:
     static Histogram *create( KernelConnection *whichKernel );
+    static Histogram *create( KernelConnection *whichKernel, std::vector< Histogram * > parents );
 
     Histogram() {};
     Histogram( KernelConnection *whichKernel );
@@ -62,6 +63,78 @@ class Histogram
 
     virtual TRecordTime getBeginTime() const = 0;
     virtual TRecordTime getEndTime() const   = 0;
+
+    // Specific functions for HistogramProxy
+    virtual Histogram *getConcrete() const
+    {
+      return nullptr;
+    }
+
+    // Specific methods for Derived Histograms
+    virtual bool isDerivedHistogram() const = 0;
+    virtual bool setParents( const std::vector< Histogram * > &whichParents )
+    {
+      return true;
+    }
+    virtual std::vector< Histogram * > getParents() const
+    {
+      return {};
+    }
+    virtual PRV_UINT16 getNumParents() const
+    {
+      return 0;
+    }
+    virtual Histogram *getParent( PRV_UINT16 whichParent ) const
+    {
+      return nullptr;
+    }
+    virtual void addChild( Histogram *whichHistogram )
+    {
+    }
+    virtual void removeChild( Histogram *whichHistogram )
+    {
+    }
+    virtual bool haveChildren() const
+    {
+      return false;
+    }
+    virtual std::multiset< Histogram * > getChildren() const
+    {
+      return {};
+    }
+    virtual void setProperties()
+    {
+    }
+    virtual void completeClone( Histogram *clonedHistogram )
+    {
+    }
+    virtual std::string getDerivedOperation() const
+    {
+      return {};
+    }
+    virtual void setDerivedOperation( const std::string &whichOperation )
+    {
+    }
+    virtual void getDerivedOperationGroupsLabels( std::vector< std::string > &onVector ) const
+    {
+    }
+    virtual void getDerivedOperationLabels( std::vector< std::string > &onVector, PRV_UINT32 whichGroup, bool getOriginalList ) const
+    {
+    }
+    virtual void getDerivedOperationLabelsAndSymbols( std::map< std::string, std::string > &onVector,
+                                                      PRV_UINT32 whichGroup,
+                                                      bool getOriginalList = true ) const
+    {
+    }
+
+    virtual void setReady( bool whichReady )
+    {
+    }
+    virtual bool isReady() const
+    {
+      return false;
+    }
+
 
     virtual Timeline *getControlWindow() const                  = 0;
     virtual Timeline *getDataWindow() const                     = 0;
@@ -792,6 +865,8 @@ class Histogram
 class HistogramProxy : public Histogram
 {
   public:
+    static bool compatibleForDerivation( Histogram *whichHistogram1, Histogram *whichHistogram2 );
+
     virtual ~HistogramProxy();
 
     virtual void setWindowBeginTime( TRecordTime whichTime ) override;
@@ -801,6 +876,29 @@ class HistogramProxy : public Histogram
     virtual TRecordTime getBeginTime() const override;
     virtual TRecordTime getEndTime() const override;
     virtual Trace *getTrace() const override;
+
+    Histogram *getConcrete() const;
+
+    virtual bool isDerivedHistogram() const override;
+    virtual bool setParents( const std::vector< Histogram * > &whichParents ) override;
+    virtual std::vector< Histogram * > getParents() const override;
+    virtual PRV_UINT16 getNumParents() const;
+    virtual Histogram *getParent( PRV_UINT16 whichParent ) const override;
+    virtual void addChild( Histogram *whichHistogram ) override;
+    virtual void removeChild( Histogram *whichHistogram ) override;
+    virtual bool haveChildren() const override;
+    virtual std::multiset< Histogram * > getChildren() const override;
+    virtual std::string getDerivedOperation() const override;
+    virtual void setDerivedOperation( const std::string &whichOperation ) override;
+    virtual void getDerivedOperationGroupsLabels( std::vector< std::string > &onVector ) const override;
+    virtual void getDerivedOperationLabels( std::vector< std::string > &onVector, PRV_UINT32 whichGroup, bool getOriginalList = true ) const override;
+    virtual void getDerivedOperationLabelsAndSymbols( std::map< std::string, std::string > &onVector,
+                                                      PRV_UINT32 whichGroup,
+                                                      bool getOriginalList = true ) const override;
+
+    virtual void setReady( bool whichIsReady ) override;
+    virtual bool isReady() const override;
+
     virtual Timeline *getControlWindow() const override;
     virtual Timeline *getDataWindow() const override;
     virtual Timeline *getExtraControlWindow() const override;
@@ -1167,16 +1265,21 @@ class HistogramProxy : public Histogram
     Timeline *extraControlWindow;
     Trace *myTrace;
 
-    bool calculateAll;
+    bool calculateAll = false;
     std::string currentStat;
     std::vector< std::string > calcStat;
     std::vector< std::string > commCalcStat;
 
     SemanticColor mySemanticColor{ std::vector< rgb >{ { 0, 255, 0 }, { 255, 255, 0 }, { 255, 0, 0 } } };
 
-    Histogram *myHisto;
+    Histogram *myHisto = nullptr;
 
     int number_of_clones;
+
+    // Derived Histogram
+    bool derivedHistogram;
+    std::vector< Histogram * > parents{};
+    std::multiset< Histogram * > children;
 
     // CFG4D
     bool isCFG4DEnabled;
@@ -1192,9 +1295,14 @@ class HistogramProxy : public Histogram
     // Selection of rows
     SelectionManagement< TObjectOrder, TTraceLevel > rowSelection;
 
-    HistogramProxy( KernelConnection *whichKernel );
+    HistogramProxy( KernelConnection *whichKernel, bool createHistogram = true, bool isDerivedHistogram = false );
+    HistogramProxy( KernelConnection *whichKernel, const std::vector< Histogram * > &whichParents );
 
     void fillSemanticSort();
 
+    // Derived histograms
+    bool createLinkToParents( const std::vector< Histogram * > &whichParents );
+
     friend Histogram *Histogram::create( KernelConnection * );
+    friend Histogram *Histogram::create( KernelConnection *whichKernel, std::vector< Histogram * > parents );
 };

@@ -162,11 +162,13 @@ class CFGLoader
 
     static void loadMap();
     static void unLoadMap();
-    static void pushbackWindow( Timeline *whichWindow, std::vector< Timeline * > &allWindows );
-    static void pushbackAllWindows( const std::vector< Timeline * > &selected,
-                                    const std::vector< Histogram * > &selectedHistos,
-                                    std::vector< Timeline * > &allWindows,
-                                    std::vector< Timeline * > &forcedOpenWindows );
+    static void pushbackWindow( Timeline *whichWindow, std::vector< Timeline * >& allWindows );
+    static void pushbackAllWindows( const std::vector< Timeline * >& selected,
+                                    const std::vector< Histogram * >& selectedHistos,
+                                    std::vector< Timeline * >& allWindows,
+                                    std::vector< Timeline * >& forcedOpenWindows );
+    static void pushbackHistogram( Histogram *whichHistogram, std::vector< Histogram * >& allHistograms );
+    static void pushbackAllHistograms( const std::vector< Histogram * >& selectedHistos, std::vector< Histogram * >& allHistograms );
 
   public:
     static bool hasCFGExtension( const std::string &filename );
@@ -187,10 +189,14 @@ class CFGLoader
                          const std::vector< Timeline * > &windows,
                          const std::vector< Histogram * > &histograms,
                          const std::vector< CFGS4DLinkedPropertiesManager > &linkedProperties );
-    static int findWindow( const Timeline *whichWindow, const std::vector< Timeline * > &allWindows );
-    static int findWindowBackwards( const Timeline *whichWindow,
-                                    const std::vector< Timeline * > &allWindows,
-                                    const std::vector< Timeline * >::const_iterator it );
+
+    template <class WindowType>
+    static int findWindow( const WindowType *whichWindow, const std::vector< WindowType * > &allWindows );
+
+    template <class WindowType>
+    static int findWindowBackwards( const WindowType *whichWindow,
+                                    const std::vector< WindowType * > &allWindows,
+                                    const typename std::vector< WindowType * >::const_iterator it );
     // CFG4D
     static const std::vector< std::string > getTagCFGFullList( Timeline *whichWindow );
     static const std::vector< std::string > getTagCFGFullList( Histogram *whichHistogram );
@@ -1909,6 +1915,63 @@ class Analyzer2DCreate : public TagFunction
                             std::vector< Timeline * > &windows,
                             std::vector< Histogram * > &histograms ) override;
     static void printLine( std::ofstream &cfgFile, const std::vector< Histogram * >::const_iterator it );
+
+    static const std::string &getTagCFG()
+    {
+      return tagCFG;
+    }
+
+
+  protected:
+    static std::string tagCFG;
+};
+
+class Analyzer2DType : public TagFunction
+{
+  public:
+    Analyzer2DType()
+    {
+    }
+
+    virtual ~Analyzer2DType()
+    {
+    }
+    virtual bool parseLine( KernelConnection *whichKernel,
+                            std::istringstream &line,
+                            Trace *whichTrace,
+                            std::vector< Timeline * > &windows,
+                            std::vector< Histogram * > &histograms ) override;
+    static void printLine( std::ofstream &cfgFile, const std::vector< Histogram * >::const_iterator it );
+
+    static const std::string &getTagCFG()
+    {
+      return tagCFG;
+    }
+
+
+  protected:
+    static std::string tagCFG;
+};
+
+
+class Analyzer2DIdentifiers : public TagFunction
+{
+  public:
+    Analyzer2DIdentifiers()
+    {
+    }
+
+    virtual ~Analyzer2DIdentifiers()
+    {
+    }
+    virtual bool parseLine( KernelConnection *whichKernel,
+                            std::istringstream &line,
+                            Trace *whichTrace,
+                            std::vector< Timeline * > &windows,
+                            std::vector< Histogram * > &histograms ) override;
+    static void printLine( std::ofstream &cfgFile,
+                           const std::vector< Histogram * > &allHistograms,
+                           const std::vector< Histogram * >::const_iterator it );
 
     static const std::string &getTagCFG()
     {

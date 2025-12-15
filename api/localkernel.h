@@ -50,8 +50,10 @@ class LocalKernel: public KernelConnection
     virtual Timeline *newSingleWindow() const override;
     virtual Timeline *newSingleWindow( Trace *whichTrace ) const override;
     virtual Timeline *newDerivedWindow() const override;
-    virtual Timeline *newDerivedWindow( Timeline *window1, Timeline * window2 ) const override;
+    virtual Timeline *newDerivedWindow( Timeline *window1, Timeline *window2 ) const override;
     virtual Histogram *newHistogram() const override;
+    virtual Histogram *newDerivedHistogram( std::vector< Histogram * >& parents ) const override;
+
 //    virtual RecordList *newRecordList() const;
     virtual ProgressController *newProgressController() const override;
     virtual Filter *newFilter( Filter *concreteFilter ) const override;
@@ -90,6 +92,7 @@ class LocalKernel: public KernelConnection
     virtual void getAllFilterFunctions( std::vector<std::string>& onVector ) const override;
     virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
                                           std::vector<std::string>& onVector ) const override;
+    virtual void getAllHistogramDerivedOperations( std::vector<std::string>& onVector ) const override;
 
     virtual bool userMessage( UserMessageID messageID ) const override;
 

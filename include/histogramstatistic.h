@@ -1048,6 +1048,7 @@ class Statistics
 {
   public:
     Statistics( const KHistogram &whichHistogram );
+    // Statistics( const KDerivedHistogram& whichHistogram );
 
 #ifndef PARALLEL_ENABLED
     static std::vector< TSemanticValue > zeroVector;

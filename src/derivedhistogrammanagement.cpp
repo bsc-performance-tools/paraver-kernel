@@ -21,44 +21,41 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
+#include "derivedhistogrammanagement.h"
 
-#pragma once
+#include "functionmanagement.h"
+#include "semanticderivedhistogramfunctions.h"
 
+using namespace std;
 
-#include <vector>
-#include "paraverkerneltypes.h"
-#include "interval.h"
-#include "memorytrace.h"
+class KHistogram;
 
-struct SemanticInfo
+void createDerivedHistogramFunctions()
 {
-  Interval *callingInterval;
-};
+  vector<string> groups;
+  vector<string> names;
+  vector<vector<SemanticDerivedHistogram *> > functions;
 
+  /*****************************
+  ** Histogram Derived functions
+  ******************************/
+  groups.push_back( "Derived Histogram" );
+  functions.push_back( vector<SemanticDerivedHistogram *>() );
 
-struct SemanticThreadInfo: public SemanticInfo
-{
-  MemoryTrace::iterator *it;
-};
+  functions[0].push_back( new DerivedHistogramAdd() );
+  functions[0].push_back( new DerivedHistogramProduct() );
+  functions[0].push_back( new DerivedHistogramSubstract() );
+  functions[0].push_back( new DerivedHistogramDivide() );
+  functions[0].push_back( new DerivedHistogramMaximum() );
+  functions[0].push_back( new DerivedHistogramMinimum() );
+  functions[0].push_back( new DerivedHistogramDifferent() );
+  //functions[0].push_back( new DerivedDifferent<KHistogram, DerivedHistogramFunctionInfo>() );
 
+  for ( PRV_UINT16 iGroup = 0; iGroup < functions.size(); iGroup++ )
+  {
+    for ( PRV_UINT16 iFunction = 0; iFunction < functions[ iGroup ].size(); iFunction++ )
+      names.push_back( functions[ iGroup ][ iFunction ]->getName() );
+  }
 
-struct SemanticHighInfo: public SemanticInfo
-{
-  std::vector<TSemanticValue> values;
-  TObjectOrder lastChanged;
-  TRecordTime controlBeginTime;
-  TRecordTime controlEndTime;
-  TRecordTime dataBeginTime;
-  TRecordTime dataEndTime;
-  bool newControlBurst;
-};
-
-// TODO: possible second version to avoid SemanticInfo empty *callingInterval
-// see semanticfunction.h
-// struct DerivedHistogramFunctionInfo
-struct DerivedHistogramFunctionInfo : public SemanticInfo
-{
-  std::vector<TSemanticValue> values; // Intermediate common struct?
-};
-
-
+  FunctionManagement<SemanticDerivedHistogram>::getInstance( groups, names, functions );
+}

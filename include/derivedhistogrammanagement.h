@@ -21,44 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-
 #pragma once
 
-
-#include <vector>
-#include "paraverkerneltypes.h"
-#include "interval.h"
-#include "memorytrace.h"
-
-struct SemanticInfo
-{
-  Interval *callingInterval;
-};
-
-
-struct SemanticThreadInfo: public SemanticInfo
-{
-  MemoryTrace::iterator *it;
-};
-
-
-struct SemanticHighInfo: public SemanticInfo
-{
-  std::vector<TSemanticValue> values;
-  TObjectOrder lastChanged;
-  TRecordTime controlBeginTime;
-  TRecordTime controlEndTime;
-  TRecordTime dataBeginTime;
-  TRecordTime dataEndTime;
-  bool newControlBurst;
-};
-
-// TODO: possible second version to avoid SemanticInfo empty *callingInterval
-// see semanticfunction.h
-// struct DerivedHistogramFunctionInfo
-struct DerivedHistogramFunctionInfo : public SemanticInfo
-{
-  std::vector<TSemanticValue> values; // Intermediate common struct?
-};
-
-
+void createDerivedHistogramFunctions();

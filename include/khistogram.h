@@ -28,16 +28,42 @@
 #include <unordered_map>
 
 #include "cube.h"
+#include "cubecontainer.h"
+#include "functionmanagement.h"
+#include "khistogramtotals.h"
 #include "histogram.h"
+#include "histogramstatistic.h"
 #include "memorytrace.h"
 #include "recordlist.h"
-#include "histogramstatistic.h"
+#include "semanticderivedhistogram.h"
+#include "semanticinfo.h"
 
-#ifdef PARALLEL_ENABLED
+
+
+// #ifdef PARALLEL_ENABLED
 #include "cubebuffer.h"
-#endif
+// #endif
 
-class KHistogramTotals;
+using TColumnsMergeMode = uint16_t;
+
+// Related to min - max
+constexpr TColumnsMergeMode MERGE_MIN_MAX           = 0x0001;
+constexpr TColumnsMergeMode KEEP_MIN_MAX_AS_PARENT1 = 0x0002;
+
+// Related to delta
+//constexpr TColumnsMergeMode DELTA_1                 = 0x0010; //?
+constexpr TColumnsMergeMode RECOMPUTE_DELTA_PARENT2 = 0x0010; //?
+constexpr TColumnsMergeMode KEEP_DELTA_AS_PARENT1   = 0x0020;
+
+// Maybe not necessary
+//constexpr TColumnsMergeMode KEEP_COLUMNS_AS_PARENT1 = 0x0100;
+//constexpr TColumnsMergeMode RECOMPUTE_COLUMNS       = 0x0200;
+
+constexpr TColumnsMergeMode DISCRETE_MAXIMUM_EXPANSION = MERGE_MIN_MAX + KEEP_DELTA_AS_PARENT1;
+// constexpr TColumnsMergeMode AS_PARENT1                 = KEEP_MIN_MAX_AS_PARENT1 + KEEP_DELTA_AS_PARENT1;
+constexpr TColumnsMergeMode CONTINUOUS_FIXED_PARENT1   = MERGE_MIN_MAX + RECOMPUTE_DELTA_PARENT2;
+
+
 class KTimeline;
 
 
@@ -75,9 +101,9 @@ class RowsTranslator
     TObjectOrder globalTranslate( PRV_UINT16 winIndex,
                                   TObjectOrder rowIndex ) const;
     void getRowChildren( PRV_UINT16 winIndex,
-                       TObjectOrder rowIndex,
-                       TObjectOrder& iniRow,
-                       TObjectOrder& endRow ) const;
+                         TObjectOrder rowIndex,
+                         TObjectOrder& iniRow,
+                         TObjectOrder& endRow ) const;
     TObjectOrder totalRows() const;
 
   protected:
@@ -136,6 +162,9 @@ struct CalculateData
 };
 
 
+/***************************************************************
+***                     KHistogram                           ***
+****************************************************************/
 class KHistogram : public Histogram
 {
   public:
@@ -254,19 +283,52 @@ class KHistogram : public Histogram
 
     Timeline *getClonedWindow( Timeline *whichWindow ) const;
 
+    virtual bool isDerivedHistogram() const override;
+    
+    ColumnTranslator *getColumnTranslator() const;
+    ColumnTranslator *getPlaneTranslator() const;
+
+    virtual void setReady( bool whichReady ) override;
+    virtual bool isReady() const override;
+
   protected:
+    TObjectOrder numRows = 0;
+    THistogramColumn numCols = 0;
+    THistogramColumn numPlanes = 0;
+
+    Cube<TSemanticValue, NUM_SEMANTIC_STATS> *cube = nullptr;
+    Matrix<TSemanticValue, NUM_SEMANTIC_STATS> *matrix = nullptr;
+    Cube<TSemanticValue, NUM_COMM_STATS> *commCube = nullptr;
+    Matrix<TSemanticValue, NUM_COMM_STATS> *commMatrix = nullptr;
+
+#ifdef PARALLEL_ENABLED
+    CubeBuffer<NUM_SEMANTIC_STATS> *semanticBuffer = nullptr;
+    CubeBuffer<NUM_COMM_STATS> *commBuffer = nullptr;
+#endif
+
+    KHistogramTotals *totals = nullptr;
+    KHistogramTotals *rowTotals = nullptr;
+    KHistogramTotals *commTotals = nullptr;
+    KHistogramTotals *rowCommTotals = nullptr;
+
+    Statistics statistics;
+
+    //Selection of rows
+    SelectionManagement< TObjectOrder, TWindowLevel > rowSelection;
+    std::vector<KTimeline *> orderedWindows;
+
+    bool createComms() const;
+    void initTranslators();
+    void initTotals();
+    void initMatrix( THistogramColumn planes, THistogramColumn cols, TObjectOrder rows );
 
   private:
-    KTimeline *controlWindow;
-    KTimeline *dataWindow;
-    KTimeline *xtraControlWindow;
+    KTimeline *controlWindow = nullptr;
+    KTimeline *dataWindow = nullptr;
+    KTimeline *xtraControlWindow = nullptr;
 
     TRecordTime beginTime;
     TRecordTime endTime;
-
-    TObjectOrder numRows;
-    THistogramColumn numCols;
-    THistogramColumn numPlanes;
 
     bool useFixedDelta;
 
@@ -292,41 +354,18 @@ class KHistogram : public Histogram
 
     bool inclusive;
 
-    Statistics statistics;
-
-    std::vector<KTimeline *> orderedWindows;
-    RowsTranslator *rowsTranslator;
-    ColumnTranslator *columnTranslator;
-    ColumnTranslator *planeTranslator;
-
-    Cube<TSemanticValue, NUM_SEMANTIC_STATS> *cube;
-    Matrix<TSemanticValue, NUM_SEMANTIC_STATS> *matrix;
-    Cube<TSemanticValue, NUM_COMM_STATS> *commCube;
-    Matrix<TSemanticValue, NUM_COMM_STATS> *commMatrix;
-
-#ifdef PARALLEL_ENABLED
-    CubeBuffer<NUM_SEMANTIC_STATS> *semanticBuffer;
-    CubeBuffer<NUM_COMM_STATS> *commBuffer;
-#endif
-
-    KHistogramTotals *totals;
-    KHistogramTotals *rowTotals;
-    KHistogramTotals *commTotals;
-    KHistogramTotals *rowCommTotals;
+    RowsTranslator *rowsTranslator = nullptr;
+    ColumnTranslator *columnTranslator = nullptr;
+    ColumnTranslator *planeTranslator = nullptr;
 
     TTimeUnit myTimeUnit;
 
     WindowCloneManager windowCloneManager;
-    
-    //Selection of rows
-    SelectionManagement< TObjectOrder, TWindowLevel > rowSelection;
+   
+    bool ready = false;
 
     void orderWindows();
-    bool createComms() const;
-    void initTranslators();
-    void initMatrix( THistogramColumn planes, THistogramColumn cols,
-                     TObjectOrder rows );
-    void initTotals();
+    void clearTranslators();
     void initSemantic( TRecordTime beginTime );
     void initStatistics();
     void initTmpBuffers( THistogramColumn planes, TObjectOrder rows );
@@ -363,4 +402,252 @@ class KHistogram : public Histogram
 };
 
 
+/***************************************************************
+***                     KDerivedHistogram                    ***
+****************************************************************/
 
+
+using TPlaneOrder = THistogramColumn;
+
+struct THistogramCoordinates
+{
+  TPlaneOrder plane;
+  TObjectOrder row;
+  THistogramColumn column;
+};
+
+class KDerivedHistogram : public KHistogram
+{
+  public:
+    KDerivedHistogram();
+    KDerivedHistogram( std::vector< KHistogram * >& whichParents );
+    ~KDerivedHistogram();
+    
+    bool setParents( const std::vector< Histogram * > &whichParents ) override;
+    std::vector< KHistogram * > getParents();
+    virtual void setProperties() override;
+
+    bool getThreeDimensions() const override;
+
+    // TRecordTime getBeginTime() const override;
+    // TRecordTime getEndTime() const override;
+
+    Timeline *getControlWindow() const override;
+    Timeline *getDataWindow() const override;
+    Timeline *getExtraControlWindow() const override;
+    void setControlWindow( Timeline *whichWindow ) override;
+    void setDataWindow( Timeline *whichWindow ) override;
+    void setExtraControlWindow( Timeline *whichWindow ) override;
+    void clearControlWindow() override;
+    void clearDataWindow() override;
+    void clearExtraControlWindow() override;
+
+    void setUseFixedDelta( bool whichValue ) override;
+    void setControlMin( THistogramLimit whichMin ) override;
+    void setControlMax( THistogramLimit whichMax ) override;
+    void setControlDelta( THistogramLimit whichDelta ) override;
+    void setExtraControlMin( THistogramLimit whichMin ) override;
+    void setExtraControlMax( THistogramLimit whichMax ) override;
+    void setExtraControlDelta( THistogramLimit whichDelta ) override;
+    void setDataMin( TSemanticValue whichMin ) override;
+    void setDataMax( TSemanticValue whichMax ) override;
+
+    // bool getUseFixedDelta() const override;
+    // THistogramLimit getControlMin() const override;
+    // THistogramLimit getControlMax() const override;
+    // THistogramLimit getControlDelta() const override;
+    // THistogramLimit getExtraControlMin() const override;
+    // THistogramLimit getExtraControlMax() const override;
+    // THistogramLimit getExtraControlDelta() const override;
+    TSemanticValue getDataMin() const override;
+    TSemanticValue getDataMax() const override;
+
+    // bool getInclusiveEnabled() const override;
+    void setInclusive( bool newValue ) override;
+    // bool getInclusive() const override;
+
+    void setNumColumns( THistogramColumn whichNumColumns ) override;
+
+    THistogramColumn getNumPlanes() const override;
+    THistogramColumn getNumColumns() const override;
+    THistogramColumn getCommNumColumns() const override;
+
+    // TObjectOrder getNumRows() const override;
+
+    // TSemanticValue getCurrentValue( PRV_UINT32 col,
+    //                                 PRV_UINT16 idStat,
+    //                                 PRV_UINT32 plane = 0 ) const override;
+    // PRV_UINT32 getCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const override;
+    // void setNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    // void setFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    // bool endCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    // bool planeWithValues( PRV_UINT32 plane = 0 ) const override;
+    // bool getCellValue( TSemanticValue& semVal,
+    //                    PRV_UINT32 whichRow,
+    //                    PRV_UINT32 whichCol,
+    //                    PRV_UINT16 idStat,
+    //                    PRV_UINT32 whichPlane = 0 ) const override;
+    // bool getNotZeroValue( PRV_UINT32 whichRow,
+    //                       PRV_UINT32 whichCol,
+    //                       PRV_UINT16 idStat,
+    //                       PRV_UINT32 whichPlane = 0 ) const override;
+
+    // TSemanticValue getCommCurrentValue( PRV_UINT32 col,
+    //                                     PRV_UINT16 idStat,
+    //                                     PRV_UINT32 plane = 0 ) const override;
+    // PRV_UINT32 getCommCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const override;
+    // void setCommNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    // void setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    // bool endCommCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    // bool planeCommWithValues( PRV_UINT32 plane = 0 ) const override;
+    // bool getCommCellValue( TSemanticValue& semVal,
+    //                        PRV_UINT32 whichRow,
+    //                        PRV_UINT32 whichCol,
+    //                        PRV_UINT16 idStat,
+    //                        PRV_UINT32 whichPlane = 0 ) const override;
+
+    // HistogramTotals *getColumnTotals() const override;
+    // HistogramTotals *getCommColumnTotals() const override;
+    // HistogramTotals *getRowTotals() const override;
+    // HistogramTotals *getCommRowTotals() const override;
+
+    void clearStatistics() override;
+    void pushbackStatistic( const std::string& whichStatistic ) override;
+
+    // bool isCommunicationStat( const std::string& whichStat ) const override;
+
+    // bool isNotZeroStat( const std::string& whichStat ) const override;
+
+    std::string getUnitsLabel( const std::string& whichStat ) const override;
+
+    void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
+                  std::vector<TObjectOrder>& selectedRows, ProgressController *progress ) override;
+
+    bool getControlOutOfLimits() const override;
+    bool getExtraOutOfLimits() const override;
+
+    TTimeUnit getTimeUnit() const override;
+
+    virtual KHistogram *clone() override;
+    virtual void completeClone( Histogram *whichSourceHistogram ) override;
+        
+    // Derived histogram specific methods
+    //virtual Histogram *getParent( PRV_UINT16 whichParent ) const override;
+    virtual bool isDerivedHistogram() const override;
+
+    virtual void setDerivedOperation( const std::string& whichOperation ) override;
+    virtual std::string getDerivedOperation() const override;
+
+    virtual void getDerivedOperationGroupsLabels( std::vector<std::string>& onVector ) const override;
+    virtual void getDerivedOperationLabels( std::vector<std::string>& onVector,
+                                            PRV_UINT32 whichGroup,
+                                            bool getOriginalList = true ) const override;
+    virtual void getDerivedOperationLabelsAndSymbols( std::map<std::string, std::string>& onVector,
+                                                      PRV_UINT32 whichGroup,
+                                                      bool getOriginalList = true ) const override;
+
+    void setColumnsMergeMode( TColumnsMergeMode whichMode );
+    TColumnsMergeMode getColumnsMergeMode() const;  
+
+
+  protected:
+    using THistogramParentID = size_t;
+    using THistoCoordsCorrespondence = std::vector< std::pair< THistogramParentID, THistogramCoordinates > >;
+    using THistoCoordsCorrespondenceIndex = CubeContainer< TPlaneOrder, TObjectOrder, THistogramColumn, THistoCoordsCorrespondence >;
+    THistoCoordsCorrespondenceIndex cellCorrespondence {};
+    THistoCoordsCorrespondenceIndex cellCommCorrespondence {};
+
+    std::string currentDerivedOperation = "add";
+
+  private:
+
+    const THistogramParentID MAIN = 0;
+
+    std::vector< KHistogram * > parents = {};
+
+
+    void fillCellCorrespondences();
+    void getCellCorrespondences( const THistogramCoordinates& whichCoords,
+                                 THistoCoordsCorrespondenceIndex& whichCellCorrespondenceIndex,
+                                 THistoCoordsCorrespondence& resultCellCorrespondence );
+
+    TColumnsMergeMode columnsMergeMode = DISCRETE_MAXIMUM_EXPANSION;
+
+    template <size_t NUM_STATS>
+    void combineCellValues( const THistogramCoordinates whichMainParentCoordinates,
+                            THistoCoordsCorrespondence& whichSecondaryParentsCoordinates,
+                            std::array< TSemanticValue, NUM_STATS >& resultSemVals );
+ 
+    void combineHistograms();
+
+    void orderWindows();
+    void initStatistics();
+
+    void mergeColumns( TRecordTime whichBeginTime, TRecordTime whichEndTime,
+                       std::vector<TObjectOrder>& selectedRows, ProgressController *progress );
+};
+
+
+template <size_t NUM_STATS>
+void KDerivedHistogram::combineCellValues( const THistogramCoordinates whichMainParentCoordinates,
+                                           THistoCoordsCorrespondence& whichSecondaryParentsCoordinates,
+                                           std::array< TSemanticValue, NUM_STATS >& resultSemVals )
+{
+  auto getCellValueForStat =
+    [this]( const size_t parentIndex,
+            const size_t currentStat,
+            const THistogramCoordinates& coord,
+            DerivedHistogramFunctionInfo& foundValues )
+    {
+      bool foundVal = false;
+      TSemanticValue tmpValue = 0.0;
+
+      if constexpr( NUM_STATS == NUM_SEMANTIC_STATS )
+        foundVal = parents[ parentIndex ]->getCellValue( tmpValue, coord.row, coord.column, currentStat, coord.plane );
+      else
+        foundVal = parents[ parentIndex ]->getCommCellValue( tmpValue, coord.row, coord.column, currentStat, coord.plane );
+
+      if ( foundVal )
+        foundValues.values.emplace_back( tmpValue );
+
+      return foundVal;
+    };
+
+  auto updateTotals =
+    [this]( const TSemanticValue semVal,
+            const size_t currentStat,
+            const THistogramCoordinates& coord )
+    {
+        if constexpr( NUM_STATS == NUM_SEMANTIC_STATS )
+        {
+          totals->newValue( semVal, currentStat, coord.column, coord.plane );
+          rowTotals->newValue( semVal, currentStat, coord.row, coord.plane );
+        }
+        else
+        {
+          commTotals->newValue( semVal, currentStat, coord.column, coord.plane );
+          rowCommTotals->newValue( semVal, currentStat, coord.row, coord.plane );
+        }
+      };
+
+  SemanticDerivedHistogram *op = FunctionManagement<SemanticDerivedHistogram>::getInstance()->getFunction( getDerivedOperation() );
+
+  for ( size_t currentStat = 0; currentStat < NUM_STATS; ++currentStat )
+  {
+    DerivedHistogramFunctionInfo tmpValues {};
+
+    bool foundVal = getCellValueForStat( MAIN, currentStat, whichMainParentCoordinates, tmpValues );
+
+    for( const auto& parentCoordinate: whichSecondaryParentsCoordinates )
+    {
+      auto parentId = std::get<0>( parentCoordinate );
+      auto parentCoords = std::get<1>( parentCoordinate );
+
+      foundVal = getCellValueForStat( parentId, currentStat, parentCoords, tmpValues );
+
+      resultSemVals[ currentStat ] = op->execute( &tmpValues );
+      
+      updateTotals( resultSemVals[ currentStat ], currentStat, whichMainParentCoordinates );
+    }
+  }
+};

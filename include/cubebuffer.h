@@ -42,9 +42,22 @@ class CubeBuffer
     const std::unordered_map< THistogramColumn, std::array< TSemanticValue, NStats > >& getRowValues( PRV_UINT32 plane, PRV_UINT32 row ) const;
     const std::unordered_map< THistogramColumn, bool >& getNotZeroValue( PRV_UINT32 plane, PRV_UINT32 row ) const;
 
+    void setFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
+    void setNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
+    bool endCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const;
+    TSemanticValue getCurrentValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT16 idStat ) const;
+    std::array<TSemanticValue, NStats> getCurrentValue( PRV_UINT32 plane, PRV_UINT32 col ) const;
+    PRV_UINT32 getCurrentRow( PRV_UINT32 plane, PRV_UINT32 col ) const;
+//    PRV_UINT32 getCurrentRow( ) const;
+
+    bool planeWithValues( PRV_UINT32 plane = 0 ) const;
+
   private:
     std::vector< std::vector< std::unordered_map< THistogramColumn, std::array< TSemanticValue, NStats > > > > buffer;
     std::vector< std::vector< std::unordered_map< THistogramColumn, bool > > > bufferNotZeroValue;
+
+    std::vector< std::unordered_map< THistogramColumn, PRV_UINT32 > > currentCell; // (plane, column)
+    std::vector< bool > planeNotEmpty;
 };
 
 #include "cubebuffer_impl.h"
