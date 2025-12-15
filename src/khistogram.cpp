@@ -2438,7 +2438,7 @@ void KDerivedHistogram::combineHistograms()
         while( !isEndCell )
         {
           // Combine current cell values of all derived histograms
-          THistogramCoordinates currentCoord{ iPlane, iRow, iCol };
+          THistogramCoordinates currentCoord{ iPlane, static_cast< TObjectOrder >( iRow ), iCol };
           getCellCorrespondences( currentCoord, cellCorrespondence, secondaryParentsCoordinates );
           combineCellValues( currentCoord, secondaryParentsCoordinates, resultSemVals );
 
@@ -2491,7 +2491,7 @@ void KDerivedHistogram::combineHistograms()
             while( !isCommEndCell )
             {
               // Combine current cell values of all derived histograms
-              THistogramCoordinates currentCoord{ iPlane, iRow, iCol };
+              THistogramCoordinates currentCoord{ iPlane, static_cast< TObjectOrder >( iRow ), iCol };
               getCellCorrespondences( currentCoord, cellCommCorrespondence, secondaryParentsCoordinates );
               combineCellValues( currentCoord, secondaryParentsCoordinates, resultCommVals );
 
@@ -2760,7 +2760,7 @@ void KDerivedHistogram::fillCellCorrespondences()
           THistoCoordsCorrespondence tmpValues{};
           for( size_t whichParent = 1; whichParent < parents.size(); ++whichParent )
           {
-            tmpValues.emplace_back( std::pair( whichParent, THistogramCoordinates{ iPlane, iRow, iCol } ) );
+            tmpValues.emplace_back( std::pair( whichParent, THistogramCoordinates{ iPlane, static_cast< TObjectOrder >( iRow ), iCol } ) );
           }
 
           cellCorrespondence( iPlane, iRow, iCol ) = tmpValues;
@@ -2787,7 +2787,7 @@ void KDerivedHistogram::fillCellCorrespondences()
               THistoCoordsCorrespondence tmpValues{};
               for( size_t whichParent = 1; whichParent < parents.size(); ++whichParent )
               {
-                tmpValues.emplace_back( std::pair( whichParent, THistogramCoordinates{ iPlane, iRow, iCol } ) );
+                tmpValues.emplace_back( std::pair( whichParent, THistogramCoordinates{ iPlane, static_cast< TObjectOrder >( iRow ), iCol } ) );
               }
 
               cellCommCorrespondence( iPlane, iRow, iCol ) = tmpValues;
