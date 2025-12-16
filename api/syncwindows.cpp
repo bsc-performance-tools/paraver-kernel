@@ -323,6 +323,7 @@ void SyncWindows::getGroupAvailableProperties( TGroupId groupId, std::vector< Sy
   if( syncGroups[ groupId ].groupType != SyncPropertiesGroup::SYNC_GROUP_HISTOGRAMS )
   {
     properties.push_back( SyncPropertiesType::SYNC_COLOR_PALETTE );
+    properties.push_back( SyncPropertiesType::SYNC_OBJECT_AXIS );
 
     if( syncGroups[ groupId ].isSameTraceStruct )
     {
@@ -386,6 +387,9 @@ void SyncWindows::broadcastProperty( TGroupId whichGroup )
           break;
         case SyncPropertiesType::SYNC_COLOR_PALETTE:
           broadcastColorPaletteAll( whichGroup );
+          break;
+        case SyncPropertiesType::SYNC_OBJECT_AXIS:
+          broadcastObjectAxisAll( whichGroup );
           break;
         default:
           break;
@@ -1111,4 +1115,58 @@ bool SyncWindows::applyToFirstWindow( TGroupId whichGroup, T &result, Visitor vi
   const WindowGenericItem &firstElement = *( it->second.syncGroupsWindows.begin() );
   result                                = std::visit( visitor, firstElement );
   return true;
+}
+
+void SyncWindows::broadcastObjectAxisAll( TGroupId whichGroup )
+{
+  if( syncGroups.find( whichGroup ) == syncGroups.end() )
+    return;
+
+  if( syncGroups[ whichGroup ].isChanging )
+    return;
+
+  syncGroups[ whichGroup ].isChanging = true;
+
+  // Get axis size from first timeline in group
+  TObjectAxisSize whichAxisSize = TObjectAxisSize::CURRENT_LEVEL;
+  PRV_UINT16 whichCustomSize = 0;
+  bool foundTimeline = false;
+
+  for( auto &window : syncGroups[ whichGroup ].syncGroupsWindows )
+  {
+    if( std::holds_alternative< Timeline * >( window ) )
+    {
+      Timeline *timeline = std::get< Timeline * >( window );
+      whichAxisSize = timeline->getObjectAxisSize();
+      whichCustomSize = timeline->getObjectAxisCustomSize();
+      foundTimeline = true;
+      break;
+    }
+  }
+
+  if( !foundTimeline )
+  {
+    syncGroups[ whichGroup ].isChanging = false;
+    return;
+  }
+
+  for( auto &window : syncGroups[ whichGroup ].syncGroupsWindows )
+  {
+    std::visit( overloads{ []( Histogram * )
+                           {
+                           },
+                           [ &whichAxisSize, &whichCustomSize ]( Timeline *timeline )
+                           {
+                             if( timeline->getObjectAxisSize() != whichAxisSize ||
+                                 ( whichAxisSize == TObjectAxisSize::CUSTOM_PERC &&
+                                   timeline->getObjectAxisCustomSize() != whichCustomSize ) )
+                             {
+                               timeline->setObjectAxisSize( whichAxisSize );
+                               timeline->setObjectAxisCustomSize( whichCustomSize );
+                               timeline->setRedraw( true );
+                             }
+                           } },
+                window );
+  }
+  syncGroups[ whichGroup ].isChanging = false;
 }

@@ -333,6 +333,8 @@ string LabelConstructor::propertyToLabel (SyncPropertiesType prop)
     return CFG_VAL_SYNC_COLOR_PALETTE;
   case SyncPropertiesType::SYNC_INFO_PANEL:
     return CFG_VAL_SYNC_INFO_PANEL;
+  case SyncPropertiesType::SYNC_OBJECT_AXIS:
+    return CFG_VAL_SYNC_OBJECT_AXIS;
   default:
     return "";
   }
@@ -362,6 +364,8 @@ SyncPropertiesType LabelConstructor::labelToProperty (const std::string &label)
     return SyncPropertiesType::SYNC_COLOR_PALETTE;
   else if (label == CFG_VAL_SYNC_INFO_PANEL)
     return SyncPropertiesType::SYNC_INFO_PANEL;
+  else if (label == CFG_VAL_SYNC_OBJECT_AXIS)
+    return SyncPropertiesType::SYNC_OBJECT_AXIS;
   else
     return SyncPropertiesType::SYNC_INIT;
 }

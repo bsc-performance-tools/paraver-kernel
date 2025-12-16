@@ -880,6 +880,7 @@ bool CFGLoader::saveCFG( const string &filename,
     WindowPixelSize::printLine( cfgFile, it );
     WindowLabelsToDraw::printLine( cfgFile, it );
     WindowObjectAxisSize::printLine( cfgFile, it );
+    WindowObjectAxisCustomSize::printLine( cfgFile, it );
     WindowSelectedFunctions::printLine( cfgFile, it );
     WindowComposeFunctions::printLine( cfgFile, it );
     WindowSemanticModule::printLine( cfgFile, it );
@@ -1082,7 +1083,8 @@ void CFGLoader::loadMap()
   cfgTagFunctions[ OLDCFG_TAG_WNDW_DRAW_MODE_ROWS ]     = new WindowDrawModeRows();
   cfgTagFunctions[ OLDCFG_TAG_WNDW_PIXEL_SIZE ]         = new WindowPixelSize();
   cfgTagFunctions[ OLDCFG_TAG_WNDW_LABELS_TO_DRAW ]     = new WindowLabelsToDraw();
-  cfgTagFunctions[ OLDCFG_TAG_WNDW_OBJECT_AXIS_SIZE ]   = new WindowObjectAxisSize();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_OBJECT_AXIS_SIZE ]        = new WindowObjectAxisSize();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_OBJECT_AXIS_CUSTOM_SIZE ] = new WindowObjectAxisCustomSize();
   cfgTagFunctions[ OLDCFG_TAG_WNDW_PUNCTUAL_COLOR_WIN ] = new WindowPunctualColorWindow();
   cfgTagFunctions[ OLDCFG_TAG_WNDW_SYNCHRONIZE ]        = new WindowSynchronize();
 
@@ -4181,6 +4183,40 @@ bool WindowObjectAxisSize::parseLine( KernelConnection *whichKernel,
 void WindowObjectAxisSize::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_OBJECT_AXIS_SIZE << " " << static_cast< int >( ( *it )->getObjectAxisSize() ) << endl;
+}
+
+
+string WindowObjectAxisCustomSize::tagCFG = OLDCFG_TAG_WNDW_OBJECT_AXIS_CUSTOM_SIZE;
+
+bool WindowObjectAxisCustomSize::parseLine( KernelConnection *whichKernel,
+                                            istringstream &line,
+                                            Trace *whichTrace,
+                                            vector< Timeline * > &windows,
+                                            vector< Histogram * > &histograms )
+{
+  string strCustomSize;
+
+  if( windows[ windows.size() - 1 ] == nullptr )
+    return false;
+
+  getline( line, strCustomSize, ' ' );
+  istringstream tmpStream( strCustomSize );
+  PRV_UINT16 customSize;
+
+  if( !( tmpStream >> customSize ) )
+    return false;
+
+  windows[ windows.size() - 1 ]->setObjectAxisCustomSize( customSize );
+
+  return true;
+}
+
+void WindowObjectAxisCustomSize::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+{
+  if( ( *it )->getObjectAxisSize() == TObjectAxisSize::CUSTOM_PERC )
+  {
+    cfgFile << OLDCFG_TAG_WNDW_OBJECT_AXIS_CUSTOM_SIZE << " " << ( *it )->getObjectAxisCustomSize() << endl;
+  }
 }
 
 

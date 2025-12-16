@@ -132,7 +132,8 @@ enum class TObjectAxisSize
   ZERO_PERC,
   FIVE_PERC,
   TEN_PERC,
-  TWENTYFIVE_PERC
+  TWENTYFIVE_PERC,
+  CUSTOM_PERC
 };
 
 class Timeline
@@ -751,6 +752,13 @@ class Timeline
       return TObjectAxisSize::CURRENT_LEVEL;
     }
 
+    virtual void setObjectAxisCustomSize( PRV_UINT16 whichSize )
+    {}
+    virtual PRV_UINT16 getObjectAxisCustomSize() const
+    {
+      return 10;
+    }
+
     // CFG4D
     virtual void setCFG4DEnabled( bool enabled )
     {
@@ -1226,6 +1234,9 @@ class TimelineProxy : public Timeline
     virtual void setObjectAxisSize( TObjectAxisSize whichSize ) override;
     virtual TObjectAxisSize getObjectAxisSize() const override;
 
+    virtual void setObjectAxisCustomSize( PRV_UINT16 whichSize ) override;
+    virtual PRV_UINT16 getObjectAxisCustomSize() const override;
+
     // CFG4D
     virtual void setCFG4DEnabled( bool enabled ) override;
     virtual bool getCFG4DEnabled() const override;
@@ -1421,6 +1432,7 @@ class TimelineProxy : public Timeline
 
     TObjectLabels objectLabels;
     TObjectAxisSize objectAxisSize;
+    PRV_UINT16 objectAxisCustomSize;
 
     // CFG4D
     bool isCFG4DEnabled;

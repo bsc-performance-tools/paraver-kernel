@@ -160,6 +160,7 @@ void TimelineProxy::init()
 
   objectLabels   = ParaverConfig::getInstance()->getTimelineLabels();
   objectAxisSize = ParaverConfig::getInstance()->getTimelineObjectAxisSize();
+  objectAxisCustomSize = 10;
 
   if( myTrace != nullptr )
   {
@@ -345,6 +346,7 @@ Timeline *TimelineProxy::clone( bool recursiveClone )
 
   clonedWindow->objectLabels   = objectLabels;
   clonedWindow->objectAxisSize = objectAxisSize;
+  clonedWindow->objectAxisCustomSize = objectAxisCustomSize;
   /*
     for ( vector<RecordList *>::iterator it = myLists.begin(); it != myLists.end(); it++ )
       clonedWindow->myLists.push_back( (*it)->create( *it ) );
@@ -1716,6 +1718,16 @@ void TimelineProxy::setObjectAxisSize( TObjectAxisSize whichSize )
 TObjectAxisSize TimelineProxy::getObjectAxisSize() const
 {
   return objectAxisSize;
+}
+
+void TimelineProxy::setObjectAxisCustomSize( PRV_UINT16 whichSize )
+{
+  objectAxisCustomSize = whichSize;
+}
+
+PRV_UINT16 TimelineProxy::getObjectAxisCustomSize() const
+{
+  return objectAxisCustomSize;
 }
 
 

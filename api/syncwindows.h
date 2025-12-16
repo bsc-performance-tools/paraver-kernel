@@ -45,7 +45,8 @@ enum class SyncPropertiesType
   SYNC_WINDOWS_SIZE,
   SYNC_WINDOWS_POSITION,
   SYNC_COLOR_PALETTE,
-  SYNC_INFO_PANEL
+  SYNC_INFO_PANEL,
+  SYNC_OBJECT_AXIS
 };
 
 enum class SyncPropertiesGroup
@@ -167,6 +168,7 @@ public:
   void broadcastPositionAll (TGroupId whichGroup, int whichPosWDiff = 0, int whichPosHDiff = 0);
   void broadcastColorPaletteAll (TGroupId whichGroup, std::optional<std::map<TSemanticValue, rgb>> paletteColors = std::nullopt, std::optional<rgb> backgroundColor = std::nullopt,
                                  std::optional<rgb> axisColor = std::nullopt, std::optional<bool> backgroundAsZero = std::nullopt);
+  void broadcastObjectAxisAll( TGroupId whichGroup );
 
   void getGroupTimes (TGroupId whichGroup, TTime &beginTime, TTime &endTime);
   void getGroupDelta (TGroupId whichGroup, THistogramLimit &whichDelta);
@@ -305,6 +307,12 @@ private:
             broadcastColorPalette (whichWindow, whichGroup, tmpPaletteColors, tmpBackgroundColor, tmpAxisColor, tmpBackgroundAsZero);
             break;
           }
+        case SyncPropertiesType::SYNC_OBJECT_AXIS:
+          if constexpr (std::is_same_v<T, Timeline>)
+          {
+            broadcastObjectAxisAll( whichGroup );
+          }
+          break;
         default:
           break;
         }
