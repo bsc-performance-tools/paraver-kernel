@@ -22,8 +22,11 @@
 \*****************************************************************************/
 
 #include <algorithm>
+#include <cerrno>
+#include <cstring>
 #include <math.h>
 #include <sstream>
+#include <stdexcept>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
@@ -54,6 +57,20 @@
 
 #include <iostream>
 using namespace std;
+
+// Helper function to check stream state and throw with file path on error
+static void checkStreamWrite( std::fstream& stream, const std::string& filePath )
+{
+  if( stream.fail() || stream.bad() )
+  {
+    int savedErrno = errno;
+    std::string errMsg = "Write failed to file: " + filePath;
+    if( savedErrno != 0 )
+      errMsg += " (" + std::string( std::strerror( savedErrno ) ) + ")";
+    throw std::runtime_error( errMsg );
+  }
+}
+
 
 KTraceCutter::KTraceCutter( TraceOptions *options,
                             const vector< TEventType > &whichHWCTypes,
@@ -621,7 +638,16 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
   std::string line;
   TraceStream *infile = TraceStream::openFile( nameIn );
 
+  std::string outfilePath( nameOut );
   fstream outfile( nameOut, ios_base::out );
+  if( !outfile.is_open() )
+  {
+    int savedErrno = errno;
+    std::string errMsg = "Cannot open output file: " + outfilePath;
+    if( savedErrno != 0 )
+      errMsg += " (" + std::string( std::strerror( savedErrno ) ) + ")";
+    throw std::runtime_error( errMsg );
+  }
 
   /* Process header */
   total_time = last_record_time - first_record_time;
@@ -728,8 +754,18 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
   }
 
   infile->close();
+  checkStreamWrite( outfile, outfilePath );
   outfile.close();
-  unlink( nameIn );
+  
+  std::string tmpFilePath( nameIn );
+  if( unlink( nameIn ) != 0 )
+  {
+    int savedErrno = errno;
+    std::string errMsg = "Failed to delete temporary file: " + tmpFilePath;
+    if( savedErrno != 0 )
+      errMsg += " (" + std::string( std::strerror( savedErrno ) ) + ")";
+    throw std::runtime_error( errMsg );
+  }
 }
 
 /* Function for filtering tasks in cut */
@@ -818,16 +854,41 @@ void KTraceCutter::execute( std::string trace_in,
 
 #ifdef _WIN32
     sprintf( trace_file_out, "%s\\tmp_fileXXXXXX", tmp_dir.c_str() );
-    _mktemp_s( trace_file_out, strlen( trace_file_out ) + 1 );
+    if( _mktemp_s( trace_file_out, strlen( trace_file_out ) + 1 ) != 0 )
+    {
+      int savedErrno = errno;
+      std::string errMsg = "Failed to create temporary file in: " + tmp_dir;
+      if( savedErrno != 0 )
+        errMsg += " (" + std::string( std::strerror( savedErrno ) ) + ")";
+      throw std::runtime_error( errMsg );
+    }
 #else
     sprintf( trace_file_out, "%s/tmp_fileXXXXXX", tmp_dir.c_str() );
-    mkstemp( trace_file_out );
+    int tmpFd = mkstemp( trace_file_out );
+    if( tmpFd == -1 )
+    {
+      int savedErrno = errno;
+      std::string errMsg = "Failed to create temporary file in: " + tmp_dir;
+      if( savedErrno != 0 )
+        errMsg += " (" + std::string( std::strerror( savedErrno ) ) + ")";
+      throw std::runtime_error( errMsg );
+    }
+    close( tmpFd );  // Close fd, will reopen via fstream
 #endif
   }
   else
     strcpy( trace_file_out, trace_out.c_str() );
 
+  std::string outfilePath( trace_file_out );
   fstream outfile( trace_file_out, ios_base::out );
+  if( !outfile.is_open() )
+  {
+    int savedErrno = errno;
+    std::string errMsg = "Cannot open output file: " + outfilePath;
+    if( savedErrno != 0 )
+      errMsg += " (" + std::string( std::strerror( savedErrno ) ) + ")";
+    throw std::runtime_error( errMsg );
+  }
 
   ini_cutter_progress_bar( trace_in, tmpKProgressControler );
 
@@ -1206,6 +1267,7 @@ void KTraceCutter::execute( std::string trace_in,
 
   /* Close the files */
   inFile->close();
+  checkStreamWrite( outfile, outfilePath );
   outfile.close();
 
   if ( writeToTmpFile )   // trace_file_out is a tmpfile!!

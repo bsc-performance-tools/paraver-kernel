@@ -24,6 +24,7 @@
 
 #include <iostream>
 #include <string>
+#include <stdexcept>
 #include <fstream>
 #include <iomanip>
 #include <map>
@@ -981,8 +982,10 @@ int main( int argc, char *argv[] )
       std::cout << "Error while loading preferences. Using default options.\n";
     }
 
-    if ( parseArguments( myKernel, argc, argv, registeredTool ) )
+    try
     {
+      if ( parseArguments( myKernel, argc, argv, registeredTool ) )
+      {
       if ( option[ SHOW_HELP ].active )
         printHelp();
       else if ( option[ SHOW_VERSION ].active )
@@ -1037,6 +1040,12 @@ int main( int argc, char *argv[] )
           delete trace;
         }
       }
+      }
+    }
+    catch( const std::exception& e )
+    {
+      std::cerr << "  [ERROR] " << e.what() << std::endl;
+      exit( 1 );
     }
   }
 

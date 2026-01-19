@@ -21,8 +21,10 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#include <errno.h>
+#include <cerrno>
+#include <cstring>
 #include <functional>
+#include <stdexcept>
 #include <string>
 #include <string.h>
 #include <stdlib.h>
@@ -49,6 +51,19 @@
 #endif
 
 using namespace std::placeholders;
+
+// Helper function to check stream state and throw with file path on error
+static void checkStreamWrite( std::fstream& stream, const std::string& filePath )
+{
+  if( stream.fail() || stream.bad() )
+  {
+    int savedErrno = errno;
+    std::string errMsg = "Write failed to file: " + filePath;
+    if( savedErrno != 0 )
+      errMsg += " (" + std::string( std::strerror( savedErrno ) ) + ")";
+    throw std::runtime_error( errMsg );
+  }
+}
 
 
 template <typename T, typename... Targs>
@@ -824,8 +839,17 @@ void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out, ProgressC
   /* Reading of program args */
   read_sc_args();
 
+  std::string traceOutPath( trace_out );
   infile = TraceStream::openFile( trace_in );
   outfile = fstream( trace_out, ios_base::out );
+  if( !outfile.is_open() )
+  {
+    int savedErrno = errno;
+    std::string errMsg = "Cannot open output file: " + traceOutPath;
+    if( savedErrno != 0 )
+      errMsg += " (" + std::string( std::strerror( savedErrno ) ) + ")";
+    throw std::runtime_error( errMsg );
+  }
   
   write_pcf( trace_in, trace_out );
 
@@ -841,5 +865,6 @@ void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out, ProgressC
 
   /* Close the files */
   infile->close();
+  checkStreamWrite( outfile, traceOutPath );
   outfile.close();
 }
