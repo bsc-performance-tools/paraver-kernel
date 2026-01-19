@@ -397,6 +397,11 @@ class Timeline
     {
       return 0;
     }
+
+    virtual void setSize( PRV_UINT16 whichPosWidth, PRV_UINT16 whichPosHeigh, bool broadcastProperty = true )
+    {
+    }
+
     virtual void setWidth( PRV_UINT16 whichPos, bool broadcastProperty = true )
     {
     }
@@ -1119,6 +1124,8 @@ class TimelineProxy : public Timeline
     virtual PRV_UINT16 getPosY() const override;
     virtual void setPosY( PRV_UINT16 whichPos, bool broadcastValue = true ) override;
     virtual PRV_UINT16 getWidth() const override;
+
+    virtual void setSize( PRV_UINT16 whichPosWidth, PRV_UINT16 whichPosHeigh, bool broadcastProperty = true ) override;
     virtual void setWidth( PRV_UINT16 whichPos, bool broadcastProperty = true ) override;
     virtual PRV_UINT16 getHeight() const override;
     virtual void setHeight( PRV_UINT16 whichPos, bool broadcastProperty = true ) override;

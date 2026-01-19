@@ -1088,6 +1088,19 @@ void TimelineProxy::setPosY( PRV_UINT16 whichPos, bool broadcastValue )
 {
   posY = whichPos;
 }
+void TimelineProxy::setSize( PRV_UINT16 whichPosWidth, PRV_UINT16 whichPosHeigh, bool broadcastProperty )
+{
+  if( width != whichPosWidth || height != whichPosHeigh )
+  {
+    width  = whichPosWidth;
+    height = whichPosHeigh;
+
+    if( sync && broadcastProperty && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_WINDOWS_SIZE ) )
+    {
+      SyncWindows::getInstance()->broadcastSizeAll( syncGroup, width, height );
+    }
+  }
+}
 
 PRV_UINT16 TimelineProxy::getWidth() const
 {
@@ -1101,7 +1114,9 @@ void TimelineProxy::setWidth( PRV_UINT16 whichPos, bool broadcastProperty )
     width = whichPos;
 
     if( sync && broadcastProperty && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_WINDOWS_SIZE ) )
+    {
       SyncWindows::getInstance()->broadcastSizeAll( syncGroup, width, height );
+    }
   }
 }
 
@@ -1117,7 +1132,9 @@ void TimelineProxy::setHeight( PRV_UINT16 whichPos, bool broadcastProperty )
     height = whichPos;
 
     if( sync && broadcastProperty && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_WINDOWS_SIZE ) )
+    {
       SyncWindows::getInstance()->broadcastSizeAll( syncGroup, width, height );
+    }
   }
 }
 
