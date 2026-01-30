@@ -53,7 +53,7 @@ constexpr size_t MAX_APPL =     32;
 #endif
 
 constexpr size_t MAX_THREAD = 16;
-constexpr size_t MAX_SELECTED_TASKS = 90;
+constexpr size_t MAX_SELECTED_TASKS = 512;
 constexpr size_t MAX_LINE_SIZE = MAX_HEADER_SIZE;
 
 /* sofware counters */
@@ -101,7 +101,8 @@ class KTraceOptions: public TraceOptions
     bool keep_boundary_events;
     bool keep_all_events;
     bool max_cut_time_to_finish_of_first_appl; // MESS
-    char tasks_list[256];
+    CutterMode cutter_mode;
+    char tasks_list[4096];
 
     /* Parameters for software counters */
     bool sc_onInterval;
@@ -164,22 +165,21 @@ class KTraceOptions: public TraceOptions
 
     inline void init_tasks_list()
     {
-      for ( unsigned int i = 0; i < 256; ++i )
+      for ( unsigned int i = 0; i < 4096; ++i )
       {
         tasks_list[ i ] = '\0';
       }
     }
 
-    inline void set_tasks_list( char whichTasksList[256] ) override
+    inline void set_tasks_list( char whichTasksList[4096] ) override
     {
       init_tasks_list();
 
-      for ( unsigned int i = 0; i < 256; ++i )
+      for ( unsigned int i = 0; i < 4096; ++i )
       {
         if ( whichTasksList[ i ] == '\0' )
           break;
-        else
-          tasks_list[ i ] = whichTasksList[ i ];
+        tasks_list[ i ] = whichTasksList[ i ];
       }
     }
 
@@ -219,6 +219,16 @@ class KTraceOptions: public TraceOptions
       max_cut_time_to_finish_of_first_appl = setOptions;
     }
 
+    inline void set_cutter_mode( CutterMode mode ) override
+    {
+      cutter_mode = mode;
+    }
+
+    inline CutterMode get_cutter_mode() const override
+    {
+      return cutter_mode;
+    }
+
     inline bool get_by_time() const override
     {
       return by_time;
@@ -246,17 +256,16 @@ class KTraceOptions: public TraceOptions
 
     inline void get_tasks_list( TTasksList &whichTasksList ) const override
     {
-      for ( unsigned int i = 0; i < 256; ++i )
+      for ( unsigned int i = 0; i < 4096; ++i )
       {
         whichTasksList[ i ] = '\0';
       }
 
-      for ( unsigned int i = 0; i < 256; ++i )
+      for ( unsigned int i = 0; i < 4096; ++i )
       {
         if ( tasks_list[ i ] == '\0' )
           break;
-        else
-          whichTasksList[ i ] = tasks_list[ i ];
+        whichTasksList[ i ] = tasks_list[ i ];
       }
     }
 

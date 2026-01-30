@@ -67,6 +67,8 @@ class KTraceCutter : public TraceCutter
     unsigned int max_size;
     bool is_zip;
     unsigned int cut_tasks;
+    unsigned int cut_apps;
+    unsigned int cut_threads;
     bool break_states;
     bool strict_cut;
     unsigned long long time_min;
@@ -142,14 +144,16 @@ class KTraceCutter : public TraceCutter
     unsigned long long timeOfFirsApplicationFinished;
 
 
-    struct selected_tasks
+    struct SelectedObject
     {
-      int min_task_id;
-      int max_task_id;
-      int range;
+      int appl;
+      int task;
+      int thread;
     };
 
-    struct selected_tasks wanted_tasks[MAX_SELECTED_TASKS];
+    std::vector<SelectedObject> wanted_tasks;
+    std::vector<SelectedObject> wanted_apps;
+    std::vector<SelectedObject> wanted_threads;
     KTraceOptions *exec_options;
     std::string cutterApplicationCaller;
 
@@ -185,7 +189,11 @@ class KTraceCutter : public TraceCutter
                        unsigned long long value );
     void load_counters_of_pcf( char *trace_name );
     void shiftLeft_TraceTimes_ToStartFromZero( const char *originalTraceName, const char *nameIn, const char *nameOut, ProgressController *progress );
-    bool is_selected_task( int task_id );
+    bool is_selected_task( int appl_id, int task_id );
+    bool is_selected_appl( int appl_id );
+    bool is_selected_thread( int appl_id, int task_id, int thread_id );
+
+
 
     ThreadInfo& initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu );
 };

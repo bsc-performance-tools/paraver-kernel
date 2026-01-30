@@ -40,7 +40,7 @@ class TraceOptions
       int last_value;
     };
 
-    typedef char TTasksList[256];
+    typedef char TTasksList[4096];
     typedef char *TStateNames[20];
     typedef struct allowed_types TFilterTypes[20];
 
@@ -87,6 +87,10 @@ class TraceOptions
 
     // MESS
     virtual bool get_max_cut_time_to_finish_of_first_appl() const = 0;
+    
+    enum CutterMode { CUT_MODE_TASK = 0, CUT_MODE_APPLICATION, CUT_MODE_THREAD }; // ORDER IS IMPORTANT
+    virtual void set_cutter_mode( CutterMode mode ) = 0;
+    virtual CutterMode get_cutter_mode() const = 0;
 
     /* Sets for filtering */
     virtual void set_filter_events( bool filterEvents ) = 0;
@@ -175,6 +179,9 @@ class TraceOptionsProxy :public TraceOptions
     virtual void set_keep_boundary_events( bool keepEvents ) override;
     virtual void set_keep_all_events( bool keepAllEvents ) override;
     virtual void set_max_cut_time_to_finish_of_first_appl( bool setOption ) override;
+    virtual void set_cutter_mode( CutterMode mode ) override;
+
+    virtual CutterMode get_cutter_mode() const override;
 
     virtual bool get_by_time() const override;
     virtual unsigned long long get_min_cutting_time() const override;

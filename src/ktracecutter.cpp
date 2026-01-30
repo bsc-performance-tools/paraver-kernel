@@ -171,32 +171,71 @@ void KTraceCutter::read_cutter_params()
   max_perc = exec_options->max_percentage;
   originalTime = exec_options->original_time;
 
+  cut_tasks = 0;
+  cut_apps = 0;
+  cut_threads = 0;
+  int j_tasks = 0;
+  int j_apps = 0;
+  int j_threads = 0;
+
   if ( exec_options->tasks_list[0] != '\0' )
   {
-    cut_tasks = true;
-    int j = 0;
+    // Clear vectors
+    wanted_apps.clear();
+    wanted_tasks.clear();
+    wanted_threads.clear();
 
-    char *tmpTasksLists_r = nullptr;
-    word = strtok_r( exec_options->tasks_list, ",", &tmpTasksLists_r );
-    do
+    TraceOptions::CutterMode mode = exec_options->get_cutter_mode();
+
+    // Setup mode flags
+    if ( mode == TraceOptions::CUT_MODE_APPLICATION ) cut_apps = 1;
+    else if ( mode == TraceOptions::CUT_MODE_THREAD ) cut_threads = 1;
+    else cut_tasks = 1;
+    
+    // Parse
+    std::string taskListStr( exec_options->tasks_list );
+    std::stringstream ss( taskListStr );
+    std::string token;
+    
+    while( std::getline( ss, token, ',' ) )
     {
-      if ( ( buffer = strchr( word, '-' ) ) != nullptr )
-      {
-        *buffer = '\0';
-        wanted_tasks[j].min_task_id = atoll( word );
-        wanted_tasks[j].max_task_id = atoll( ++buffer );
-        wanted_tasks[j].range = 1;
-      }
-      else
-      {
-        wanted_tasks[j].min_task_id = atoll( word );
-        wanted_tasks[j].range = 0;
-      }
-
-      j++;
+       // Trim whitespace
+       size_t first = token.find_first_not_of(' ');
+       if (std::string::npos == first) continue;
+       size_t last = token.find_last_not_of(' ');
+       token = token.substr(first, (last - first + 1));
+       
+       int a=0, t=0, th=0;
+       
+       if( mode == TraceOptions::CUT_MODE_APPLICATION )
+       {
+          if( sscanf( token.c_str(), "%d", &a ) == 1 )
+          {
+             SelectedObject obj = { a, 0, 0 };
+             wanted_apps.push_back( obj );
+          }
+       }
+       else if( mode == TraceOptions::CUT_MODE_TASK )
+       {
+          if( sscanf( token.c_str(), "%d.%d", &a, &t ) == 2 )
+          {
+             SelectedObject obj = { a, t, 0 };
+             wanted_tasks.push_back( obj );
+          }
+       }
+       else if( mode == TraceOptions::CUT_MODE_THREAD )
+       {
+          // Try 1.1.1 format
+          if( sscanf( token.c_str(), "%d.%d.%d", &a, &t, &th ) == 3 )
+          {
+             SelectedObject obj = { a, t, th };
+             wanted_threads.push_back( obj );
+          }
+       }
     }
-    while ( ( word = strtok_r( nullptr, ",", &tmpTasksLists_r ) ) != nullptr );
   }
+
+
 
   if ( exec_options->max_trace_size != 0 )
     max_size = exec_options->max_trace_size * 1000000;
@@ -768,28 +807,6 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
   }
 }
 
-/* Function for filtering tasks in cut */
-bool KTraceCutter::is_selected_task( int task_id )
-{
-  int i;
-
-  for ( i = 0; i < MAX_SELECTED_TASKS; i++ )
-  {
-    if ( wanted_tasks[i].min_task_id == 0 )
-      break;
-
-    if ( wanted_tasks[i].range )
-    {
-      if ( task_id >= wanted_tasks[i].min_task_id && task_id <= wanted_tasks[i].max_task_id )
-        return true;
-    }
-    else
-      if ( task_id == wanted_tasks[i].min_task_id )
-        return true;
-  }
-
-  return false;
-}
 
 KTraceCutter::ThreadInfo& KTraceCutter::initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu )
 {
@@ -839,8 +856,6 @@ void KTraceCutter::execute( std::string trace_in,
   first_time_caught = false;
   current_size = 0;
 
-  for ( i = 0; i < MAX_SELECTED_TASKS; i++ )
-    wanted_tasks[i].min_task_id = 0;
 
   /* Reading of the program arguments */
   read_cutter_params();
@@ -958,7 +973,11 @@ void KTraceCutter::execute( std::string trace_in,
                ( time_2 >= timeOfFirsApplicationFinished && !break_states ) ) )
           break;
 
-        if ( cut_tasks && !is_selected_task( task ) )
+        if ( cut_apps && !is_selected_appl( appl ) )
+          break;
+        if ( cut_tasks && !is_selected_task( appl, task ) )
+          break;
+        if ( cut_threads && !is_selected_thread( appl, task, thread ) )
           break;
 
         if ( time_2 <= time_min )
@@ -1082,7 +1101,11 @@ void KTraceCutter::execute( std::string trace_in,
              firstApplicationFinished && time_1 >= timeOfFirsApplicationFinished )
           break;
 
-        if( cut_tasks && !is_selected_task( task ) )
+        if ( cut_apps && !is_selected_appl( appl ) )
+          break;
+        if( cut_tasks && !is_selected_task( appl, task ) )
+          break;
+        if ( cut_threads && !is_selected_thread( appl, task, thread ) )
           break;
 
         threadInfoIt = threadsInfo.find( appl - 1, task - 1, thread - 1 );
@@ -1192,7 +1215,7 @@ void KTraceCutter::execute( std::string trace_in,
                time_4 >= timeOfFirsApplicationFinished ) )
           break;
 
-        if ( cut_tasks && !is_selected_task( task ) && !is_selected_task( task_2 ) )
+        if ( cut_tasks && !is_selected_task( appl, task ) && !is_selected_task( appl_2, task_2 ) )
           break;
 
         if ( time_1 >= time_min && time_3 >= time_min )
@@ -1277,4 +1300,31 @@ void KTraceCutter::execute( std::string trace_in,
   }
 
   free( trace_file_out );
+}
+
+bool KTraceCutter::is_selected_appl( int appl_id )
+{
+  for( const auto& obj : wanted_apps )
+  {
+     if( obj.appl == appl_id ) return true;
+  }
+  return false;
+}
+
+bool KTraceCutter::is_selected_task( int appl_id, int task_id )
+{
+  for( const auto& obj : wanted_tasks )
+  {
+     if( obj.appl == appl_id && obj.task == task_id ) return true;
+  }
+  return false;
+}
+
+bool KTraceCutter::is_selected_thread( int appl_id, int task_id, int thread_id )
+{
+  for( const auto& obj : wanted_threads )
+  {
+     if( obj.appl == appl_id && obj.task == task_id && obj.thread == thread_id ) return true;
+  }
+  return false;
 }
