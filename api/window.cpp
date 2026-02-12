@@ -2269,7 +2269,7 @@ void TimelineProxy::computeSemanticParallel( vector< TObjectOrder > &selectedSet
   tmpComputedMaxY.reserve( numRows );
   tmpComputedMinY.reserve( numRows );
   tmpComputedZeros.reserve( numRows );
-// init here
+
   paramProgress = progress;
 
   if( progress != nullptr )
@@ -2299,8 +2299,6 @@ void TimelineProxy::computeSemanticParallel( vector< TObjectOrder > &selectedSet
       int currentRow = 0;
       for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
       {
-        //rowWithSemanticValuesNotZero.push_back( 0 ); // TODO: meditate this.
-
         TObjectOrder firstObj = *obj;
         TObjectOrder lastObj  = firstObj;
         if( !isFusedLinesColorSet() )
@@ -2492,16 +2490,11 @@ void TimelineProxy::computeSemanticRowParallel( int numRows,
       initRow( *row, getWindowBeginTime(), CREATECOMMS + CREATEEVENTS, rowComputedMaxY, rowComputedMinY, rowComputedZeros );
   }
 
-//  rowWithSemanticValuesNotZero = 0;
-  //for( auto tmpRow = firstRow; tmpRow <= lastRow; ++tmpRow )
-  // rowWithSemanticValuesNotZero[ tmpRow ] = 0;
-
-
   TTime currentTime = getWindowBeginTime() + timeStep;
   while( currentTime <= getWindowEndTime() && currentTime <= getTrace()->getEndTime() )
   {
     rowValues.clear();
-    //TObjectOrder currentRow = firstRow;
+
     for( vector< TObjectOrder >::iterator row = first; row <= last; ++row )
     {
       timeValues.clear();
@@ -2529,16 +2522,12 @@ void TimelineProxy::computeSemanticRowParallel( int numRows,
         if( currentValue != 0 ) 
         {
           rowWithSemanticValuesNotZero[ *row ] = 1; // Before drawmode.
-       //   if ( *row == 1 )
-       //     std::cout << "[ " << *row << "] =  " <<  currentValue << std::endl;
           
           if( currentValue < getMinimumY() || currentValue > getMaximumY() )
           {
             drawCaution = true;
           }
         }
-     //   else if ( *row == 1 )
-     //     std::cout << "[ " << *row << "] =  0 ********************" << std::endl;
       }
       rowValues.push_back( DrawMode::selectValue( timeValues, getDrawModeTime() ) );
 
@@ -2554,8 +2543,6 @@ void TimelineProxy::computeSemanticRowParallel( int numRows,
                                     objectPosList,
                                     eventsToDraw,
                                     commsToDraw );
-
-     //++currentRow;
     }
     valuesToDraw.push_back( DrawMode::selectValue( rowValues, getDrawModeObject() ) );
     timePos += (int)magnify;
@@ -2587,8 +2574,6 @@ void TimelineProxy::computeSemanticRowParallel( int numRows,
     }
   }
 
-
- //std::cout << "valuesToDraw[" << firstRow << "-" << lastRow <<  "] tiene " << valuesToDraw.size() << " valores"  << std::endl;
 
   for( vector< TObjectOrder >::iterator row = first; row <= last; ++row )
   {

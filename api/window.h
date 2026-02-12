@@ -1552,7 +1552,7 @@ class TimelineProxy : public Timeline
                                      TSemanticValue &rowComputedMinY,
                                      int &rowComputedZeros,
                                      std::vector< TSemanticValue > &valuesToDraw,       // I/O
-                                     std::vector< int > &rowWithSemanticValuesNotZero, // I/O
+                                     std::vector< int > &rowWithSemanticValuesNotZero,  // I/O
                                      std::unordered_set< PRV_INT32 > &eventsToDraw,     // I/O
                                      std::unordered_set< commCoord, hashCommCoord > &commsToDraw,
                                      ProgressController *progress ); // I/O
