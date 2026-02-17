@@ -942,6 +942,7 @@ class Timeline
                                           TObjectOrder maxObj,
                                           bool &drawCaution,                                          // I/O
                                           std::vector< std::vector< TSemanticValue > > &valuesToDraw, // I/O
+                                          std::vector< int > &rowWithSemanticValuesNotZero,          // I/O
                                           std::vector< hash_set< PRV_INT32 > > &eventsToDraw,         // I/O
                                           std::vector< hash_set< commCoord > > &commsToDraw,          // I/O
                                           ProgressController *progress )
@@ -955,6 +956,7 @@ class Timeline
                                           TObjectOrder maxObj,
                                           bool &drawCaution,                                                          // I/O
                                           std::vector< std::vector< TSemanticValue > > &valuesToDraw,                 // I/O
+                                          std::vector< int > &rowWithSemanticValuesNotZero,                          // I/O
                                           std::vector< std::unordered_set< PRV_INT32 > > &eventsToDraw,               // I/O
                                           std::vector< std::unordered_set< commCoord, hashCommCoord > > &commsToDraw, // I/O
                                           ProgressController *progress )
@@ -1319,6 +1321,7 @@ class TimelineProxy : public Timeline
                                           TObjectOrder maxObj,
                                           bool &drawCaution,                                          // O
                                           std::vector< std::vector< TSemanticValue > > &valuesToDraw, // O
+                                          std::vector< int > &rowWithSemanticValuesNotZero,          // O
                                           std::vector< hash_set< PRV_INT32 > > &eventsToDraw,         // O
                                           std::vector< hash_set< commCoord > > &commsToDraw,          // O
                                           ProgressController *progress ) override;
@@ -1333,6 +1336,7 @@ class TimelineProxy : public Timeline
                                           TObjectOrder maxObj,
                                           bool &drawCaution,                                                          // I/O
                                           std::vector< std::vector< TSemanticValue > > &valuesToDraw,                 // I/O
+                                          std::vector< int > &rowWithSemanticValuesNotZero,                          // I/O
                                           std::vector< std::unordered_set< PRV_INT32 > > &eventsToDraw,               // I/O
                                           std::vector< std::unordered_set< commCoord, hashCommCoord > > &commsToDraw, // I/O
                                           ProgressController *progress ) override;
@@ -1499,8 +1503,9 @@ class TimelineProxy : public Timeline
                                      TSemanticValue &rowComputedMaxY,
                                      TSemanticValue &rowComputedMinY,
                                      int &rowComputedZeros,
-                                     std::vector< TSemanticValue > &valuesToDraw, // O
-                                     hash_set< PRV_INT32 > &eventsToDraw,         // O
+                                     std::vector< TSemanticValue > &valuesToDraw,       // O
+                                     std::vector< int > &rowWithSemanticValuesNotZero, // O
+                                     hash_set< PRV_INT32 > &eventsToDraw,               // O
                                      hash_set< commCoord > &commsToDraw,
                                      ProgressController *progress ); // O
 
@@ -1546,8 +1551,9 @@ class TimelineProxy : public Timeline
                                      TSemanticValue &rowComputedMaxY,
                                      TSemanticValue &rowComputedMinY,
                                      int &rowComputedZeros,
-                                     std::vector< TSemanticValue > &valuesToDraw,   // I/O
-                                     std::unordered_set< PRV_INT32 > &eventsToDraw, // I/O
+                                     std::vector< TSemanticValue > &valuesToDraw,       // I/O
+                                     std::vector< int > &rowWithSemanticValuesNotZero,  // I/O
+                                     std::unordered_set< PRV_INT32 > &eventsToDraw,     // I/O
                                      std::unordered_set< commCoord, hashCommCoord > &commsToDraw,
                                      ProgressController *progress ); // I/O
 
