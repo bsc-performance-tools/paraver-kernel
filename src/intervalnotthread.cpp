@@ -106,7 +106,7 @@ KRecordList *IntervalNotThread::calcNext( KRecordList *displayList, bool initCal
 
   TObjectOrder i                                               = 0;
   std::multimap< TRecordTime, TObjectOrder >::iterator itChild = orderedChildren.begin();
-  while( itChild->first == begin->getTime() )
+  while( itChild->first <= begin->getTime() )
   {
     if( childIntervals[ itChild->second ]->getEnd()->getTime() <= begin->getTime() )
     {
@@ -125,7 +125,12 @@ KRecordList *IntervalNotThread::calcNext( KRecordList *displayList, bool initCal
       break;
   }
 
-  *end = *childIntervals[ itChild->second ]->getEnd();
+  *end = *childIntervals[ 0 ]->getEnd();
+  for( i = 1; i < childIntervals.size(); ++i )
+  {
+    if( childIntervals[ i ]->getEnd()->getTime() < end->getTime() )
+      *end = *childIntervals[ i ]->getEnd();
+  }
 
   currentValue = function->execute( &info );
 
