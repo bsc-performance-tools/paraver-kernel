@@ -55,7 +55,7 @@ void SyncWindows::initConfigGroup( std::map< TGroupId, TGroupId > &syncRealGroup
   bool tmpConfigGroupsCreated = false;
 
   int tmpIteratorGroupMap   = 0;
-  int tmpIteratorSyncGroups = 0;
+  TGroupId tmpIteratorSyncGroups = 0;
 
   auto itMapSyncGroups = syncRealGroup.begin();
 
@@ -175,18 +175,6 @@ int SyncWindows::getNumWindows( TGroupId whichGroup )
   return syncGroups[ whichGroup ].syncGroupsWindows.size();
 }
 
-std::vector< Timeline * > SyncWindows::getGroupTimelineWindows( TGroupId whichGroup )
-{
-  std::vector< Timeline * > tmpTimelineList;
-  for( auto it = syncGroups[ whichGroup ].syncGroupsWindows.begin(); it != syncGroups[ whichGroup ].syncGroupsWindows.end(); it++ )
-  {
-    if( std::holds_alternative< Timeline * >( *it ) )
-    {
-      tmpTimelineList.push_back( std::get< Timeline * >( *it ) );
-    }
-  }
-  return tmpTimelineList;
-}
 
 void SyncWindows::removeAllGroups()
 {

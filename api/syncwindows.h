@@ -143,7 +143,21 @@ public:
 
   int getNumWindows (TGroupId whichGroup);
   int getNumGroups () const;
-  std::vector<Timeline *> getGroupTimelineWindows (TGroupId whichGroup);
+  
+  template< typename T >
+  auto getGroupWindows( TGroupId whichGroup ) -> std::vector< T * >
+  {
+    std::vector< T * > tmpWindowList;
+    for( auto it = syncGroups[ whichGroup ].syncGroupsWindows.begin(); it != syncGroups[ whichGroup ].syncGroupsWindows.end(); it++ )
+    {
+      if( std::holds_alternative< T * >( *it ) )
+      {
+        tmpWindowList.push_back( std::get< T * >( *it ) );
+      }
+    }
+
+    return tmpWindowList;
+  };
 
   void getGroups (std::vector<TGroupId> &groups) const;
   void getGroupsProperties (std::map<TGroupId, std::vector<SyncPropertiesType>> &groups) const;
