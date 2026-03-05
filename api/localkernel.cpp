@@ -53,6 +53,7 @@
 #include "filtermanagement.h"
 #include "statisticmanagement.h"
 #include "functionmanagement.h"
+#include "derivedhistogrammanagement.h"
 #include "krecordlist.h"
 #include "kprogresscontroller.h"
 #include "labelconstructor.h"
@@ -65,7 +66,9 @@
 #include "ktraceshifter.h"
 #include "keventdrivencutter.h"
 #include "keventtranslator.h"
+#include "semanticderivedhistogramfunctions.h"
 #include "tracestream.h"
+
 #include <string.h>
 
 #ifdef TRACING_ENABLED
@@ -82,7 +85,8 @@ void LocalKernel::init()
   createFilter();
   createSemantic();
   createStatistic();
-
+  createDerivedHistogramFunctions();
+  
   LabelConstructor::init();
 
 #ifdef TRACING_ENABLED
@@ -131,7 +135,7 @@ LocalKernel::LocalKernel( bool ( *messageFunction )( UserMessageID ) ) :
   char tmpPath[PATH_MAX];
   if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)tmpPath, PATH_MAX))
   {
-      throw ParaverKernelException();
+      throw ParaverKernelException( TErrorCode::  undefined  );
   }
   CFRelease(resourcesURL);
 
@@ -303,6 +307,14 @@ Histogram *LocalKernel::newHistogram() const
   return new KHistogram();
 }
 
+Histogram *LocalKernel::newDerivedHistogram( std::vector< Histogram * >& whichParents ) const
+{
+  std::vector< KHistogram * > concreteParents;
+  std::transform( whichParents.begin(), whichParents.end(), std::back_inserter( concreteParents ),
+                                                            []( auto& parent ){ return ( KHistogram * )parent->getConcrete(); } ); 
+
+  return new KDerivedHistogram( concreteParents );
+}
 
 /*RecordList *LocalKernel::newRecordList() const
 {
@@ -468,8 +480,13 @@ void LocalKernel::getAllFilterFunctions( vector<string>& onVector ) const
 void LocalKernel::getAllSemanticFunctions( TSemanticGroup whichGroup,
     vector<string>& onVector ) const
 {
-  FunctionManagement<SemanticFunction>::getInstance()->getAll( onVector,
-      whichGroup );
+  FunctionManagement<SemanticFunction>::getInstance()->getAll( onVector, whichGroup );
+}
+
+
+void LocalKernel::getAllHistogramDerivedOperations( vector<string>& onVector ) const
+{
+  FunctionManagement<SemanticDerivedHistogram>::getInstance()->getAll( onVector );
 }
 
 

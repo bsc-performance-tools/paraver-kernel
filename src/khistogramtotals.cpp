@@ -33,12 +33,14 @@ KHistogramTotals::KHistogramTotals( const KHistogramTotals& source )
 {
   columns = source.columns;
   stats = source.stats;
-
+  
+  numCells = source.numCells;
   total = source.total;
   average = source.average;
   maximum = source.maximum;
   minimum = source.minimum;
   stdev = source.stdev;
+  
 
   sort = nullptr;
   if( source.sort != nullptr )
@@ -59,7 +61,7 @@ KHistogramTotals::KHistogramTotals( PRV_UINT16 numStat,
   vector<vector<TSemanticValue> > tmpStatsMax( stats, tmpColumnsMax );
   vector<vector<TSemanticValue> > tmpStatsMin( stats, tmpColumnsMin );
 
-  numCells.insert( total.begin(), numPlanes, tmpStats );
+  numCells.insert( numCells.begin(), numPlanes, tmpStats );
   total.insert( total.begin(), numPlanes, tmpStats );
   average.insert( average.begin(), numPlanes, tmpStats );
   maximum.insert( maximum.begin(), numPlanes, tmpStatsMax );

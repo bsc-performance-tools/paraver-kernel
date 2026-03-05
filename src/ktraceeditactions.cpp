@@ -333,27 +333,29 @@ bool RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
 
   bool eofParsed = ( (EOFParsedState *)tmpSequence->getState( TSequenceStates::eofParsedState ) )->getData();
+  bool shiftCommunication = ( whichRecord->getRecordType() == COMM + LOG + SEND );
 
   if ( ( whichRecord->getRecordType() == STATE + BEGIN ) ||
        ( whichRecord->getRecordType() == EVENT ) ||
-       ( whichRecord->getRecordType() == COMM + LOG + SEND ) ||
-       ( eofParsed ) )
+       shiftCommunication ||
+       eofParsed )
   {
     TTime delta = (TTime)0;
+    TTime deltaReceive = (TTime)0;
 
-    TApplOrder app;
-    TTaskOrder task;
-    TThreadOrder thread;
+    TApplOrder app, appReceive;
+    TTaskOrder task, taskReceive;
+    TThreadOrder thread, threadReceive;
 
     if ( !eofParsed )
     {
-      std::vector< TTime > *shiftTimes =
-              ( (ShiftTimesState *)tmpSequence->getState( TSequenceStates::shiftTimesState ) )->getData();
+      std::vector< TTime > *shiftTimes = ( (ShiftTimesState *)tmpSequence->getState( TSequenceStates::shiftTimesState ) )->getData();
 
-      TWindowLevel shiftLevel =
-              ( (ShiftLevelState *)tmpSequence->getState( TSequenceStates::shiftLevelState ) )->getData();
+      TWindowLevel shiftLevel = ( (ShiftLevelState *)tmpSequence->getState( TSequenceStates::shiftLevelState ) )->getData();
 
       tmpSequence->getCurrentTrace()->getThreadLocation( whichRecord->getThread(), app, task, thread );
+      if ( shiftCommunication )
+        tmpSequence->getCurrentTrace()->getThreadLocation( whichRecord->getReceiverThread(), appReceive, taskReceive, threadReceive );
 
       switch ( shiftLevel )
       {
@@ -366,7 +368,10 @@ bool RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
           }
 
           if ( availableShiftTime )
+          {
             delta = (*shiftTimes)[ 0 ];
+            deltaReceive = (*shiftTimes)[ 0 ];
+          }
 
           break;
 
@@ -379,7 +384,11 @@ bool RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
           }
 
           if ( availableShiftTime )
+          {
             delta = (*shiftTimes)[ app ];
+            if ( shiftCommunication )
+              deltaReceive = (*shiftTimes)[ appReceive ];
+          }
 
           break;
 
@@ -394,6 +403,8 @@ bool RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
           if ( availableShiftTime )
           {
             delta = (*shiftTimes)[ tmpSequence->getCurrentTrace()->getGlobalTask( app, task ) ];
+            if ( shiftCommunication )
+              deltaReceive = (*shiftTimes)[ tmpSequence->getCurrentTrace()->getGlobalTask( appReceive, taskReceive ) ];
           }
 
           break;
@@ -409,6 +420,8 @@ bool RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
           if ( availableShiftTime )
           {
             delta = (*shiftTimes)[ tmpSequence->getCurrentTrace()->getGlobalThread( app, task, thread ) ];
+            if ( shiftCommunication )
+              deltaReceive = (*shiftTimes)[ tmpSequence->getCurrentTrace()->getGlobalThread( appReceive, taskReceive, threadReceive ) ];
             //delta = (*shiftTimes)[ whichRecord->getThread() ]; //??
           }
 
@@ -429,17 +442,13 @@ bool RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
       {
         whichRecord->setStateEndTime( whichRecord->getStateEndTime() + delta );
       }
-      else if ( whichRecord->getRecordType() == COMM + LOG + SEND )
+      else if ( shiftCommunication )
       {
         TCommID commID = whichRecord->getCommIndex();
-        tmpSequence->getCurrentTrace()->setLogicalSend( commID,
-                tmpSequence->getCurrentTrace()->getLogicalSend( commID ) + delta );
-        tmpSequence->getCurrentTrace()->setLogicalReceive( commID,
-                tmpSequence->getCurrentTrace()->getLogicalReceive( commID ) + delta );
-        tmpSequence->getCurrentTrace()->setPhysicalSend( commID,
-                tmpSequence->getCurrentTrace()->getPhysicalSend( commID ) + delta );
-        tmpSequence->getCurrentTrace()->setPhysicalReceive( commID,
-                tmpSequence->getCurrentTrace()->getPhysicalReceive( commID ) + delta );
+        tmpSequence->getCurrentTrace()->setLogicalSend( commID, tmpSequence->getCurrentTrace()->getLogicalSend( commID ) + delta );
+        tmpSequence->getCurrentTrace()->setLogicalReceive( commID, tmpSequence->getCurrentTrace()->getLogicalReceive( commID ) + deltaReceive );
+        tmpSequence->getCurrentTrace()->setPhysicalSend( commID, tmpSequence->getCurrentTrace()->getPhysicalSend( commID ) + delta );
+        tmpSequence->getCurrentTrace()->setPhysicalReceive( commID, tmpSequence->getCurrentTrace()->getPhysicalReceive( commID ) + deltaReceive );
       }
 
       executionError = tmpSequence->executeNextAction( whichRecord );
@@ -621,9 +630,7 @@ bool EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
     }
   }
 
-  //tmpSequence->executeNextAction( it );
-
-  return tmpSequence->executeNextAction( it );;
+  return tmpSequence->executeNextAction( it );
 }
 
 
@@ -641,8 +648,6 @@ vector<TSequenceStates> TraceSortAction::getStateDependencies() const
 bool TraceSortAction::execute( std::string whichTrace )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
-
-  //tmpSequence->executeNextAction( whichTrace );
 
   return tmpSequence->executeNextAction( whichTrace );
 }
@@ -666,7 +671,6 @@ vector<TSequenceStates> PCFEventMergerAction::getStateDependencies() const
 bool PCFEventMergerAction::execute( std::string whichTrace )
 {
   TraceEditSequence *tmpSequence = mySequence;
-  bool translationOk = false;
 
   // Get new tracename
   std::string newName = ( (OutputTraceFileNameState *)tmpSequence->getState( TSequenceStates::outputTraceFileNameState ) )->getData();

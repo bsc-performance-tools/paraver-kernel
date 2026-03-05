@@ -249,7 +249,7 @@ void PlainBlocks::setCommIndex( TCommID whichID )
 void PlainBlocks::newComm( bool createRecords )
 {
   if ( createRecords )
-    throw ParaverKernelException();
+    throw ParaverKernelException( TErrorCode::  undefined  );
 
   communications.push_back( new TCommInfo() );
   currentComm = communications.size() - 1;

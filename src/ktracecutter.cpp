@@ -22,8 +22,11 @@
 \*****************************************************************************/
 
 #include <algorithm>
+#include <cerrno>
+#include <cstring>
 #include <math.h>
 #include <sstream>
+#include <stdexcept>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
@@ -55,6 +58,20 @@
 #include <iostream>
 using namespace std;
 
+// Helper function to check stream state and throw with file path on error
+static void checkStreamWrite( std::fstream& stream, const std::string& filePath )
+{
+  if( stream.fail() || stream.bad() )
+  {
+    int savedErrno = errno;
+    std::string errMsg = "Write failed to file: " + filePath;
+    if( savedErrno != 0 )
+      errMsg += " (" + std::string( std::strerror( savedErrno ) ) + ")";
+    throw std::runtime_error( errMsg );
+  }
+}
+
+
 KTraceCutter::KTraceCutter( TraceOptions *options,
                             const vector< TEventType > &whichHWCTypes,
                             const vector< TEventType > &whichNotHWCTypes )
@@ -65,7 +82,7 @@ KTraceCutter::KTraceCutter( TraceOptions *options,
   notHWCTypesInPCF.insert( whichNotHWCTypes.begin(), whichNotHWCTypes.end() );
   cutterOriginCaller = MetadataAction::MANUAL_ORIGIN_ID;
   
-  // PROFET
+  // MESS
   firstApplicationFinished = false;
   timeOfFirsApplicationFinished = 0;
 }
@@ -153,31 +170,72 @@ void KTraceCutter::read_cutter_params()
   min_perc = exec_options->min_percentage;
   max_perc = exec_options->max_percentage;
   originalTime = exec_options->original_time;
+
+  cut_tasks = 0;
+  cut_apps = 0;
+  cut_threads = 0;
+  int j_tasks = 0;
+  int j_apps = 0;
+  int j_threads = 0;
+
   if ( exec_options->tasks_list[0] != '\0' )
   {
-    cut_tasks = true;
-    int j = 0;
+    // Clear vectors
+    wanted_apps.clear();
+    wanted_tasks.clear();
+    wanted_threads.clear();
 
-    word = strtok( exec_options->tasks_list, "," );
-    do
+    TraceOptions::CutterMode mode = exec_options->get_cutter_mode();
+
+    // Setup mode flags
+    if ( mode == TraceOptions::CUT_MODE_APPLICATION ) cut_apps = 1;
+    else if ( mode == TraceOptions::CUT_MODE_THREAD ) cut_threads = 1;
+    else cut_tasks = 1;
+    
+    // Parse
+    std::string taskListStr( exec_options->tasks_list );
+    std::stringstream ss( taskListStr );
+    std::string token;
+    
+    while( std::getline( ss, token, ',' ) )
     {
-      if ( ( buffer = strchr( word, '-' ) ) != nullptr )
-      {
-        *buffer = '\0';
-        wanted_tasks[j].min_task_id = atoll( word );
-        wanted_tasks[j].max_task_id = atoll( ++buffer );
-        wanted_tasks[j].range = 1;
-      }
-      else
-      {
-        wanted_tasks[j].min_task_id = atoll( word );
-        wanted_tasks[j].range = 0;
-      }
-
-      j++;
+       // Trim whitespace
+       size_t first = token.find_first_not_of(' ');
+       if (std::string::npos == first) continue;
+       size_t last = token.find_last_not_of(' ');
+       token = token.substr(first, (last - first + 1));
+       
+       int a=0, t=0, th=0;
+       
+       if( mode == TraceOptions::CUT_MODE_APPLICATION )
+       {
+          if( sscanf( token.c_str(), "%d", &a ) == 1 )
+          {
+             SelectedObject obj = { a, 0, 0 };
+             wanted_apps.push_back( obj );
+          }
+       }
+       else if( mode == TraceOptions::CUT_MODE_TASK )
+       {
+          if( sscanf( token.c_str(), "%d.%d", &a, &t ) == 2 )
+          {
+             SelectedObject obj = { a, t, 0 };
+             wanted_tasks.push_back( obj );
+          }
+       }
+       else if( mode == TraceOptions::CUT_MODE_THREAD )
+       {
+          // Try 1.1.1 format
+          if( sscanf( token.c_str(), "%d.%d.%d", &a, &t, &th ) == 3 )
+          {
+             SelectedObject obj = { a, t, th };
+             wanted_threads.push_back( obj );
+          }
+       }
     }
-    while ( ( word = strtok( nullptr, "," ) ) != nullptr );
   }
+
+
 
   if ( exec_options->max_trace_size != 0 )
     max_size = exec_options->max_trace_size * 1000000;
@@ -277,11 +335,12 @@ void KTraceCutter::proces_cutter_header( const std::string& header, TraceStream 
 
   // PARSE variable header
   // #Paraver (12/03/2018 at 16:11:35.687574899):
-  word = strtok( tmpHeader, ")" );
+  char *tmpHeader_r = nullptr;
+  word = strtok_r( tmpHeader, ")", &tmpHeader_r );
   current_size += fprintf( outfile, "%s):", word );
 
   /* Obtaining the trace total time */
-  word = strtok( nullptr, ":" );
+  word = strtok_r( nullptr, ":", &tmpHeader_r );
   if ( strstr( word, "_ns" ) )
   {
     word[ strlen( word ) - 3 ] = '\0';
@@ -323,7 +382,7 @@ void KTraceCutter::proces_cutter_header( const std::string& header, TraceStream 
   }
 
   /* Obtaining the number of communicators */
-  word = strtok( nullptr, "\n" ); // put in word the rest of the line
+  word = strtok_r( nullptr, "\n", &tmpHeader_r ); // put in word the rest of the line
   current_size += fprintf( outfile, "%s\n", word );
 
   // Do I have some "," looking back?
@@ -332,11 +391,11 @@ void KTraceCutter::proces_cutter_header( const std::string& header, TraceStream 
   {
     // Is it because some "1:1,1:1)\n" or the expected "1:1,1:1),16\n" ?
     //                       -^-                               -^-
-    strcpy( tmpHeader, word + 1 ); // Copy "1:1)" or "16" in header
-    if ( strchr( tmpHeader, ')' ) == nullptr ) // Do I have some ")"?
+    strcpy( tmpHeader_r, word + 1 ); // Copy "1:1)" or "16" in header
+    if ( strchr( tmpHeader_r, ')' ) == nullptr ) // Do I have some ")"?
     {
       // Hope it's a number and it fits the number of communicator lines...
-      num_comms = atoi( tmpHeader );
+      num_comms = atoi( tmpHeader_r );
       while ( num_comms > 0 )
       {
         whichFile->getline( auxLine );
@@ -618,7 +677,16 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
   std::string line;
   TraceStream *infile = TraceStream::openFile( nameIn );
 
+  std::string outfilePath( nameOut );
   fstream outfile( nameOut, ios_base::out );
+  if( !outfile.is_open() )
+  {
+    int savedErrno = errno;
+    std::string errMsg = "Cannot open output file: " + outfilePath;
+    if( savedErrno != 0 )
+      errMsg += " (" + std::string( std::strerror( savedErrno ) ) + ")";
+    throw std::runtime_error( errMsg );
+  }
 
   /* Process header */
   total_time = last_record_time - first_record_time;
@@ -725,32 +793,20 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
   }
 
   infile->close();
+  checkStreamWrite( outfile, outfilePath );
   outfile.close();
-  unlink( nameIn );
-}
-
-/* Function for filtering tasks in cut */
-bool KTraceCutter::is_selected_task( int task_id )
-{
-  int i;
-
-  for ( i = 0; i < MAX_SELECTED_TASKS; i++ )
+  
+  std::string tmpFilePath( nameIn );
+  if( unlink( nameIn ) != 0 )
   {
-    if ( wanted_tasks[i].min_task_id == 0 )
-      break;
-
-    if ( wanted_tasks[i].range )
-    {
-      if ( task_id >= wanted_tasks[i].min_task_id && task_id <= wanted_tasks[i].max_task_id )
-        return true;
-    }
-    else
-      if ( task_id == wanted_tasks[i].min_task_id )
-        return true;
+    int savedErrno = errno;
+    std::string errMsg = "Failed to delete temporary file: " + tmpFilePath;
+    if( savedErrno != 0 )
+      errMsg += " (" + std::string( std::strerror( savedErrno ) ) + ")";
+    throw std::runtime_error( errMsg );
   }
-
-  return false;
 }
+
 
 KTraceCutter::ThreadInfo& KTraceCutter::initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu )
 {
@@ -800,8 +856,6 @@ void KTraceCutter::execute( std::string trace_in,
   first_time_caught = false;
   current_size = 0;
 
-  for ( i = 0; i < MAX_SELECTED_TASKS; i++ )
-    wanted_tasks[i].min_task_id = 0;
 
   /* Reading of the program arguments */
   read_cutter_params();
@@ -815,16 +869,41 @@ void KTraceCutter::execute( std::string trace_in,
 
 #ifdef _WIN32
     sprintf( trace_file_out, "%s\\tmp_fileXXXXXX", tmp_dir.c_str() );
-    _mktemp_s( trace_file_out, strlen( trace_file_out ) + 1 );
+    if( _mktemp_s( trace_file_out, strlen( trace_file_out ) + 1 ) != 0 )
+    {
+      int savedErrno = errno;
+      std::string errMsg = "Failed to create temporary file in: " + tmp_dir;
+      if( savedErrno != 0 )
+        errMsg += " (" + std::string( std::strerror( savedErrno ) ) + ")";
+      throw std::runtime_error( errMsg );
+    }
 #else
     sprintf( trace_file_out, "%s/tmp_fileXXXXXX", tmp_dir.c_str() );
-    mkstemp( trace_file_out );
+    int tmpFd = mkstemp( trace_file_out );
+    if( tmpFd == -1 )
+    {
+      int savedErrno = errno;
+      std::string errMsg = "Failed to create temporary file in: " + tmp_dir;
+      if( savedErrno != 0 )
+        errMsg += " (" + std::string( std::strerror( savedErrno ) ) + ")";
+      throw std::runtime_error( errMsg );
+    }
+    close( tmpFd );  // Close fd, will reopen via fstream
 #endif
   }
   else
     strcpy( trace_file_out, trace_out.c_str() );
 
+  std::string outfilePath( trace_file_out );
   fstream outfile( trace_file_out, ios_base::out );
+  if( !outfile.is_open() )
+  {
+    int savedErrno = errno;
+    std::string errMsg = "Cannot open output file: " + outfilePath;
+    if( savedErrno != 0 )
+      errMsg += " (" + std::string( std::strerror( savedErrno ) ) + ")";
+    throw std::runtime_error( errMsg );
+  }
 
   ini_cutter_progress_bar( trace_in, tmpKProgressControler );
 
@@ -887,14 +966,18 @@ void KTraceCutter::execute( std::string trace_in,
           break;
         }
 
-        // PROFET
+        // MESS
         if ( exec_options->get_max_cut_time_to_finish_of_first_appl() &&
              firstApplicationFinished &&
              ( time_1 >= timeOfFirsApplicationFinished || 
                ( time_2 >= timeOfFirsApplicationFinished && !break_states ) ) )
           break;
 
-        if ( cut_tasks && !is_selected_task( task ) )
+        if ( cut_apps && !is_selected_appl( appl ) )
+          break;
+        if ( cut_tasks && !is_selected_task( appl, task ) )
+          break;
+        if ( cut_threads && !is_selected_thread( appl, task, thread ) )
           break;
 
         if ( time_2 <= time_min )
@@ -927,7 +1010,7 @@ void KTraceCutter::execute( std::string trace_in,
             --useful_tasks;
             threadsInfo( appl - 1, task - 1, thread - 1 ).finished = true;
 
-            // PROFET
+            // MESS
             if ( exec_options->get_max_cut_time_to_finish_of_first_appl() )
             {
               if ( appl == 1 && appsInfo[ appl - 1 ].addFinishedThread() )
@@ -958,7 +1041,7 @@ void KTraceCutter::execute( std::string trace_in,
           {
             threadsInfo( appl - 1, task - 1, thread - 1 ).finished = true;
 
-            // PROFET
+            // MESS
             if ( exec_options->get_max_cut_time_to_finish_of_first_appl() )
             {
               if ( appl == 1 && appsInfo[ appl - 1 ].addFinishedThread() )
@@ -1013,12 +1096,16 @@ void KTraceCutter::execute( std::string trace_in,
           break;
         }
 
-        // PROFET
+        // MESS
         if ( exec_options->get_max_cut_time_to_finish_of_first_appl() &&
              firstApplicationFinished && time_1 >= timeOfFirsApplicationFinished )
           break;
 
-        if( cut_tasks && !is_selected_task( task ) )
+        if ( cut_apps && !is_selected_appl( appl ) )
+          break;
+        if( cut_tasks && !is_selected_task( appl, task ) )
+          break;
+        if ( cut_threads && !is_selected_thread( appl, task, thread ) )
           break;
 
         threadInfoIt = threadsInfo.find( appl - 1, task - 1, thread - 1 );
@@ -1119,7 +1206,7 @@ void KTraceCutter::execute( std::string trace_in,
           break;
         }
 
-        // PROFET
+        // MESS
         if ( exec_options->get_max_cut_time_to_finish_of_first_appl() &&
              firstApplicationFinished &&
              ( time_1 >= timeOfFirsApplicationFinished ||
@@ -1128,7 +1215,7 @@ void KTraceCutter::execute( std::string trace_in,
                time_4 >= timeOfFirsApplicationFinished ) )
           break;
 
-        if ( cut_tasks && !is_selected_task( task ) && !is_selected_task( task_2 ) )
+        if ( cut_tasks && !is_selected_task( appl, task ) && !is_selected_task( appl_2, task_2 ) )
           break;
 
         if ( time_1 >= time_min && time_3 >= time_min )
@@ -1203,6 +1290,7 @@ void KTraceCutter::execute( std::string trace_in,
 
   /* Close the files */
   inFile->close();
+  checkStreamWrite( outfile, outfilePath );
   outfile.close();
 
   if ( writeToTmpFile )   // trace_file_out is a tmpfile!!
@@ -1212,4 +1300,31 @@ void KTraceCutter::execute( std::string trace_in,
   }
 
   free( trace_file_out );
+}
+
+bool KTraceCutter::is_selected_appl( int appl_id )
+{
+  for( const auto& obj : wanted_apps )
+  {
+     if( obj.appl == appl_id ) return true;
+  }
+  return false;
+}
+
+bool KTraceCutter::is_selected_task( int appl_id, int task_id )
+{
+  for( const auto& obj : wanted_tasks )
+  {
+     if( obj.appl == appl_id && obj.task == task_id ) return true;
+  }
+  return false;
+}
+
+bool KTraceCutter::is_selected_thread( int appl_id, int task_id, int thread_id )
+{
+  for( const auto& obj : wanted_threads )
+  {
+     if( obj.appl == appl_id && obj.task == task_id && obj.thread == thread_id ) return true;
+  }
+  return false;
 }

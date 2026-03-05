@@ -31,6 +31,7 @@ enum class THistogramErrorCode
 {
   undefined = 0,
   noControlWindow,
+  invalidValueDelta,
   LAST
 };
 
@@ -46,6 +47,8 @@ class HistogramException: public ParaverKernelException
       auxMessage = whichAuxMessage;
       file = whichFile;
       line = whichLine;
+    
+      initMessage();
     }
 
   protected:

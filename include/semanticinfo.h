@@ -53,4 +53,12 @@ struct SemanticHighInfo: public SemanticInfo
   bool newControlBurst;
 };
 
+// TODO: possible second version to avoid SemanticInfo empty *callingInterval
+// see semanticfunction.h
+// struct DerivedHistogramFunctionInfo
+struct DerivedHistogramFunctionInfo : public SemanticInfo
+{
+  std::vector<TSemanticValue> values; // Intermediate common struct?
+};
+
 

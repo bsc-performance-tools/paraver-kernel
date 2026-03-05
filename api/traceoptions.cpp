@@ -167,6 +167,11 @@ void TraceOptionsProxy::set_max_cut_time_to_finish_of_first_appl( bool setOption
   myTraceOptions->set_max_cut_time_to_finish_of_first_appl( setOption );
 }
 
+void TraceOptionsProxy::set_cutter_mode( CutterMode mode )
+{
+  myTraceOptions->set_cutter_mode( mode );
+}
+
 bool TraceOptionsProxy::get_by_time() const
 {
   return myTraceOptions->get_by_time();
@@ -227,10 +232,15 @@ bool TraceOptionsProxy::get_keep_all_events() const
   return myTraceOptions->get_keep_all_events();
 }
 
-// PROFET
+// MESS
 bool TraceOptionsProxy::get_max_cut_time_to_finish_of_first_appl() const
 {
   return myTraceOptions->get_max_cut_time_to_finish_of_first_appl();
+}
+
+TraceOptions::CutterMode TraceOptionsProxy::get_cutter_mode() const
+{
+  return myTraceOptions->get_cutter_mode();
 }
 
 

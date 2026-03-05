@@ -21,10 +21,11 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#include <string>
-#include <sstream>
-#include <iostream>
 #include "tracebodyio_csv.h"
+
+#include <iostream>
+#include <sstream>
+#include <string>
 
 using namespace std;
 
@@ -138,8 +139,8 @@ bool prv_atoll_precision( std::string::const_iterator& it,
                           T& result,
                           double& decimals )
 {
-  register long long int tmp = 0;
-  double decs = 1.0;
+  long long int tmp  = 0;
+  double decs        = 1.0;
   long long int sign = 1;
 
   if( *it == '-' )
@@ -173,9 +174,9 @@ bool prv_atoll_precision( std::string::const_iterator& it,
   return true;
 }
 
-TraceBodyIO_csv::TraceBodyIO_csv( Trace* trace, ProcessModel<>& whichProcessModel )
-: myTrace( trace ),  myProcessModel( &whichProcessModel )
-{}
+TraceBodyIO_csv::TraceBodyIO_csv( Trace* trace, ProcessModel<>& whichProcessModel ) : myTrace( trace ), myProcessModel( &whichProcessModel )
+{
+}
 
 
 bool TraceBodyIO_csv::ordered() const
@@ -187,13 +188,13 @@ void TraceBodyIO_csv::read( TraceStream& file,
                             MemoryBlocks& records,
                             const ProcessModel<>& whichProcessModel,
                             const ResourceModel<>& whichResourceModel,
-                            std::unordered_set<TState>& states,
-                            std::unordered_set<TEventType>& events,
+                            std::unordered_set< TState >& states,
+                            std::unordered_set< TEventType >& events,
                             MetadataManager& traceInfo,
                             TRecordTime& endTime ) const
 {
   file.getline( line );
-  if ( line.size() == 0 )
+  if( line.size() == 0 )
     return;
 
   if ( line[ 0 ] == '#' )
@@ -207,10 +208,10 @@ void TraceBodyIO_csv::read( TraceStream& file,
 
 void TraceBodyIO_csv::bufferWrite( fstream& whichStream, bool writeReady, bool lineClear ) const
 {
-  if ( writeReady )
+  if( writeReady )
   {
     whichStream << line << '\n';
-    if ( lineClear )
+    if( lineClear )
       line.clear();
   }
 }
@@ -219,7 +220,7 @@ void TraceBodyIO_csv::bufferWrite( fstream& whichStream, bool writeReady, bool l
 void TraceBodyIO_csv::write( std::fstream& whichStream,
                              const ProcessModel<>& whichProcessModel,
                              const ResourceModel<>& whichResourceModel,
-                             MemoryTrace::iterator *record ) const
+                             MemoryTrace::iterator* record ) const
 {
 }
 
@@ -236,9 +237,9 @@ inline void TraceBodyIO_csv::readTraceInfo( const std::string& line, MetadataMan
 inline void TraceBodyIO_csv::readEvents( const ResourceModel<>& whichResourceModel,
                                          const string& line,
                                          MemoryBlocks& records,
-                                         unordered_set<TEventType>& events,
+                                         unordered_set< TEventType >& events,
                                          TRecordTime& endTime ) const
-{ 
+{
   TCPUOrder CPU = 0;
   TApplOrder appl;
   TTaskOrder task;
@@ -251,19 +252,17 @@ inline void TraceBodyIO_csv::readEvents( const ResourceModel<>& whichResourceMod
   strLine.clear();
   strLine.str( line );
   // Read the common info
-  if ( !readCommon( whichResourceModel,
-                    strLine, CPU, appl, task, thread, 
-                    begintime, time, eventvalue, decimals ) )
+  if( !readCommon( whichResourceModel, strLine, CPU, appl, task, thread, begintime, time, eventvalue, decimals ) )
   {
     cerr << "Error reading record (CSV file)." << endl;
     cerr << line << endl;
     return;
   }
-  if ( endTime < begintime + time )
+  if( endTime < begintime + time )
     endTime = begintime + time;
   TEventType eventtype = 1;
 
-  //Event
+  // Event
   records.newRecord();
   records.setRecordType( EVENT );
   records.setTime( begintime );
@@ -287,7 +286,7 @@ inline bool TraceBodyIO_csv::readCommon( const ResourceModel<>& whichResourceMod
                                          TRecordTime& time,
                                          TEventValue& eventvalue,
                                          double& decimals ) const
-{ 
+{
   static ProcessModel<>::ThreadLocation lastATT = { 0, 0, 0 };
 
   std::getline( line, tmpstring, '.' );
@@ -309,7 +308,7 @@ inline bool TraceBodyIO_csv::readCommon( const ResourceModel<>& whichResourceMod
     throw ParaverKernelException( TErrorCode::csvWrongFormat );
 
   ProcessModel<>::ThreadLocation currATT = { appl, task, thread };
-  if ( !( currATT == lastATT ) )
+  if( !( currATT == lastATT ) )
   {
     lastATT = currATT;
     --currATT.appl;

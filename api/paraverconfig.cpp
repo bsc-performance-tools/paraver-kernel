@@ -112,7 +112,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
   char tmpPath[PATH_MAX];
   if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)tmpPath, PATH_MAX))
   {
-      throw ParaverKernelException();
+      throw ParaverKernelException( TErrorCode::  undefined  );
   }
   CFRelease(resourcesURL);
 

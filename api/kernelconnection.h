@@ -81,6 +81,8 @@ class KernelConnection
     virtual Timeline *newDerivedWindow() const = 0;
     virtual Timeline *newDerivedWindow( Timeline *window1, Timeline * window2 ) const = 0;
     virtual Histogram *newHistogram() const = 0;
+    virtual Histogram *newDerivedHistogram( std::vector< Histogram * >& parents ) const = 0;
+
     virtual ProgressController *newProgressController() const = 0;
     virtual Filter *newFilter( Filter *concreteFilter ) const = 0;
     virtual TraceEditSequence *newTraceEditSequence() const = 0;
@@ -118,6 +120,7 @@ class KernelConnection
     virtual void getAllFilterFunctions( std::vector<std::string>& onVector ) const = 0;
     virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
                                           std::vector<std::string>& onVector ) const = 0;
+    virtual void getAllHistogramDerivedOperations( std::vector<std::string>& onVector ) const = 0;
 
     virtual bool userMessage( UserMessageID messageID ) const = 0;
 

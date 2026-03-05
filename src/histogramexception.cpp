@@ -31,7 +31,8 @@ string HistogramException::moduleMessage( "Histogram: " );
 
 const char *HistogramException::errorMessage[] =
   {
-    "Undefined error: ",
+    "Undefined error histogram: ",
     "No control window selected: ",
+    "Delta definition not valid ",
     nullptr
   };

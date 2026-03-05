@@ -22,22 +22,25 @@
 \*****************************************************************************/
 
 
-#include <string>
-#include <cmath>
-#include "kernelconnection.h"
 #include "histogram.h"
-#include "window.h"
+
 #include "histogramtotals.h"
-#include "paraverconfig.h"
+#include "kernelconnection.h"
 #include "labelconstructor.h"
 #include "loadedwindows.h"
-#include "syncwindows.h"
+#include "paraverconfig.h"
 #include "paraverlabels.h"
+#include "selectionrowsutils.h"
+#include "syncwindows.h"
+#include "window.h"
+
+#include <cmath>
 #include <iostream>
+#include <string>
 
 #ifdef _WIN32
-#undef min
-#undef max
+#  undef min
+#  undef max
 #endif
 
 using namespace std;
@@ -49,77 +52,160 @@ Histogram *Histogram::create( KernelConnection *whichKernel )
 
 
 Histogram::Histogram( KernelConnection *whichKernel ) : myKernel( whichKernel )
-{}
+{
+}
 
-HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
-  Histogram( whichKernel )
+
+Histogram *Histogram::create( KernelConnection *whichKernel, std::vector< Histogram * > parents )
+{
+  // if ( parent1 == nullptr )
+  // {
+  //   bool createHistogram = false;
+  //   bool isDerived = true;
+  //   return new HistogramProxy( whichKernel, createHistogram, isDerived );
+  // }
+
+  return new HistogramProxy( whichKernel, parents );
+}
+
+
+HistogramProxy::HistogramProxy( KernelConnection *whichKernel, bool createHistogram, bool isDerivedHistogram ) : Histogram( whichKernel )
 {
   destroy = false;
 
-  name = Histogram::getName();
+  name             = Histogram::getName();
   number_of_clones = 0;
 
-  myTrace = nullptr;
-  controlWindow = nullptr;
-  dataWindow = nullptr;
+  myTrace            = nullptr;
+  controlWindow      = nullptr;
+  dataWindow         = nullptr;
   extraControlWindow = nullptr;
-  myHisto = myKernel->newHistogram();
 
-  width = Histogram::getWidth();
-  height = Histogram::getHeight();
-  horizontal = Histogram::getHorizontal();
-  hideColumns = Histogram::getHideColumns();
-  scientificNotation = Histogram::getScientificNotation();
-  numDecimals = Histogram::getNumDecimals();
-  thousandSep = Histogram::getThousandSeparator();
-  showUnits = ParaverConfig::getInstance()->getHistogramShowUnits();
-  sortSemanticColumns = Histogram::getSemanticSortColumns();
-  sortSemanticReverse = Histogram::getSemanticSortReverse();
-  semanticSortCriteria = Histogram::getSemanticSortCriteria();
-  fixedSemanticSort = Histogram::getFixedSemanticSort();
-  minGradient = Histogram::getMinGradient();
-  maxGradient = Histogram::getMaxGradient();
-  computeControlScale = Histogram::getCompute2DScale();
+  derivedHistogram = isDerivedHistogram;
+  if( !derivedHistogram || createHistogram )
+    myHisto = myKernel->newHistogram();
+
+  width                   = Histogram::getWidth();
+  height                  = Histogram::getHeight();
+  horizontal              = Histogram::getHorizontal();
+  hideColumns             = Histogram::getHideColumns();
+  scientificNotation      = Histogram::getScientificNotation();
+  numDecimals             = Histogram::getNumDecimals();
+  thousandSep             = Histogram::getThousandSeparator();
+  showUnits               = ParaverConfig::getInstance()->getHistogramShowUnits();
+  sortSemanticColumns     = Histogram::getSemanticSortColumns();
+  sortSemanticReverse     = Histogram::getSemanticSortReverse();
+  semanticSortCriteria    = Histogram::getSemanticSortCriteria();
+  fixedSemanticSort       = Histogram::getFixedSemanticSort();
+  minGradient             = Histogram::getMinGradient();
+  maxGradient             = Histogram::getMaxGradient();
+  computeControlScale     = Histogram::getCompute2DScale();
   computeControlScaleZero = Histogram::getCompute2DScaleZero();
-  computeXtraScale = Histogram::getCompute3DScale();
-  computeGradient = Histogram::getComputeGradient();
-  showColor = Histogram::getShowColor();
-  zoom = Histogram::getZoom();
-  firstRowColored = Histogram::getFirstRowColored();
-  futurePlane = false;
-  planeMinValue = 0.0;
-  selectedPlane = 0;
-  commSelectedPlane = 0;
-  drawModeObjects = Histogram::getDrawModeObjects();
-  drawModeColumns = Histogram::getDrawModeColumns();
+  computeXtraScale        = Histogram::getCompute3DScale();
+  computeGradient         = Histogram::getComputeGradient();
+  showColor               = Histogram::getShowColor();
+  zoom                    = Histogram::getZoom();
+  firstRowColored         = Histogram::getFirstRowColored();
+  futurePlane             = false;
+  planeMinValue           = 0.0;
+  selectedPlane           = 0;
+  commSelectedPlane       = 0;
+  drawModeObjects         = Histogram::getDrawModeObjects();
+  drawModeColumns         = Histogram::getDrawModeColumns();
   mySemanticColor.setColorMode( Histogram::getColorMode() );
   mySemanticColor.setGradientFunction( ParaverConfig::getInstance()->getHistogramGradientFunction() );
-  if( ParaverConfig::getInstance()->getHistogramPixelSize() >= 0 &&
-      ParaverConfig::getInstance()->getHistogramPixelSize() <= 3 )
-    pixelSize = (PRV_UINT16)pow( float(2), (int)ParaverConfig::getInstance()->getHistogramPixelSize() );
+  if( ParaverConfig::getInstance()->getHistogramPixelSize() >= 0 && ParaverConfig::getInstance()->getHistogramPixelSize() <= 3 )
+    pixelSize = (PRV_UINT16)pow( float( 2 ), (int)ParaverConfig::getInstance()->getHistogramPixelSize() );
   else
     pixelSize = ParaverConfig::getInstance()->getHistogramPixelSize();
-  onlyTotals = Histogram::getOnlyTotals();
+  onlyTotals  = Histogram::getOnlyTotals();
   shortLabels = Histogram::getShortLabels();
 
-  setCalculateAll( Histogram::getCalculateAll() );
+  if( !derivedHistogram || createHistogram )
+    setCalculateAll( Histogram::getCalculateAll() );
   currentStat = Histogram::getCurrentStat();
 
-  showWindow = true;
-  changed = false;
-  redraw = false;
-  recalc = false;
+  showWindow  = true;
+  changed     = false;
+  redraw      = false;
+  recalc      = false;
   forceRecalc = true;
 
   zoomHistory.clear();
 
-  sync = false;
+  sync      = false;
   syncGroup = 0;
 
-  isCFG4DEnabled = false;
-  CFG4DMode = false;
+  isCFG4DEnabled  = false;
+  CFG4DMode       = false;
   globalIndexLink = 0;
 }
+
+
+bool HistogramProxy::createLinkToParents( const std::vector< Histogram * > &whichParents )
+{
+  if( whichParents.size() < 2 || std::any_of( whichParents.cbegin(),
+                                              whichParents.cend(),
+                                              []( const auto &parent )
+                                              {
+                                                return parent == nullptr;
+                                              } ) )
+    return false;
+
+  parents = whichParents;
+
+  std::for_each( parents.begin(),
+                 parents.end(),
+                 [ this ]( auto &parent )
+                 {
+                   parent->addChild( this );
+                 } );
+
+  return true;
+}
+
+
+bool HistogramProxy::setParents( const std::vector< Histogram * > &whichParents )
+{
+  if( !createLinkToParents( whichParents ) )
+    return false;
+
+  // Parents related info
+  Histogram *mainHistogram = parents.front();
+
+  myTrace = mainHistogram->getTrace(); // Only for further queries, may not be necessary
+  myHisto = myKernel->newDerivedHistogram( parents );
+
+  currentStat = mainHistogram->getCurrentStat();
+
+  sortSemanticColumns = mainHistogram->getSemanticSortColumns();
+  sortSemanticReverse = mainHistogram->getSemanticSortReverse();
+  currentSemanticSort = mainHistogram->getCurrentSemanticSort();
+  fixedSemanticSort   = mainHistogram->getFixedSemanticSort();
+  setSemanticSortCriteria( mainHistogram->getSemanticSortCriteria() );
+
+  setControlWindow( mainHistogram->getControlWindow() );
+  setDataWindow( mainHistogram->getDataWindow() );
+  if( mainHistogram->getExtraControlWindow() != nullptr )
+    setExtraControlWindow( mainHistogram->getExtraControlWindow() );
+
+  setCalculateAll( Histogram::getCalculateAll() );
+
+  return true;
+}
+
+HistogramProxy::HistogramProxy( KernelConnection *whichKernel, const std::vector< Histogram * > &whichParents )
+  : HistogramProxy( whichKernel, false, true )
+{
+  if( setParents( whichParents ) )
+  {
+    Histogram *mainHistogram = parents.front();
+
+    myHisto->setWindowBeginTime( mainHistogram->getBeginTime() );
+    myHisto->setWindowEndTime( mainHistogram->getEndTime() );
+  }
+}
+
 
 HistogramProxy::~HistogramProxy()
 {
@@ -130,25 +216,40 @@ HistogramProxy::~HistogramProxy()
   if( extraControlWindow != nullptr )
     extraControlWindow->unsetUsedByHistogram( this );
 
+  if( derivedHistogram )
+  {
+    std::vector< Histogram * > loadedHistograms;
+    LoadedWindows::getInstance()->getAll( loadedHistograms );
+
+    for( auto &tmpParent : parents )
+    {
+      if( tmpParent != nullptr && std::find( loadedHistograms.begin(), loadedHistograms.end(), tmpParent ) != loadedHistograms.end() )
+      {
+        tmpParent->removeChild( this );
+      }
+    }
+  }
+
   if( sync )
     SyncWindows::getInstance()->removeWindow( this, syncGroup );
 
   LoadedWindows::getInstance()->eraseHisto( this );
   delete myHisto;
+  myHisto = nullptr;
 }
 
-void HistogramProxy::setWindowBeginTime( TRecordTime whichTime, bool isBroadcast )
+void HistogramProxy::setWindowBeginTime( TRecordTime whichTime )
 {
   winBeginTime = whichTime;
-  if( sync && !isBroadcast )
-    SyncWindows::getInstance()->broadcastTime( syncGroup, this, winBeginTime, winEndTime );
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_TIME ) )
+    SyncWindows::getInstance()->broadcastTimeAll( syncGroup, winBeginTime, winEndTime );
 }
 
-void HistogramProxy::setWindowEndTime( TRecordTime whichTime, bool isBroadcast )
+void HistogramProxy::setWindowEndTime( TRecordTime whichTime )
 {
   winEndTime = whichTime;
-  if( sync && !isBroadcast )
-    SyncWindows::getInstance()->broadcastTime( syncGroup, this, winBeginTime, winEndTime );
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_TIME ) )
+    SyncWindows::getInstance()->broadcastTimeAll( syncGroup, winBeginTime, winEndTime );
 }
 
 bool HistogramProxy::getThreeDimensions() const
@@ -191,7 +292,7 @@ void HistogramProxy::setControlWindow( Timeline *whichWindow )
   if( controlWindow != nullptr )
     controlWindow->unsetUsedByHistogram( this );
   else
-    rowSelection.copy( *whichWindow->getSelectedRows() );
+    rowSelection.copy( whichWindow->getRowSelectionManager() );
 
   controlWindow = whichWindow;
   controlWindow->setUsedByHistogram( this );
@@ -238,8 +339,8 @@ void HistogramProxy::clearExtraControlWindow()
   if( extraControlWindow != nullptr )
     extraControlWindow->unsetUsedByHistogram( this );
   extraControlWindow = nullptr;
-  selectedPlane = 0;
-  commSelectedPlane = 0;
+  selectedPlane      = 0;
+  commSelectedPlane  = 0;
   myHisto->clearExtraControlWindow();
 }
 
@@ -253,16 +354,22 @@ void HistogramProxy::setUseFixedDelta( bool whichValue )
 void HistogramProxy::setControlMin( THistogramLimit whichMin )
 {
   myHisto->setControlMin( whichMin );
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_MIN ) )
+    SyncWindows::getInstance()->broadcastMinAll( syncGroup, whichMin );
 }
 
 void HistogramProxy::setControlMax( THistogramLimit whichMax )
 {
   myHisto->setControlMax( whichMax );
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_MAX ) )
+    SyncWindows::getInstance()->broadcastMaxAll( syncGroup, whichMax );
 }
 
 void HistogramProxy::setControlDelta( THistogramLimit whichDelta )
 {
   myHisto->setControlDelta( whichDelta );
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_HISTOGRAM_DELTA ) )
+    SyncWindows::getInstance()->broadcastDeltaAll( syncGroup, whichDelta );
 }
 
 void HistogramProxy::setExtraControlMin( THistogramLimit whichMin )
@@ -289,37 +396,6 @@ void HistogramProxy::setDataMax( TSemanticValue whichMax )
 {
   myHisto->setDataMax( whichMax );
 }
-
-void HistogramProxy::setBurstMin( TRecordTime whichTime )
-{
-  myHisto->setBurstMin( whichTime );
-}
-
-void HistogramProxy::setBurstMax( TRecordTime whichTime )
-{
-  myHisto->setBurstMax( whichTime );
-}
-
-void HistogramProxy::setCommSizeMin( TCommSize whichSize )
-{
-  myHisto->setCommSizeMin( whichSize );
-}
-
-void HistogramProxy::setCommSizeMax( TCommSize whichSize )
-{
-  myHisto->setCommSizeMax( whichSize );
-}
-
-void HistogramProxy::setCommTagMin( TCommTag whichTag )
-{
-  myHisto->setCommTagMin( whichTag );
-}
-
-void HistogramProxy::setCommTagMax( TCommTag whichTag )
-{
-  myHisto->setCommTagMax( whichTag );
-}
-
 
 bool HistogramProxy::getUseFixedDelta() const
 {
@@ -366,35 +442,6 @@ TSemanticValue HistogramProxy::getDataMax() const
   return myHisto->getDataMax();
 }
 
-TRecordTime HistogramProxy::getBurstMin() const
-{
-  return myHisto->getBurstMin();
-}
-
-TRecordTime HistogramProxy::getBurstMax() const
-{
-  return myHisto->getBurstMax();
-}
-
-TCommSize HistogramProxy::getCommSizeMin() const
-{
-  return myHisto->getCommSizeMin();
-}
-
-TCommSize HistogramProxy::getCommSizeMax() const
-{
-  return myHisto->getCommSizeMax();
-}
-
-TCommTag HistogramProxy::getCommTagMin() const
-{
-  return myHisto->getCommTagMin();
-}
-
-TCommTag HistogramProxy::getCommTagMax() const
-{
-  return myHisto->getCommTagMax();
-}
 
 bool HistogramProxy::getInclusiveEnabled() const
 {
@@ -422,9 +469,9 @@ THistogramColumn HistogramProxy::getNumPlanes() const
   return myHisto->getNumPlanes();
 }
 
-THistogramColumn HistogramProxy::getNumColumns( const string& whichStat ) const
+THistogramColumn HistogramProxy::getNumColumns( const string &whichStat ) const
 {
-  if ( isCommunicationStat( whichStat ) )
+  if( isCommunicationStat( whichStat ) )
     return getCommNumColumns();
 
   return getNumColumns();
@@ -445,9 +492,7 @@ TObjectOrder HistogramProxy::getNumRows() const
   return myHisto->getNumRows();
 }
 
-TSemanticValue HistogramProxy::getCurrentValue( PRV_UINT32 col,
-                                                PRV_UINT16 idStat,
-                                                PRV_UINT32 plane ) const
+TSemanticValue HistogramProxy::getCurrentValue( PRV_UINT32 col, PRV_UINT16 idStat, PRV_UINT32 plane ) const
 {
   return myHisto->getCurrentValue( getSemanticSortedColumn( col ), idStat, plane );
 }
@@ -477,26 +522,17 @@ bool HistogramProxy::planeWithValues( PRV_UINT32 plane ) const
   return myHisto->planeWithValues( plane );
 }
 
-bool HistogramProxy::getCellValue( TSemanticValue& semVal,
-                                   PRV_UINT32 whichRow,
-                                   PRV_UINT32 whichCol,
-                                   PRV_UINT16 idStat,
-                                   PRV_UINT32 whichPlane ) const
+bool HistogramProxy::getCellValue( TSemanticValue &semVal, PRV_UINT32 whichRow, PRV_UINT32 whichCol, PRV_UINT16 idStat, PRV_UINT32 whichPlane ) const
 {
   return myHisto->getCellValue( semVal, whichRow, getSemanticSortedColumn( whichCol ), idStat, whichPlane );
 }
 
-bool HistogramProxy::getNotZeroValue( PRV_UINT32 whichRow,
-                                      PRV_UINT32 whichCol,
-                                      PRV_UINT16 idStat,
-                                      PRV_UINT32 whichPlane ) const
+bool HistogramProxy::getNotZeroValue( PRV_UINT32 whichRow, PRV_UINT32 whichCol, PRV_UINT16 idStat, PRV_UINT32 whichPlane ) const
 {
   return myHisto->getNotZeroValue( whichRow, getSemanticSortedColumn( whichCol ), idStat, whichPlane );
 }
 
-TSemanticValue HistogramProxy::getCommCurrentValue( PRV_UINT32 col,
-                                                    PRV_UINT16 idStat,
-                                                    PRV_UINT32 plane ) const
+TSemanticValue HistogramProxy::getCommCurrentValue( PRV_UINT32 col, PRV_UINT16 idStat, PRV_UINT32 plane ) const
 {
   return myHisto->getCommCurrentValue( getSemanticSortedColumn( col ), idStat, plane );
 }
@@ -526,7 +562,7 @@ bool HistogramProxy::planeCommWithValues( PRV_UINT32 plane ) const
   return myHisto->planeCommWithValues( plane );
 }
 
-bool HistogramProxy::getCommCellValue( TSemanticValue& semVal,
+bool HistogramProxy::getCommCellValue( TSemanticValue &semVal,
                                        PRV_UINT32 whichRow,
                                        PRV_UINT32 whichCol,
                                        PRV_UINT16 idStat,
@@ -535,20 +571,20 @@ bool HistogramProxy::getCommCellValue( TSemanticValue& semVal,
   return myHisto->getCommCellValue( semVal, whichRow, getSemanticSortedColumn( whichCol ), idStat, whichPlane );
 }
 
-HistogramTotals *HistogramProxy::getTotals( const string& whichStat ) const
+HistogramTotals *HistogramProxy::getTotals( const string &whichStat ) const
 {
-  if ( isCommunicationStat( whichStat ) )
+  if( isCommunicationStat( whichStat ) )
   {
-// TODO: Draw sorted vertical totals
-    if ( horizontal )
+    // TODO: Draw sorted vertical totals
+    if( horizontal )
       return getCommColumnTotals();
     else
       return getCommRowTotals();
   }
   else
   {
-// TODO: Draw sorted vertical totals
-    if ( horizontal )
+    // TODO: Draw sorted vertical totals
+    if( horizontal )
       return getColumnTotals();
     else
       return getRowTotals();
@@ -575,6 +611,17 @@ HistogramTotals *HistogramProxy::getCommRowTotals() const
   return HistogramTotals::create( myHisto->getCommRowTotals() );
 }
 
+void HistogramProxy::registerResizeFunctionCallback( const std::function< void( int, int ) > &callbackFunction )
+{
+  resizeFunctionCallback = callbackFunction;
+}
+
+void HistogramProxy::onResizeFunctionCallback( int height, int width )
+{
+  if( resizeFunctionCallback != nullptr )
+    resizeFunctionCallback( height, width );
+}
+
 void HistogramProxy::clearStatistics()
 {
   myHisto->clearStatistics();
@@ -582,29 +629,31 @@ void HistogramProxy::clearStatistics()
   commCalcStat.clear();
 }
 
-void HistogramProxy::pushbackStatistic( const string& whichStatistic )
+void HistogramProxy::pushbackStatistic( const string &whichStatistic )
 {
   myHisto->pushbackStatistic( whichStatistic );
-  if ( isCommunicationStat( whichStatistic ) )
+  if( isCommunicationStat( whichStatistic ) )
     commCalcStat.push_back( whichStatistic );
   else
     calcStat.push_back( whichStatistic );
 }
 
-void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
-                              vector<TObjectOrder>& selectedRows, ProgressController *progress )
+void HistogramProxy::execute( TRecordTime whichBeginTime,
+                              TRecordTime whichEndTime,
+                              vector< TObjectOrder > &selectedRows,
+                              ProgressController *progress )
 {
   winBeginTime = whichBeginTime;
-  winEndTime = whichEndTime;
+  winEndTime   = whichEndTime;
 
   TObjectOrder beginRow;
   TObjectOrder endRow;
-  if ( computeControlScale )
+  if( computeControlScale )
   {
     compute2DScale( progress );
     TZoomInfo tmpZoomControl1, tmpZoomControl2;
     tmpZoomControl1.begin = getControlMin();
-    tmpZoomControl1.end = getControlMax();
+    tmpZoomControl1.end   = getControlMax();
     tmpZoomControl2.begin = getControlDelta();
     if( zoomHistory.isEmpty() )
     {
@@ -616,17 +665,17 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
       addZoom( tmpZoomControl1, tmpZoomControl2 );
 
     beginRow = getZoomSecondDimension().first;
-    endRow = getZoomSecondDimension().second;
-    rowSelection.getSelected( selectedRows, beginRow, endRow, controlWindow->getLevel() );
+    endRow   = getZoomSecondDimension().second;
+    // rowSelection.getSelected( selectedRows, beginRow, endRow, controlWindow->getLevel() );
   }
 
 
-  if ( getThreeDimensions() && computeXtraScale )
+  if( getThreeDimensions() && computeXtraScale )
     compute3DScale( progress );
 
   myHisto->execute( whichBeginTime, whichEndTime, selectedRows, progress );
 
-  if ( getThreeDimensions() && futurePlane )
+  if( getThreeDimensions() && futurePlane )
   {
     THistogramLimit nPlanes = getNumPlanes();
     THistogramLimit min, max;
@@ -634,30 +683,30 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
     bool commFuturePlane = true;
     i = selectedPlane = commSelectedPlane = 0;
 
-    while ( i < nPlanes )
+    while( i < nPlanes )
     {
       min = getExtraControlMin() + getExtraControlDelta() * i;
       max = getExtraControlMin() + getExtraControlDelta() * i + 1;
 
       // get the first plane with values
-      if ( futurePlane && planeWithValues( i ) )
+      if( futurePlane && planeWithValues( i ) )
       {
         selectedPlane = i;
-        futurePlane = false;
+        futurePlane   = false;
       }
 
-      if ( commFuturePlane && planeCommWithValues( i ) )
+      if( commFuturePlane && planeCommWithValues( i ) )
       {
         commSelectedPlane = i;
-        commFuturePlane = false;
+        commFuturePlane   = false;
       }
 
-      if ( planeMinValue >= min && planeMinValue < max )
+      if( planeMinValue >= min && planeMinValue < max )
       {
-        if ( planeWithValues( i ) )
+        if( planeWithValues( i ) )
           selectedPlane = i;
 
-        if ( planeCommWithValues( i ) )
+        if( planeCommWithValues( i ) )
           commSelectedPlane = i;
       }
 
@@ -665,7 +714,7 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
     }
     futurePlane = false;
   }
-  else if ( getThreeDimensions() )
+  else if( getThreeDimensions() )
   {
     THistogramLimit nPlanes = getNumPlanes();
     PRV_UINT32 i;
@@ -673,13 +722,13 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
     if( selectedPlane >= nPlanes )
       selectedPlane = 0;
 
-    if ( !planeWithValues( selectedPlane ) )
+    if( !planeWithValues( selectedPlane ) )
     {
       i = selectedPlane = 0;
-      while ( i < nPlanes )
+      while( i < nPlanes )
       {
         // get the first plane with values
-        if ( /*futurePlane &&*/ planeWithValues( i ) )
+        if( /*futurePlane &&*/ planeWithValues( i ) )
         {
           selectedPlane = i;
           break;
@@ -688,12 +737,12 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
       }
     }
 
-    if ( !planeCommWithValues( commSelectedPlane ) )
+    if( !planeCommWithValues( commSelectedPlane ) )
     {
       i = commSelectedPlane = 0;
-      while ( i < nPlanes )
+      while( i < nPlanes )
       {
-        if ( /*commFuturePlane &&*/ planeCommWithValues( i ) )
+        if( /*commFuturePlane &&*/ planeCommWithValues( i ) )
         {
           commSelectedPlane = i;
           break;
@@ -704,6 +753,8 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
   }
 
   fillSemanticSort();
+
+  setReady( true );
 }
 
 void HistogramProxy::setHorizontal( bool newValue )
@@ -822,7 +873,7 @@ void HistogramProxy::setFixedSemanticSort( bool newValue )
   if( fixedSemanticSort )
   {
     customSemanticSort = currentSemanticSort;
-    lastSortCriteria = getSemanticSortCriteria();
+    lastSortCriteria   = getSemanticSortCriteria();
   }
   else
     setSemanticSortCriteria( lastSortCriteria );
@@ -856,7 +907,7 @@ double HistogramProxy::getMaxGradient() const
 void HistogramProxy::setComputeScale( bool newValue )
 {
   computeControlScale = newValue;
-  computeXtraScale = newValue;
+  computeXtraScale    = newValue;
 }
 
 bool HistogramProxy::getComputeScale() const
@@ -919,15 +970,15 @@ rgb HistogramProxy::calcGradientColor( TSemanticValue whichValue ) const
   return mySemanticColor.calcColor( whichValue, minGradient, maxGradient );
 }
 
-SemanticColor& HistogramProxy::getSemanticColor()
+SemanticColor &HistogramProxy::getSemanticColor()
 {
   return mySemanticColor;
 }
 
 void HistogramProxy::recalcGradientLimits()
 {
-  TSemanticValue tmpMin = std::numeric_limits<TSemanticValue>::max();
-  TSemanticValue tmpMax = 0.0;
+  TSemanticValue tmpMin   = std::numeric_limits< TSemanticValue >::max();
+  TSemanticValue tmpMax   = 0.0;
   HistogramTotals *totals = nullptr;
   PRV_UINT32 plane;
   PRV_UINT16 idStat;
@@ -935,36 +986,36 @@ void HistogramProxy::recalcGradientLimits()
 
   getIdStat( getCurrentStat(), idStat );
 
-  if ( isCommunicationStat( getCurrentStat() ) )
+  if( isCommunicationStat( getCurrentStat() ) )
   {
     totals = getCommColumnTotals();
-    plane = getCommSelectedPlane();
+    plane  = getCommSelectedPlane();
   }
   else
   {
     totals = getColumnTotals();
-    plane = getSelectedPlane();
+    plane  = getSelectedPlane();
   }
 
-  if ( !planeWithValues( plane ) )
+  if( !planeWithValues( plane ) )
   {
     minGradient = 0.0;
-    maxGradient = std::numeric_limits<TSemanticValue>::max();
+    maxGradient = std::numeric_limits< TSemanticValue >::max();
     delete totals;
     return;
   }
 
-  for ( THistogramColumn iCol = 0; iCol < numColumns; ++iCol )
+  for( THistogramColumn iCol = 0; iCol < numColumns; ++iCol )
   {
     TSemanticValue curMin = totals->getMinimum( idStat, iCol, plane );
     TSemanticValue curMax = totals->getMaximum( idStat, iCol, plane );
-    if ( curMin != 0 && curMin < tmpMin )
+    if( curMin != 0 && curMin < tmpMin )
       tmpMin = curMin;
-    if ( curMax > tmpMax )
+    if( curMax > tmpMax )
       tmpMax = curMax;
   }
 
-  if( tmpMin == std::numeric_limits<TSemanticValue>::max() )
+  if( tmpMin == std::numeric_limits< TSemanticValue >::max() )
     minGradient = 0;
   else
     minGradient = tmpMin;
@@ -996,7 +1047,7 @@ bool HistogramProxy::getFirstRowColored() const
 void HistogramProxy::setPlaneMinValue( double whichMin )
 {
   planeMinValue = whichMin;
-  futurePlane = true;
+  futurePlane   = true;
 }
 
 double HistogramProxy::getPlaneMinValue() const
@@ -1028,17 +1079,17 @@ PRV_INT32 HistogramProxy::getCommSelectedPlane() const
   return commSelectedPlane;
 }
 
-bool HistogramProxy::isCommunicationStat( const string& whichStat ) const
+bool HistogramProxy::isCommunicationStat( const string &whichStat ) const
 {
   return myHisto->isCommunicationStat( whichStat );
 }
 
-bool HistogramProxy::isNotZeroStat( const string& whichStat ) const
+bool HistogramProxy::isNotZeroStat( const string &whichStat ) const
 {
   return myHisto->isNotZeroStat( whichStat );
 }
 
-THistogramColumn HistogramProxy::getSemanticRealColumn( THistogramColumn whichCol, const vector<THistogramColumn>& noVoidSemRanges ) const
+THistogramColumn HistogramProxy::getSemanticRealColumn( THistogramColumn whichCol, const vector< THistogramColumn > &noVoidSemRanges ) const
 {
   THistogramColumn realCol = whichCol;
 
@@ -1048,28 +1099,28 @@ THistogramColumn HistogramProxy::getSemanticRealColumn( THistogramColumn whichCo
     realCol = noVoidSemRanges[ whichCol ];
   else if( getHideColumns() && !getSemanticSortColumns() && getSemanticSortReverse() )
     realCol = noVoidSemRanges[ noVoidSemRanges.size() - whichCol - 1 ];
-    
+
   return realCol;
 }
 
 void HistogramProxy::compute2DScale( ProgressController *progress )
 {
-  bool restoreYScale = false;
+  bool restoreYScale     = false;
   TSemanticValue tmpMinY = 0.0;
   TSemanticValue tmpMaxY = 0.0;
   if( controlWindow->getYScaleComputed() )
   {
     restoreYScale = true;
-    tmpMinY = controlWindow->getMinimumY();
-    tmpMaxY = controlWindow->getMaximumY();
+    tmpMinY       = controlWindow->getMinimumY();
+    tmpMaxY       = controlWindow->getMaximumY();
   }
   TRecordTime tmpBeginTime = controlWindow->getWindowBeginTime();
-  TRecordTime tmpEndTime = controlWindow->getWindowEndTime();
-  controlWindow->setWindowBeginTime( getBeginTime(), true );
-  controlWindow->setWindowEndTime( getEndTime(), true );
+  TRecordTime tmpEndTime   = controlWindow->getWindowEndTime();
+  controlWindow->setWindowBeginTime( getBeginTime() );
+  controlWindow->setWindowEndTime( getEndTime() );
   controlWindow->computeYScale( progress );
-  controlWindow->setWindowBeginTime( tmpBeginTime, true );
-  controlWindow->setWindowEndTime( tmpEndTime, true );
+  controlWindow->setWindowBeginTime( tmpBeginTime );
+  controlWindow->setWindowEndTime( tmpEndTime );
   TSemanticValue minY = controlWindow->getMinimumY();
   if( getCompute2DScaleZero() && controlWindow->getExistSemanticZero() && minY > 0.0 )
     minY = 0.0;
@@ -1083,14 +1134,14 @@ void HistogramProxy::compute2DScale( ProgressController *progress )
   setControlMin( minY );
   setControlMax( maxY + ( ( maxY - minY ) * 0.05 ) );
 
-  if ( getUseFixedDelta() )
+  if( getUseFixedDelta() )
     return;
-  else if ( ( maxY - minY ) == 0 )
+  else if( ( maxY - minY ) == 0 )
   {
     setControlDelta( 1.0 );
     setUseFixedDelta( true );
   }
-  else if ( controlWindow->isCodeColorSet() && ( maxY - minY ) <= 10000 )
+  else if( controlWindow->isCodeColorSet() && ( maxY - minY ) <= 10000 )
   {
     setControlMax( floor( maxY + ( ( maxY - minY ) * 0.05 ) ) );
     setControlDelta( 1.0 );
@@ -1098,23 +1149,22 @@ void HistogramProxy::compute2DScale( ProgressController *progress )
   }
   else
   {
-    setControlDelta( ( maxY + ( ( maxY - minY ) * 0.05 ) - minY ) /
-                     ParaverConfig::getInstance()->getHistogramNumColumns() );
+    setControlDelta( ( maxY + ( ( maxY - minY ) * 0.05 ) - minY ) / ParaverConfig::getInstance()->getHistogramNumColumns() );
     setNumColumns( ParaverConfig::getInstance()->getHistogramNumColumns() );
   }
 }
 
 void HistogramProxy::compute3DScale( ProgressController *progress )
 {
-  TSemanticValue tmpMinY = extraControlWindow->getMinimumY();
-  TSemanticValue tmpMaxY = extraControlWindow->getMaximumY();
+  TSemanticValue tmpMinY   = extraControlWindow->getMinimumY();
+  TSemanticValue tmpMaxY   = extraControlWindow->getMaximumY();
   TRecordTime tmpBeginTime = extraControlWindow->getWindowBeginTime();
-  TRecordTime tmpEndTime = extraControlWindow->getWindowEndTime();
-  extraControlWindow->setWindowBeginTime( getBeginTime(), true );
-  extraControlWindow->setWindowEndTime( getEndTime(), true );
+  TRecordTime tmpEndTime   = extraControlWindow->getWindowEndTime();
+  extraControlWindow->setWindowBeginTime( getBeginTime() );
+  extraControlWindow->setWindowEndTime( getEndTime() );
   extraControlWindow->computeYScale( progress );
-  extraControlWindow->setWindowBeginTime( tmpBeginTime, true );
-  extraControlWindow->setWindowEndTime( tmpEndTime, true );
+  extraControlWindow->setWindowBeginTime( tmpBeginTime );
+  extraControlWindow->setWindowEndTime( tmpEndTime );
   TSemanticValue minY = extraControlWindow->getMinimumY();
   TSemanticValue maxY = extraControlWindow->getMaximumY();
   extraControlWindow->setMinimumY( tmpMinY );
@@ -1123,7 +1173,7 @@ void HistogramProxy::compute3DScale( ProgressController *progress )
   setExtraControlMin( minY );
   setExtraControlMax( maxY );
 
-  if ( ( maxY - minY ) == 0 )
+  if( ( maxY - minY ) == 0 )
   {
     setExtraControlDelta( 1.0 );
   }
@@ -1133,8 +1183,7 @@ void HistogramProxy::compute3DScale( ProgressController *progress )
   }
   else
   {
-    setExtraControlDelta( ( maxY - minY ) /
-                          ParaverConfig::getInstance()->getHistogramNumColumns() );
+    setExtraControlDelta( ( maxY - minY ) / ParaverConfig::getInstance()->getHistogramNumColumns() );
   }
 }
 
@@ -1146,8 +1195,7 @@ string HistogramProxy::getRowLabel( TObjectOrder whichRow ) const
   if( controlWindow->getLevel() == TTraceLevel::CPU || controlWindow->getLevel() == TTraceLevel::NODE )
     ++whichRow;
 
-  return LabelConstructor::objectLabel( whichRow, controlWindow->getLevel(),
-                                        controlWindow->getTrace() );
+  return LabelConstructor::objectLabel( whichRow, controlWindow->getLevel(), controlWindow->getTrace() );
 }
 
 string HistogramProxy::getColumnLabel( THistogramColumn whichColumn ) const
@@ -1158,13 +1206,9 @@ string HistogramProxy::getColumnLabel( THistogramColumn whichColumn ) const
   THistogramColumn tmpCol = getSemanticSortedColumn( whichColumn );
 
   if( isCommunicationStat( getCurrentStat() ) )
-    return getRowLabel( ( TObjectOrder ) tmpCol );
+    return getRowLabel( (TObjectOrder)tmpCol );
 
-  return LabelConstructor::histoColumnLabel( tmpCol, controlWindow,
-         getControlMin(),
-         getControlMax(),
-         getControlDelta(),
-         getShortLabels() );
+  return LabelConstructor::histoColumnLabel( tmpCol, controlWindow, getControlMin(), getControlMax(), getControlDelta(), getShortLabels() );
 }
 
 string HistogramProxy::getPlaneLabel( THistogramColumn whichPlane ) const
@@ -1173,16 +1217,12 @@ string HistogramProxy::getPlaneLabel( THistogramColumn whichPlane ) const
   if( win == nullptr )
     return "";
 
-  return LabelConstructor::histoColumnLabel( whichPlane, win,
-         getExtraControlMin(),
-         getExtraControlMax(),
-         getExtraControlDelta(),
-         getShortLabels() );
+  return LabelConstructor::histoColumnLabel( whichPlane, win, getExtraControlMin(), getExtraControlMax(), getExtraControlDelta(), getShortLabels() );
 }
 
 THistogramColumn HistogramProxy::getPlaneColumns( THistogramColumn iPlane,
-    bool hideEmptyColumns, // need to override cfg value
-    vector<THistogramColumn> &noVoidSemRanges ) const
+                                                  bool hideEmptyColumns, // need to override cfg value
+                                                  vector< THistogramColumn > &noVoidSemRanges ) const
 {
   THistogramColumn numColumns = 0;
 
@@ -1191,12 +1231,12 @@ THistogramColumn HistogramProxy::getPlaneColumns( THistogramColumn iPlane,
   if( getIdStat( getCurrentStat(), idStat ) )
   {
     bool commStat = isCommunicationStat( getCurrentStat() );
-    numColumns = getNumColumns( getCurrentStat() );
+    numColumns    = getNumColumns( getCurrentStat() );
 
-    if ( hideEmptyColumns )
+    if( hideEmptyColumns )
     {
       // Return only the columns with values
-      SelectionManagement<THistogramColumn, int> columnSelection;
+      SelectionManagement< THistogramColumn, int > columnSelection;
 
       if( commStat )
         columnSelection.init( getCommColumnTotals(), idStat, numColumns, iPlane );
@@ -1248,8 +1288,7 @@ void HistogramProxy::prevZoom()
   zoomHistory.prevZoom();
 }
 
-void HistogramProxy::addZoom( TZoomInfo columnsInfo, TZoomInfo dummy,
-                              TObjectOrder beginObject, TObjectOrder endObject )
+void HistogramProxy::addZoom( TZoomInfo columnsInfo, TZoomInfo dummy, TObjectOrder beginObject, TObjectOrder endObject )
 {
   zoomHistory.addZoom( columnsInfo, dummy, beginObject, endObject );
 }
@@ -1264,31 +1303,40 @@ void HistogramProxy::addZoom( TObjectOrder beginObject, TObjectOrder endObject )
   zoomHistory.addZoom( beginObject, endObject );
 }
 
-void HistogramProxy::setZoomFirstDimension( pair<TZoomInfo, TZoomInfo> &zinfo )
+void HistogramProxy::setZoomFirstDimension( pair< TZoomInfo, TZoomInfo > &zinfo )
 {
   zoomHistory.setFirstDimension( zinfo );
 }
 
-void HistogramProxy::setZoomSecondDimension( pair<TObjectOrder, TObjectOrder> &objects )
+void HistogramProxy::setZoomSecondDimension( pair< TObjectOrder, TObjectOrder > &objects )
 {
   zoomHistory.setSecondDimension( objects );
 }
 
-pair<HistogramProxy::TZoomInfo, HistogramProxy::TZoomInfo> HistogramProxy::getZoomFirstDimension() const
+pair< HistogramProxy::TZoomInfo, HistogramProxy::TZoomInfo > HistogramProxy::getZoomFirstDimension() const
 {
   return zoomHistory.getFirstDimension();
 }
 
-pair <TObjectOrder, TObjectOrder> HistogramProxy::getZoomSecondDimension() const
+pair< TObjectOrder, TObjectOrder > HistogramProxy::getZoomSecondDimension() const
 {
   return zoomHistory.getSecondDimension();
+}
+std::vector< TObjectOrder > HistogramProxy::getCurrentZoomRange() const
+{
+  vector< TObjectOrder > zoomRange;
+
+  zoomRange.push_back( getZoomSecondDimension().first );
+  zoomRange.push_back( getZoomSecondDimension().second );
+
+  return zoomRange;
 }
 
 void HistogramProxy::addToSyncGroup( TGroupId whichGroup )
 {
   SyncWindows::getInstance()->removeWindow( this, syncGroup );
   syncGroup = whichGroup;
-  sync = SyncWindows::getInstance()->addWindow( this, whichGroup );
+  sync      = SyncWindows::getInstance()->addWindow( (Histogram *)this, whichGroup );
 }
 
 void HistogramProxy::removeFromSync()
@@ -1309,7 +1357,7 @@ TGroupId HistogramProxy::getSyncGroup() const
   return syncGroup;
 }
 
-void HistogramProxy::setName( const string& whichName )
+void HistogramProxy::setName( const string &whichName )
 {
   name = whichName;
 }
@@ -1323,15 +1371,25 @@ void HistogramProxy::setCalculateAll( bool status )
 {
   calculateAll = status;
   clearStatistics();
-  if ( status )
+  if( status )
   {
-    vector<string> vStat;
+    vector< string > vStat;
     myKernel->getAllStatistics( vStat );
-    for ( vector<string>::iterator it = vStat.begin(); it != vStat.end(); ++it )
+    for( vector< string >::iterator it = vStat.begin(); it != vStat.end(); ++it )
       pushbackStatistic( *it );
   }
   else
     pushbackStatistic( currentStat );
+
+  if( isDerivedHistogram() )
+  {
+    std::for_each( parents.begin(),
+                   parents.end(),
+                   [ & ]( auto &parent )
+                   {
+                     parent->setCalculateAll( status );
+                   } );
+  }
 }
 
 bool HistogramProxy::getCalculateAll() const
@@ -1339,22 +1397,22 @@ bool HistogramProxy::getCalculateAll() const
   return calculateAll;
 }
 
-bool HistogramProxy::getIdStat( const string& whichStat, PRV_UINT16& idStat ) const
+bool HistogramProxy::getIdStat( const string &whichStat, PRV_UINT16 &idStat ) const
 {
   idStat = 0;
-  const vector<string> *vStat;
+  const vector< string > *vStat;
 
-  if ( isCommunicationStat( whichStat ) )
+  if( isCommunicationStat( whichStat ) )
     vStat = &commCalcStat;
   else
     vStat = &calcStat;
 
-  if ( vStat->begin() == vStat->end() )
+  if( vStat->begin() == vStat->end() )
     return false;
 
-  for ( vector<string>::const_iterator it = vStat->begin(); it != vStat->end(); ++it )
+  for( vector< string >::const_iterator it = vStat->begin(); it != vStat->end(); ++it )
   {
-    if ( whichStat.compare( *it ) == 0 )
+    if( whichStat.compare( *it ) == 0 )
       return true;
 
     idStat++;
@@ -1363,10 +1421,10 @@ bool HistogramProxy::getIdStat( const string& whichStat, PRV_UINT16& idStat ) co
   return false;
 }
 
-void HistogramProxy::setCurrentStat( const string& whichStat )
+void HistogramProxy::setCurrentStat( const string &whichStat )
 {
   currentStat = whichStat;
-  if ( !calculateAll )
+  if( !calculateAll )
   {
     clearStatistics();
     pushbackStatistic( whichStat );
@@ -1380,67 +1438,110 @@ string HistogramProxy::getCurrentStat() const
   return currentStat;
 }
 
-string HistogramProxy::getUnitsLabel( const string& whichStat ) const
+string HistogramProxy::getUnitsLabel( const string &whichStat ) const
 {
   return myHisto->getUnitsLabel( whichStat );
 }
 
 Histogram *HistogramProxy::clone()
 {
-  HistogramProxy *clonedHistogramProxy = new HistogramProxy( myKernel );
-
-  delete clonedHistogramProxy->myHisto;
-  clonedHistogramProxy->myHisto = myHisto->clone();
+  bool createHistogram                 = false;
+  HistogramProxy *clonedHistogramProxy = new HistogramProxy( myKernel, createHistogram );
+  // delete clonedHistogramProxy->myHisto;
+  clonedHistogramProxy->myHisto = myHisto->clone(); // not recursive in case of derived histogram
 
   std::ostringstream tmp;
   tmp << ++number_of_clones;
   clonedHistogramProxy->name = name + ".c" + tmp.str();
 
-  clonedHistogramProxy->posX = posX;
-  clonedHistogramProxy->posY = posY;
-  clonedHistogramProxy->width = width;
+  clonedHistogramProxy->derivedHistogram = derivedHistogram;
+  if( derivedHistogram )
+  {
+    // Clone parents
+    auto recursiveCloneHistogramProxies = []( auto &whichParent )
+                                          {
+                                            return whichParent->clone();
+                                          };
+
+    std::vector< Histogram * > clonedParents;
+    std::transform( parents.cbegin(), parents.cend(), std::back_inserter( clonedParents ), recursiveCloneHistogramProxies );
+    std::for_each( clonedParents.begin(),
+                   clonedParents.end(),
+                   [ &clonedHistogramProxy ]( auto &whichParent )
+                   {
+                     whichParent->addChild( clonedHistogramProxy );
+                   } );
+
+    auto getKHistoParent = []( auto &whichParent )
+                           {
+                             return whichParent->getConcrete();
+                           };
+    std::vector< Histogram * > clonedKParents;
+    std::transform( clonedParents.cbegin(), clonedParents.cend(), std::back_inserter( clonedKParents ), getKHistoParent );
+
+    clonedHistogramProxy->parents = clonedParents;
+
+    clonedHistogramProxy->myHisto->setParents( clonedKParents );
+    clonedHistogramProxy->myHisto->setProperties();
+    clonedHistogramProxy->myHisto->completeClone( myHisto );
+
+    // Commented on purpose: histogram SHOULD NOT clone its children
+    // clonedHistogramProxy->children = children;
+
+    clonedHistogramProxy->setDerivedOperation( getDerivedOperation() );
+
+    // extracted from setParents
+    // clonedHistogramProxy->setParents( clonedParents );
+    Histogram *mainHistogram = parents.front();
+
+    clonedHistogramProxy->myTrace = mainHistogram->getTrace(); // Only for further queries, may not be necessary
+  }
+
+  clonedHistogramProxy->posX   = posX;
+  clonedHistogramProxy->posY   = posY;
+  clonedHistogramProxy->width  = width;
   clonedHistogramProxy->height = height;
 
-  clonedHistogramProxy->horizontal = horizontal;
-  clonedHistogramProxy->hideColumns = hideColumns;
+  clonedHistogramProxy->horizontal         = horizontal;
+  clonedHistogramProxy->hideColumns        = hideColumns;
   clonedHistogramProxy->scientificNotation = scientificNotation;
-  clonedHistogramProxy->numDecimals = numDecimals;
-  clonedHistogramProxy->thousandSep = thousandSep;
-  clonedHistogramProxy->showUnits = showUnits;
+  clonedHistogramProxy->numDecimals        = numDecimals;
+  clonedHistogramProxy->thousandSep        = thousandSep;
+  clonedHistogramProxy->showUnits          = showUnits;
 
-  clonedHistogramProxy->sortSemanticColumns = sortSemanticColumns;
-  clonedHistogramProxy->sortSemanticReverse = sortSemanticReverse;
+  clonedHistogramProxy->sortSemanticColumns  = sortSemanticColumns;
+  clonedHistogramProxy->sortSemanticReverse  = sortSemanticReverse;
   clonedHistogramProxy->semanticSortCriteria = semanticSortCriteria;
-  clonedHistogramProxy->fixedSemanticSort = fixedSemanticSort;
-  clonedHistogramProxy->currentSemanticSort = currentSemanticSort;
-  clonedHistogramProxy->customSemanticSort = customSemanticSort;
+  clonedHistogramProxy->fixedSemanticSort    = fixedSemanticSort;
+  clonedHistogramProxy->currentSemanticSort  = currentSemanticSort;
+  clonedHistogramProxy->customSemanticSort   = customSemanticSort;
 
-  clonedHistogramProxy->minGradient = minGradient;
-  clonedHistogramProxy->maxGradient = maxGradient;
-  clonedHistogramProxy->computeControlScale = computeControlScale;
-  clonedHistogramProxy->computeXtraScale = computeXtraScale;
-  clonedHistogramProxy->computeGradient = computeGradient;
-  clonedHistogramProxy->showColor = showColor;
-  clonedHistogramProxy->zoom = zoom;
-  clonedHistogramProxy->firstRowColored = firstRowColored;
-  clonedHistogramProxy->pixelSize = pixelSize;
-  clonedHistogramProxy->onlyTotals = onlyTotals;
-  clonedHistogramProxy->shortLabels = shortLabels;
-  clonedHistogramProxy->futurePlane = futurePlane;
-  clonedHistogramProxy->planeMinValue = planeMinValue;
-  clonedHistogramProxy->selectedPlane = selectedPlane;
-  clonedHistogramProxy->commSelectedPlane = commSelectedPlane;
-  clonedHistogramProxy->showWindow = showWindow;
-  clonedHistogramProxy->changed = changed;
-  clonedHistogramProxy->redraw = redraw;
-  clonedHistogramProxy->recalc = recalc;
+  clonedHistogramProxy->minGradient           = minGradient;
+  clonedHistogramProxy->maxGradient           = maxGradient;
+  clonedHistogramProxy->computeControlScale   = computeControlScale;
+  clonedHistogramProxy->computeXtraScale      = computeXtraScale;
+  clonedHistogramProxy->computeGradient       = computeGradient;
+  clonedHistogramProxy->showColor             = showColor;
+  clonedHistogramProxy->zoom                  = zoom;
+  clonedHistogramProxy->firstRowColored       = firstRowColored;
+  clonedHistogramProxy->pixelSize             = pixelSize;
+  clonedHistogramProxy->onlyTotals            = onlyTotals;
+  clonedHistogramProxy->shortLabels           = shortLabels;
+  clonedHistogramProxy->futurePlane           = futurePlane;
+  clonedHistogramProxy->planeMinValue         = planeMinValue;
+  clonedHistogramProxy->selectedPlane         = selectedPlane;
+  clonedHistogramProxy->commSelectedPlane     = commSelectedPlane;
+  clonedHistogramProxy->showWindow            = showWindow;
+  clonedHistogramProxy->changed               = changed;
+  clonedHistogramProxy->redraw                = redraw;
+  clonedHistogramProxy->recalc                = recalc;
   clonedHistogramProxy->numColumnsInitialized = numColumnsInitialized;
-  clonedHistogramProxy->drawModeColumns = drawModeColumns;
-  clonedHistogramProxy->drawModeObjects = drawModeObjects;
-  clonedHistogramProxy->mySemanticColor = mySemanticColor;
+  clonedHistogramProxy->drawModeColumns       = drawModeColumns;
+  clonedHistogramProxy->drawModeObjects       = drawModeObjects;
+  clonedHistogramProxy->mySemanticColor       = mySemanticColor;
 
   clonedHistogramProxy->winBeginTime = winBeginTime;
-  clonedHistogramProxy->winEndTime = winEndTime;
+  clonedHistogramProxy->winEndTime   = winEndTime;
 
   // Must store the associated proxies
   clonedHistogramProxy->setControlWindow( controlWindow->clone() );
@@ -1452,7 +1553,7 @@ Histogram *HistogramProxy::clone()
     clonedHistogramProxy->setDataWindow( dataWindow->clone() );
     clonedHistogramProxy->getDataWindow()->setUsedByHistogram( clonedHistogramProxy );
   }
-  if ( extraControlWindow != nullptr )
+  if( extraControlWindow != nullptr )
   {
     if( extraControlWindow == controlWindow )
       clonedHistogramProxy->setExtraControlWindow( clonedHistogramProxy->getControlWindow() );
@@ -1465,26 +1566,28 @@ Histogram *HistogramProxy::clone()
     }
   }
 
-  clonedHistogramProxy->calculateAll = calculateAll;
-  clonedHistogramProxy->currentStat = currentStat;
-  clonedHistogramProxy->calcStat = vector<string>( calcStat );
-  clonedHistogramProxy->commCalcStat = vector<string>( commCalcStat );
+  clonedHistogramProxy->setCalculateAll( calculateAll );
+  clonedHistogramProxy->currentStat  = currentStat;
+  clonedHistogramProxy->calcStat     = vector< string >( calcStat );
+  clonedHistogramProxy->commCalcStat = vector< string >( commCalcStat );
 
-  if ( ParaverConfig::getInstance()->getHistogramKeepSyncGroupClone() )
+  if( ParaverConfig::getInstance()->getHistogramKeepSyncGroupClone() )
   {
-    clonedHistogramProxy->sync = sync;
+    clonedHistogramProxy->sync      = sync;
     clonedHistogramProxy->syncGroup = syncGroup;
     if( clonedHistogramProxy->sync )
-      SyncWindows::getInstance()->addWindow( clonedHistogramProxy, syncGroup );
+      SyncWindows::getInstance()->addWindow( (Histogram *)clonedHistogramProxy, syncGroup );
   }
 
   clonedHistogramProxy->rowSelection = rowSelection;
 
   // CFG4D
-  clonedHistogramProxy->isCFG4DEnabled = isCFG4DEnabled;
-  clonedHistogramProxy->CFG4DMode = CFG4DMode;
+  clonedHistogramProxy->isCFG4DEnabled       = isCFG4DEnabled;
+  clonedHistogramProxy->CFG4DMode            = CFG4DMode;
   clonedHistogramProxy->propertiesAliasCFG4D = propertiesAliasCFG4D;
   clonedHistogramProxy->statisticsAliasCFG4D = statisticsAliasCFG4D;
+
+  clonedHistogramProxy->setReady( isReady() );
 
   return clonedHistogramProxy;
 }
@@ -1498,6 +1601,22 @@ bool HistogramProxy::getDestroy() const
 
 void HistogramProxy::setDestroy( bool newValue )
 {
+  if( controlWindow != nullptr )
+  {
+    controlWindow->unsetUsedByHistogram( this );
+    controlWindow = nullptr;
+  }
+  if( dataWindow != nullptr )
+  {
+    dataWindow->unsetUsedByHistogram( this );
+    dataWindow = nullptr;
+  }
+  if( extraControlWindow != nullptr )
+  {
+    extraControlWindow->unsetUsedByHistogram( this );
+    extraControlWindow = nullptr;
+  }
+
   destroy = newValue;
 }
 
@@ -1507,7 +1626,7 @@ PRV_UINT16 HistogramProxy::getPosX() const
   return posX;
 }
 
-void HistogramProxy::setPosX( PRV_UINT16 whichPos )
+void HistogramProxy::setPosX( PRV_UINT16 whichPos, bool broadcastValue )
 {
   posX = whichPos;
 }
@@ -1517,7 +1636,7 @@ PRV_UINT16 HistogramProxy::getPosY() const
   return posY;
 }
 
-void HistogramProxy::setPosY( PRV_UINT16 whichPos )
+void HistogramProxy::setPosY( PRV_UINT16 whichPos, bool broadcastValue )
 {
   posY = whichPos;
 }
@@ -1527,9 +1646,17 @@ PRV_UINT16 HistogramProxy::getWidth() const
   return width;
 }
 
-void HistogramProxy::setWidth( PRV_UINT16 whichPos )
+void HistogramProxy::setWidth( PRV_UINT16 whichPos, bool broadcastValue )
 {
-  width = whichPos;
+
+  if( width != whichPos )
+  {
+    width = whichPos;
+    // onResizeFunctionCallback( width, height );
+
+    if( sync && broadcastValue && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_WINDOWS_SIZE ) )
+      SyncWindows::getInstance()->broadcastSizeAll( syncGroup, width, height );
+  }
 }
 
 PRV_UINT16 HistogramProxy::getHeight() const
@@ -1537,9 +1664,32 @@ PRV_UINT16 HistogramProxy::getHeight() const
   return height;
 }
 
-void HistogramProxy::setHeight( PRV_UINT16 whichPos )
+void HistogramProxy::setHeight( PRV_UINT16 whichPos, bool broadcastValue )
 {
-  height = whichPos;
+  if( height != whichPos )
+  {
+    height = whichPos;
+    // onResizeFunctionCallback( width, height );
+
+    if( sync && broadcastValue && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_WINDOWS_SIZE ) )
+      SyncWindows::getInstance()->broadcastSizeAll( syncGroup, width, height );
+  }
+}
+
+void HistogramProxy::registerPositionFunctionCallback( const std::function< void( int, int ) > &callbackFunction )
+{
+  positionFunctionCallback = callbackFunction;
+}
+void HistogramProxy::onPositionFunctionCallback( int height, int width )
+{
+  if( positionFunctionCallback != nullptr )
+    positionFunctionCallback( height, width );
+}
+
+void HistogramProxy::addOffsetPosition( int posXDiff, int posYDiff )
+{
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_WINDOWS_POSITION ) )
+    SyncWindows::getInstance()->broadcastPositionAll( syncGroup, posYDiff, posXDiff );
 }
 
 bool HistogramProxy::getShowWindow() const
@@ -1580,18 +1730,18 @@ bool HistogramProxy::getChanged() const
 void HistogramProxy::setChanged( bool newValue )
 {
   changed = newValue;
+  if( newValue )
+    setReady( false );
 }
 
-void HistogramProxy::getGroupsLabels( vector<string>& onVector ) const
+void HistogramProxy::getGroupsLabels( vector< string > &onVector ) const
 {
   myHisto->getGroupsLabels( onVector );
 }
 
-void HistogramProxy::getStatisticsLabels( vector<string>& onVector,
-                                          PRV_UINT32 whichGroup,
-                                          bool getOriginalList ) const
+void HistogramProxy::getStatisticsLabels( vector< string > &onVector, PRV_UINT32 whichGroup, bool getOriginalList ) const
 {
-  if ( getOriginalList )
+  if( getOriginalList )
   {
     myHisto->getStatisticsLabels( onVector, whichGroup );
   }
@@ -1604,8 +1754,8 @@ void HistogramProxy::getStatisticsLabels( vector<string>& onVector,
     for( vector< string >::iterator it = fullList.begin(); it != fullList.end(); ++it )
     {
       itStat = statisticsAliasCFG4D.find( *it );
-      if ( itStat != statisticsAliasCFG4D.end() )
-      onVector.push_back( itStat->second );
+      if( itStat != statisticsAliasCFG4D.end() )
+        onVector.push_back( itStat->second );
     }
   }
 }
@@ -1725,26 +1875,25 @@ void HistogramProxy::setShortLabels( bool newValue )
 
 bool HistogramProxy::getShowProgressBar() const
 {
-  return controlWindow->getShowProgressBar() ||
-         dataWindow->getShowProgressBar() ||
+  return controlWindow->getShowProgressBar() || dataWindow->getShowProgressBar() ||
          ( extraControlWindow != nullptr && extraControlWindow->getShowProgressBar() );
 }
 
 void HistogramProxy::setCFG4DMode( bool mode )
 {
-  if ( controlWindow != nullptr )
+  if( controlWindow != nullptr )
     controlWindow->setCFG4DMode( mode );
 
-  if ( dataWindow != nullptr )
+  if( dataWindow != nullptr )
     dataWindow->setCFG4DMode( mode );
 
-  if ( extraControlWindow != nullptr )
+  if( extraControlWindow != nullptr )
     extraControlWindow->setCFG4DMode( mode );
 
   CFG4DMode = mode;
 }
 
-bool HistogramProxy::getCFG4DMode( ) const
+bool HistogramProxy::getCFG4DMode() const
 {
   return CFG4DMode;
 }
@@ -1756,14 +1905,13 @@ bool HistogramProxy::getCFG4DEnabled() const
 
 void HistogramProxy::setCFG4DEnabled( bool enabled )
 {
-
-  if ( controlWindow != nullptr )
+  if( controlWindow != nullptr )
     controlWindow->setCFG4DEnabled( enabled );
 
-  if ( dataWindow != nullptr )
+  if( dataWindow != nullptr )
     dataWindow->setCFG4DEnabled( enabled );
 
-  if ( extraControlWindow != nullptr )
+  if( extraControlWindow != nullptr )
     extraControlWindow->setCFG4DEnabled( enabled );
 
   isCFG4DEnabled = enabled;
@@ -1774,10 +1922,10 @@ bool HistogramProxy::existsCFG4DAlias( const string &property ) const
 {
   bool found = false;
 
-  if ( propertiesAliasCFG4D.size() > 0 )
+  if( propertiesAliasCFG4D.size() > 0 )
   {
     map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
-    if ( itAlias != propertiesAliasCFG4D.end() )
+    if( itAlias != propertiesAliasCFG4D.end() )
     {
       found = true;
     }
@@ -1791,12 +1939,12 @@ bool HistogramProxy::existsCFG4DAlias( const THistogramProperties &propertyIndex
 {
   bool found = false;
 
-  if ( propertiesAliasCFG4D.size() > 0 )
+  if( propertiesAliasCFG4D.size() > 0 )
   {
     string property( HistogramPropertyLabels[ propertyIndex ] );
 
     map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
-    if ( itAlias != propertiesAliasCFG4D.end() )
+    if( itAlias != propertiesAliasCFG4D.end() )
     {
       found = true;
     }
@@ -1810,10 +1958,10 @@ string HistogramProxy::getCFG4DAlias( const string &property ) const
 {
   string alias = "";
 
-  if ( propertiesAliasCFG4D.size() > 0 )
+  if( propertiesAliasCFG4D.size() > 0 )
   {
     map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
-    if ( itAlias != propertiesAliasCFG4D.end() )
+    if( itAlias != propertiesAliasCFG4D.end() )
     {
       alias = itAlias->second;
     }
@@ -1827,12 +1975,12 @@ string HistogramProxy::getCFG4DAlias( const THistogramProperties &propertyIndex 
 {
   string alias = "";
 
-  if ( propertiesAliasCFG4D.size() > 0 )
+  if( propertiesAliasCFG4D.size() > 0 )
   {
     string property( HistogramPropertyLabels[ propertyIndex ] );
 
     map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
-    if ( itAlias != propertiesAliasCFG4D.end() )
+    if( itAlias != propertiesAliasCFG4D.end() )
     {
       alias = itAlias->second;
     }
@@ -1853,13 +2001,13 @@ void HistogramProxy::setCFG4DStatisticAlias( const string &statistic, const stri
 }
 
 
-void  HistogramProxy::setCFG4DAliasList( const map< string, string >& aliasList )
+void HistogramProxy::setCFG4DAliasList( const map< string, string > &aliasList )
 {
   propertiesAliasCFG4D = aliasList;
 }
 
 
-void  HistogramProxy::setCFG4DStatisticsAliasList( const map< string, string >& statisticsAliasList )
+void HistogramProxy::setCFG4DStatisticsAliasList( const map< string, string > &statisticsAliasList )
 {
   statisticsAliasCFG4D = statisticsAliasList;
 }
@@ -1878,7 +2026,7 @@ const vector< string > HistogramProxy::getCFG4DFullTagList()
 {
   vector< string > tags;
 
-  for ( int iTag = 0; iTag < TOTAL_HISTOGRAM_PROPERTIES; ++iTag )
+  for( int iTag = 0; iTag < TOTAL_HISTOGRAM_PROPERTIES; ++iTag )
   {
     tags.push_back( HistogramPropertyLabels[ iTag ] );
   }
@@ -1910,9 +2058,19 @@ TCFGS4DIndexLink HistogramProxy::getCFGS4DIndexLink() const
   return globalIndexLink;
 }
 
-SelectionManagement< TObjectOrder, TTraceLevel > * HistogramProxy::getRowSelectionManagement()
+TTraceLevel HistogramProxy::getLevel() const
 {
-  return &rowSelection;
+  return getControlWindow()->getLevel();
+}
+
+bool HistogramProxy::areAllSelectedRows( TTraceLevel onLevel ) const
+{
+  return rowSelection.areAllSelected( onLevel );
+}
+
+const SelectionManagement< TObjectOrder, TTraceLevel > &HistogramProxy::getRowSelectionManager() const
+{
+  return rowSelection;
 }
 
 void HistogramProxy::setRowSelectionManager( SelectionManagement< TObjectOrder, TTraceLevel > &rowSel )
@@ -1921,39 +2079,99 @@ void HistogramProxy::setRowSelectionManager( SelectionManagement< TObjectOrder, 
 }
 
 
-vector< TObjectOrder > HistogramProxy::getSelectedRows() const
+void HistogramProxy::getSelectedRows( vector< TObjectOrder > &selected ) const
 {
-  vector< TObjectOrder > vecRows;
-  rowSelection.getSelected( vecRows, myHisto->getControlWindow()->getLevel() );
-  return vecRows;
+  rowSelection.getSelected( selected, myHisto->getControlWindow()->getLevel() );
+
+  SelectionRowsUtils::getAllLevelsSelectedRows( getTrace(), rowSelection, controlWindow->getLevel(), selected );
 }
 
 
-vector< TObjectOrder > HistogramProxy::getSelectedRows( TObjectOrder whichBeginRow, TObjectOrder whichEndRow ) const
+void HistogramProxy::getSelectedRows( TTraceLevel whichLevel,
+                                      vector< TObjectOrder > &selected,
+                                      TObjectOrder whichBeginRow,
+                                      TObjectOrder whichEndRow,
+                                      bool lookUpLevels ) const
 {
-  vector< TObjectOrder > vecRows;
-  rowSelection.getSelected( vecRows, whichBeginRow, whichEndRow, myHisto->getControlWindow()->getLevel() );
-  return vecRows;
+  rowSelection.getSelected( selected, whichBeginRow, whichEndRow, whichLevel );
+
+  if( lookUpLevels )
+  {
+    SelectionRowsUtils::getAllLevelsSelectedRows( getTrace(), rowSelection, whichLevel, selected );
+  }
 }
 
 
-vector< bool > HistogramProxy::getSelectedBooleanRows() const
+void HistogramProxy::getSelectedRows( TTraceLevel whichLevel, std::vector< bool > &selected, bool lookUpLevels ) const
 {
-  vector< bool > vecRows;
-  rowSelection.getSelected( vecRows, myHisto->getControlWindow()->getLevel() );
-  return vecRows;
+  rowSelection.getSelected( selected, whichLevel );
+
+  if( lookUpLevels )
+  {
+    TObjectOrder first, last;
+    first = 0;
+    switch( whichLevel )
+    {
+      case TTraceLevel::TASK:
+        last = getTrace()->totalTasks() - 1;
+        break;
+
+      case TTraceLevel::THREAD:
+        last = getTrace()->totalThreads() - 1;
+        break;
+
+      case TTraceLevel::CPU:
+        last = getTrace()->totalCPUs() - 1;
+        break;
+
+      default:
+        break;
+    }
+
+    SelectionRowsUtils::getAllLevelsSelectedRows( getTrace(), rowSelection, whichLevel, first, last, selected );
+  }
+}
+
+void HistogramProxy::getSelectedRows( TTraceLevel onLevel,
+                                      std::vector< bool > &selected,
+                                      TObjectOrder first,
+                                      TObjectOrder last,
+                                      bool lookUpLevels ) const
+{
+  rowSelection.getSelected( selected, first, last, onLevel );
+
+  if( lookUpLevels )
+  {
+    SelectionRowsUtils::getAllLevelsSelectedRows( getTrace(), rowSelection, onLevel, first, last, selected );
+  }
 }
 
 void HistogramProxy::setSelectedRows( vector< bool > &selected )
 {
-  rowSelection.setSelected( selected, myHisto->getControlWindow()->getLevel() );
+  auto tmpLevel = myHisto->getControlWindow()->getLevel();
+  rowSelection.setSelected( selected, tmpLevel );
+
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_OBJECT_SELECTION ) )
+    SyncWindows::getInstance()->broadcastObjectSelectionAll( syncGroup, tmpLevel, selected );
+}
+
+void HistogramProxy::setSelectedRows( TTraceLevel onLevel, std::vector< bool > &selected )
+{
+  rowSelection.setSelected( selected, onLevel );
+
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_OBJECT_SELECTION ) )
+    SyncWindows::getInstance()->broadcastObjectSelectionAll( syncGroup, onLevel, selected );
 }
 
 void HistogramProxy::setSelectedRows( vector< TObjectOrder > &selected )
 {
-  rowSelection.setSelected( selected,
-                            myTrace->getLevelObjects( myHisto->getControlWindow()->getLevel() ),
-                            myHisto->getControlWindow()->getLevel() );
+  auto tmpLevel = myHisto->getControlWindow()->getLevel();
+  rowSelection.setSelected( selected, myTrace->getLevelObjects( tmpLevel ), tmpLevel );
+  vector< bool > tmpSelectedRows;
+  rowSelection.getSelected( tmpSelectedRows, tmpLevel );
+
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_OBJECT_SELECTION ) )
+    SyncWindows::getInstance()->broadcastObjectSelectionAll( syncGroup, tmpLevel, tmpSelectedRows );
 }
 
 void HistogramProxy::fillSemanticSort()
@@ -1974,7 +2192,7 @@ void HistogramProxy::fillSemanticSort()
     }
 
     HistogramTotals *tmpTotals = nullptr;
-    if ( isCommunicationStat( currentStat ) )
+    if( isCommunicationStat( currentStat ) )
       tmpTotals = getCommColumnTotals();
     else
       tmpTotals = getColumnTotals();
@@ -2014,15 +2232,148 @@ void HistogramProxy::fillSemanticSort()
 }
 
 
-vector<int> HistogramProxy::getCurrentSemanticSort() const
+vector< int > HistogramProxy::getCurrentSemanticSort() const
 {
   return currentSemanticSort;
 }
 
-void HistogramProxy::setCurrentSemanticSort( const vector<int>& whichSort )
+void HistogramProxy::setCurrentSemanticSort( const vector< int > &whichSort )
 {
   currentSemanticSort = whichSort;
-  customSemanticSort = whichSort;
+  customSemanticSort  = whichSort;
 
   sortSemanticColumns = true;
+}
+
+bool HistogramProxy::isDerivedHistogram() const
+{
+  return derivedHistogram;
+}
+
+bool HistogramProxy::compatibleForDerivation( Histogram *whichHistogram1, Histogram *whichHistogram2 )
+{
+  std::string tmpStat1 = whichHistogram1->getCurrentStat();
+  std::string tmpStat2 = whichHistogram2->getCurrentStat();
+  bool sameStatType    = ( !whichHistogram1->isCommunicationStat( tmpStat1 ) && !whichHistogram2->isCommunicationStat( tmpStat2 ) ) ||
+                      ( whichHistogram1->isCommunicationStat( tmpStat1 ) && whichHistogram2->isCommunicationStat( tmpStat2 ) );
+
+  // TODO: 3D? only showed plane or whole cube?
+  bool sameRows    = whichHistogram1->getNumRows() == whichHistogram2->getNumRows();
+  bool sameColumns = whichHistogram1->getNumColumns() == whichHistogram2->getNumColumns();
+
+  return ( sameStatType && sameRows && sameColumns );
+}
+
+Histogram *HistogramProxy::getConcrete() const
+{
+  return myHisto;
+}
+
+std::vector< Histogram * > HistogramProxy::getParents() const
+{
+  return parents;
+}
+
+PRV_UINT16 HistogramProxy::getNumParents() const
+{
+  return parents.size();
+}
+
+
+Histogram *HistogramProxy::getParent( PRV_UINT16 whichParent ) const
+{
+  return ( parents.size() > whichParent ? parents[ whichParent ] : nullptr );
+}
+
+void HistogramProxy::addChild( Histogram *whichHistogram )
+{
+  children.insert( whichHistogram );
+}
+
+void HistogramProxy::removeChild( Histogram *whichHistogram )
+{
+  children.erase( whichHistogram );
+}
+
+bool HistogramProxy::haveChildren() const
+{
+  return children.size() > 0;
+}
+
+std::multiset< Histogram * > HistogramProxy::getChildren() const
+{
+  return children;
+}
+
+std::string HistogramProxy::getDerivedOperation() const
+{
+  return myHisto->getDerivedOperation();
+}
+
+void HistogramProxy::setDerivedOperation( const std::string &whichOperation )
+{
+  myHisto->setDerivedOperation( whichOperation );
+}
+
+void HistogramProxy::getDerivedOperationGroupsLabels( vector< string > &onVector ) const
+{
+  myHisto->getDerivedOperationGroupsLabels( onVector );
+}
+
+void HistogramProxy::getDerivedOperationLabels( vector< string > &onVector, PRV_UINT32 whichGroup, bool getOriginalList ) const
+{
+  if( getOriginalList )
+  {
+    myHisto->getDerivedOperationLabels( onVector, whichGroup, getOriginalList );
+  }
+  else
+  {
+    // TODO: decide if derived operation can be renamed in CFG4D
+    // vector< string > fullList;
+    // myHisto->getDerivedOperationLabels( fullList, whichGroup );
+    // map< string, string >::const_iterator itStat;
+
+    // for( vector< string >::iterator it = fullList.begin(); it != fullList.end(); ++it )
+    // {
+    //   itStat = histogramDerivedOperationAliasCFG4D.find( *it );
+    //   if ( itStat != histogramDerivedOperationAliasCFG4D.end() )
+    //   onVector.push_back( itStat->second );
+    // }
+  }
+}
+
+void HistogramProxy::getDerivedOperationLabelsAndSymbols( std::map< std::string, std::string > &onVector,
+                                                          PRV_UINT32 whichGroup,
+                                                          bool getOriginalList ) const
+{
+  // TODO check again: cut & paste of previous method
+  if( getOriginalList )
+  {
+    myHisto->getDerivedOperationLabelsAndSymbols( onVector, whichGroup, getOriginalList );
+  }
+  else
+  {
+    // TODO: decide if derived operation can be renamed in CFG4D
+    // vector< string > fullList;
+    // myHisto->getDerivedOperationLabels( fullList, whichGroup );
+    // map< string, string >::const_iterator itStat;
+
+    // for( vector< string >::iterator it = fullList.begin(); it != fullList.end(); ++it )
+    // {
+    //   itStat = histogramDerivedOperationAliasCFG4D.find( *it );
+    //   if ( itStat != histogramDerivedOperationAliasCFG4D.end() )
+    //   onVector.push_back( itStat->second );
+    // }
+  }
+}
+
+void HistogramProxy::setReady( bool whichReady = true )
+{
+  myHisto->setReady( whichReady );
+}
+
+
+bool HistogramProxy::isReady() const
+{
+  return myHisto->isReady();
 }

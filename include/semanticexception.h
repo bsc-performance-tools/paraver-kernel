@@ -46,6 +46,9 @@ class SemanticException: public ParaverKernelException
       auxMessage = whichAuxMessage;
       file = whichFile;
       line = whichLine;
+
+      initMessage();
+
     }
 
   protected:

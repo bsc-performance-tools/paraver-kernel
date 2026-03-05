@@ -21,44 +21,45 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
+#include "cfg.h"
+
+#include "drawmode.h"
+#include "filter.h"
+#include "functionmanagement.h"
+#include "histogram.h"
+#include "histogramstatistic.h"
+#include "kernelconnection.h"
+#include "labelconstructor.h"
+#include "loadedwindows.h"
+#include "semanticfunction.h"
+#include "symbolpicker.h"
+#include "syncwindows.h"
+#include "trace.h"
+#include "window.h"
+
 #include <math.h>
 #include <sstream>
 #include <string>
 #include <type_traits>
 
-#include "kernelconnection.h"
-#include "cfg.h"
-#include "window.h"
-#include "trace.h"
-#include "histogram.h"
-#include "histogramstatistic.h"
-#include "functionmanagement.h"
-#include "semanticfunction.h"
-#include "filter.h"
-#include "drawmode.h"
-#include "symbolpicker.h"
-#include "syncwindows.h"
-#include "loadedwindows.h"
-
-
 using namespace std;
 
 // CFG4D
-//string TagFunction::currentTag = "";
-bool TagFunction::isWindowTag = true;
+// string TagFunction::currentTag = "";
+bool TagFunction::isWindowTag      = true;
 string TagFunction::currentNameTag = "";
 
-PRV_UINT16 numComposesExtraComposesInWindow = 0;
+PRV_UINT16 numComposesExtraComposesInWindow      = 0;
 PRV_UINT16 numSemanticParamExtraComposesInWindow = 0;
 
-map<string, TagFunction *> CFGLoader::cfgTagFunctions;
+map< string, TagFunction * > CFGLoader::cfgTagFunctions;
 bool CFGLoader::firstMapLoaded = false;
 
 string currentWindowName;
 string CFGLoader::errorLine = "";
-bool someEventsExist = false;
-bool someEventsNotExist = false;
-bool multipleLabelValues = false;
+bool someEventsExist        = false;
+bool someEventsNotExist     = false;
+bool multipleLabelValues    = false;
 EventTypeSymbolPicker eventTypeSymbolPicker;
 EventValueSymbolPicker eventValueSymbolPicker;
 
@@ -70,28 +71,20 @@ map< TGroupId, TGroupId > syncRealGroup; // Group from CFG -> Group to app
 TGroupId lastSyncGroupUsed;
 
 // Drawmodes codification
-map<string, DrawModeMethod> drawModeCodes;
-map<DrawModeMethod, string> drawModeTags;
+map< string, DrawModeMethod > drawModeCodes;
+map< DrawModeMethod, string > drawModeTags;
 
 // Tags for DrawModeMethod enumeration
 // Keep aligned
-static const char * drawModeCfgTags[] =
-{ "draw_last",
-  "draw_maximum",
-  "draw_minnotzero",
-  "draw_random",
-  "draw_randnotzero",
-  "draw_average",
-  "draw_averagenotzero",
-  "draw_mode",
-  "draw_absolute_maximum",
-  "draw_absolute_minimum",
+static const char *drawModeCfgTags[] = {
+  "draw_last",    "draw_maximum",        "draw_minnotzero", "draw_random",           "draw_randnotzero",
+  "draw_average", "draw_averagenotzero", "draw_mode",       "draw_absolute_maximum", "draw_absolute_minimum",
 };
 
 // Before reading cfg
 void initDrawModeCodes()
 {
-  if ( drawModeCodes.size() == 0 )
+  if( drawModeCodes.size() == 0 )
   {
     // Old codification: "0" --> 0
     // This allows to read old cfgs
@@ -105,9 +98,9 @@ void initDrawModeCodes()
     drawModeCodes[ OLDCFG_VAL_DRAW_MODE_AVERAGENOT0 ] = DrawModeMethod::DRAW_AVERAGENOTZERO;
     drawModeCodes[ OLDCFG_VAL_DRAW_MODE_MODE ]        = DrawModeMethod::DRAW_MODE;
     // New codification: "draw_last" --> 0
-    for ( unsigned int current = static_cast<unsigned int>( DrawModeMethod::DRAW_LAST );
-          current < static_cast<unsigned int>( DrawModeMethod::DRAW_NUMMETHODS );
-          ++current )
+    for( unsigned int current = static_cast< unsigned int >( DrawModeMethod::DRAW_LAST );
+         current < static_cast< unsigned int >( DrawModeMethod::DRAW_NUMMETHODS );
+         ++current )
     {
       drawModeCodes[ string( drawModeCfgTags[ current ] ) ] = DrawModeMethod( current );
     }
@@ -118,65 +111,64 @@ void initDrawModeCodes()
 // Before writing cfg
 void initDrawModeTags()
 {
-  if ( drawModeTags.size() == 0 )
+  if( drawModeTags.size() == 0 )
   {
     // New codification: 0 --> "draw_last"
-    for ( unsigned int current = static_cast<unsigned int>( DrawModeMethod::DRAW_LAST );
-          current < static_cast<unsigned int>( DrawModeMethod::DRAW_NUMMETHODS );
-          ++current )
+    for( unsigned int current = static_cast< unsigned int >( DrawModeMethod::DRAW_LAST );
+         current < static_cast< unsigned int >( DrawModeMethod::DRAW_NUMMETHODS );
+         ++current )
     {
       drawModeTags[ DrawModeMethod( current ) ] = string( drawModeCfgTags[ current ] );
     }
   }
 }
 
-
-TWindowLevel stringToLevel( const std::string& strLevel )
+TWindowLevel stringToLevel( const std::string &strLevel )
 {
   TWindowLevel level = NONE;
 
-  if ( strLevel.compare( OLDCFG_LVL_APPL ) == 0 )
+  if( strLevel.compare( OLDCFG_LVL_APPL ) == 0 )
     level = APPLICATION;
-  else if ( strLevel.compare( OLDCFG_LVL_PTASK ) == 0 )
+  else if( strLevel.compare( OLDCFG_LVL_PTASK ) == 0 )
     level = APPLICATION;
-  else if ( strLevel.compare( OLDCFG_LVL_WORKLOAD ) == 0 )
+  else if( strLevel.compare( OLDCFG_LVL_WORKLOAD ) == 0 )
     level = WORKLOAD;
-  else if ( strLevel.compare( OLDCFG_LVL_TASK ) == 0 )
+  else if( strLevel.compare( OLDCFG_LVL_TASK ) == 0 )
     level = TASK;
-  else if ( strLevel.compare( OLDCFG_LVL_THREAD ) == 0 )
+  else if( strLevel.compare( OLDCFG_LVL_THREAD ) == 0 )
     level = THREAD;
-  else if ( strLevel.compare( OLDCFG_LVL_CPU ) == 0 )
+  else if( strLevel.compare( OLDCFG_LVL_CPU ) == 0 )
     level = CPU;
-  else if ( strLevel.compare( OLDCFG_LVL_NODE ) == 0 )
+  else if( strLevel.compare( OLDCFG_LVL_NODE ) == 0 )
     level = NODE;
-  else if ( strLevel.compare( OLDCFG_LVL_SYSTEM ) == 0 )
+  else if( strLevel.compare( OLDCFG_LVL_SYSTEM ) == 0 )
     level = SYSTEM;
-  else if ( strLevel.compare( OLDCFG_LVL_TOPCOMPOSE ) == 0 )
+  else if( strLevel.compare( OLDCFG_LVL_TOPCOMPOSE ) == 0 )
     level = TOPCOMPOSE2;
-  else if ( strLevel.compare( OLDCFG_LVL_TOPCOMPOSE1 ) == 0 )
+  else if( strLevel.compare( OLDCFG_LVL_TOPCOMPOSE1 ) == 0 )
     level = TOPCOMPOSE1;
-  else if ( strLevel.compare( OLDCFG_LVL_TOPCOMPOSE2 ) == 0 )
+  else if( strLevel.compare( OLDCFG_LVL_TOPCOMPOSE2 ) == 0 )
     level = TOPCOMPOSE2;
-  else if ( strLevel.compare( OLDCFG_LVL_COMPOSE_WORKLOAD ) == 0 )
+  else if( strLevel.compare( OLDCFG_LVL_COMPOSE_WORKLOAD ) == 0 )
     level = COMPOSEWORKLOAD;
-  else if ( strLevel.compare( OLDCFG_LVL_COMPOSE_APPL ) == 0 )
+  else if( strLevel.compare( OLDCFG_LVL_COMPOSE_APPL ) == 0 )
     level = COMPOSEAPPLICATION;
-  else if ( strLevel.compare( OLDCFG_LVL_COMPOSE_TASK ) == 0 )
+  else if( strLevel.compare( OLDCFG_LVL_COMPOSE_TASK ) == 0 )
     level = COMPOSETASK;
-  else if ( strLevel.compare( OLDCFG_LVL_COMPOSE_THREAD ) == 0 )
+  else if( strLevel.compare( OLDCFG_LVL_COMPOSE_THREAD ) == 0 )
     level = COMPOSETHREAD;
-  else if ( strLevel.compare( OLDCFG_LVL_COMPOSE_CPU ) == 0 )
+  else if( strLevel.compare( OLDCFG_LVL_COMPOSE_CPU ) == 0 )
     level = COMPOSECPU;
-  else if ( strLevel.compare( OLDCFG_LVL_COMPOSE_NODE ) == 0 )
+  else if( strLevel.compare( OLDCFG_LVL_COMPOSE_NODE ) == 0 )
     level = COMPOSENODE;
-  else if ( strLevel.compare( OLDCFG_LVL_COMPOSE_SYSTEM ) == 0 )
+  else if( strLevel.compare( OLDCFG_LVL_COMPOSE_SYSTEM ) == 0 )
     level = COMPOSESYSTEM;
   // Old semantic composes
-  else if ( strLevel.compare( OLDCFG_LVL_COMPOSE1 ) == 0 )
+  else if( strLevel.compare( OLDCFG_LVL_COMPOSE1 ) == 0 )
     level = TOPCOMPOSE1;
-  else if ( strLevel.compare( OLDCFG_LVL_COMPOSE2 ) == 0 )
+  else if( strLevel.compare( OLDCFG_LVL_COMPOSE2 ) == 0 )
     level = TOPCOMPOSE2;
-  else if ( strLevel.compare( CFG_LVL_EXTRATOPCOMPOSE1 ) == 0 )
+  else if( strLevel.compare( CFG_LVL_EXTRATOPCOMPOSE1 ) == 0 )
     level = EXTRATOPCOMPOSE1;
 
   return level;
@@ -185,7 +177,7 @@ TWindowLevel stringToLevel( const std::string& strLevel )
 
 string levelToString( TWindowLevel whichLevel )
 {
-  switch ( whichLevel )
+  switch( whichLevel )
   {
     case NONE:
     case EXTRATOPCOMPOSE1:
@@ -246,7 +238,7 @@ string levelToString( TWindowLevel whichLevel )
 }
 
 
-bool parseSelectedFunctionsNumFunctions( std::istringstream& line, PRV_UINT16& numFunctions )
+bool parseSelectedFunctionsNumFunctions( std::istringstream &line, PRV_UINT16 &numFunctions )
 {
   std::string tmpString;
   std::string strNumFunctions;
@@ -255,7 +247,7 @@ bool parseSelectedFunctionsNumFunctions( std::istringstream& line, PRV_UINT16& n
   std::getline( line, strNumFunctions, ',' );
   std::istringstream tmpNumFunctions( strNumFunctions );
 
-  if ( !( tmpNumFunctions >> numFunctions ) )
+  if( !( tmpNumFunctions >> numFunctions ) )
     return false;
 
   std::getline( line, tmpString, '{' );
@@ -263,7 +255,7 @@ bool parseSelectedFunctionsNumFunctions( std::istringstream& line, PRV_UINT16& n
   return true;
 }
 
-void parseSelectedFunctionsLevelAndFunction( std::istringstream& line, std::string& strLevel, TWindowLevel& level, std::string& strFunction )
+void parseSelectedFunctionsLevelAndFunction( std::istringstream &line, std::string &strLevel, TWindowLevel &level, std::string &strFunction )
 {
   std::string tmpString;
 
@@ -277,7 +269,7 @@ void parseSelectedFunctionsLevelAndFunction( std::istringstream& line, std::stri
 
 string levelToStringHisto( TWindowLevel whichLevel )
 {
-  switch ( whichLevel )
+  switch( whichLevel )
   {
     case WORKLOAD:
       return OLDCFG_LVL_HISTO_WORKLOAD;
@@ -314,16 +306,16 @@ void clearSymbolPickers()
 
 bool pickSymbols( Trace *whichTrace, Timeline *whichWindow )
 {
-  vector<TEventType> tmpTypes;
-  vector<TSemanticValue> tmpValues;
+  vector< TEventType > tmpTypes;
+  vector< TSemanticValue > tmpValues;
 
   if( !eventTypeSymbolPicker.pick( whichTrace->getEventLabels(), tmpTypes ) )
     return false;
   else
   {
-    for( vector<TEventType>::iterator it = tmpTypes.begin(); it != tmpTypes.end(); ++it )
+    for( vector< TEventType >::iterator it = tmpTypes.begin(); it != tmpTypes.end(); ++it )
     {
-      if ( !whichTrace->eventLoaded( *it ) )
+      if( !whichTrace->eventLoaded( *it ) )
         someEventsNotExist = true;
       else
         someEventsExist = true;
@@ -332,16 +324,16 @@ bool pickSymbols( Trace *whichTrace, Timeline *whichWindow )
     }
   }
 
-  std::vector<std::string> filterFunctions;
+  std::vector< std::string > filterFunctions;
   whichWindow->getFilter()->getAllFilterFunctions( filterFunctions );
   if( whichWindow->getFilter()->getEventTypeFunction() == filterFunctions[ 6 ] )
   {
-    std::vector<TEventType> rankEvents;
+    std::vector< TEventType > rankEvents;
     whichWindow->getFilter()->getEventType( rankEvents );
     if( rankEvents.size() >= 2 && whichTrace->anyEventLoaded( rankEvents[ 0 ], rankEvents[ 1 ] ) )
     {
       someEventsNotExist = false;
-      someEventsExist = true;
+      someEventsExist    = true;
     }
   }
 
@@ -350,7 +342,7 @@ bool pickSymbols( Trace *whichTrace, Timeline *whichWindow )
     return false;
   else
   {
-    for( vector<TSemanticValue>::iterator it = tmpValues.begin(); it != tmpValues.end(); ++it )
+    for( vector< TSemanticValue >::iterator it = tmpValues.begin(); it != tmpValues.end(); ++it )
       whichWindow->getFilter()->insertEventValue( *it );
   }
 
@@ -360,11 +352,11 @@ bool pickSymbols( Trace *whichTrace, Timeline *whichWindow )
 }
 
 
-bool CFGLoader::hasCFGExtension( const string& filename )
+bool CFGLoader::hasCFGExtension( const string &filename )
 {
   string cfgExt;
 
-  if ( filename.length() > CFG_SUFFIX.length() )
+  if( filename.length() > CFG_SUFFIX.length() )
   {
     // Does it end with ".cfg"?
     cfgExt = filename.substr( filename.length() - CFG_SUFFIX.length() );
@@ -376,32 +368,32 @@ bool CFGLoader::hasCFGExtension( const string& filename )
 }
 
 // Smarter detections welcome!
-bool CFGLoader::isCFGFile( const string& filename )
+bool CFGLoader::isCFGFile( const string &filename )
 {
   bool isCFG = false;
 
-  if ( hasCFGExtension( filename ) )
+  if( hasCFGExtension( filename ) )
   {
     map< string, bool > found;
-    found[ CFG_SHEBANG ] = false;
-    found[ CFG_HEADER_VERSION ] = false;
-    found[ CFG_HEADER_NUM_WINDOWS ] = false;
-    found[ OLDCFG_HEADER_VERSION ] = false;
+    found[ CFG_SHEBANG ]               = false;
+    found[ CFG_HEADER_VERSION ]        = false;
+    found[ CFG_HEADER_NUM_WINDOWS ]    = false;
+    found[ OLDCFG_HEADER_VERSION ]     = false;
     found[ OLDCFG_HEADER_NUM_WINDOWS ] = false;
     ifstream cfgFile( filename.c_str() );
-    if ( cfgFile.good() )
+    if( cfgFile.good() )
     {
-      while ( !cfgFile.eof() && !isCFG )
+      while( !cfgFile.eof() && !isCFG )
       {
         string strLine;
         string cfgHeaderTag;
 
         getline( cfgFile, strLine );
 
-        if ( strLine.length() > 0 && strLine[ strLine.length() - 1 ] == '\r' )
+        if( strLine.length() > 0 && strLine[ strLine.length() - 1 ] == '\r' )
           strLine = strLine.substr( 0, strLine.length() - 1 );
 
-        if ( strLine.length() > 0 )
+        if( strLine.length() > 0 )
         {
           istringstream auxStream( strLine );
           getline( auxStream, cfgHeaderTag, ' ' );
@@ -412,8 +404,7 @@ bool CFGLoader::isCFGFile( const string& filename )
           found[ OLDCFG_HEADER_VERSION ] |= ( cfgHeaderTag.compare( OLDCFG_HEADER_VERSION ) == 0 );
           found[ OLDCFG_HEADER_NUM_WINDOWS ] |= ( cfgHeaderTag.compare( OLDCFG_HEADER_NUM_WINDOWS ) == 0 );
 
-          isCFG = found[ CFG_SHEBANG ] ||
-                  ( found[ CFG_HEADER_VERSION ] && found[ CFG_HEADER_NUM_WINDOWS ] ) ||
+          isCFG = found[ CFG_SHEBANG ] || ( found[ CFG_HEADER_VERSION ] && found[ CFG_HEADER_NUM_WINDOWS ] ) ||
                   ( found[ OLDCFG_HEADER_VERSION ] && found[ OLDCFG_HEADER_NUM_WINDOWS ] );
         }
       }
@@ -426,12 +417,12 @@ bool CFGLoader::isCFGFile( const string& filename )
 }
 
 
-bool CFGLoader::isDimemasCFGFile( const std::string& filename )
+bool CFGLoader::isDimemasCFGFile( const std::string &filename )
 {
   bool isDimemasCFG = false;
   string cfgExt;
 
-  if ( filename.length() > DIMEMAS_CFG_SUFFIX.length() )
+  if( filename.length() > DIMEMAS_CFG_SUFFIX.length() )
   {
     // Does it end with ".cfg"?
     cfgExt = filename.substr( filename.length() - DIMEMAS_CFG_SUFFIX.length() );
@@ -439,22 +430,21 @@ bool CFGLoader::isDimemasCFGFile( const std::string& filename )
     {
       // Read shebang
       ifstream cfgFile( filename.c_str() );
-      if ( !cfgFile )
+      if( !cfgFile )
         return false;
 
-      if ( !cfgFile.eof() )
+      if( !cfgFile.eof() )
       {
         string strLine;
 
         getline( cfgFile, strLine );
 
-        if ( strLine.length() > 0 && strLine[ strLine.length() - 1 ] == '\r' )
+        if( strLine.length() > 0 && strLine[ strLine.length() - 1 ] == '\r' )
           strLine = strLine.substr( 0, strLine.length() - 1 );
 
-        if ( strLine.length() > 0 )
+        if( strLine.length() > 0 )
         {
-          isDimemasCFG = ( strLine.compare( DIMEMAS_SHEBANG ) == 0 ) ||
-                         ( strLine.compare( OLD_DIMEMAS_SHEBANG ) == 0 );
+          isDimemasCFG = ( strLine.compare( DIMEMAS_SHEBANG ) == 0 ) || ( strLine.compare( OLD_DIMEMAS_SHEBANG ) == 0 );
         }
       }
 
@@ -465,34 +455,34 @@ bool CFGLoader::isDimemasCFGFile( const std::string& filename )
   return isDimemasCFG;
 }
 
-bool CFGLoader::loadDescription( const std::string& filename, std::string& description )
+bool CFGLoader::loadDescription( const std::string &filename, std::string &description )
 {
   description = "";
   ifstream cfgFile( filename.c_str() );
-  if ( !cfgFile )
+  if( !cfgFile )
     return false;
 
   bool keepReading = false;
-  while ( !cfgFile.eof() )
+  while( !cfgFile.eof() )
   {
     std::string strLine;
     std::string cfgTag;
 
     getline( cfgFile, strLine );
 
-    if ( strLine.length() == 0 )
+    if( strLine.length() == 0 )
       continue;
 
-    if ( strLine == CFG_HEADER_END_DESCRIPTION || strLine == OLDCFG_HEADER_END_DESCRIPTION )
+    if( strLine == CFG_HEADER_END_DESCRIPTION || strLine == OLDCFG_HEADER_END_DESCRIPTION )
     {
       keepReading = false;
       cfgFile.close();
       return description != "";
     }
-    if ( keepReading )
+    if( keepReading )
       description += strLine + "\n";
 
-    if ( strLine == CFG_HEADER_BEGIN_DESCRIPTION || strLine == OLDCFG_HEADER_BEGIN_DESCRIPTION )
+    if( strLine == CFG_HEADER_BEGIN_DESCRIPTION || strLine == OLDCFG_HEADER_BEGIN_DESCRIPTION )
       keepReading = true;
   }
   return false;
@@ -503,15 +493,15 @@ bool CFGLoader::getCFGTag( istream& cfgFile, string& strLine, istringstream& aux
 {
   getline( cfgFile, strLine );
 
-  if ( strLine.empty() || strLine[ 0 ] == '#' )
+  if( strLine.empty() || strLine[ 0 ] == '#' )
     return false;
 
-  if ( strLine.back() == '\r' )
+  if( strLine.back() == '\r' )
     strLine.pop_back();
 
   auxStream.str( strLine );
 
-  if ( strLine[ 0 ] == '<' )
+  if( strLine[ 0 ] == '<' )
     cfgTag = strLine;
   else
     getline( auxStream, cfgTag, ' ' );
@@ -528,8 +518,8 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
                          SaveOptions &options,
                          bool overrideChecks )
 {
-  someEventsExist = false;
-  someEventsNotExist = false;
+  someEventsExist     = false;
+  someEventsNotExist  = false;
   multipleLabelValues = false;
 
   lastGlobalLinkIndex = 0;
@@ -550,54 +540,57 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   string strLine;
   string cfgTag;
   istringstream auxStream;
-  while ( !cfgFile.eof() )
+  while( !cfgFile.eof() )
   {
     auxStream.clear();
 
     if( !CFGLoader::getCFGTag( cfgFile, strLine, auxStream, cfgTag ) )
       continue;
 
-    if ( strLine.compare( CFG_TAG_CFG4D_ENABLED ) == 0 )
+    if( strLine.compare( CFG_TAG_CFG4D_ENABLED ) == 0 )
     {
-      lastGlobalLinkIndex = CFGS4DGlobalManager::getInstance()->newLinkManager();
+      lastGlobalLinkIndex      = CFGS4DGlobalManager::getInstance()->newLinkManager();
       options.enabledCFG4DMode = true;
       continue;
     }
 
-    map<string, TagFunction *>::iterator it = cfgTagFunctions.find( cfgTag );
+    if( cfgTag.compare( CFG_HEADER_SYNC_GROUPS ) == 0 )
+    {
+      SyncWindowsGroups lineSyncWindows;
+      lineSyncWindows.parseLine( whichKernel, auxStream, whichTrace );
+      continue;
+    }
 
-    if ( it != cfgTagFunctions.end() )
+    map< string, TagFunction * >::iterator it = cfgTagFunctions.find( cfgTag );
+
+    if( it != cfgTagFunctions.end() )
     {
       bool tmpError = false;
 
-      if( windows[ windows.size() - 1 ] != nullptr &&
-          !windows[ windows.size() - 1 ]->isDerivedWindow() &&
-          typeid( *( it->second ) ) == typeid( WindowName ) ||
+      if( windows[ windows.size() - 1 ] != nullptr && !windows[ windows.size() - 1 ]->isDerivedWindow() &&
+            typeid( *( it->second ) ) == typeid( WindowName ) ||
           typeid( *( it->second ) ) == typeid( Analyzer2DCreate ) )
       {
         tmpError = !pickSymbols( whichTrace, windows[ windows.size() - 1 ] );
         clearSymbolPickers();
       }
 
-      if ( tmpError ||
-           !it->second->parseLine( whichKernel, auxStream, whichTrace, windows,
-                                   histograms ) )
+      if( tmpError || !it->second->parseLine( whichKernel, auxStream, whichTrace, windows, histograms ) )
       {
-        if ( histograms.begin() != histograms.end() &&
-             histograms[ histograms.size() - 1 ] != nullptr )
+        if( histograms.begin() != histograms.end() && histograms[ histograms.size() - 1 ] != nullptr )
         {
           delete histograms[ histograms.size() - 1 ];
           histograms[ histograms.size() - 1 ] = nullptr;
-          CFGLoader::errorLine = strLine;
+          CFGLoader::errorLine                = strLine;
           break;
         }
         else
         {
-          if ( windows[ windows.size() - 1 ] != nullptr )
+          if( windows[ windows.size() - 1 ] != nullptr )
           {
             delete windows[ windows.size() - 1 ];
             windows[ windows.size() - 1 ] = nullptr;
-            CFGLoader::errorLine = strLine;
+            CFGLoader::errorLine          = strLine;
             break;
           }
         }
@@ -607,21 +600,20 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 
   //unLoadMap();
 
-  if ( histograms[ histograms.size() -1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     histograms.pop_back();
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
-  if( histograms.size() == 0 &&
-      !windows[ windows.size() - 1 ]->isDerivedWindow() )
+  if( histograms.size() == 0 && !windows[ windows.size() - 1 ]->isDerivedWindow() )
   {
     bool tmpError = !pickSymbols( whichTrace, windows[ windows.size() - 1 ] );
     clearSymbolPickers();
     if( tmpError )
     {
       delete windows[ windows.size() - 1 ];
-      //CFGLoader::errorLine = strLine;
+      // CFGLoader::errorLine = strLine;
       windows[ windows.size() - 1 ] = nullptr;
       return false;
     }
@@ -634,7 +626,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 
     if( currentHisto->getCFG4DEnabled() )
     {
-      map<string, string> tmpAlias( currentHisto->getCFG4DStatisticsAliasList() );
+      map< string, string > tmpAlias( currentHisto->getCFG4DStatisticsAliasList() );
       if( tmpAlias.find( currentHisto->getCurrentStat() ) == tmpAlias.end() )
         currentHisto->setCurrentStat( tmpAlias.begin()->first );
     }
@@ -653,9 +645,9 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 
   // Check if there are some objects in the selected level
   bool someWindowWithSelectedLevelEmpty = false;
-  for ( vector<Timeline *>::iterator itWin = windows.begin(); itWin != windows.end(); ++itWin )
+  for( vector< Timeline * >::iterator itWin = windows.begin(); itWin != windows.end(); ++itWin )
   {
-    if ( !( *itWin )->hasLevelSomeSelectedObject( ( *itWin )->getLevel() ) )
+    if( !( *itWin )->hasLevelSomeSelectedObject( ( *itWin )->getLevel() ) )
     {
       someWindowWithSelectedLevelEmpty = true;
       break;
@@ -666,11 +658,11 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 
   if( !continueLoading )
   {
-    for ( vector<Histogram *>::iterator itHisto = histograms.begin(); itHisto != histograms.end(); ++itHisto )
+    for( vector< Histogram * >::iterator itHisto = histograms.begin(); itHisto != histograms.end(); ++itHisto )
       delete *itHisto;
     histograms.clear();
 
-    for ( vector<Timeline *>::iterator itWin = windows.begin(); itWin != windows.end(); ++itWin )
+    for( vector< Timeline * >::iterator itWin = windows.begin(); itWin != windows.end(); ++itWin )
       delete *itWin;
     windows.clear();
 
@@ -678,24 +670,24 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   }
 
   // Init first zoom for all windows
-  for ( vector<Timeline *>::iterator it = windows.begin(); it != windows.end(); ++it )
+  for( vector< Timeline * >::iterator it = windows.begin(); it != windows.end(); ++it )
     ( *it )->addZoom( ( *it )->getWindowBeginTime(), ( *it )->getWindowEndTime() );
 
   // Because old paraver set window_open to false for all windows
-  if ( histograms.begin() == histograms.end() )
+  if( histograms.begin() == histograms.end() )
     windows[ windows.size() - 1 ]->setShowWindow( true );
 
   // If enabled CFG4D mode, all the windows and histograms must be presented that way.
-  if ( options.enabledCFG4DMode )
+  if( options.enabledCFG4DMode )
   {
-    for ( vector<Timeline *>::iterator it = windows.begin(); it != windows.end(); ++it )
+    for( vector< Timeline * >::iterator it = windows.begin(); it != windows.end(); ++it )
     {
       ( *it )->setCFG4DEnabled( true );
       ( *it )->setCFG4DMode( true );
       ( *it )->setCFGS4DIndexLink( lastGlobalLinkIndex );
     }
 
-    for ( vector<Histogram *>::iterator it = histograms.begin(); it != histograms.end(); ++it )
+    for( vector< Histogram * >::iterator it = histograms.begin(); it != histograms.end(); ++it )
     {
       ( *it )->setCFG4DEnabled( true );
       ( *it )->setCFG4DMode( true );
@@ -709,7 +701,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 
 void CFGLoader::pushbackWindow( Timeline *whichWindow, vector<Timeline *>& allWindows )
 {
-  if ( whichWindow->isDerivedWindow() )
+  if( whichWindow->isDerivedWindow() )
   {
     pushbackWindow( whichWindow->getParent( 0 ), allWindows );
     pushbackWindow( whichWindow->getParent( 1 ), allWindows );
@@ -725,81 +717,105 @@ void CFGLoader::pushbackWindow( Timeline *whichWindow, vector<Timeline *>& allWi
     allWindows.push_back( whichWindow );
 }
 
-void CFGLoader::pushbackAllWindows( const vector<Timeline *>& selectedWindows,
-                                    const vector<Histogram *>& selectedHistos,
-                                    vector<Timeline *>& allWindows,
-                                    vector<Timeline *>& forcedOpenWindows )
+void CFGLoader::pushbackAllWindows( const vector< Timeline * > &selectedWindows,
+                                    const vector< Histogram * > &selectedHistos,
+                                    vector< Timeline * > &allWindows,
+                                    vector< Timeline * > &forcedOpenWindows )
 {
-  for ( vector<Timeline *>::const_iterator it = selectedWindows.begin();
-        it != selectedWindows.end(); ++it )
+  for( vector< Timeline * >::const_iterator it = selectedWindows.begin(); it != selectedWindows.end(); ++it )
   {
     pushbackWindow( ( *it ), allWindows );
   }
 
   auto checkTimelineAndPushback = [ &selectedWindows, &allWindows, &forcedOpenWindows ]( auto cond, Timeline *whichTimeline )
-    {
-      if( cond )
-      {
-        if( find( selectedWindows.begin(), selectedWindows.end(), whichTimeline ) == selectedWindows.end() )
-          pushbackWindow( whichTimeline, allWindows );
-        else
-          forcedOpenWindows.push_back( whichTimeline );
-      }
-    };
-
-  for ( vector<Histogram *>::const_iterator it = selectedHistos.begin();
-        it != selectedHistos.end(); ++it )
   {
-    checkTimelineAndPushback( true, ( *it )->getControlWindow() );
+    if( cond )
+    {
+      if( find( selectedWindows.begin(), selectedWindows.end(), whichTimeline ) == selectedWindows.end() )
+        pushbackWindow( whichTimeline, allWindows );
+      else
+        forcedOpenWindows.push_back( whichTimeline );
+    }
+  };
 
-    checkTimelineAndPushback( ( *it )->getControlWindow() != ( *it )->getDataWindow(), ( *it )->getDataWindow() );
+  for( vector< Histogram * >::const_iterator it = selectedHistos.begin(); it != selectedHistos.end(); ++it )
+  {
+    if( !( *it )->getDestroy() )
+    {
+      checkTimelineAndPushback( true, ( *it )->getControlWindow() );
 
-    checkTimelineAndPushback( ( *it )->getThreeDimensions() &&
-                               ( *it )->getExtraControlWindow() != ( *it )->getControlWindow() &&
-                               ( *it )->getExtraControlWindow() != ( *it )->getDataWindow(),
-                               ( *it )->getExtraControlWindow() );
+      checkTimelineAndPushback( ( *it )->getControlWindow() != ( *it )->getDataWindow(), ( *it )->getDataWindow() );
+
+      checkTimelineAndPushback( ( *it )->getThreeDimensions() && ( *it )->getExtraControlWindow() != ( *it )->getControlWindow() &&
+                                  ( *it )->getExtraControlWindow() != ( *it )->getDataWindow(),
+                                ( *it )->getExtraControlWindow() );
+    }
   }
+}
+
+void CFGLoader::pushbackHistogram( Histogram *whichHistogram, vector<Histogram *>& allHistograms )
+{
+  if ( whichHistogram->isDerivedHistogram() )
+  {
+    for ( auto i = 0; i < whichHistogram->getNumParents(); ++i  )
+      pushbackHistogram( whichHistogram->getParent( i ), allHistograms );
+  }
+
+  if ( find( allHistograms.begin(), allHistograms.end(), whichHistogram ) == allHistograms.end() )
+  {
+    allHistograms.push_back( whichHistogram );
+  }
+}
+
+
+void CFGLoader::pushbackAllHistograms( const vector< Histogram * > &selectedHistos, vector< Histogram * > &allHistograms )
+{
+  for( std::vector< Histogram * >::const_iterator it = selectedHistos.begin(); it != selectedHistos.end(); ++it )
+    pushbackHistogram( ( *it ), allHistograms );
 }
 
 
 bool CFGLoader::saveCFG( std::ostream& cfgFile,
                          const SaveOptions& options,
-                         const vector<Timeline *>& windows,
-                         const vector<Histogram *>& histograms,
-                         const vector<CFGS4DLinkedPropertiesManager>& linkedProperties )
+                         const vector< Timeline * >& windows,
+                         const vector< Histogram * >& histograms,
+                         const vector< CFGS4DLinkedPropertiesManager >& linkedProperties )
 {
-  vector<Timeline *> allWindows;
-  vector<Timeline *> forcedOpenWindows;
+  vector< Timeline * > allWindows;
+  vector< Timeline * > forcedOpenWindows;
+  vector< Histogram * > allHistograms;
 
   syncRealGroup.clear();
   lastSyncGroupUsed = 0;
 
   initDrawModeTags();
 
-  pushbackAllWindows( windows, histograms, allWindows, forcedOpenWindows );
+  pushbackAllHistograms( histograms, allHistograms );
+  pushbackAllWindows( windows, allHistograms, allWindows, forcedOpenWindows );
 
   cfgFile << fixed;
   cfgFile.precision( 12 );
 
   cfgFile << CFG_SHEBANG << endl;
-  //cfgFile << "ConfigFile.Version: 3.4" << endl;
-  //cfgFile << "ConfigFile.NumWindows: " << allWindows.size() << endl;
+  // cfgFile << "ConfigFile.Version: 3.4" << endl;
+  // cfgFile << "ConfigFile.NumWindows: " << allWindows.size() << endl;
   cfgFile << CFG_HEADER_VERSION << " " << CFG_CURRENT_VERSION << endl;
   cfgFile << CFG_HEADER_NUM_WINDOWS << " " << allWindows.size() << endl;
   cfgFile << CFG_HEADER_BEGIN_DESCRIPTION << endl;
   cfgFile << options.description << endl;
   cfgFile << CFG_HEADER_END_DESCRIPTION << endl;
 
-  if ( options.enabledCFG4DMode )
+  SyncWindowsGroups::printLine( cfgFile, windows, histograms );
+
+  if( options.enabledCFG4DMode )
     cfgFile << CFG_TAG_CFG4D_ENABLED << endl;
-//    TagEnabledCFG4D::printLine( cfgFile, it );
+  //    TagEnabledCFG4D::printLine( cfgFile, it );
 
   cfgFile << endl;
 
   int id = 1;
 
-  for ( vector<Timeline *>::const_iterator it = allWindows.begin();
-        it != allWindows.end(); ++it )
+  for( vector< Timeline * >::const_iterator it = allWindows.begin(); it != allWindows.end(); ++it )
   {
     cfgFile << "################################################################################" << endl;
     cfgFile << "< NEW DISPLAYING WINDOW " << ( *it )->getName() << " >" << endl;
@@ -807,7 +823,7 @@ bool CFGLoader::saveCFG( std::ostream& cfgFile,
     WindowName::printLine( cfgFile, it );
     WindowType::printLine( cfgFile, it );
     cfgFile << OLDCFG_TAG_WNDW_ID << " " << id << endl;
-    if ( ( *it )->isDerivedWindow() )
+    if( ( *it )->isDerivedWindow() )
     {
       WindowFactors::printLine( cfgFile, it );
       WindowShifts::printLine( cfgFile, it );
@@ -831,7 +847,7 @@ bool CFGLoader::saveCFG( std::ostream& cfgFile,
     WindowCustomBackgroundAsZero::printLine( cfgFile, it );
     WindowSemanticScaleMinAtZero::printLine( cfgFile, it );
     WindowPunctualColorWindow::printLine( cfgFile, allWindows, it );
-    if ( !( *it )->isDerivedWindow() )
+    if( !( *it )->isDerivedWindow() )
     {
       WindowFilterLogical::printLine( cfgFile, it );
       WindowFilterPhysical::printLine( cfgFile, it );
@@ -860,15 +876,16 @@ bool CFGLoader::saveCFG( std::ostream& cfgFile,
     WindowPixelSize::printLine( cfgFile, it );
     WindowLabelsToDraw::printLine( cfgFile, it );
     WindowObjectAxisSize::printLine( cfgFile, it );
+    WindowObjectAxisCustomSize::printLine( cfgFile, it );
     WindowSelectedFunctions::printLine( cfgFile, it );
     WindowComposeFunctions::printLine( cfgFile, it );
     WindowSemanticModule::printLine( cfgFile, it );
-    if ( !( *it )->isDerivedWindow() )
+    if( !( *it )->isDerivedWindow() )
       WindowFilterModule::printLine( cfgFile, it );
     if( ( *it )->isSync() )
       WindowSynchronize::printLine( cfgFile, it );
 
-    if ( options.enabledCFG4DMode )
+    if( options.enabledCFG4DMode )
     {
       cfgFile << endl;
       TagAliasCFG4D::printAliasList( cfgFile, it );
@@ -880,10 +897,14 @@ bool CFGLoader::saveCFG( std::ostream& cfgFile,
     ++id;
   }
 
-  for ( vector<Histogram *>::const_iterator it = histograms.begin();
-        it != histograms.end(); ++it )
+  for( vector< Histogram * >::const_iterator it = allHistograms.begin(); it != allHistograms.end(); ++it )
   {
     Analyzer2DCreate::printLine( cfgFile, it );
+    Analyzer2DType::printLine( cfgFile, it );
+    if( ( *it )->isDerivedHistogram() )
+    {
+      Analyzer2DIdentifiers::printLine( cfgFile, allHistograms, it );
+    }
     Analyzer2DName::printLine( cfgFile, it );
     Analyzer2DX::printLine( cfgFile, it );
     Analyzer2DY::printLine( cfgFile, it );
@@ -916,7 +937,7 @@ bool CFGLoader::saveCFG( std::ostream& cfgFile,
     Analyzer2DComputeGradient::printLine( cfgFile, options, it );
     Analyzer2DMinimumGradient::printLine( cfgFile, it );
     Analyzer2DMaximumGradient::printLine( cfgFile, it );
-    Analyzer2DObjects::printLine( cfgFile, it );
+    Analyzer2DObject::printLine( cfgFile, it );
     Analyzer2DDrawModeObjects::printLine( cfgFile, it );
     Analyzer2DDrawModeColumns::printLine( cfgFile, it );
     Analyzer2DPixelSize::printLine( cfgFile, it );
@@ -926,7 +947,7 @@ bool CFGLoader::saveCFG( std::ostream& cfgFile,
     if( ( *it )->isSync() )
       Analyzer2DSynchronize::printLine( cfgFile, it );
 
-    if ( ( *it )->getThreeDimensions() )
+    if( ( *it )->getThreeDimensions() )
     {
       Analyzer3DControlWindow::printLine( cfgFile, allWindows, it );
       Analyzer3DComputeYScale::printLine( cfgFile, options, it );
@@ -936,7 +957,7 @@ bool CFGLoader::saveCFG( std::ostream& cfgFile,
       Analyzer3DFixedValue::printLine( cfgFile, it );
     }
 
-    if ( options.enabledCFG4DMode )
+    if( options.enabledCFG4DMode )
     {
       cfgFile << endl;
       TagAliasCFG4D::printAliasList( cfgFile, it );
@@ -949,43 +970,43 @@ bool CFGLoader::saveCFG( std::ostream& cfgFile,
   return true;
 }
 
-int CFGLoader::findWindow( const Timeline *whichWindow,
-                           const vector<Timeline *>& allWindows )
+template< class WindowType >
+int CFGLoader::findWindow( const WindowType *whichWindow, const vector< WindowType * > &allWindows )
 {
   unsigned int i = 0;
 
-  if ( allWindows.begin() == allWindows.end() )
+  if( allWindows.begin() == allWindows.end() )
     return -1;
 
-  while ( i < allWindows.size() )
+  while( i < allWindows.size() )
   {
-    if ( whichWindow == allWindows[ i ] )
+    if( whichWindow == allWindows[ i ] )
       break;
     ++i;
   }
 
-  if ( i == allWindows.size() )
+  if( i == allWindows.size() )
     return -1;
 
   return i;
 }
 
-
-int CFGLoader::findWindowBackwards( const Timeline *whichWindow,
-                                    const vector<Timeline *>& allWindows,
-                                    const vector<Timeline *>::const_iterator it )
+template< class WindowType >
+int CFGLoader::findWindowBackwards( const WindowType *whichWindow,
+                                    const vector< WindowType * > &allWindows,
+                                    const typename vector< WindowType * >::const_iterator it )
 {
   int i = std::distance( allWindows.begin(), it );
 
-/*  for( vector<Timeline *>::iterator tmpIt = it; it != allWindows.begin(); --it )
-    ++i;*/
-  if ( allWindows.begin() == allWindows.end() )
+  /*  for( vector<Timeline *>::iterator tmpIt = it; it != allWindows.begin(); --it )
+      ++i;*/
+  if( allWindows.begin() == allWindows.end() )
     return -1;
 
   --i;
-  while ( i >= 0 )
+  while( i >= 0 )
   {
-    if ( whichWindow == allWindows[ i ] )
+    if( whichWindow == allWindows[ i ] )
       break;
     --i;
   }
@@ -1086,152 +1107,288 @@ void CFGLoader::dumpColorMode( TColorFunction whichColorMode, std::ostream& whic
 
 void CFGLoader::loadMap()
 {
-  cfgTagFunctions[OLDCFG_TAG_WNDW_NAME]                = new WindowName();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_TYPE]                = new WindowType();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_FACTORS]             = new WindowFactors();
-  cfgTagFunctions[CFG_TAG_WNDW_SHIFTS]                 = new WindowShifts();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_POSX]                = new WindowPositionX();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_POSY]                = new WindowPositionY();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_WIDTH]               = new WindowWidth();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_HEIGHT]              = new WindowHeight();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_COMM_LINES]          = new WindowCommLines();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_FLAGS_ENABLED]       = new WindowFlagsEnabled();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_NON_COLOR_MODE]      = new WindowNonColorMode();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_UNITS]               = new WindowUnits();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_COLOR_MODE]          = new WindowColorMode();
-  cfgTagFunctions[CFG_TAG_WNDW_GRADIENT_FUNCTION]      = new WindowGradientFunction();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_NAME ]           = new WindowName();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_TYPE ]           = new WindowType();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_FACTORS ]        = new WindowFactors();
+  cfgTagFunctions[ CFG_TAG_WNDW_SHIFTS ]            = new WindowShifts();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_POSX ]           = new WindowPositionX();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_POSY ]           = new WindowPositionY();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_WIDTH ]          = new WindowWidth();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_HEIGHT ]         = new WindowHeight();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_COMM_LINES ]     = new WindowCommLines();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_FLAGS_ENABLED ]  = new WindowFlagsEnabled();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_NON_COLOR_MODE ] = new WindowNonColorMode();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_UNITS ]          = new WindowUnits();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_COLOR_MODE ]     = new WindowColorMode();
+  cfgTagFunctions[ CFG_TAG_WNDW_GRADIENT_FUNCTION ] = new WindowGradientFunction();
   // Color palette
-  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED]         = new WindowCustomColorEnabled();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_COLOR]      = new WindowCustomBackgroundColor();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_AXIS_COLOR]            = new WindowCustomAxisColor();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_PUNCTUAL_COLOR]        = new WindowCustomPunctualColor();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_COLOR_PALETTE]         = new WindowCustomColorPalette();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_AS_ZERO]    = new WindowCustomBackgroundAsZero();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED ]      = new WindowCustomColorEnabled();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_COLOR ]   = new WindowCustomBackgroundColor();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_CUSTOM_AXIS_COLOR ]         = new WindowCustomAxisColor();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_CUSTOM_PUNCTUAL_COLOR ]     = new WindowCustomPunctualColor();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_CUSTOM_COLOR_PALETTE ]      = new WindowCustomColorPalette();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_AS_ZERO ] = new WindowCustomBackgroundAsZero();
 
-  cfgTagFunctions[OLDCFG_TAG_WNDW_SEMANTIC_SCALE_MIN_AT_ZERO] = new WindowSemanticScaleMinAtZero();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_SEMANTIC_SCALE_MIN_AT_ZERO ] = new WindowSemanticScaleMinAtZero();
 
-  cfgTagFunctions[OLDCFG_TAG_WNDW_OPERATION]               = new WindowOperation();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_MAXIMUM_Y]               = new WindowMaximumY();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_MINIMUM_Y]               = new WindowMinimumY();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_COMPUTE_Y_MAX]           = new WindowComputeYMax();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_LEVEL]                   = new WindowLevel();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_SCALE_RELATIVE]          = new WindowScaleRelative();
-  cfgTagFunctions[CFG_TAG_WNDW_END_TIME_RELATIVE]          = new WindowEndTimeRelative();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_OBJECT]                  = new WindowObject();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_IDENTIFIERS]             = new WindowIdentifiers();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_OPERATION ]      = new WindowOperation();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_MAXIMUM_Y ]      = new WindowMaximumY();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_MINIMUM_Y ]      = new WindowMinimumY();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_COMPUTE_Y_MAX ]  = new WindowComputeYMax();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_LEVEL ]          = new WindowLevel();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_SCALE_RELATIVE ] = new WindowScaleRelative();
+  cfgTagFunctions[ CFG_TAG_WNDW_END_TIME_RELATIVE ] = new WindowEndTimeRelative();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_OBJECT ]         = new WindowObject();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_IDENTIFIERS ]    = new WindowIdentifiers();
 
-  cfgTagFunctions[OLDCFG_TAG_WNDW_ZOOM_OBJECTS]        = new WindowZoomObjects();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_BEGIN_TIME]          = new WindowBeginTime();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_STOP_TIME]           = new WindowStopTime();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_END_TIME]            = new WindowEndTime();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_BEGIN_TIME_RELATIVE] = new WindowBeginTimeRelative();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_ZOOM_OBJECTS ]        = new WindowZoomObjects();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_BEGIN_TIME ]          = new WindowBeginTime();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_STOP_TIME ]           = new WindowStopTime();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_END_TIME ]            = new WindowEndTime();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_BEGIN_TIME_RELATIVE ] = new WindowBeginTimeRelative();
 
-  cfgTagFunctions[OLDCFG_TAG_WNDW_NUMBER_OF_ROWS]      = new WindowNumberOfRow();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_SELECTED_FUNCTIONS]  = new WindowSelectedFunctions();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_SEMANTIC_MODULE]     = new WindowSemanticModule();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_COMPOSE_FUNCTIONS]   = new WindowComposeFunctions();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_NUMBER_OF_ROWS ]     = new WindowNumberOfRow();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_SELECTED_FUNCTIONS ] = new WindowSelectedFunctions();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_SEMANTIC_MODULE ]    = new WindowSemanticModule();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_COMPOSE_FUNCTIONS ]  = new WindowComposeFunctions();
 
   // Filter options
-  cfgTagFunctions[OLDCFG_TAG_WNDW_FILTER_MODULE]       = new WindowFilterModule();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_LOGICAL_FILTERED]    = new WindowFilterLogical();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_PHYSICAL_FILTERED]   = new WindowFilterPhysical();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_INTRACOMMS_FILTERED] = new WindowFilterIntraComms();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_INTERCOMMS_FILTERED] = new WindowFilterInterComms();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_FROMTO]              = new WindowFilterBoolOpFromTo();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_COMM_TAGSIZE]        = new WindowFilterBoolOpTagSize();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_TYPEVAL]             = new WindowFilterBoolOpTypeVal();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_FILTER_MODULE ]       = new WindowFilterModule();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_LOGICAL_FILTERED ]    = new WindowFilterLogical();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_PHYSICAL_FILTERED ]   = new WindowFilterPhysical();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_INTRACOMMS_FILTERED ] = new WindowFilterIntraComms();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_INTERCOMMS_FILTERED ] = new WindowFilterInterComms();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_FROMTO ]              = new WindowFilterBoolOpFromTo();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_COMM_TAGSIZE ]        = new WindowFilterBoolOpTagSize();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_TYPEVAL ]             = new WindowFilterBoolOpTypeVal();
 
-  cfgTagFunctions[OLDCFG_TAG_WNDW_OPEN]                = new WindowOpen();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_DRAW_MODE]           = new WindowDrawMode();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_DRAW_MODE_ROWS]      = new WindowDrawModeRows();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_PIXEL_SIZE]          = new WindowPixelSize();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_LABELS_TO_DRAW]      = new WindowLabelsToDraw();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_OBJECT_AXIS_SIZE]    = new WindowObjectAxisSize();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_PUNCTUAL_COLOR_WIN]  = new WindowPunctualColorWindow();
-  cfgTagFunctions[OLDCFG_TAG_WNDW_SYNCHRONIZE]         = new WindowSynchronize();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_OPEN ]               = new WindowOpen();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_DRAW_MODE ]          = new WindowDrawMode();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_DRAW_MODE_ROWS ]     = new WindowDrawModeRows();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_PIXEL_SIZE ]         = new WindowPixelSize();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_LABELS_TO_DRAW ]     = new WindowLabelsToDraw();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_OBJECT_AXIS_SIZE ]        = new WindowObjectAxisSize();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_OBJECT_AXIS_CUSTOM_SIZE ] = new WindowObjectAxisCustomSize();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_PUNCTUAL_COLOR_WIN ] = new WindowPunctualColorWindow();
+  cfgTagFunctions[ OLDCFG_TAG_WNDW_SYNCHRONIZE ]        = new WindowSynchronize();
 
   // Histogram options
 
-  cfgTagFunctions[OLDCFG_TAG_AN2D_NEW]                 = new Analyzer2DCreate();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_NAME]                = new Analyzer2DName();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_X]                   = new Analyzer2DX();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_Y]                   = new Analyzer2DY();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_WIDTH]               = new Analyzer2DWidth();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_HEIGHT]              = new Analyzer2DHeight();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_CONTROL_WINDOW]      = new Analyzer2DControlWindow();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_DATA_WINDOW]         = new Analyzer2DDataWindow();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_STATISTIC]           = new Analyzer2DStatistic();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_CALCULATE_ALL]       = new Analyzer2DCalculateAll();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_NEW ]            = new Analyzer2DCreate();
+  cfgTagFunctions[ CFG_TAG_AN2D_TYPE ]              = new Analyzer2DType();
+  cfgTagFunctions[ CFG_TAG_AN2D_IDENTIFIERS ]       = new Analyzer2DIdentifiers();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_NAME ]           = new Analyzer2DName();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_X ]              = new Analyzer2DX();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_Y ]              = new Analyzer2DY();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_WIDTH ]          = new Analyzer2DWidth();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_HEIGHT ]         = new Analyzer2DHeight();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_CONTROL_WINDOW ] = new Analyzer2DControlWindow();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_DATA_WINDOW ]    = new Analyzer2DDataWindow();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_STATISTIC ]      = new Analyzer2DStatistic();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_CALCULATE_ALL ]  = new Analyzer2DCalculateAll();
   // --> Analyzer2D.hide_empty_cols:
-  cfgTagFunctions[OLDCFG_TAG_AN2D_HIDE_COLS]           = new Analyzer2DHideColumns();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_HORIZONTAL]          = new Analyzer2DHorizontal();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_COLOR]               = new Analyzer2DColor();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_SEMANTIC_COLOR]      = new Analyzer2DSemanticColor();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_HIDE_COLS ]      = new Analyzer2DHideColumns();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_HORIZONTAL ]     = new Analyzer2DHorizontal();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_COLOR ]          = new Analyzer2DColor();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_SEMANTIC_COLOR ] = new Analyzer2DSemanticColor();
   // --> Analyzer2D.TextMode:
-  cfgTagFunctions[OLDCFG_TAG_AN2D_ZOOM]                = new Analyzer2DZoom();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_ZOOM ] = new Analyzer2DZoom();
   // --> Analyzer2D.Expanded:
   // --> Analyzer2D.expanded:
-  cfgTagFunctions[OLDCFG_TAG_AN2D_ACCUMULATOR]          = new Analyzer2DAccumulator();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_ACCUM_BY_CTRL_WINDOW] = new Analyzer2DAccumulateByControlWindow();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_SORTCOLS]             = new Analyzer2DSortCols();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_SORTCRITERIA]         = new Analyzer2DSortCriteria();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_SORTREVERSE]         = new Analyzer2DSortReverse();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_ACCUMULATOR ]          = new Analyzer2DAccumulator();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_ACCUM_BY_CTRL_WINDOW ] = new Analyzer2DAccumulateByControlWindow();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_SORTCOLS ]             = new Analyzer2DSortCols();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_SORTCRITERIA ]         = new Analyzer2DSortCriteria();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_SORTREVERSE ]          = new Analyzer2DSortReverse();
 
-  cfgTagFunctions[OLDCFG_TAG_AN2D_PARAMETERS]           = new Analyzer2DParameters();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_ANALYSISLIMITS]       = new Analyzer2DAnalysisLimits();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_RELATIVETIME]         = new Analyzer2DRelativeTime();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_PARAMETERS ]     = new Analyzer2DParameters();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_ANALYSISLIMITS ] = new Analyzer2DAnalysisLimits();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_RELATIVETIME ]   = new Analyzer2DRelativeTime();
   // --> cfgTagFunctions["Analyzer2D.RelativeXScale:"] = new Analyzer2DRelativeXScale();
   // --> Analyzer2D.ShowWindows:
-  cfgTagFunctions[OLDCFG_TAG_AN2D_COMPUTEYSCALE]        = new Analyzer2DComputeYScale();
-  cfgTagFunctions[CFG_TAG_AN2D_COMPUTEYSCALE_ZERO]      = new Analyzer2DComputeYScaleZero();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_MINIMUM]              = new Analyzer2DMinimum();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_MAXIMUM]              = new Analyzer2DMaximum();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_DELTA]                = new Analyzer2DDelta();
-  cfgTagFunctions[CFG_TAG_AN2D_USE_CUSTOM_DELTA]        = new Analyzer2DUseCustomDelta();
-  cfgTagFunctions[CFG_TAG_AN2D_USE_FIXED_DELTA]         = new Analyzer2DUseFixedDelta();
-  cfgTagFunctions[CFG_TAG_AN2D_NUMCOLUMNS]              = new Analyzer2DNumColumns();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_COMPUTEGRADIENT]      = new Analyzer2DComputeGradient();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_MINIMUMGRADIENT]      = new Analyzer2DMinimumGradient();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_MAXIMUMGRADIENT]      = new Analyzer2DMaximumGradient();
-  cfgTagFunctions[ CFG_TAG_OBJECTS ]                    = new Analyzer2DObjects();
-  cfgTagFunctions[ CFG_TAG_DRAWMODE_OBJECTS ]           = new Analyzer2DDrawModeObjects();
-  cfgTagFunctions[ CFG_TAG_DRAWMODE_COLUMNS ]           = new Analyzer2DDrawModeColumns();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_PIXEL_SIZE]           = new Analyzer2DPixelSize();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_CODE_COLOR]           = new Analyzer2DCodeColor();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_COLOR_MODE]           = new Analyzer2DColorMode();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_ONLY_TOTALS]          = new Analyzer2DOnlyTotals();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_SHORT_LABELS]         = new Analyzer2DShortLabels();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_SYNCHRONIZE]          = new Analyzer2DSynchronize();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_COMPUTEYSCALE ]   = new Analyzer2DComputeYScale();
+  cfgTagFunctions[ CFG_TAG_AN2D_COMPUTEYSCALE_ZERO ] = new Analyzer2DComputeYScaleZero();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_MINIMUM ]         = new Analyzer2DMinimum();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_MAXIMUM ]         = new Analyzer2DMaximum();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_DELTA ]           = new Analyzer2DDelta();
+  cfgTagFunctions[ CFG_TAG_AN2D_USE_CUSTOM_DELTA ]   = new Analyzer2DUseCustomDelta();
+  cfgTagFunctions[ CFG_TAG_AN2D_USE_FIXED_DELTA ]    = new Analyzer2DUseFixedDelta();
+  cfgTagFunctions[ CFG_TAG_AN2D_NUMCOLUMNS ]         = new Analyzer2DNumColumns();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_COMPUTEGRADIENT ] = new Analyzer2DComputeGradient();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_MINIMUMGRADIENT ] = new Analyzer2DMinimumGradient();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_MAXIMUMGRADIENT ] = new Analyzer2DMaximumGradient();
+  cfgTagFunctions[ CFG_TAG_AN2D_OBJECTS ]            = new Analyzer2DObjects(); // DEPRECATED
+  cfgTagFunctions[ CFG_TAG_AN2D_OBJECT ]             = new Analyzer2DObject();
+  cfgTagFunctions[ CFG_TAG_AN2D_DRAWMODE_OBJECTS ]   = new Analyzer2DDrawModeObjects();
+  cfgTagFunctions[ CFG_TAG_AN2D_DRAWMODE_COLUMNS ]   = new Analyzer2DDrawModeColumns();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_PIXEL_SIZE ]      = new Analyzer2DPixelSize();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_CODE_COLOR ]      = new Analyzer2DCodeColor();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_COLOR_MODE ]      = new Analyzer2DColorMode();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_ONLY_TOTALS ]     = new Analyzer2DOnlyTotals();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_SHORT_LABELS ]    = new Analyzer2DShortLabels();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_SYNCHRONIZE ]     = new Analyzer2DSynchronize();
 
   // 3D Histogram
-  cfgTagFunctions[OLDCFG_TAG_AN3D_CONTROLWINDOW]        = new Analyzer3DControlWindow();
-  cfgTagFunctions[OLDCFG_TAG_AN3D_COMPUTEYSCALE]        = new Analyzer3DComputeYScale();
-  cfgTagFunctions[OLDCFG_TAG_AN3D_MINIMUM]              = new Analyzer3DMinimum();
-  cfgTagFunctions[OLDCFG_TAG_AN3D_MAXIMUM]              = new Analyzer3DMaximum();
-  cfgTagFunctions[OLDCFG_TAG_AN3D_DELTA]                = new Analyzer3DDelta();
-  cfgTagFunctions[OLDCFG_TAG_AN3D_FIXEDVALUE]           = new Analyzer3DFixedValue();
+  cfgTagFunctions[ OLDCFG_TAG_AN3D_CONTROLWINDOW ] = new Analyzer3DControlWindow();
+  cfgTagFunctions[ OLDCFG_TAG_AN3D_COMPUTEYSCALE ] = new Analyzer3DComputeYScale();
+  cfgTagFunctions[ OLDCFG_TAG_AN3D_MINIMUM ]       = new Analyzer3DMinimum();
+  cfgTagFunctions[ OLDCFG_TAG_AN3D_MAXIMUM ]       = new Analyzer3DMaximum();
+  cfgTagFunctions[ OLDCFG_TAG_AN3D_DELTA ]         = new Analyzer3DDelta();
+  cfgTagFunctions[ OLDCFG_TAG_AN3D_FIXEDVALUE ]    = new Analyzer3DFixedValue();
 
-  cfgTagFunctions[ CFG_TAG_ALIAS_CFG4D ]                = new TagAliasCFG4D();
-  cfgTagFunctions[ CFG_TAG_LINK_CFG4D ]                 = new TagLinkCFG4D();
-  cfgTagFunctions[ CFG_TAG_STATISTIC_ALIAS_CFG4D ]      = new TagAliasStatisticCFG4D();
-  cfgTagFunctions[ CFG_TAG_PARAM_ALIAS_CFG4D ]          = new TagAliasParamCFG4D();
+  cfgTagFunctions[ CFG_TAG_ALIAS_CFG4D ]           = new TagAliasCFG4D();
+  cfgTagFunctions[ CFG_TAG_LINK_CFG4D ]            = new TagLinkCFG4D();
+  cfgTagFunctions[ CFG_TAG_STATISTIC_ALIAS_CFG4D ] = new TagAliasStatisticCFG4D();
+  cfgTagFunctions[ CFG_TAG_PARAM_ALIAS_CFG4D ]     = new TagAliasParamCFG4D();
 }
 
 void CFGLoader::unLoadMap()
 {
-  for ( map<string, TagFunction *>::iterator it = cfgTagFunctions.begin();
-        it != cfgTagFunctions.end();
-        ++it )
-    delete ( *it ).second;
+  for( map< string, TagFunction * >::iterator it = cfgTagFunctions.begin(); it != cfgTagFunctions.end(); ++it )
+    delete( *it ).second;
 }
 
+string SyncWindowsGroups::tagCFG = CFG_HEADER_SYNC_GROUPS;
+
+bool SyncWindowsGroups::parseLine( KernelConnection *whichKernel, istringstream &line, Trace *whichTrace )
+{
+  string inner;
+  getline( line, inner );
+
+  if( inner == "" )
+  {
+    return true;
+  }
+
+  std::string groupStr;
+
+  std::map< TGroupId, std::vector< SyncPropertiesType > > groups;
+
+  bool lastElement = false;
+  size_t start     = 0;
+  while( !lastElement )
+  {
+    size_t pos = inner.find( ';', start );
+
+    if( pos == std::string::npos )
+    {
+      groupStr    = inner.substr( start );
+      lastElement = true; // exit loop
+    }
+    else
+    {
+      groupStr = inner.substr( start, pos - start );
+      start    = pos + 1;
+    }
+
+    groupStr.erase( 0, groupStr.find_first_not_of( " \t" ) );
+    groupStr.erase( groupStr.find_last_not_of( " \t" ) + 1 );
+
+    size_t colonPos = groupStr.find( ':' );
+
+    int id              = std::stoi( groupStr.substr( 0, colonPos ) );
+    syncRealGroup[ id ] = 0;
+
+    std::string values = groupStr.substr( colonPos + 1 );
+
+    bool tmpIsLastSyncElement = false;
+
+    size_t tmpStartSyncElement = 0;
+
+    while( !tmpIsLastSyncElement )
+    {
+      size_t posSyncElements = values.find( ',', tmpStartSyncElement );
+
+      if( posSyncElements == std::string::npos )
+      {
+        groupStr             = values.substr( tmpStartSyncElement );
+        tmpIsLastSyncElement = true; // exit loop
+      }
+      else
+      {
+        groupStr            = values.substr( tmpStartSyncElement, posSyncElements - tmpStartSyncElement );
+        tmpStartSyncElement = posSyncElements + 1;
+      }
+      auto property = LabelConstructor::labelToProperty( groupStr );
+      groups[ id ].push_back( property );
+    }
+  }
+
+  SyncWindows::getInstance()->initConfigGroup( syncRealGroup );
+
+  for( auto &group : groups )
+  {
+    for( auto &groupProperties : group.second )
+    {
+      SyncWindows::getInstance()->addProperty( syncRealGroup[ group.first ], groupProperties );
+    }
+  }
+
+  return true;
+}
+
+void SyncWindowsGroups::printLine( ostream &cfgFile, const vector< Timeline * > &windows, const vector< Histogram * > &histograms )
+{
+  cfgFile << CFG_HEADER_SYNC_GROUPS << " ";
+
+  std::map< TGroupId, std::vector< SyncPropertiesType > > groups;
+
+  SyncWindows::getInstance()->getGroupsProperties( groups );
+
+  bool firstGroup = true;
+  std::set< TGroupId > groupList;
+
+  for( auto &window : windows )
+  {
+    if( window->isSync() )
+    {
+      groupList.insert( window->getSyncGroup() );
+    }
+  }
+  for( auto &histogram : histograms )
+  {
+    if( histogram->isSync() )
+    {
+      groupList.insert( histogram->getSyncGroup() );
+    }
+  }
+
+  for( auto &group : groupList )
+  {
+    if( !firstGroup )
+      cfgFile << ";"; // separator between groups
+
+    cfgFile << group << ":";
+
+    bool firstProperty = true;
+
+    std::vector< SyncPropertiesType > properties;
+
+    SyncWindows::getInstance()->getGroupAvailableProperties( group, properties );
+
+    for( auto &property : properties )
+    {
+      if( SyncWindows::getInstance()->isPropertySelected( group, property ))
+      {
+        if( !firstProperty )
+          cfgFile << ",";
+        cfgFile << LabelConstructor::propertyToLabel( property );
+        firstProperty = false;
+      }
+    }
+
+    firstGroup = false;
+  }
+    cfgFile << endl;
+}
 
 string WindowName::tagCFG = OLDCFG_TAG_WNDW_NAME;
 
-bool WindowName::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowName::parseLine( KernelConnection *whichKernel,
+                            istringstream &line,
                             Trace *whichTrace,
-                            vector<Timeline *>& windows,
-                            vector<Histogram *>& histograms )
+                            vector< Timeline * > &windows,
+                            vector< Histogram * > &histograms )
 {
   string name;
 
@@ -1241,7 +1398,7 @@ bool WindowName::parseLine( KernelConnection *whichKernel, istringstream& line,
 
   isWindowTag = true; // CFG4D
 
-  numComposesExtraComposesInWindow = 0;
+  numComposesExtraComposesInWindow      = 0;
   numSemanticParamExtraComposesInWindow = 0;
 
   return true;
@@ -1256,10 +1413,11 @@ void WindowName::printLine( ostream& cfgFile,
 
 string WindowType::tagCFG = OLDCFG_TAG_WNDW_TYPE;
 
-bool WindowType::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowType::parseLine( KernelConnection *whichKernel,
+                            istringstream &line,
                             Trace *whichTrace,
-                            vector<Timeline *>& windows,
-                            vector<Histogram *>& histograms )
+                            vector< Timeline * > &windows,
+                            vector< Histogram * > &histograms )
 {
   string type;
   Timeline *tmpWin;
@@ -1267,11 +1425,11 @@ bool WindowType::parseLine( KernelConnection *whichKernel, istringstream& line,
   isWindowTag = true; // CFG4D
 
   getline( line, type );
-  if ( type.compare( OLDCFG_VAL_WNDW_TYPE_SINGLE ) == 0 )
+  if( type.compare( OLDCFG_VAL_WNDW_TYPE_SINGLE ) == 0 )
   {
     tmpWin = Timeline::create( whichKernel, whichTrace );
   }
-  else if ( type.compare( OLDCFG_VAL_WNDW_TYPE_COMPOSED ) == 0 )
+  else if( type.compare( OLDCFG_VAL_WNDW_TYPE_COMPOSED ) == 0 )
   {
     tmpWin = Timeline::create( whichKernel );
   }
@@ -1281,7 +1439,7 @@ bool WindowType::parseLine( KernelConnection *whichKernel, istringstream& line,
   // Force Code Color: cfgs assume this by default
   tmpWin->setCodeColorMode();
 
-  if ( windows.size() == 1 && windows[ 0 ] == nullptr )
+  if( windows.size() == 1 && windows[ 0 ] == nullptr )
     windows[ 0 ] = tmpWin;
   else
     windows.push_back( tmpWin );
@@ -1292,7 +1450,7 @@ bool WindowType::parseLine( KernelConnection *whichKernel, istringstream& line,
   windows[ windows.size() - 1 ]->setTimeUnit( US );
 
   // CFG4D
-  if ( currentNameTag.compare( "" ) != 0 )
+  if( currentNameTag.compare( "" ) != 0 )
   {
     windows[ windows.size() - 1 ]->setCFG4DAlias( OLDCFG_TAG_WNDW_NAME, currentNameTag );
     setCurrentNameTag( "" );
@@ -1309,39 +1467,39 @@ void WindowType::printLine( ostream& cfgFile,
                             const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_TYPE << " ";
-  if ( ( *it )->isDerivedWindow() )
+  if( ( *it )->isDerivedWindow() )
     cfgFile << OLDCFG_VAL_WNDW_TYPE_COMPOSED << endl;
   else
     cfgFile << OLDCFG_VAL_WNDW_TYPE_SINGLE << endl;
 }
 
 
-
 string WindowFactors::tagCFG = OLDCFG_TAG_WNDW_FACTORS;
 
-bool WindowFactors::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowFactors::parseLine( KernelConnection *whichKernel,
+                               istringstream &line,
                                Trace *whichTrace,
-                               vector<Timeline *>& windows,
-                               vector<Histogram *>& histograms )
+                               vector< Timeline * > &windows,
+                               vector< Histogram * > &histograms )
 {
   string strFactor;
   PRV_UINT16 numFactor = 0;
 
   isWindowTag = true; // CFG4D
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
-  if ( !windows[ windows.size() - 1 ]->isDerivedWindow() )
+  if( !windows[ windows.size() - 1 ]->isDerivedWindow() )
     return true;
 
-  while ( !line.eof() )
+  while( !line.eof() )
   {
     getline( line, strFactor, ' ' );
     istringstream tmpStream( strFactor );
     TSemanticValue factorValue;
 
-    if ( !( tmpStream >> factorValue ) )
+    if( !( tmpStream >> factorValue ) )
       return false;
 
     windows[ windows.size() - 1 ]->setFactor( numFactor, factorValue );
@@ -1354,36 +1512,36 @@ bool WindowFactors::parseLine( KernelConnection *whichKernel, istringstream& lin
 void WindowFactors::printLine( ostream& cfgFile,
                                const vector<Timeline *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_FACTORS << " " << ( *it )->getFactor( 0 ) <<
-  " " << ( *it )->getFactor( 1 ) << endl;
+  cfgFile << OLDCFG_TAG_WNDW_FACTORS << " " << ( *it )->getFactor( 0 ) << " " << ( *it )->getFactor( 1 ) << endl;
 }
 
 
 string WindowShifts::tagCFG = CFG_TAG_WNDW_SHIFTS;
 
-bool WindowShifts::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowShifts::parseLine( KernelConnection *whichKernel,
+                              istringstream &line,
                               Trace *whichTrace,
-                              vector<Timeline *>& windows,
-                              vector<Histogram *>& histograms )
+                              vector< Timeline * > &windows,
+                              vector< Histogram * > &histograms )
 {
   string strShift;
   PRV_UINT16 numShift = 0;
 
   isWindowTag = true; // CFG4D
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
-  if ( !windows[ windows.size() - 1 ]->isDerivedWindow() )
+  if( !windows[ windows.size() - 1 ]->isDerivedWindow() )
     return true;
 
-  while ( !line.eof() )
+  while( !line.eof() )
   {
     getline( line, strShift, ' ' );
     istringstream tmpStream( strShift );
     PRV_INT16 shiftValue;
 
-    if ( !( tmpStream >> shiftValue ) )
+    if( !( tmpStream >> shiftValue ) )
       return false;
 
     windows[ windows.size() - 1 ]->setShift( numShift, shiftValue );
@@ -1396,28 +1554,28 @@ bool WindowShifts::parseLine( KernelConnection *whichKernel, istringstream& line
 void WindowShifts::printLine( ostream& cfgFile,
                               const vector<Timeline *>::const_iterator it )
 {
-  cfgFile << CFG_TAG_WNDW_SHIFTS << " " << ( *it )->getShift( 0 ) <<
-    " " << ( *it )->getShift( 1 ) << endl;
+  cfgFile << CFG_TAG_WNDW_SHIFTS << " " << ( *it )->getShift( 0 ) << " " << ( *it )->getShift( 1 ) << endl;
 }
 
 
 string WindowPositionX::tagCFG = OLDCFG_TAG_WNDW_POSX;
 
-bool WindowPositionX::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowPositionX::parseLine( KernelConnection *whichKernel,
+                                 istringstream &line,
                                  Trace *whichTrace,
-                                 vector<Timeline *>& windows,
-                                 vector<Histogram *>& histograms )
+                                 vector< Timeline * > &windows,
+                                 vector< Histogram * > &histograms )
 {
   string strPos;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strPos, ' ' );
   istringstream tmpStream( strPos );
   PRV_UINT16 pos;
 
-  if ( !( tmpStream >> pos ) )
+  if( !( tmpStream >> pos ) )
     return false;
 
   windows[ windows.size() - 1 ]->setPosX( pos );
@@ -1432,24 +1590,24 @@ void WindowPositionX::printLine( ostream& cfgFile,
 }
 
 
-
 string WindowPositionY::tagCFG = OLDCFG_TAG_WNDW_POSY;
 
-bool WindowPositionY::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowPositionY::parseLine( KernelConnection *whichKernel,
+                                 istringstream &line,
                                  Trace *whichTrace,
-                                 vector<Timeline *>& windows,
-                                 vector<Histogram *>& histograms )
+                                 vector< Timeline * > &windows,
+                                 vector< Histogram * > &histograms )
 {
   string strPos;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strPos, ' ' );
   istringstream tmpStream( strPos );
   PRV_UINT16 pos;
 
-  if ( !( tmpStream >> pos ) )
+  if( !( tmpStream >> pos ) )
     return false;
 
   windows[ windows.size() - 1 ]->setPosY( pos );
@@ -1464,24 +1622,24 @@ void WindowPositionY::printLine( ostream& cfgFile,
 }
 
 
-
 string WindowWidth::tagCFG = OLDCFG_TAG_WNDW_WIDTH;
 
-bool WindowWidth::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowWidth::parseLine( KernelConnection *whichKernel,
+                             istringstream &line,
                              Trace *whichTrace,
-                             vector<Timeline *>& windows,
-                             vector<Histogram *>& histograms )
+                             vector< Timeline * > &windows,
+                             vector< Histogram * > &histograms )
 {
   string strWidth;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strWidth, ' ' );
   istringstream tmpStream( strWidth );
   PRV_UINT16 width;
 
-  if ( !( tmpStream >> width ) )
+  if( !( tmpStream >> width ) )
     return false;
 
   windows[ windows.size() - 1 ]->setWidth( width );
@@ -1496,24 +1654,24 @@ void WindowWidth::printLine( ostream& cfgFile,
 }
 
 
-
 string WindowHeight::tagCFG = OLDCFG_TAG_WNDW_HEIGHT;
 
-bool WindowHeight::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowHeight::parseLine( KernelConnection *whichKernel,
+                              istringstream &line,
                               Trace *whichTrace,
-                              vector<Timeline *>& windows,
-                              vector<Histogram *>& histograms )
+                              vector< Timeline * > &windows,
+                              vector< Histogram * > &histograms )
 {
   string strHeight;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strHeight, ' ' );
   istringstream tmpStream( strHeight );
   PRV_UINT16 height;
 
-  if ( !( tmpStream >> height ) )
+  if( !( tmpStream >> height ) )
     return false;
 
   windows[ windows.size() - 1 ]->setHeight( height );
@@ -1528,24 +1686,24 @@ void WindowHeight::printLine( ostream& cfgFile,
 }
 
 
-
 string WindowCommLines::tagCFG = OLDCFG_TAG_WNDW_COMM_LINES;
 
-bool WindowCommLines::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowCommLines::parseLine( KernelConnection *whichKernel,
+                                 istringstream &line,
                                  Trace *whichTrace,
-                                 vector<Timeline *>& windows,
-                                 vector<Histogram *>& histograms )
+                                 vector< Timeline * > &windows,
+                                 vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
     windows[ windows.size() - 1 ]->setDrawCommLines( false );
-  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
     windows[ windows.size() - 1 ]->setDrawCommLines( true );
   else
     return false;
@@ -1556,29 +1714,28 @@ bool WindowCommLines::parseLine( KernelConnection *whichKernel, istringstream& l
 void WindowCommLines::printLine( ostream& cfgFile,
                                  const vector<Timeline *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_COMM_LINES << " " << ( ( *it )->getDrawCommLines() ?
-      OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
+  cfgFile << OLDCFG_TAG_WNDW_COMM_LINES << " " << ( ( *it )->getDrawCommLines() ? OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
 }
-
 
 
 string WindowFlagsEnabled::tagCFG = OLDCFG_TAG_WNDW_FLAGS_ENABLED;
 
-bool WindowFlagsEnabled::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowFlagsEnabled::parseLine( KernelConnection *whichKernel,
+                                    istringstream &line,
                                     Trace *whichTrace,
-                                    vector<Timeline *>& windows,
-                                    vector<Histogram *>& histograms )
+                                    vector< Timeline * > &windows,
+                                    vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
     windows[ windows.size() - 1 ]->setDrawFlags( false );
-  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
     windows[ windows.size() - 1 ]->setDrawFlags( true );
   else
     return false;
@@ -1589,30 +1746,29 @@ bool WindowFlagsEnabled::parseLine( KernelConnection *whichKernel, istringstream
 void WindowFlagsEnabled::printLine( ostream& cfgFile,
                                     const vector<Timeline *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_FLAGS_ENABLED << " " << ( ( *it )->getDrawFlags() ?
-      OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
+  cfgFile << OLDCFG_TAG_WNDW_FLAGS_ENABLED << " " << ( ( *it )->getDrawFlags() ? OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
 }
-
 
 
 string WindowNonColorMode::tagCFG = OLDCFG_TAG_WNDW_NON_COLOR_MODE;
 
-bool WindowNonColorMode::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowNonColorMode::parseLine( KernelConnection *whichKernel,
+                                    istringstream &line,
                                     Trace *whichTrace,
-                                    vector<Timeline *>& windows,
-                                    vector<Histogram *>& histograms )
+                                    vector< Timeline * > &windows,
+                                    vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
   // TODO: non color mode is color mode !!
-  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
     windows[ windows.size() - 1 ]->setFunctionLineColorMode();
-  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
     return true;
   else
     return false;
@@ -1624,21 +1780,21 @@ void WindowNonColorMode::printLine( ostream& cfgFile,
                                     const vector<Timeline *>::const_iterator it )
 {
   // TODO: non color mode is color mode !!
-  cfgFile << OLDCFG_TAG_WNDW_NON_COLOR_MODE << " " << ( ( *it )->isFunctionLineColorSet() ?
-      OLDCFG_VAL_FALSE : OLDCFG_VAL_TRUE ) << endl;
+  cfgFile << OLDCFG_TAG_WNDW_NON_COLOR_MODE << " " << ( ( *it )->isFunctionLineColorSet() ? OLDCFG_VAL_FALSE : OLDCFG_VAL_TRUE ) << endl;
 }
 
 
 string WindowColorMode::tagCFG = OLDCFG_TAG_WNDW_COLOR_MODE;
 
-bool WindowColorMode::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowColorMode::parseLine( KernelConnection *whichKernel,
+                                 istringstream &line,
                                  Trace *whichTrace,
-                                 vector<Timeline *>& windows,
-                                 vector<Histogram *>& histograms )
+                                 vector< Timeline * > &windows,
+                                 vector< Histogram * > &histograms )
 {
   string strMode;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strMode, ' ' );
@@ -1663,23 +1819,24 @@ void WindowColorMode::printLine( ostream& cfgFile,
 
 string WindowGradientFunction::tagCFG = CFG_TAG_WNDW_GRADIENT_FUNCTION;
 
-bool WindowGradientFunction::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowGradientFunction::parseLine( KernelConnection *whichKernel,
+                                        istringstream &line,
                                         Trace *whichTrace,
-                                        vector<Timeline *>& windows,
-                                        vector<Histogram *>& histograms )
+                                        vector< Timeline * > &windows,
+                                        vector< Histogram * > &histograms )
 {
   string strFunction;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strFunction );
 
-  if ( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_LINEAR ) == 0 )
+  if( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_LINEAR ) == 0 )
     windows[ windows.size() - 1 ]->getSemanticColor().setGradientFunction( TGradientFunction::LINEAR );
-  else if ( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_STEPS ) == 0 )
+  else if( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_STEPS ) == 0 )
     windows[ windows.size() - 1 ]->getSemanticColor().setGradientFunction( TGradientFunction::STEPS );
-  else if ( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_LOG ) == 0 )
+  else if( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_LOG ) == 0 )
     windows[ windows.size() - 1 ]->getSemanticColor().setGradientFunction( TGradientFunction::LOGARITHMIC );
   else if( strFunction.compare( CFG_VAL_GRADIENT_FUNCTION_EXP ) == 0 )
     windows[ windows.size() - 1 ]->getSemanticColor().setGradientFunction( TGradientFunction::EXPONENTIAL );
@@ -1694,19 +1851,16 @@ void WindowGradientFunction::printLine( ostream& cfgFile,
 {
   auto currentGradientFunction = ( *it )->getSemanticColor().getGradientFunction();
 
-  if( ( *it )->isFunctionLineColorSet() ||
-      ( *it )->isPunctualColorSet() ||
-      ( *it )->isGradientColorSet() ||
-      ( *it )->isNotNullGradientColorSet() ||
+  if( ( *it )->isFunctionLineColorSet() || ( *it )->isPunctualColorSet() || ( *it )->isGradientColorSet() || ( *it )->isNotNullGradientColorSet() ||
       ( *it )->isAlternativeGradientColorSet() )
   {
-    if ( currentGradientFunction == TGradientFunction::LINEAR )
+    if( currentGradientFunction == TGradientFunction::LINEAR )
       cfgFile << CFG_TAG_WNDW_GRADIENT_FUNCTION << " " << CFG_VAL_GRADIENT_FUNCTION_LINEAR << endl;
-    else if ( currentGradientFunction == TGradientFunction::STEPS )
+    else if( currentGradientFunction == TGradientFunction::STEPS )
       cfgFile << CFG_TAG_WNDW_GRADIENT_FUNCTION << " " << CFG_VAL_GRADIENT_FUNCTION_STEPS << endl;
-    else if ( currentGradientFunction == TGradientFunction::LOGARITHMIC )
+    else if( currentGradientFunction == TGradientFunction::LOGARITHMIC )
       cfgFile << CFG_TAG_WNDW_GRADIENT_FUNCTION << " " << CFG_VAL_GRADIENT_FUNCTION_LOG << endl;
-    else if ( currentGradientFunction == TGradientFunction::EXPONENTIAL )
+    else if( currentGradientFunction == TGradientFunction::EXPONENTIAL )
       cfgFile << CFG_TAG_WNDW_GRADIENT_FUNCTION << " " << CFG_VAL_GRADIENT_FUNCTION_EXP << endl;
   }
 }
@@ -1714,21 +1868,22 @@ void WindowGradientFunction::printLine( ostream& cfgFile,
 
 string WindowCustomColorEnabled::tagCFG = OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED;
 
-bool WindowCustomColorEnabled::parseLine( KernelConnection *whichKernel, istringstream& line,
-                                 Trace *whichTrace,
-                                 vector<Timeline *>& windows,
-                                 vector<Histogram *>& histograms )
+bool WindowCustomColorEnabled::parseLine( KernelConnection *whichKernel,
+                                          istringstream &line,
+                                          Trace *whichTrace,
+                                          vector< Timeline * > &windows,
+                                          vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
     windows[ windows.size() - 1 ]->setUseCustomPalette( false );
-  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
     windows[ windows.size() - 1 ]->setUseCustomPalette( true );
   else
     return false;
@@ -1739,12 +1894,11 @@ bool WindowCustomColorEnabled::parseLine( KernelConnection *whichKernel, istring
 void WindowCustomColorEnabled::printLine( ostream& cfgFile,
                                  const vector<Timeline *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED << " " << ( ( *it )->getUseCustomPalette() ?
-      OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
+  cfgFile << OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED << " " << ( ( *it )->getUseCustomPalette() ? OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
 }
 
 
-bool parseColorComponents( istringstream& line, rgb& onColor )
+bool parseColorComponents( istringstream &line, rgb &onColor )
 {
   istringstream sstrTmp;
   string strComponent;
@@ -1754,21 +1908,21 @@ bool parseColorComponents( istringstream& line, rgb& onColor )
 
   getline( line, strComponent, ',' );
   sstrTmp.str( strComponent );
-  if ( !( sstrTmp >> tmpComponent ) ) 
+  if( !( sstrTmp >> tmpComponent ) )
     return false;
   onColor.red = tmpComponent;
 
   getline( line, strComponent, ',' );
   sstrTmp.clear();
   sstrTmp.str( strComponent );
-  if ( !( sstrTmp >> tmpComponent ) ) 
+  if( !( sstrTmp >> tmpComponent ) )
     return false;
   onColor.green = tmpComponent;
 
   getline( line, strComponent, '}' );
   sstrTmp.clear();
   sstrTmp.str( strComponent );
-  if ( !( sstrTmp >> tmpComponent ) ) 
+  if( !( sstrTmp >> tmpComponent ) )
     return false;
   onColor.blue = tmpComponent;
 
@@ -1777,17 +1931,18 @@ bool parseColorComponents( istringstream& line, rgb& onColor )
 
 string WindowCustomBackgroundColor::tagCFG = OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_COLOR;
 
-bool WindowCustomBackgroundColor::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowCustomBackgroundColor::parseLine( KernelConnection *whichKernel,
+                                             istringstream &line,
                                              Trace *whichTrace,
-                                             vector<Timeline *>& windows,
-                                             vector<Histogram *>& histograms )
+                                             vector< Timeline * > &windows,
+                                             vector< Histogram * > &histograms )
 {
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   rgb tmpRGB;
 
-  if ( !parseColorComponents( line, tmpRGB ) )
+  if( !parseColorComponents( line, tmpRGB ) )
     return false;
 
   windows[ windows.size() - 1 ]->setCustomBackgroundColor( tmpRGB );
@@ -1809,17 +1964,18 @@ void WindowCustomBackgroundColor::printLine( ostream& cfgFile,
 
 string WindowCustomAxisColor::tagCFG = OLDCFG_TAG_WNDW_CUSTOM_AXIS_COLOR;
 
-bool WindowCustomAxisColor::parseLine( KernelConnection *whichKernel, istringstream& line,
-                                             Trace *whichTrace,
-                                             vector<Timeline *>& windows,
-                                             vector<Histogram *>& histograms )
+bool WindowCustomAxisColor::parseLine( KernelConnection *whichKernel,
+                                       istringstream &line,
+                                       Trace *whichTrace,
+                                       vector< Timeline * > &windows,
+                                       vector< Histogram * > &histograms )
 {
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   rgb tmpRGB;
 
-  if ( !parseColorComponents( line, tmpRGB ) )
+  if( !parseColorComponents( line, tmpRGB ) )
     return false;
 
   windows[ windows.size() - 1 ]->setCustomAxisColor( tmpRGB );
@@ -1841,17 +1997,18 @@ void WindowCustomAxisColor::printLine( ostream& cfgFile,
 
 string WindowCustomPunctualColor::tagCFG = OLDCFG_TAG_WNDW_CUSTOM_PUNCTUAL_COLOR;
 
-bool WindowCustomPunctualColor::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowCustomPunctualColor::parseLine( KernelConnection *whichKernel,
+                                           istringstream &line,
                                            Trace *whichTrace,
-                                           vector<Timeline *>& windows,
-                                           vector<Histogram *>& histograms )
+                                           vector< Timeline * > &windows,
+                                           vector< Histogram * > &histograms )
 {
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   rgb tmpRGB;
 
-  if ( !parseColorComponents( line, tmpRGB ) )
+  if( !parseColorComponents( line, tmpRGB ) )
     return false;
 
   windows[ windows.size() - 1 ]->setCustomPunctualColor( tmpRGB );
@@ -1873,19 +2030,20 @@ void WindowCustomPunctualColor::printLine( ostream& cfgFile,
 
 string WindowCustomColorPalette::tagCFG = OLDCFG_TAG_WNDW_CUSTOM_COLOR_PALETTE;
 
-bool WindowCustomColorPalette::parseLine( KernelConnection *whichKernel, istringstream& line,
-                                 Trace *whichTrace,
-                                 vector<Timeline *>& windows,
-                                 vector<Histogram *>& histograms )
+bool WindowCustomColorPalette::parseLine( KernelConnection *whichKernel,
+                                          istringstream &line,
+                                          Trace *whichTrace,
+                                          vector< Timeline * > &windows,
+                                          vector< Histogram * > &histograms )
 {
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
- 
+
   istringstream sstrColorItem;
   string strColorItem;
   istringstream sstrTmp;
   string strTmp;
-  while ( !line.eof() ) 
+  while( !line.eof() )
   {
     TSemanticValue tmpValue;
     rgb tmpRGB;
@@ -1896,32 +2054,32 @@ bool WindowCustomColorPalette::parseLine( KernelConnection *whichKernel, istring
     if( line.eof() )
       break;
     sstrColorItem.str( strColorItem );
-    
+
     sstrTmp.clear();
     getline( sstrColorItem, strTmp, '{' ); // get '{'
     getline( sstrColorItem, strTmp, ':' ); // value
     sstrTmp.str( strTmp );
-    if ( !( sstrTmp >> tmpValue ) ) 
+    if( !( sstrTmp >> tmpValue ) )
       return false;
-  
+
     sstrTmp.clear();
     getline( sstrColorItem, strTmp, ',' ); // color red
     sstrTmp.str( strTmp );
-    if ( !( sstrTmp >> tmpComponent ) ) 
+    if( !( sstrTmp >> tmpComponent ) )
       return false;
     tmpRGB.red = tmpComponent;
 
     sstrTmp.clear();
     getline( sstrColorItem, strTmp, ',' ); // color green
     sstrTmp.str( strTmp );
-    if ( !( sstrTmp >> tmpComponent ) ) 
+    if( !( sstrTmp >> tmpComponent ) )
       return false;
     tmpRGB.green = tmpComponent;
 
     sstrTmp.clear();
     getline( sstrColorItem, strTmp, '}' ); // color blue
     sstrTmp.str( strTmp );
-    if ( !( sstrTmp >> tmpComponent ) ) 
+    if( !( sstrTmp >> tmpComponent ) )
       return false;
     tmpRGB.blue = tmpComponent;
 
@@ -1934,20 +2092,20 @@ bool WindowCustomColorPalette::parseLine( KernelConnection *whichKernel, istring
 void WindowCustomColorPalette::printLine( ostream& cfgFile,
                                  const vector<Timeline *>::const_iterator it )
 {
-  const SemanticColor& tmpCodeColor = ( *it )->getSemanticColor();
+  const SemanticColor &tmpCodeColor = ( *it )->getSemanticColor();
 
   if( tmpCodeColor.existCustomColors() )
   {
     cfgFile << OLDCFG_TAG_WNDW_CUSTOM_COLOR_PALETTE << " ";
 
-    const std::map<TSemanticValue, rgb>& tmpPalette = tmpCodeColor.getCustomPalette();
-    for( std::map<TSemanticValue, rgb>::const_iterator itMap = tmpPalette.begin(); itMap != tmpPalette.end(); ++itMap )
+    const std::map< TSemanticValue, rgb > &tmpPalette = tmpCodeColor.getCustomPalette();
+    for( std::map< TSemanticValue, rgb >::const_iterator itMap = tmpPalette.begin(); itMap != tmpPalette.end(); ++itMap )
     {
-      cfgFile << "{" << itMap->first << ":" << (int) itMap->second.red << "," << (int) itMap->second.green << "," << (int) itMap->second.blue << "}";
-      if ( itMap != --tmpPalette.end() )
+      cfgFile << "{" << itMap->first << ":" << (int)itMap->second.red << "," << (int)itMap->second.green << "," << (int)itMap->second.blue << "}";
+      if( itMap != --tmpPalette.end() )
         cfgFile << ",";
     }
-    
+
     cfgFile << endl;
   }
 }
@@ -1955,21 +2113,22 @@ void WindowCustomColorPalette::printLine( ostream& cfgFile,
 
 string WindowCustomBackgroundAsZero::tagCFG = OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_AS_ZERO;
 
-bool WindowCustomBackgroundAsZero::parseLine( KernelConnection *whichKernel, istringstream& line,
-                                 Trace *whichTrace,
-                                 vector<Timeline *>& windows,
-                                 vector<Histogram *>& histograms )
+bool WindowCustomBackgroundAsZero::parseLine( KernelConnection *whichKernel,
+                                              istringstream &line,
+                                              Trace *whichTrace,
+                                              vector< Timeline * > &windows,
+                                              vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
     windows[ windows.size() - 1 ]->setBackgroundAsZero( false );
-  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
     windows[ windows.size() - 1 ]->setBackgroundAsZero( true );
   else
     return false;
@@ -1980,28 +2139,28 @@ bool WindowCustomBackgroundAsZero::parseLine( KernelConnection *whichKernel, ist
 void WindowCustomBackgroundAsZero::printLine( ostream& cfgFile,
                                  const vector<Timeline *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_AS_ZERO << " " << ( ( *it )->getBackgroundAsZero() ?
-      OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
+  cfgFile << OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_AS_ZERO << " " << ( ( *it )->getBackgroundAsZero() ? OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
 }
 
 
 string WindowSemanticScaleMinAtZero::tagCFG = OLDCFG_TAG_WNDW_SEMANTIC_SCALE_MIN_AT_ZERO;
 
-bool WindowSemanticScaleMinAtZero::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowSemanticScaleMinAtZero::parseLine( KernelConnection *whichKernel,
+                                              istringstream &line,
                                               Trace *whichTrace,
-                                              vector<Timeline *>& windows,
-                                              vector<Histogram *>& histograms )
+                                              vector< Timeline * > &windows,
+                                              vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
     windows[ windows.size() - 1 ]->setSemanticScaleMinAtZero( false );
-  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
     windows[ windows.size() - 1 ]->setSemanticScaleMinAtZero( true );
   else
     return false;
@@ -2012,21 +2171,21 @@ bool WindowSemanticScaleMinAtZero::parseLine( KernelConnection *whichKernel, ist
 void WindowSemanticScaleMinAtZero::printLine( ostream& cfgFile,
                                               const vector<Timeline *>::const_iterator it )
 {
-  cfgFile << WindowSemanticScaleMinAtZero::tagCFG << " " << ( ( *it )->getSemanticScaleMinAtZero() ?
-      OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
+  cfgFile << WindowSemanticScaleMinAtZero::tagCFG << " " << ( ( *it )->getSemanticScaleMinAtZero() ? OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
 }
 
 
 string WindowUnits::tagCFG = OLDCFG_TAG_WNDW_UNITS;
 
-bool WindowUnits::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowUnits::parseLine( KernelConnection *whichKernel,
+                             istringstream &line,
                              Trace *whichTrace,
-                             vector<Timeline *>& windows,
-                             vector<Histogram *>& histograms )
+                             vector< Timeline * > &windows,
+                             vector< Histogram * > &histograms )
 {
   string strUnits;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strUnits, ' ' );
@@ -2047,17 +2206,18 @@ void WindowUnits::printLine( ostream& cfgFile,
 
 string WindowOperation::tagCFG = OLDCFG_TAG_WNDW_OPERATION;
 
-bool WindowOperation::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowOperation::parseLine( KernelConnection *whichKernel,
+                                 istringstream &line,
                                  Trace *whichTrace,
-                                 vector<Timeline *>& windows,
-                                 vector<Histogram *>& histograms )
+                                 vector< Timeline * > &windows,
+                                 vector< Histogram * > &histograms )
 {
   string strFunction;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
-  if ( !windows[ windows.size() - 1 ]->isDerivedWindow() )
+  if( !windows[ windows.size() - 1 ]->isDerivedWindow() )
     return true;
 
   getline( line, strFunction );
@@ -2074,20 +2234,21 @@ void WindowOperation::printLine( ostream& cfgFile,
 
 string WindowMaximumY::tagCFG = OLDCFG_TAG_WNDW_MAXIMUM_Y;
 
-bool WindowMaximumY::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowMaximumY::parseLine( KernelConnection *whichKernel,
+                                istringstream &line,
                                 Trace *whichTrace,
-                                vector<Timeline *>& windows,
-                                vector<Histogram *>& histograms )
+                                vector< Timeline * > &windows,
+                                vector< Histogram * > &histograms )
 {
   string strMaximum;
   TSemanticValue maximum;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strMaximum, ' ' );
   istringstream tmpStream( strMaximum );
-  if ( !( tmpStream >> maximum ) )
+  if( !( tmpStream >> maximum ) )
     return false;
 
   windows[ windows.size() - 1 ]->setMaximumY( maximum );
@@ -2104,20 +2265,21 @@ void WindowMaximumY::printLine( ostream& cfgFile,
 
 string WindowMinimumY::tagCFG = OLDCFG_TAG_WNDW_MINIMUM_Y;
 
-bool WindowMinimumY::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowMinimumY::parseLine( KernelConnection *whichKernel,
+                                istringstream &line,
                                 Trace *whichTrace,
-                                vector<Timeline *>& windows,
-                                vector<Histogram *>& histograms )
+                                vector< Timeline * > &windows,
+                                vector< Histogram * > &histograms )
 {
   string strMinimum;
   TSemanticValue minimum;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strMinimum, ' ' );
   istringstream tmpStream( strMinimum );
-  if ( !( tmpStream >> minimum ) )
+  if( !( tmpStream >> minimum ) )
     return false;
 
   windows[ windows.size() - 1 ]->setMinimumY( minimum );
@@ -2134,21 +2296,22 @@ void WindowMinimumY::printLine( ostream& cfgFile,
 
 string WindowComputeYMax::tagCFG = OLDCFG_TAG_WNDW_COMPUTE_Y_MAX;
 
-bool WindowComputeYMax::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowComputeYMax::parseLine( KernelConnection *whichKernel,
+                                   istringstream &line,
                                    Trace *whichTrace,
-                                   vector<Timeline *>& windows,
-                                   vector<Histogram *>& histograms )
+                                   vector< Timeline * > &windows,
+                                   vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
     windows[ windows.size() - 1 ]->setComputeYMaxOnInit( false );
-  else if ( strBool == "" || strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+  else if( strBool == "" || strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
     windows[ windows.size() - 1 ]->setComputeYMaxOnInit( true );
   else
     return false;
@@ -2171,20 +2334,21 @@ void WindowComputeYMax::printLine( ostream& cfgFile,
 
 string WindowLevel::tagCFG = OLDCFG_TAG_WNDW_LEVEL;
 
-bool WindowLevel::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowLevel::parseLine( KernelConnection *whichKernel,
+                             istringstream &line,
                              Trace *whichTrace,
-                             vector<Timeline *>& windows,
-                             vector<Histogram *>& histograms )
+                             vector< Timeline * > &windows,
+                             vector< Histogram * > &histograms )
 {
   string strLevel;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strLevel, ' ' );
 
-  TTraceLevel tmpLevel = static_cast<TTraceLevel>( stringToLevel( strLevel ) );
-  if ( tmpLevel >= TTraceLevel::SYSTEM && tmpLevel <= TTraceLevel::CPU && !whichTrace->existResourceInfo() )
+  TTraceLevel tmpLevel = static_cast< TTraceLevel >( stringToLevel( strLevel ) );
+  if( tmpLevel >= TTraceLevel::SYSTEM && tmpLevel <= TTraceLevel::CPU && !whichTrace->existResourceInfo() )
     return false;
 
   windows[ windows.size() - 1 ]->setLevel( tmpLevel );
@@ -2195,34 +2359,35 @@ bool WindowLevel::parseLine( KernelConnection *whichKernel, istringstream& line,
 void WindowLevel::printLine( ostream& cfgFile,
                              const vector<Timeline *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_LEVEL << " " << levelToString( static_cast<TWindowLevel>( ( *it )->getLevel() ) ) << endl;
+  cfgFile << OLDCFG_TAG_WNDW_LEVEL << " " << levelToString( static_cast< TWindowLevel >( ( *it )->getLevel() ) ) << endl;
 }
 
 
 string WindowIdentifiers::tagCFG = OLDCFG_TAG_WNDW_IDENTIFIERS;
 
-bool WindowIdentifiers::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowIdentifiers::parseLine( KernelConnection *whichKernel,
+                                   istringstream &line,
                                    Trace *whichTrace,
-                                   vector<Timeline *>& windows,
-                                   vector<Histogram *>& histograms )
+                                   vector< Timeline * > &windows,
+                                   vector< Histogram * > &histograms )
 {
   string strID;
   PRV_UINT16 id;
   PRV_UINT16 numID = 0;
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
-  if ( !windows[ windows.size() - 1 ]->isDerivedWindow() )
+  if( !windows[ windows.size() - 1 ]->isDerivedWindow() )
     return true;
 
-  while ( !line.eof() )
+  while( !line.eof() )
   {
     getline( line, strID, ' ' );
     istringstream tmpStream( strID );
-    if ( !( tmpStream >> id ) )
+    if( !( tmpStream >> id ) )
       return false;
 
-    if ( windows[ id - 1 ] == nullptr )
+    if( windows[ id - 1 ] == nullptr )
       return false;
 
     windows[ windows.size() - 1 ]->setParent( numID, windows[ id - 1 ] );
@@ -2245,21 +2410,22 @@ void WindowIdentifiers::printLine( ostream& cfgFile,
 
 string WindowZoomObjects::tagCFG = OLDCFG_TAG_WNDW_ZOOM_OBJECTS;
 
-bool WindowZoomObjects::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowZoomObjects::parseLine( KernelConnection *whichKernel,
+                                   istringstream &line,
                                    Trace *whichTrace,
-                                   vector<Timeline *>& windows,
-                                   vector<Histogram *>& histograms )
+                                   vector< Timeline * > &windows,
+                                   vector< Histogram * > &histograms )
 {
   string strObject;
   TObjectOrder firstObject;
   TObjectOrder lastObject;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strObject, ' ' );
   istringstream tmpStreamFirst( strObject );
-  if ( !( tmpStreamFirst >> firstObject ) )
+  if( !( tmpStreamFirst >> firstObject ) )
     return false;
 
   if( firstObject > windows[ windows.size() - 1 ]->getWindowLevelObjects() - 1 )
@@ -2267,7 +2433,7 @@ bool WindowZoomObjects::parseLine( KernelConnection *whichKernel, istringstream&
 
   getline( line, strObject, ' ' );
   istringstream tmpStreamLast( strObject );
-  if ( !( tmpStreamLast >> lastObject ) )
+  if( !( tmpStreamLast >> lastObject ) )
     return false;
 
   if( lastObject > windows[ windows.size() - 1 ]->getWindowLevelObjects() - 1 )
@@ -2281,7 +2447,7 @@ bool WindowZoomObjects::parseLine( KernelConnection *whichKernel, istringstream&
 void WindowZoomObjects::printLine( ostream& cfgFile,
                                    const vector<Timeline *>::const_iterator it )
 {
-  pair<TObjectOrder, TObjectOrder> currentZoom = ( *it )->getZoomSecondDimension();
+  pair< TObjectOrder, TObjectOrder > currentZoom = ( *it )->getZoomSecondDimension();
   if( currentZoom.first > 0 || currentZoom.second < ( *it )->getWindowLevelObjects() - 1 )
   {
     cfgFile << OLDCFG_TAG_WNDW_ZOOM_OBJECTS << " ";
@@ -2294,24 +2460,24 @@ void WindowZoomObjects::printLine( ostream& cfgFile,
 
 string WindowScaleRelative::tagCFG = OLDCFG_TAG_WNDW_SCALE_RELATIVE;
 
-bool WindowScaleRelative::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowScaleRelative::parseLine( KernelConnection *whichKernel,
+                                     istringstream &line,
                                      Trace *whichTrace,
-                                     vector<Timeline *>& windows,
-                                     vector<Histogram *>& histograms )
+                                     vector< Timeline * > &windows,
+                                     vector< Histogram * > &histograms )
 {
   string strEndTime;
   double percEndTime;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strEndTime );
   istringstream tmpStream( strEndTime );
-  if ( !( tmpStream >> percEndTime ) )
+  if( !( tmpStream >> percEndTime ) )
     return false;
 
-  windows[ windows.size() - 1 ]->setWindowEndTime(
-    ( windows[ windows.size() - 1 ]->getTrace() )->getEndTime() * percEndTime );
+  windows[ windows.size() - 1 ]->setWindowEndTime( ( windows[ windows.size() - 1 ]->getTrace() )->getEndTime() * percEndTime );
 
   return true;
 }
@@ -2340,24 +2506,24 @@ void WindowScaleRelative::printLine( ostream& cfgFile,
 
 string WindowEndTimeRelative::tagCFG = CFG_TAG_WNDW_END_TIME_RELATIVE;
 
-bool WindowEndTimeRelative::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowEndTimeRelative::parseLine( KernelConnection *whichKernel,
+                                       istringstream &line,
                                        Trace *whichTrace,
-                                       vector<Timeline *>& windows,
-                                       vector<Histogram *>& histograms )
+                                       vector< Timeline * > &windows,
+                                       vector< Histogram * > &histograms )
 {
   string strEndTime;
   double percEndTime;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strEndTime );
   istringstream tmpStream( strEndTime );
-  if ( !( tmpStream >> percEndTime ) )
+  if( !( tmpStream >> percEndTime ) )
     return false;
 
-  windows[ windows.size() - 1 ]->setWindowEndTime(
-    ( windows[ windows.size() - 1 ]->getTrace() )->getEndTime() * percEndTime );
+  windows[ windows.size() - 1 ]->setWindowEndTime( ( windows[ windows.size() - 1 ]->getTrace() )->getEndTime() * percEndTime );
 
   return true;
 }
@@ -2383,18 +2549,14 @@ void WindowEndTimeRelative::printLine( ostream& cfgFile,
   }
 }
 
-bool genericParseObjects( istringstream& line,
-                          TObjectOrder numObjects,
-                          TObjectOrder beginObject,
-                          vector<bool>& onVector,
-                          bool numbers = false )
+bool genericParseObjects( istringstream &line, TObjectOrder numObjects, TObjectOrder beginObject, vector< bool > &onVector, bool numbers = false )
 {
   string strValue;
   bool value;
 
-  for ( TObjectOrder iObj = 0; iObj < numObjects; ++iObj )
+  for( TObjectOrder iObj = 0; iObj < numObjects; ++iObj )
   {
-    if ( iObj == numObjects - 1 )
+    if( iObj == numObjects - 1 )
     {
       getline( line, strValue, '}' );
       strValue.erase( strValue.length() - 1 );
@@ -2406,16 +2568,16 @@ bool genericParseObjects( istringstream& line,
       strValue.erase( 0, 1 );
     }
 
-    if ( numbers )
+    if( numbers )
     {
       istringstream tmpValue( strValue );
-      if ( !( tmpValue >> value ) )
+      if( !( tmpValue >> value ) )
         return false;
     }
     else
     {
       value = true;
-      if ( strValue == "None" )
+      if( strValue == "None" )
         value = false;
     }
 
@@ -2428,160 +2590,155 @@ bool genericParseObjects( istringstream& line,
 
 string WindowObject::tagCFG = OLDCFG_TAG_WNDW_OBJECT;
 
-bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line, Trace *whichTrace,
-                              vector<Timeline *>& windows,
-                              vector<Histogram *>& histograms )
+template< typename T >
+bool objectGenericParseLine( KernelConnection *whichKernel, istringstream &line, Trace *whichTrace, T *win )
 {
   string strVoid;
   string strLevel;
   TTraceLevel level;
   string strNumObjects;
   TObjectOrder numObjects;
-  vector<bool> selObjects;
+  vector< bool > selObjects;
   istringstream tmpNumObjects;
-  Timeline *win = windows[ windows.size() - 1 ];
-
-  if ( win == nullptr )
-    return false;
 
   getline( line, strLevel, ' ' );
-  level = static_cast<TTraceLevel>( stringToLevel( strLevel ) );
+  level = static_cast< TTraceLevel >( stringToLevel( strLevel ) );
 
   getline( line, strVoid, ' ' );
 
-  switch ( level )
+  switch( level )
   {
     case TTraceLevel::APPLICATION:
-      {
-        win->getSelectedRows( TTraceLevel::APPLICATION, selObjects );
-        getline( line, strNumObjects, ',' );
-        tmpNumObjects.str( strNumObjects );
-        if ( !( tmpNumObjects >> numObjects ) )
-          return false;
-        if ( numObjects > whichTrace->totalApplications() )
-          return true;
-        getline( line, strVoid, '{' );
-        if ( !genericParseObjects( line, numObjects, 0, selObjects, win->getLevel() == level ) )
-          return false;
-        win->setSelectedRows( TTraceLevel::APPLICATION, selObjects );
-      }
-      break;
+    {
+      win->getSelectedRows( TTraceLevel::APPLICATION, selObjects );
+      getline( line, strNumObjects, ',' );
+      tmpNumObjects.str( strNumObjects );
+      if( !( tmpNumObjects >> numObjects ) )
+        return false;
+      if( numObjects > whichTrace->totalApplications() )
+        return true;
+      getline( line, strVoid, '{' );
+      if( !genericParseObjects( line, numObjects, 0, selObjects, win->getLevel() == level ) )
+        return false;
+      win->setSelectedRows( TTraceLevel::APPLICATION, selObjects );
+    }
+    break;
 
     case TTraceLevel::TASK:
-      {
-        string strAppl;
-        TApplOrder appl;
-        win->getSelectedRows( TTraceLevel::TASK, selObjects );
-        getline( line, strAppl, ',' );
-        istringstream tmpAppl( strAppl );
-        if ( !( tmpAppl >> appl ) )
-          return false;
-        if ( appl >= whichTrace->totalApplications() )
-          return true;
+    {
+      string strAppl;
+      TApplOrder appl;
+      win->getSelectedRows( TTraceLevel::TASK, selObjects );
+      getline( line, strAppl, ',' );
+      istringstream tmpAppl( strAppl );
+      if( !( tmpAppl >> appl ) )
+        return false;
+      if( appl >= whichTrace->totalApplications() )
+        return true;
 
-        getline( line, strNumObjects, ',' );
-        tmpNumObjects.str( strNumObjects );
-        if ( !( tmpNumObjects >> numObjects ) )
-          return false;
-        TApplOrder tmpNumAppl;
-        TTaskOrder tmpNumTask;
-        whichTrace->getTaskLocation( whichTrace->getLastTask( appl ), tmpNumAppl, tmpNumTask );
-        if ( numObjects > tmpNumTask + 1 )
-          return true;
+      getline( line, strNumObjects, ',' );
+      tmpNumObjects.str( strNumObjects );
+      if( !( tmpNumObjects >> numObjects ) )
+        return false;
+      TApplOrder tmpNumAppl;
+      TTaskOrder tmpNumTask;
+      whichTrace->getTaskLocation( whichTrace->getLastTask( appl ), tmpNumAppl, tmpNumTask );
+      if( numObjects > tmpNumTask + 1 )
+        return true;
 
-        getline( line, strVoid, '{' );
-        TObjectOrder beginObject = win->getTrace()->getGlobalTask( appl, 0 );
-        if ( !genericParseObjects( line, numObjects, beginObject, selObjects, win->getLevel() == level ) )
-          return false;
-        win->setSelectedRows( TTraceLevel::TASK, selObjects );
-      }
-      break;
+      getline( line, strVoid, '{' );
+      TObjectOrder beginObject = win->getTrace()->getGlobalTask( appl, 0 );
+      if( !genericParseObjects( line, numObjects, beginObject, selObjects, win->getLevel() == level ) )
+        return false;
+      win->setSelectedRows( TTraceLevel::TASK, selObjects );
+    }
+    break;
 
     case TTraceLevel::THREAD:
-      {
-        string strAppl, strTask;
-        TApplOrder appl, task;
-        win->getSelectedRows( TTraceLevel::THREAD, selObjects );
-        getline( line, strAppl, ',' );
-        istringstream tmpAppl( strAppl );
-        if ( !( tmpAppl >> appl ) )
-          return false;
-        if ( appl >= whichTrace->totalApplications() )
-          return true;
+    {
+      string strAppl, strTask;
+      TApplOrder appl, task;
+      win->getSelectedRows( TTraceLevel::THREAD, selObjects );
+      getline( line, strAppl, ',' );
+      istringstream tmpAppl( strAppl );
+      if( !( tmpAppl >> appl ) )
+        return false;
+      if( appl >= whichTrace->totalApplications() )
+        return true;
 
-        getline( line, strTask, ',' );
-        istringstream tmpTask( strTask );
-        if ( !( tmpTask >> task ) )
-          return false;
-        TApplOrder tmpNumAppl;
-        TTaskOrder tmpNumTask;
-        whichTrace->getTaskLocation( whichTrace->getLastTask( appl ), tmpNumAppl, tmpNumTask );
-        if ( task > tmpNumTask )
-          return true;
+      getline( line, strTask, ',' );
+      istringstream tmpTask( strTask );
+      if( !( tmpTask >> task ) )
+        return false;
+      TApplOrder tmpNumAppl;
+      TTaskOrder tmpNumTask;
+      whichTrace->getTaskLocation( whichTrace->getLastTask( appl ), tmpNumAppl, tmpNumTask );
+      if( task > tmpNumTask )
+        return true;
 
-        getline( line, strNumObjects, ',' );
-        tmpNumObjects.str( strNumObjects );
-        if ( !( tmpNumObjects >> numObjects ) )
-          return false;
-        TThreadOrder tmpNumThread;
-        whichTrace->getThreadLocation( whichTrace->getLastThread( appl, task ), tmpNumAppl, tmpNumTask, tmpNumThread );
-        if ( numObjects > tmpNumThread + 1 )
-          return true;
+      getline( line, strNumObjects, ',' );
+      tmpNumObjects.str( strNumObjects );
+      if( !( tmpNumObjects >> numObjects ) )
+        return false;
+      TThreadOrder tmpNumThread;
+      whichTrace->getThreadLocation( whichTrace->getLastThread( appl, task ), tmpNumAppl, tmpNumTask, tmpNumThread );
+      if( numObjects > tmpNumThread + 1 )
+        return true;
 
-        getline( line, strVoid, '{' );
-        TObjectOrder beginObject = win->getTrace()->getGlobalThread( appl, task, 0 );
-        if ( !genericParseObjects( line, numObjects, beginObject, selObjects, win->getLevel() == level ) )
-          return false;
-        win->setSelectedRows( TTraceLevel::THREAD, selObjects );
-      }
-      break;
+      getline( line, strVoid, '{' );
+      TObjectOrder beginObject = win->getTrace()->getGlobalThread( appl, task, 0 );
+      if( !genericParseObjects( line, numObjects, beginObject, selObjects, win->getLevel() == level ) )
+        return false;
+      win->setSelectedRows( TTraceLevel::THREAD, selObjects );
+    }
+    break;
 
     case TTraceLevel::NODE:
-      {
-        win->getSelectedRows( TTraceLevel::NODE, selObjects );
-        getline( line, strNumObjects, ',' );
-        tmpNumObjects.str( strNumObjects );
-        if ( !( tmpNumObjects >> numObjects ) )
-          return false;
-        if ( numObjects > whichTrace->totalNodes() )
-          return true;
+    {
+      win->getSelectedRows( TTraceLevel::NODE, selObjects );
+      getline( line, strNumObjects, ',' );
+      tmpNumObjects.str( strNumObjects );
+      if( !( tmpNumObjects >> numObjects ) )
+        return false;
+      if( numObjects > whichTrace->totalNodes() )
+        return true;
 
-        getline( line, strVoid, '{' );
-        if ( !genericParseObjects( line, numObjects, 0, selObjects, win->getLevel() == level ) )
-          return false;
-        win->setSelectedRows( TTraceLevel::NODE, selObjects );
-      }
-      break;
+      getline( line, strVoid, '{' );
+      if( !genericParseObjects( line, numObjects, 0, selObjects, win->getLevel() == level ) )
+        return false;
+      win->setSelectedRows( TTraceLevel::NODE, selObjects );
+    }
+    break;
 
     case TTraceLevel::CPU:
-      {
-        string strNode;
-        TApplOrder node;
-        win->getSelectedRows( TTraceLevel::CPU, selObjects );
-        getline( line, strNode, ',' );
-        istringstream tmpNode( strNode );
-        if ( !( tmpNode >> node ) )
-          return false;
-        if ( node >= whichTrace->totalNodes() )
-          return true;
+    {
+      string strNode;
+      TApplOrder node;
+      win->getSelectedRows( TTraceLevel::CPU, selObjects );
+      getline( line, strNode, ',' );
+      istringstream tmpNode( strNode );
+      if( !( tmpNode >> node ) )
+        return false;
+      if( node >= whichTrace->totalNodes() )
+        return true;
 
-        getline( line, strNumObjects, ',' );
-        tmpNumObjects.str( strNumObjects );
-        if ( !( tmpNumObjects >> numObjects ) )
-          return false;
-        TApplOrder tmpNumNode;
-        TTaskOrder tmpNumCPU;
-        whichTrace->getCPULocation( whichTrace->getLastCPU( node ), tmpNumNode, tmpNumCPU );
-        if ( numObjects > tmpNumCPU + 1 )
-          return true;
+      getline( line, strNumObjects, ',' );
+      tmpNumObjects.str( strNumObjects );
+      if( !( tmpNumObjects >> numObjects ) )
+        return false;
+      TApplOrder tmpNumNode;
+      TTaskOrder tmpNumCPU;
+      whichTrace->getCPULocation( whichTrace->getLastCPU( node ), tmpNumNode, tmpNumCPU );
+      if( numObjects > tmpNumCPU + 1 )
+        return true;
 
-        getline( line, strVoid, '{' );
-        TObjectOrder beginObject = win->getTrace()->getGlobalCPU( node, 1 );
-        if ( !genericParseObjects( line, numObjects, beginObject, selObjects, win->getLevel() == level ) )
-          return false;
-        win->setSelectedRows( TTraceLevel::CPU, selObjects );
-      }
-      break;
+      getline( line, strVoid, '{' );
+      TObjectOrder beginObject = win->getTrace()->getGlobalCPU( node, 1 );
+      if( !genericParseObjects( line, numObjects, beginObject, selObjects, win->getLevel() == level ) )
+        return false;
+      win->setSelectedRows( TTraceLevel::CPU, selObjects );
+    }
+    break;
 
     default:
       break;
@@ -2590,170 +2747,183 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
   return true;
 }
 
-void genericWriteObjects( ostream& cfgFile, vector<bool>& selected, bool numbers )
+bool WindowObject::parseLine( KernelConnection *whichKernel,
+                              istringstream &line,
+                              Trace *whichTrace,
+                              vector< Timeline * > &windows,
+                              vector< Histogram * > &histograms )
 {
-  for ( vector<bool>::iterator it = selected.begin(); it != selected.end(); ++it )
+  Timeline *win = windows[ windows.size() - 1 ];
+
+  if( win == nullptr )
+    return false;
+
+  return objectGenericParseLine( whichKernel, line, whichTrace, win );
+}
+
+void genericWriteObjects( ostream &cfgFile, vector< bool > &selected, bool numbers )
+{
+  for( vector< bool >::iterator it = selected.begin(); it != selected.end(); ++it )
   {
-    if ( *it )
+    if( *it )
     {
-      if ( numbers )
+      if( numbers )
         cfgFile << "1";
       else
         cfgFile << "All";
     }
     else
     {
-      if ( numbers )
+      if( numbers )
         cfgFile << "0";
       else
         cfgFile << "None";
     }
-    if ( it != --selected.end() )
+    if( it != --selected.end() )
       cfgFile << ", ";
   }
 }
 
-void writeAppl( ostream& cfgFile,
-                const vector<Timeline *>::const_iterator it )
+template< typename T >
+void writeAppl( const std::string& whichTag,
+                ostream& cfgFile,
+                const T it )
 {
-  vector<bool> selectedSet;
+  vector< bool > selectedSet;
 
   ( *it )->getSelectedRows( TTraceLevel::APPLICATION, selectedSet );
-  cfgFile << OLDCFG_TAG_WNDW_OBJECT << " appl { " << selectedSet.size() << ", { ";
+  cfgFile << whichTag << " appl { " << selectedSet.size() << ", { ";
   genericWriteObjects( cfgFile, selectedSet, ( *it )->getLevel() == TTraceLevel::APPLICATION );
   cfgFile << " } }" << endl;
 }
 
-void writeTask( ostream& cfgFile,
-                const vector<Timeline *>::const_iterator it,
-                TApplOrder whichAppl )
+template< typename T >
+void writeTask( const std::string &whichTag, ostream &cfgFile, const T it, TApplOrder whichAppl )
 {
-  vector<bool> selectedSet;
+  vector< bool > selectedSet;
 
-  ( *it )->getSelectedRows( TTraceLevel::TASK, selectedSet,
+  ( *it )->getSelectedRows( TTraceLevel::TASK,
+                            selectedSet,
                             ( *it )->getTrace()->getFirstTask( whichAppl ),
                             ( *it )->getTrace()->getLastTask( whichAppl ) );
-  cfgFile << OLDCFG_TAG_WNDW_OBJECT << " task { " << whichAppl << ", " << selectedSet.size() << ", { ";
+  cfgFile << whichTag << " task { " << whichAppl << ", " << selectedSet.size() << ", { ";
   genericWriteObjects( cfgFile, selectedSet, ( *it )->getLevel() == TTraceLevel::TASK );
   cfgFile << " } }" << endl;
 }
 
-void writeTasks( ostream& cfgFile,
-                 const vector<Timeline *>::const_iterator it )
+template< typename T >
+void writeTasks( const std::string &whichTag, ostream &cfgFile, const T it )
 {
-  vector<TTaskOrder> tmpSel;
+  vector< TTaskOrder > tmpSel;
 
-  for ( TApplOrder iAppl = 0; iAppl < ( *it )->getTrace()->totalApplications(); ++iAppl )
+  for( TApplOrder iAppl = 0; iAppl < ( *it )->getTrace()->totalApplications(); ++iAppl )
   {
     TTaskOrder begin = ( *it )->getTrace()->getFirstTask( iAppl );
-    TTaskOrder last = ( *it )->getTrace()->getLastTask( iAppl );
+    TTaskOrder last  = ( *it )->getTrace()->getLastTask( iAppl );
     ( *it )->getSelectedRows( TTraceLevel::TASK, tmpSel, begin, last );
-    if ( tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
-      writeTask( cfgFile, it, iAppl );
+    if( tmpSel.size() != (TObjectOrder)( last - begin + 1 ) )
+      writeTask( whichTag, cfgFile, it, iAppl );
   }
 }
 
-void writeThread( ostream& cfgFile,
-                  const vector<Timeline *>::const_iterator it,
-                  TApplOrder whichAppl,
-                  TTaskOrder whichTask )
+template< typename T >
+void writeThread( const std::string &whichTag, ostream &cfgFile, const T it, TApplOrder whichAppl, TTaskOrder whichTask )
 {
-  vector<bool> selectedSet;
+  vector< bool > selectedSet;
 
-  ( *it )->getSelectedRows( TTraceLevel::THREAD, selectedSet,
+  ( *it )->getSelectedRows( TTraceLevel::THREAD,
+                            selectedSet,
                             ( *it )->getTrace()->getFirstThread( whichAppl, whichTask ),
                             ( *it )->getTrace()->getLastThread( whichAppl, whichTask ) );
-  cfgFile << OLDCFG_TAG_WNDW_OBJECT << " thread { " << whichAppl << ", ";
+  cfgFile << whichTag << " thread { " << whichAppl << ", ";
   cfgFile << whichTask << ", " << selectedSet.size() << ", { ";
   genericWriteObjects( cfgFile, selectedSet, ( *it )->getLevel() == TTraceLevel::THREAD );
   cfgFile << " } }" << endl;
 }
 
-void writeThreads( ostream& cfgFile,
-                   const vector<Timeline *>::const_iterator it )
+template< typename T >
+void writeThreads( const std::string &whichTag, ostream &cfgFile, const T it )
 {
-  vector<TObjectOrder> tmpSel;
+  vector< TObjectOrder > tmpSel;
 
-  for ( TApplOrder iAppl = 0; iAppl < ( *it )->getTrace()->totalApplications(); ++iAppl )
+  for( TApplOrder iAppl = 0; iAppl < ( *it )->getTrace()->totalApplications(); ++iAppl )
   {
     TTaskOrder beginTask = ( *it )->getTrace()->getFirstTask( iAppl );
-    TTaskOrder lastTask = ( *it )->getTrace()->getLastTask( iAppl );
-    for ( TTaskOrder iTask = beginTask; iTask <= lastTask; ++iTask )
+    TTaskOrder lastTask  = ( *it )->getTrace()->getLastTask( iAppl );
+    for( TTaskOrder iTask = beginTask; iTask <= lastTask; ++iTask )
     {
       TTaskOrder begin = ( *it )->getTrace()->getFirstThread( iAppl, iTask - beginTask );
-      TTaskOrder last = ( *it )->getTrace()->getLastThread( iAppl, iTask - beginTask );
+      TTaskOrder last  = ( *it )->getTrace()->getLastThread( iAppl, iTask - beginTask );
 
       if( !( *it )->areAllSelectedRows( TTraceLevel::THREAD ) )
       {
         ( *it )->getSelectedRows( TTraceLevel::THREAD, tmpSel, begin, last );
-        if ( tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
-          writeThread( cfgFile, it, iAppl, iTask - beginTask );
+        if( tmpSel.size() != (TObjectOrder)( last - begin + 1 ) )
+          writeThread( whichTag, cfgFile, it, iAppl, iTask - beginTask );
       }
     }
   }
 }
 
-void writeNode( ostream& cfgFile,
-                const vector<Timeline *>::const_iterator it )
+template< typename T >
+void writeNode( const std::string &whichTag, ostream &cfgFile, const T it )
 {
-  vector<bool> selectedSet;
+  vector< bool > selectedSet;
 
   ( *it )->getSelectedRows( TTraceLevel::NODE, selectedSet );
-  cfgFile << OLDCFG_TAG_WNDW_OBJECT << " node { " << selectedSet.size() << ", { ";
+  cfgFile << whichTag << " node { " << selectedSet.size() << ", { ";
   genericWriteObjects( cfgFile, selectedSet, ( *it )->getLevel() == TTraceLevel::NODE );
   cfgFile << " } }" << endl;
 }
 
-void writeCPU( ostream& cfgFile,
-               const vector<Timeline *>::const_iterator it,
-               TNodeOrder whichNode )
+template< typename T >
+void writeCPU( const std::string &whichTag, ostream &cfgFile, const T it, TNodeOrder whichNode )
 {
-  vector<bool> selectedSet;
+  vector< bool > selectedSet;
 
-  ( *it )->getSelectedRows( TTraceLevel::CPU, selectedSet,
+  ( *it )->getSelectedRows( TTraceLevel::CPU,
+                            selectedSet,
                             ( *it )->getTrace()->getFirstCPU( whichNode ) - 1,
                             ( *it )->getTrace()->getLastCPU( whichNode ) - 1 );
-  cfgFile << OLDCFG_TAG_WNDW_OBJECT << " cpu { " << whichNode << ", " << selectedSet.size() << ", { ";
+  cfgFile << whichTag << " cpu { " << whichNode << ", " << selectedSet.size() << ", { ";
   genericWriteObjects( cfgFile, selectedSet, ( *it )->getLevel() == TTraceLevel::CPU );
   cfgFile << " } }" << endl;
 }
 
-void writeCPUs( ostream& cfgFile,
-                const vector<Timeline *>::const_iterator it )
+template< typename T >
+void writeCPUs( const std::string &whichTag, ostream &cfgFile, T it )
 {
-  vector<TObjectOrder> tmpSel;
+  vector< TObjectOrder > tmpSel;
 
-  for ( TNodeOrder iNode = 0; iNode < ( *it )->getTrace()->totalNodes(); ++iNode )
+  for( TNodeOrder iNode = 0; iNode < ( *it )->getTrace()->totalNodes(); ++iNode )
   {
     TCPUOrder begin = ( *it )->getTrace()->getFirstCPU( iNode );
-    TCPUOrder last = ( *it )->getTrace()->getLastCPU( iNode );
+    TCPUOrder last  = ( *it )->getTrace()->getLastCPU( iNode );
     ( *it )->getSelectedRows( TTraceLevel::CPU, tmpSel, begin, last );
-    if ( tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
-      writeCPU( cfgFile, it, iNode );
+    if( tmpSel.size() != (TObjectOrder)( last - begin + 1 ) )
+      writeCPU( whichTag, cfgFile, it, iNode );
   }
 }
 
-void WindowObject::printLine( ostream& cfgFile,
-                              const vector<Timeline *>::const_iterator it )
+template< typename T >
+void objectGenericPrintLine( const std::string &whichTag, ostream &cfgFile, const T it )
 {
-  vector<TObjectOrder> selected;
-
-  switch ( ( *it )->getLevel() )
+  switch( ( *it )->getLevel() )
   {
     case TTraceLevel::WORKLOAD:
     case TTraceLevel::APPLICATION:
     case TTraceLevel::TASK:
     case TTraceLevel::THREAD:
-      writeAppl( cfgFile, it );
-      writeTasks( cfgFile, it );
-      writeThreads( cfgFile, it );
+      writeAppl( whichTag, cfgFile, it );
+      writeTasks( whichTag, cfgFile, it );
+      writeThreads( whichTag, cfgFile, it );
       break;
 
     case TTraceLevel::SYSTEM:
     case TTraceLevel::NODE:
     case TTraceLevel::CPU:
-      writeNode( cfgFile, it );
-      writeCPUs( cfgFile, it );
+      writeNode( whichTag, cfgFile, it );
+      writeCPUs( whichTag, cfgFile, it );
       break;
 
     default:
@@ -2761,27 +2931,32 @@ void WindowObject::printLine( ostream& cfgFile,
   }
 }
 
+void WindowObject::printLine( ostream &cfgFile, const vector< Timeline * >::const_iterator it )
+{
+  objectGenericPrintLine( WindowObject::tagCFG, cfgFile, it );
+}
 
 string WindowBeginTime::tagCFG = OLDCFG_TAG_WNDW_BEGIN_TIME;
 
-bool WindowBeginTime::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowBeginTime::parseLine( KernelConnection *whichKernel,
+                                 istringstream &line,
                                  Trace *whichTrace,
-                                 vector<Timeline *>& windows,
-                                 vector<Histogram *>& histograms )
+                                 vector< Timeline * > &windows,
+                                 vector< Histogram * > &histograms )
 {
   string strTime;
   TRecordTime auxTime;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strTime, ' ' );
   istringstream tmpTime( strTime );
 
-  if ( !( tmpTime >> auxTime ) )
+  if( !( tmpTime >> auxTime ) )
     return false;
 
-  if ( auxTime < whichTrace->getEndTime() )
+  if( auxTime < whichTrace->getEndTime() )
     windows[ windows.size() - 1 ]->setWindowBeginTime( auxTime );
   else
     windows[ windows.size() - 1 ]->setWindowBeginTime( 0.0 );
@@ -2802,21 +2977,22 @@ void WindowBeginTime::printLine( ostream& cfgFile,
 
 string WindowEndTime::tagCFG = "";
 
-bool WindowEndTime::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowEndTime::parseLine( KernelConnection *whichKernel,
+                               istringstream &line,
                                Trace *whichTrace,
-                               vector<Timeline *>& windows,
-                               vector<Histogram *>& histograms )
+                               vector< Timeline * > &windows,
+                               vector< Histogram * > &histograms )
 {
   string strTime;
   TRecordTime auxTime;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strTime, ' ' );
   istringstream tmpTime( strTime );
 
-  if ( !( tmpTime >> auxTime ) )
+  if( !( tmpTime >> auxTime ) )
     return false;
 
   // endTime = auxTime;
@@ -2833,24 +3009,25 @@ void WindowEndTime::printLine( ostream& cfgFile,
 
 string WindowStopTime::tagCFG = OLDCFG_TAG_WNDW_STOP_TIME;
 
-bool WindowStopTime::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowStopTime::parseLine( KernelConnection *whichKernel,
+                                istringstream &line,
                                 Trace *whichTrace,
-                                vector<Timeline *>& windows,
-                                vector<Histogram *>& histograms )
+                                vector< Timeline * > &windows,
+                                vector< Histogram * > &histograms )
 {
   string strTime;
   TRecordTime auxTime;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strTime, ' ' );
   istringstream tmpTime( strTime );
 
-  if ( !( tmpTime >> auxTime ) )
+  if( !( tmpTime >> auxTime ) )
     return false;
 
-  if ( auxTime <= whichTrace->getEndTime() )
+  if( auxTime <= whichTrace->getEndTime() )
     windows[ windows.size() - 1 ]->setWindowEndTime( auxTime );
   else
     windows[ windows.size() - 1 ]->setWindowEndTime( whichTrace->getEndTime() );
@@ -2864,32 +3041,31 @@ void WindowStopTime::printLine( ostream& cfgFile,
   if ( !options.timelineScaleRelative )
   {
     cfgFile << OLDCFG_TAG_WNDW_STOP_TIME << " " << ( *it )->getWindowEndTime() << endl;
- }
+  }
 }
 
 
 string WindowBeginTimeRelative::tagCFG = OLDCFG_TAG_WNDW_BEGIN_TIME_RELATIVE;
 
 bool WindowBeginTimeRelative::parseLine( KernelConnection *whichKernel,
-                                         istringstream& line,
+                                         istringstream &line,
                                          Trace *whichTrace,
-                                         vector<Timeline *>& windows,
-                                         vector<Histogram *>& histograms )
+                                         vector< Timeline * > &windows,
+                                         vector< Histogram * > &histograms )
 {
   string strPercentage;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strPercentage, ' ' );
   istringstream tmpStream( strPercentage );
   TSemanticValue percentage;
 
-  if ( !( tmpStream >> percentage ) )
+  if( !( tmpStream >> percentage ) )
     return false;
 
-  windows[ windows.size() - 1 ]->setWindowBeginTime(
-    ( windows[ windows.size() - 1 ]->getTrace() )->getEndTime() * percentage );
+  windows[ windows.size() - 1 ]->setWindowBeginTime( ( windows[ windows.size() - 1 ]->getTrace() )->getEndTime() * percentage );
 
   return true;
 }
@@ -2913,10 +3089,11 @@ void WindowBeginTimeRelative::printLine( ostream& cfgFile,
 
 string WindowNumberOfRow::tagCFG = "";
 
-bool WindowNumberOfRow::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowNumberOfRow::parseLine( KernelConnection *whichKernel,
+                                   istringstream &line,
                                    Trace *whichTrace,
-                                   vector<Timeline *>& windows,
-                                   vector<Histogram *>& histograms )
+                                   vector< Timeline * > &windows,
+                                   vector< Histogram * > &histograms )
 {
   // DEPRECATED
   return true;
@@ -2931,31 +3108,32 @@ void WindowNumberOfRow::printLine( ostream& cfgFile,
 
 string WindowSelectedFunctions::tagCFG = OLDCFG_TAG_WNDW_SELECTED_FUNCTIONS;
 
-bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istringstream& line,
-    Trace *whichTrace,
-    vector<Timeline *>& windows,
-    vector<Histogram *>& histograms )
+bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel,
+                                         istringstream &line,
+                                         Trace *whichTrace,
+                                         vector< Timeline * > &windows,
+                                         vector< Histogram * > &histograms )
 {
   PRV_UINT16 numFunctions;
   string strLevel;
   TWindowLevel level;
   string strFunction;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
-  if ( !parseSelectedFunctionsNumFunctions( line, numFunctions ) )
+  if( !parseSelectedFunctionsNumFunctions( line, numFunctions ) )
     return false;
 
-  for ( PRV_UINT16 i = 0; i < numFunctions; i++ )
+  for( PRV_UINT16 i = 0; i < numFunctions; i++ )
   {
     parseSelectedFunctionsLevelAndFunction( line, strLevel, level, strFunction );
 
     // It's a semantic function
-    if ( level != NONE )
+    if( level != NONE )
     {
       bool result = windows[ windows.size() - 1 ]->setLevelFunction( level, strFunction );
-      if ( !result )
+      if( !result )
         return false;
     }
     // It's a filter function
@@ -2966,23 +3144,23 @@ bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istrings
 
       Filter *filter = windows[ windows.size() - 1 ]->getFilter();
 
-      if ( strLevel.compare( OLDCFG_VAL_FILTER_OBJ_FROM ) == 0 )
+      if( strLevel.compare( OLDCFG_VAL_FILTER_OBJ_FROM ) == 0 )
         filter->setCommFromFunction( strFunction );
-      else if ( strLevel.compare( OLDCFG_VAL_FILTER_OBJ_TO ) == 0 )
+      else if( strLevel.compare( OLDCFG_VAL_FILTER_OBJ_TO ) == 0 )
         filter->setCommToFunction( strFunction );
-      else if ( strLevel.compare( OLDCFG_VAL_FILTER_COM_TAG ) == 0 )
+      else if( strLevel.compare( OLDCFG_VAL_FILTER_COM_TAG ) == 0 )
         filter->setCommTagFunction( strFunction );
-      else if ( strLevel.compare( OLDCFG_VAL_FILTER_COM_SIZE ) == 0 )
+      else if( strLevel.compare( OLDCFG_VAL_FILTER_COM_SIZE ) == 0 )
         filter->setCommSizeFunction( strFunction );
-      else if ( strLevel.compare( OLDCFG_VAL_FILTER_COM_BW ) == 0 )
+      else if( strLevel.compare( OLDCFG_VAL_FILTER_COM_BW ) == 0 )
         filter->setBandWidthFunction( strFunction );
-      else if ( strLevel.compare( OLDCFG_VAL_FILTER_EVT_TYPE ) == 0 )
+      else if( strLevel.compare( OLDCFG_VAL_FILTER_EVT_TYPE ) == 0 )
       {
         filter->setEventTypeFunction( strFunction );
-        if ( strFunction == "All" || strFunction == "None" )
+        if( strFunction == "All" || strFunction == "None" )
           someEventsExist = true;
       }
-      else if ( strLevel.compare( OLDCFG_VAL_FILTER_EVT_VALUE ) == 0 )
+      else if( strLevel.compare( OLDCFG_VAL_FILTER_EVT_VALUE ) == 0 )
         filter->setEventValueFunction( strFunction );
     }
   }
@@ -3028,10 +3206,10 @@ void WindowSelectedFunctions::printLine( ostream& cfgFile,
 string WindowComposeFunctions::tagCFG = OLDCFG_TAG_WNDW_COMPOSE_FUNCTIONS;
 
 bool WindowComposeFunctions::parseLine( KernelConnection *whichKernel,
-                                        istringstream& line,
+                                        istringstream &line,
                                         Trace *whichTrace,
-                                        vector<Timeline *>& windows,
-                                        vector<Histogram *>& histograms )
+                                        vector< Timeline * > &windows,
+                                        vector< Histogram * > &histograms )
 {
   string tmpString;
   string strNumFunctions;
@@ -3040,18 +3218,18 @@ bool WindowComposeFunctions::parseLine( KernelConnection *whichKernel,
   TWindowLevel level;
   string strFunction;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, tmpString, ' ' );
   getline( line, strNumFunctions, ',' );
   istringstream tmpNumFunctions( strNumFunctions );
 
-  if ( !( tmpNumFunctions >> numFunctions ) )
+  if( !( tmpNumFunctions >> numFunctions ) )
     return false;
 
   getline( line, tmpString, '{' );
-  for ( PRV_UINT16 i = 0; i < numFunctions; i++ )
+  for( PRV_UINT16 i = 0; i < numFunctions; i++ )
   {
     getline( line, tmpString, '{' );
     getline( line, strLevel, ',' );
@@ -3059,20 +3237,20 @@ bool WindowComposeFunctions::parseLine( KernelConnection *whichKernel,
     getline( line, strFunction, '}' );
     level = stringToLevel( strLevel );
 
-    if ( level == EXTRATOPCOMPOSE1 )
+    if( level == EXTRATOPCOMPOSE1 )
     {
       windows[ windows.size() - 1 ]->addExtraCompose( TOPCOMPOSE1 );
       bool result = windows[ windows.size() - 1 ]->setExtraLevelFunction( TOPCOMPOSE1, numComposesExtraComposesInWindow, strFunction );
       numComposesExtraComposesInWindow++; // after return?
-      if ( !result )
+      if( !result )
       {
         return false;
       }
     }
-    else if ( level != NONE ) // It's a semantic function
+    else if( level != NONE ) // It's a semantic function
     {
       // Compatibility code with old CFG versions
-      switch ( level )
+      switch( level )
       {
         case WORKLOAD:
           level = COMPOSEWORKLOAD;
@@ -3100,7 +3278,7 @@ bool WindowComposeFunctions::parseLine( KernelConnection *whichKernel,
       }
 
       bool result = windows[ windows.size() - 1 ]->setLevelFunction( level, strFunction );
-      if ( !result )
+      if( !result )
       {
         return false;
       }
@@ -3145,7 +3323,7 @@ void WindowComposeFunctions::printLine( ostream& cfgFile,
   cfgFile << "{" << OLDCFG_LVL_TOPCOMPOSE1 << ", " << ( *it )->getLevelFunction( TOPCOMPOSE1 ) << "}, ";
   cfgFile << "{" << OLDCFG_LVL_TOPCOMPOSE2 << ", " << ( *it )->getLevelFunction( TOPCOMPOSE2 ) << "}";
 
-  if ( ( *it )->getExtraNumPositions( TOPCOMPOSE1 ) == 0 )
+  if( ( *it )->getExtraNumPositions( TOPCOMPOSE1 ) == 0 )
   {
     cfgFile << " ";
   }
@@ -3155,7 +3333,7 @@ void WindowComposeFunctions::printLine( ostream& cfgFile,
     for( size_t pos = 0; pos < ( *it )->getExtraNumPositions( TOPCOMPOSE1 ); ++pos )
     {
       cfgFile << "{" << CFG_LVL_EXTRATOPCOMPOSE1 << ", " << ( *it )->getExtraLevelFunction( TOPCOMPOSE1, pos ) << "}";
-      if ( pos == ( *it )->getExtraNumPositions( TOPCOMPOSE1 ) - 1 )
+      if( pos == ( *it )->getExtraNumPositions( TOPCOMPOSE1 ) - 1 )
         cfgFile << " ";
       else
         cfgFile << ", ";
@@ -3167,30 +3345,30 @@ void WindowComposeFunctions::printLine( ostream& cfgFile,
 
 string WindowSemanticModule::tagCFG = OLDCFG_TAG_WNDW_SEMANTIC_MODULE;
 
-bool WindowSemanticModule::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowSemanticModule::parseLine( KernelConnection *whichKernel,
+                                      istringstream &line,
                                       Trace *whichTrace,
-                                      vector<Timeline *>& windows,
-                                      vector<Histogram *>& histograms )
+                                      vector< Timeline * > &windows,
+                                      vector< Histogram * > &histograms )
 {
   string strLevel;
   TWindowLevel level;
   string strFunction;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strLevel, ' ' );
   level = stringToLevel( strLevel );
-  if ( level == NONE )
+  if( level == NONE )
     return false;
 
   getline( line, strFunction, '{' );
   strFunction.erase( strFunction.length() - 1 ); // Final space.
 
-  if ( ( level != EXTRATOPCOMPOSE1 && windows[ windows.size() - 1 ]->getLevelFunction( level ) == strFunction )
-      ||
-       ( level == EXTRATOPCOMPOSE1 &&
-         windows[ windows.size() - 1 ]->getExtraLevelFunction( TOPCOMPOSE1, numSemanticParamExtraComposesInWindow ) == strFunction ) )
+  if( ( level != EXTRATOPCOMPOSE1 && windows[ windows.size() - 1 ]->getLevelFunction( level ) == strFunction ) ||
+      ( level == EXTRATOPCOMPOSE1 &&
+        windows[ windows.size() - 1 ]->getExtraLevelFunction( TOPCOMPOSE1, numSemanticParamExtraComposesInWindow ) == strFunction ) )
   {
     string tmpString;
     string strNumParam;
@@ -3199,12 +3377,12 @@ bool WindowSemanticModule::parseLine( KernelConnection *whichKernel, istringstre
     getline( line, tmpString, ' ' );
     getline( line, strNumParam, ',' );
     istringstream tmpNumParam( strNumParam );
-    if ( !( tmpNumParam >> numParam ) )
+    if( !( tmpNumParam >> numParam ) )
       return false;
 
     getline( line, tmpString, '{' );
 
-    for ( TParamIndex i = 0; i < numParam; i++ )
+    for( TParamIndex i = 0; i < numParam; i++ )
     {
       string strNumValues;
       PRV_UINT32 numValues;
@@ -3214,30 +3392,30 @@ bool WindowSemanticModule::parseLine( KernelConnection *whichKernel, istringstre
 
       getline( line, strNumValues, ' ' );
       istringstream tmpNumValues( strNumValues );
-      if ( !( tmpNumValues >> numValues ) )
+      if( !( tmpNumValues >> numValues ) )
         return false;
 
-      for ( PRV_UINT32 j = 0; j < numValues; j++ )
+      for( PRV_UINT32 j = 0; j < numValues; j++ )
       {
         string strParamValue;
         double paramValue;
 
-        if ( j < numValues - 1 )
+        if( j < numValues - 1 )
           getline( line, strParamValue, ' ' );
-        else if ( j == numValues - 1 )
+        else if( j == numValues - 1 )
         {
-          if ( i < numParam - 1 )
+          if( i < numParam - 1 )
             getline( line, strParamValue, ',' );
-          else if ( i == numParam - 1 )
+          else if( i == numParam - 1 )
             getline( line, strParamValue, ' ' );
         }
         istringstream tmpParamValue( strParamValue );
-        if ( !( tmpParamValue >> paramValue ) )
+        if( !( tmpParamValue >> paramValue ) )
           return false;
         values.push_back( paramValue );
       }
 
-      if ( level == EXTRATOPCOMPOSE1 )
+      if( level == EXTRATOPCOMPOSE1 )
       {
         windows[ windows.size() - 1 ]->setExtraFunctionParam( TOPCOMPOSE1, numSemanticParamExtraComposesInWindow, i, values );
         numSemanticParamExtraComposesInWindow++;
@@ -3245,7 +3423,6 @@ bool WindowSemanticModule::parseLine( KernelConnection *whichKernel, istringstre
       else
         windows[ windows.size() - 1 ]->setFunctionParam( level, i, values );
     }
-
   }
 
   return true;
@@ -3254,116 +3431,116 @@ bool WindowSemanticModule::parseLine( KernelConnection *whichKernel, istringstre
 void WindowSemanticModule::printLine( ostream& cfgFile,
                                       const vector<Timeline *>::const_iterator it )
 {
-  for ( size_t position = 0; position < ( *it )->getExtraNumPositions( TOPCOMPOSE1 ); ++position )
+  for( size_t position = 0; position < ( *it )->getExtraNumPositions( TOPCOMPOSE1 ); ++position )
   {
     TWindowLevel topLevel = TOPCOMPOSE1;
-    for ( TParamIndex parIdx = 0; parIdx < ( *it )->getExtraFunctionNumParam( topLevel, position ); ++parIdx )
+    for( TParamIndex parIdx = 0; parIdx < ( *it )->getExtraFunctionNumParam( topLevel, position ); ++parIdx )
     {
-      if ( parIdx == 0 )
+      if( parIdx == 0 )
       {
         cfgFile << OLDCFG_TAG_WNDW_SEMANTIC_MODULE << " " << CFG_LVL_EXTRATOPCOMPOSE1;
         cfgFile << " " << ( *it )->getExtraLevelFunction( topLevel, position ) << " { ";
         cfgFile << ( *it )->getExtraFunctionNumParam( topLevel, position ) << ", ";
         cfgFile << "{ ";
       }
-      vector<double> v = ( *it )->getExtraFunctionParam( topLevel, position, parIdx );
+      vector< double > v = ( *it )->getExtraFunctionParam( topLevel, position, parIdx );
       cfgFile << v.size();
-      for ( vector<double>::iterator itVec = v.begin(); itVec != v.end(); ++itVec )
+      for( vector< double >::iterator itVec = v.begin(); itVec != v.end(); ++itVec )
         cfgFile << " " << ( *itVec );
-      if ( parIdx < ( *it )->getExtraFunctionNumParam( topLevel, position ) - 1 )
+      if( parIdx < ( *it )->getExtraFunctionNumParam( topLevel, position ) - 1 )
         cfgFile << ", ";
       else
         cfgFile << " } }" << endl;
     }
   }
 
-  for ( int levelIdx = TOPCOMPOSE1; levelIdx <= TOPCOMPOSE2; ++levelIdx )
+  for( int levelIdx = TOPCOMPOSE1; levelIdx <= TOPCOMPOSE2; ++levelIdx )
   {
-    TWindowLevel topLevel = ( TWindowLevel ) levelIdx;
-    for ( TParamIndex parIdx = 0; parIdx < ( *it )->getFunctionNumParam( topLevel ); ++parIdx )
+    TWindowLevel topLevel = (TWindowLevel)levelIdx;
+    for( TParamIndex parIdx = 0; parIdx < ( *it )->getFunctionNumParam( topLevel ); ++parIdx )
     {
-      if ( parIdx == 0 )
+      if( parIdx == 0 )
       {
         cfgFile << OLDCFG_TAG_WNDW_SEMANTIC_MODULE << " " << levelToString( topLevel );
         cfgFile << " " << ( *it )->getLevelFunction( topLevel ) << " { ";
         cfgFile << ( *it )->getFunctionNumParam( topLevel ) << ", ";
         cfgFile << "{ ";
       }
-      vector<double> v = ( *it )->getFunctionParam( topLevel, parIdx );
+      vector< double > v = ( *it )->getFunctionParam( topLevel, parIdx );
       cfgFile << v.size();
-      for ( vector<double>::iterator itVec = v.begin(); itVec != v.end(); ++itVec )
+      for( vector< double >::iterator itVec = v.begin(); itVec != v.end(); ++itVec )
         cfgFile << " " << ( *itVec );
-      if ( parIdx < ( *it )->getFunctionNumParam( topLevel ) - 1 )
+      if( parIdx < ( *it )->getFunctionNumParam( topLevel ) - 1 )
         cfgFile << ", ";
       else
         cfgFile << " } }" << endl;
     }
   }
 
-  if ( ( *it )->isDerivedWindow() )
+  if( ( *it )->isDerivedWindow() )
   {
-    for ( TParamIndex parIdx = 0; parIdx < ( *it )->getFunctionNumParam( DERIVED ); ++parIdx )
+    for( TParamIndex parIdx = 0; parIdx < ( *it )->getFunctionNumParam( DERIVED ); ++parIdx )
     {
-      if ( parIdx == 0 )
+      if( parIdx == 0 )
       {
         cfgFile << OLDCFG_TAG_WNDW_SEMANTIC_MODULE << " " << levelToString( DERIVED );
         cfgFile << " " << ( *it )->getLevelFunction( DERIVED ) << " { ";
         cfgFile << ( *it )->getFunctionNumParam( DERIVED ) << ", ";
         cfgFile << "{ ";
       }
-      vector<double> v = ( *it )->getFunctionParam( DERIVED, parIdx );
+      vector< double > v = ( *it )->getFunctionParam( DERIVED, parIdx );
       cfgFile << v.size();
-      for ( vector<double>::iterator itVec = v.begin(); itVec != v.end(); ++itVec )
+      for( vector< double >::iterator itVec = v.begin(); itVec != v.end(); ++itVec )
         cfgFile << " " << ( *itVec );
-      if ( parIdx < ( *it )->getFunctionNumParam( DERIVED ) - 1 )
+      if( parIdx < ( *it )->getFunctionNumParam( DERIVED ) - 1 )
         cfgFile << ", ";
       else
         cfgFile << " } }" << endl;
     }
   }
 
-  for ( int levelIdx = WORKLOAD; levelIdx <= CPU; ++levelIdx )
+  for( int levelIdx = WORKLOAD; levelIdx <= CPU; ++levelIdx )
   {
     if( ( *it )->isDerivedWindow() && ( levelIdx == THREAD || levelIdx == CPU ) )
       continue;
 
-    TWindowLevel level = ( TWindowLevel ) levelIdx;
-    for ( TParamIndex parIdx = 0; parIdx < ( *it )->getFunctionNumParam( level ); ++parIdx )
+    TWindowLevel level = (TWindowLevel)levelIdx;
+    for( TParamIndex parIdx = 0; parIdx < ( *it )->getFunctionNumParam( level ); ++parIdx )
     {
-      if ( parIdx == 0 )
+      if( parIdx == 0 )
       {
         cfgFile << OLDCFG_TAG_WNDW_SEMANTIC_MODULE << " " << levelToString( level );
         cfgFile << " " << ( *it )->getLevelFunction( level ) << " { ";
         cfgFile << ( *it )->getFunctionNumParam( level ) << ", ";
         cfgFile << "{ ";
       }
-      vector<double> v = ( *it )->getFunctionParam( level, parIdx );
+      vector< double > v = ( *it )->getFunctionParam( level, parIdx );
       cfgFile << v.size();
-      for ( vector<double>::iterator itVec = v.begin(); itVec != v.end(); ++itVec )
+      for( vector< double >::iterator itVec = v.begin(); itVec != v.end(); ++itVec )
         cfgFile << " " << ( *itVec );
-      if ( parIdx < ( *it )->getFunctionNumParam( level ) - 1 )
+      if( parIdx < ( *it )->getFunctionNumParam( level ) - 1 )
         cfgFile << ", ";
       else
         cfgFile << " } }" << endl;
     }
   }
-  for ( int levelIdx = COMPOSEWORKLOAD; levelIdx <= COMPOSECPU; ++levelIdx )
+  for( int levelIdx = COMPOSEWORKLOAD; levelIdx <= COMPOSECPU; ++levelIdx )
   {
-    TWindowLevel level = ( TWindowLevel ) levelIdx;
-    for ( TParamIndex parIdx = 0; parIdx < ( *it )->getFunctionNumParam( level ); ++parIdx )
+    TWindowLevel level = (TWindowLevel)levelIdx;
+    for( TParamIndex parIdx = 0; parIdx < ( *it )->getFunctionNumParam( level ); ++parIdx )
     {
-      if ( parIdx == 0 )
+      if( parIdx == 0 )
       {
         cfgFile << OLDCFG_TAG_WNDW_SEMANTIC_MODULE << " " << levelToString( level );
         cfgFile << " " << ( *it )->getLevelFunction( level ) << " { ";
         cfgFile << ( *it )->getFunctionNumParam( level ) << ", ";
         cfgFile << "{ ";
       }
-      vector<double> v = ( *it )->getFunctionParam( level, parIdx );
+      vector< double > v = ( *it )->getFunctionParam( level, parIdx );
       cfgFile << v.size();
-      for ( vector<double>::iterator itVec = v.begin(); itVec != v.end(); ++itVec )
+      for( vector< double >::iterator itVec = v.begin(); itVec != v.end(); ++itVec )
         cfgFile << " " << ( *itVec );
-      if ( parIdx < ( *it )->getFunctionNumParam( level ) - 1 )
+      if( parIdx < ( *it )->getFunctionNumParam( level ) - 1 )
         cfgFile << ", ";
       else
         cfgFile << " } }" << endl;
@@ -3374,59 +3551,96 @@ void WindowSemanticModule::printLine( ostream& cfgFile,
 
 string WindowFilterModule::tagCFG = OLDCFG_TAG_WNDW_FILTER_MODULE;
 
-bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowFilterModule::parseLine( KernelConnection *whichKernel,
+                                    istringstream &line,
                                     Trace *whichTrace,
-                                    vector<Timeline *>& windows,
-                                    vector<Histogram *>& histograms )
+                                    vector< Timeline * > &windows,
+                                    vector< Histogram * > &histograms )
 {
   string strTag;
   Filter *filter;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
-  if ( windows[ windows.size() - 1 ]->isDerivedWindow() )
+  if( windows[ windows.size() - 1 ]->isDerivedWindow() )
     return true;
 
-  getline( line, strTag, ' ' );          // Parameter type.
+  getline( line, strTag, ' ' ); // Parameter type.
 
   filter = windows[ windows.size() - 1 ]->getFilter();
 
-  if ( strTag.compare( OLDCFG_VAL_FILTER_OBJ_FROM ) == 0 )
+  if( strTag.compare( OLDCFG_VAL_FILTER_OBJ_FROM ) == 0 )
   {
-    return parseLineFilter<TObjectOrder>( line, [filter]( TObjectOrder fromObject ) { filter->insertCommFrom( fromObject - 1 ); } );
+    return parseLineFilter< TObjectOrder >( line,
+                                            [ filter ]( TObjectOrder fromObject )
+                                            {
+                                              filter->insertCommFrom( fromObject - 1 );
+                                            } );
   }
-  else if ( strTag.compare( OLDCFG_VAL_FILTER_OBJ_TO ) == 0 )
+  else if( strTag.compare( OLDCFG_VAL_FILTER_OBJ_TO ) == 0 )
   {
-    return parseLineFilter<TObjectOrder>( line, [filter]( TObjectOrder toObject ) { filter->insertCommTo( toObject - 1 ); } );
+    return parseLineFilter< TObjectOrder >( line,
+                                            [ filter ]( TObjectOrder toObject )
+                                            {
+                                              filter->insertCommTo( toObject - 1 );
+                                            } );
   }
-  else if ( strTag.compare( OLDCFG_VAL_FILTER_COM_TAG ) == 0 )
+  else if( strTag.compare( OLDCFG_VAL_FILTER_COM_TAG ) == 0 )
   {
-    return parseLineFilter<TCommTag>( line, [filter]( TCommTag commTag ) { filter->insertCommTag( commTag ); } );
+    return parseLineFilter< TCommTag >( line,
+                                        [ filter ]( TCommTag commTag )
+                                        {
+                                          filter->insertCommTag( commTag );
+                                        } );
   }
-  else if ( strTag.compare( OLDCFG_VAL_FILTER_COM_SIZE ) == 0 )
+  else if( strTag.compare( OLDCFG_VAL_FILTER_COM_SIZE ) == 0 )
   {
-    return parseLineFilter<TCommSize>( line, [filter]( TCommSize commSize ) { filter->insertCommSize( commSize ); } );
+    return parseLineFilter< TCommSize >( line,
+                                         [ filter ]( TCommSize commSize )
+                                         {
+                                           filter->insertCommSize( commSize );
+                                         } );
   }
-  else if ( strTag.compare( OLDCFG_VAL_FILTER_COM_BW ) == 0 )
+  else if( strTag.compare( OLDCFG_VAL_FILTER_COM_BW ) == 0 )
   {
-    return parseLineFilter<TSemanticValue>( line, [filter]( TSemanticValue bandWidth ) { filter->insertBandWidth( bandWidth ); } );
+    return parseLineFilter< TSemanticValue >( line,
+                                              [ filter ]( TSemanticValue bandWidth )
+                                              {
+                                                filter->insertBandWidth( bandWidth );
+                                              } );
   }
-  else if ( strTag.compare( OLDCFG_VAL_FILTER_EVT_TYPE ) == 0 )
+  else if( strTag.compare( OLDCFG_VAL_FILTER_EVT_TYPE ) == 0 )
   {
-    return parseLineFilter<TEventType>( line, []( TEventType eventType ) { eventTypeSymbolPicker.insert( eventType ); } );
+    return parseLineFilter< TEventType >( line,
+                                          []( TEventType eventType )
+                                          {
+                                            eventTypeSymbolPicker.insert( eventType );
+                                          } );
   }
-  else if ( strTag.compare( OLDCFG_VAL_FILTER_EVT_VALUE ) == 0 )
+  else if( strTag.compare( OLDCFG_VAL_FILTER_EVT_VALUE ) == 0 )
   {
-    return parseLineFilter<TSemanticValue>( line, []( TSemanticValue eventValue ) { eventValueSymbolPicker.insert( eventValue ); } );
+    return parseLineFilter< TSemanticValue >( line,
+                                              []( TSemanticValue eventValue )
+                                              {
+                                                eventValueSymbolPicker.insert( eventValue );
+                                              } );
   }
-  else if ( strTag.compare( CFG_VAL_FILTER_EVT_TYPE_LABEL ) == 0 )
+  else if( strTag.compare( CFG_VAL_FILTER_EVT_TYPE_LABEL ) == 0 )
   {
-    return parseLineFilter<std::string>( line, []( std::string typeLabel ) { eventTypeSymbolPicker.insert( typeLabel ); } );
+    return parseLineFilter< std::string >( line,
+                                           []( std::string typeLabel )
+                                           {
+                                             eventTypeSymbolPicker.insert( typeLabel );
+                                           } );
   }
-  else if ( strTag.compare( CFG_VAL_FILTER_EVT_VALUE_LABEL ) == 0 )
+  else if( strTag.compare( CFG_VAL_FILTER_EVT_VALUE_LABEL ) == 0 )
   {
-    return parseLineFilter<std::string>( line, []( std::string valueLabel ) { eventValueSymbolPicker.insert( valueLabel ); } );
+    return parseLineFilter< std::string >( line,
+                                           []( std::string valueLabel )
+                                           {
+                                             eventValueSymbolPicker.insert( valueLabel );
+                                           } );
   }
 
   return true;
@@ -3435,22 +3649,21 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
 void WindowFilterModule::printLine( ostream& cfgFile,
                                     const vector<Timeline *>::const_iterator it )
 {
-  Filter *filter = ( *it )->getFilter();
-  const EventLabels& labels = ( *it )->getTrace()->getEventLabels();
-  vector<TObjectOrder> objVec;
-  vector<TCommTag> tagVec;
-  vector<TCommSize> sizeVec;
-  vector<TSemanticValue> bwVec;
-  vector<TEventType> typeVec;
-  vector<TSemanticValue> valueVec;
+  Filter *filter            = ( *it )->getFilter();
+  const EventLabels &labels = ( *it )->getTrace()->getEventLabels();
+  vector< TObjectOrder > objVec;
+  vector< TCommTag > tagVec;
+  vector< TCommSize > sizeVec;
+  vector< TSemanticValue > bwVec;
+  vector< TEventType > typeVec;
+  vector< TSemanticValue > valueVec;
 
   filter->getCommFrom( objVec );
-  if ( objVec.begin() != objVec.end() )
+  if( objVec.begin() != objVec.end() )
   {
     cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << OLDCFG_VAL_FILTER_OBJ_FROM << " ";
     cfgFile << objVec.size();
-    for ( vector<TObjectOrder>::iterator itObj = objVec.begin();
-          itObj != objVec.end(); ++itObj )
+    for( vector< TObjectOrder >::iterator itObj = objVec.begin(); itObj != objVec.end(); ++itObj )
     {
       cfgFile << " " << ( *itObj ) + 1;
     }
@@ -3459,12 +3672,11 @@ void WindowFilterModule::printLine( ostream& cfgFile,
 
   objVec.clear();
   filter->getCommTo( objVec );
-  if ( objVec.begin() != objVec.end() )
+  if( objVec.begin() != objVec.end() )
   {
     cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << OLDCFG_VAL_FILTER_OBJ_TO << " ";
     cfgFile << objVec.size();
-    for ( vector<TObjectOrder>::iterator itObj = objVec.begin();
-          itObj != objVec.end(); ++itObj )
+    for( vector< TObjectOrder >::iterator itObj = objVec.begin(); itObj != objVec.end(); ++itObj )
     {
       cfgFile << " " << ( *itObj ) + 1;
     }
@@ -3472,12 +3684,11 @@ void WindowFilterModule::printLine( ostream& cfgFile,
   }
 
   filter->getCommTag( tagVec );
-  if ( tagVec.begin() != tagVec.end() )
+  if( tagVec.begin() != tagVec.end() )
   {
     cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << OLDCFG_VAL_FILTER_COM_TAG << " ";
     cfgFile << tagVec.size();
-    for ( vector<TCommTag>::iterator itTag = tagVec.begin();
-          itTag != tagVec.end(); ++itTag )
+    for( vector< TCommTag >::iterator itTag = tagVec.begin(); itTag != tagVec.end(); ++itTag )
     {
       cfgFile << " " << ( *itTag );
     }
@@ -3485,12 +3696,11 @@ void WindowFilterModule::printLine( ostream& cfgFile,
   }
 
   filter->getCommSize( sizeVec );
-  if ( sizeVec.begin() != sizeVec.end() )
+  if( sizeVec.begin() != sizeVec.end() )
   {
     cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << OLDCFG_VAL_FILTER_COM_SIZE << " ";
     cfgFile << sizeVec.size();
-    for ( vector<TCommSize>::iterator itSize = sizeVec.begin();
-          itSize != sizeVec.end(); ++itSize )
+    for( vector< TCommSize >::iterator itSize = sizeVec.begin(); itSize != sizeVec.end(); ++itSize )
     {
       cfgFile << " " << ( *itSize );
     }
@@ -3498,12 +3708,11 @@ void WindowFilterModule::printLine( ostream& cfgFile,
   }
 
   filter->getBandWidth( bwVec );
-  if ( bwVec.begin() != bwVec.end() )
+  if( bwVec.begin() != bwVec.end() )
   {
     cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << OLDCFG_VAL_FILTER_COM_BW << " ";
     cfgFile << bwVec.size();
-    for ( vector<TSemanticValue>::iterator itBW = bwVec.begin();
-          itBW != bwVec.end(); ++itBW )
+    for( vector< TSemanticValue >::iterator itBW = bwVec.begin(); itBW != bwVec.end(); ++itBW )
     {
       cfgFile << " " << ( *itBW );
     }
@@ -3511,12 +3720,11 @@ void WindowFilterModule::printLine( ostream& cfgFile,
   }
 
   filter->getEventType( typeVec );
-  if ( typeVec.begin() != typeVec.end() )
+  if( typeVec.begin() != typeVec.end() )
   {
     cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << OLDCFG_VAL_FILTER_EVT_TYPE << " ";
     cfgFile << typeVec.size();
-    for ( vector<TEventType>::iterator itType = typeVec.begin();
-          itType != typeVec.end(); ++itType )
+    for( vector< TEventType >::iterator itType = typeVec.begin(); itType != typeVec.end(); ++itType )
     {
       cfgFile << " " << ( *itType );
     }
@@ -3524,24 +3732,21 @@ void WindowFilterModule::printLine( ostream& cfgFile,
 
     cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << CFG_VAL_FILTER_EVT_TYPE_LABEL << " ";
     cfgFile << typeVec.size();
-    for ( vector<TEventType>::iterator itType = typeVec.begin();
-          itType != typeVec.end(); ++itType )
+    for( vector< TEventType >::iterator itType = typeVec.begin(); itType != typeVec.end(); ++itType )
     {
       string tmpTypeLabel;
       labels.getEventTypeLabel( ( *itType ), tmpTypeLabel );
       cfgFile << " \"" << tmpTypeLabel << "\"";
     }
     cfgFile << endl;
-
   }
 
   filter->getEventValue( valueVec );
-  if ( valueVec.begin() != valueVec.end() )
+  if( valueVec.begin() != valueVec.end() )
   {
     cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << OLDCFG_VAL_FILTER_EVT_VALUE << " ";
     cfgFile << valueVec.size();
-    for ( vector<TSemanticValue>::iterator itValue = valueVec.begin();
-          itValue != valueVec.end(); ++itValue )
+    for( vector< TSemanticValue >::iterator itValue = valueVec.begin(); itValue != valueVec.end(); ++itValue )
     {
       cfgFile << " " << ( *itValue );
     }
@@ -3549,17 +3754,15 @@ void WindowFilterModule::printLine( ostream& cfgFile,
 
     cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << CFG_VAL_FILTER_EVT_VALUE_LABEL << " ";
     cfgFile << valueVec.size();
-    for ( vector<TSemanticValue>::iterator itValue = valueVec.begin();
-          itValue != valueVec.end(); ++itValue )
+    for( vector< TSemanticValue >::iterator itValue = valueVec.begin(); itValue != valueVec.end(); ++itValue )
     {
       string tmpValueLabel;
       double tmpIntpart;
-      if( std::modf( *itValue, &tmpIntpart) == 0.0 )
+      if( std::modf( *itValue, &tmpIntpart ) == 0.0 )
       {
-        if ( typeVec.begin() != typeVec.end() )
+        if( typeVec.begin() != typeVec.end() )
         {
-          for ( vector<TEventType>::iterator itType = typeVec.begin();
-                itType != typeVec.end(); ++itType )
+          for( vector< TEventType >::iterator itType = typeVec.begin(); itType != typeVec.end(); ++itType )
           {
             if( labels.getEventValueLabel( ( *itType ), ( *itValue ), tmpValueLabel ) )
               break;
@@ -3576,34 +3779,34 @@ void WindowFilterModule::printLine( ostream& cfgFile,
       cfgFile << " \"" << tmpValueLabel << "\"";
     }
     cfgFile << endl;
-
   }
 }
 
 
 string WindowFilterLogical::tagCFG = OLDCFG_TAG_WNDW_LOGICAL_FILTERED;
 
-bool WindowFilterLogical::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowFilterLogical::parseLine( KernelConnection *whichKernel,
+                                     istringstream &line,
                                      Trace *whichTrace,
-                                     vector<Timeline *>& windows,
-                                     vector<Histogram *>& histograms )
+                                     vector< Timeline * > &windows,
+                                     vector< Histogram * > &histograms )
 {
   string strBool;
   Filter *filter;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
-  if ( windows[ windows.size() - 1 ]->isDerivedWindow() )
+  if( windows[ windows.size() - 1 ]->isDerivedWindow() )
     return true;
 
   getline( line, strBool, ' ' );
 
   filter = windows[ windows.size() - 1 ]->getFilter();
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
     filter->setLogical( false );
-  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
     filter->setLogical( true );
   else
     return false;
@@ -3615,7 +3818,7 @@ void WindowFilterLogical::printLine( ostream& cfgFile,
                                      const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_LOGICAL_FILTERED << " ";
-  if ( ( *it )->getFilter()->getLogical() )
+  if( ( *it )->getFilter()->getLogical() )
     cfgFile << OLDCFG_VAL_TRUE;
   else
     cfgFile << OLDCFG_VAL_FALSE;
@@ -3625,27 +3828,28 @@ void WindowFilterLogical::printLine( ostream& cfgFile,
 
 string WindowFilterPhysical::tagCFG = OLDCFG_TAG_WNDW_PHYSICAL_FILTERED;
 
-bool WindowFilterPhysical::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowFilterPhysical::parseLine( KernelConnection *whichKernel,
+                                      istringstream &line,
                                       Trace *whichTrace,
-                                      vector<Timeline *>& windows,
-                                      vector<Histogram *>& histograms )
+                                      vector< Timeline * > &windows,
+                                      vector< Histogram * > &histograms )
 {
   string strBool;
   Filter *filter;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
-  if ( windows[ windows.size() - 1 ]->isDerivedWindow() )
+  if( windows[ windows.size() - 1 ]->isDerivedWindow() )
     return true;
 
   getline( line, strBool, ' ' );
 
   filter = windows[ windows.size() - 1 ]->getFilter();
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
     filter->setPhysical( false );
-  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
     filter->setPhysical( true );
   else
     return false;
@@ -3657,7 +3861,7 @@ void WindowFilterPhysical::printLine( ostream& cfgFile,
                                       const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_PHYSICAL_FILTERED << " ";
-  if ( ( *it )->getFilter()->getPhysical() )
+  if( ( *it )->getFilter()->getPhysical() )
     cfgFile << OLDCFG_VAL_TRUE;
   else
     cfgFile << OLDCFG_VAL_FALSE;
@@ -3667,27 +3871,28 @@ void WindowFilterPhysical::printLine( ostream& cfgFile,
 
 string WindowFilterIntraComms::tagCFG = OLDCFG_TAG_WNDW_INTRACOMMS_FILTERED;
 
-bool WindowFilterIntraComms::parseLine( KernelConnection *whichKernel, istringstream& line,
-                                      Trace *whichTrace,
-                                      vector<Timeline *>& windows,
-                                      vector<Histogram *>& histograms )
+bool WindowFilterIntraComms::parseLine( KernelConnection *whichKernel,
+                                        istringstream &line,
+                                        Trace *whichTrace,
+                                        vector< Timeline * > &windows,
+                                        vector< Histogram * > &histograms )
 {
   string strBool;
   Filter *filter;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
-  if ( windows[ windows.size() - 1 ]->isDerivedWindow() )
+  if( windows[ windows.size() - 1 ]->isDerivedWindow() )
     return true;
 
   getline( line, strBool, ' ' );
 
   filter = windows[ windows.size() - 1 ]->getFilter();
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
     filter->setIntraCommsFilter( false );
-  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
     filter->setIntraCommsFilter( true );
   else
     return false;
@@ -3699,7 +3904,7 @@ void WindowFilterIntraComms::printLine( ostream& cfgFile,
                                       const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_INTRACOMMS_FILTERED << " ";
-  if ( ( *it )->getFilter()->getIntraCommsFilter() )
+  if( ( *it )->getFilter()->getIntraCommsFilter() )
     cfgFile << OLDCFG_VAL_TRUE;
   else
     cfgFile << OLDCFG_VAL_FALSE;
@@ -3709,27 +3914,28 @@ void WindowFilterIntraComms::printLine( ostream& cfgFile,
 
 string WindowFilterInterComms::tagCFG = OLDCFG_TAG_WNDW_INTERCOMMS_FILTERED;
 
-bool WindowFilterInterComms::parseLine( KernelConnection *whichKernel, istringstream& line,
-                                      Trace *whichTrace,
-                                      vector<Timeline *>& windows,
-                                      vector<Histogram *>& histograms )
+bool WindowFilterInterComms::parseLine( KernelConnection *whichKernel,
+                                        istringstream &line,
+                                        Trace *whichTrace,
+                                        vector< Timeline * > &windows,
+                                        vector< Histogram * > &histograms )
 {
   string strBool;
   Filter *filter;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
-  if ( windows[ windows.size() - 1 ]->isDerivedWindow() )
+  if( windows[ windows.size() - 1 ]->isDerivedWindow() )
     return true;
 
   getline( line, strBool, ' ' );
 
   filter = windows[ windows.size() - 1 ]->getFilter();
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
     filter->setInterCommsFilter( false );
-  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
     filter->setInterCommsFilter( true );
   else
     return false;
@@ -3741,7 +3947,7 @@ void WindowFilterInterComms::printLine( ostream& cfgFile,
                                       const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_INTERCOMMS_FILTERED << " ";
-  if ( ( *it )->getFilter()->getInterCommsFilter() )
+  if( ( *it )->getFilter()->getInterCommsFilter() )
     cfgFile << OLDCFG_VAL_TRUE;
   else
     cfgFile << OLDCFG_VAL_FALSE;
@@ -3751,27 +3957,28 @@ void WindowFilterInterComms::printLine( ostream& cfgFile,
 
 string WindowFilterBoolOpFromTo::tagCFG = OLDCFG_TAG_WNDW_FROMTO;
 
-bool WindowFilterBoolOpFromTo::parseLine( KernelConnection *whichKernel, istringstream& line,
-    Trace *whichTrace,
-    vector<Timeline *>& windows,
-    vector<Histogram *>& histograms )
+bool WindowFilterBoolOpFromTo::parseLine( KernelConnection *whichKernel,
+                                          istringstream &line,
+                                          Trace *whichTrace,
+                                          vector< Timeline * > &windows,
+                                          vector< Histogram * > &histograms )
 {
   string strBool;
   Filter *filter;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
-  if ( windows[ windows.size() - 1 ]->isDerivedWindow() )
+  if( windows[ windows.size() - 1 ]->isDerivedWindow() )
     return true;
 
   filter = windows[ windows.size() - 1 ]->getFilter();
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
     filter->setOpFromToOr();
-  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
     filter->setOpFromToAnd();
   else
     return false;
@@ -3783,7 +3990,7 @@ void WindowFilterBoolOpFromTo::printLine( ostream& cfgFile,
     const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_FROMTO << " ";
-  if ( ( *it )->getFilter()->getOpFromTo() )
+  if( ( *it )->getFilter()->getOpFromTo() )
     cfgFile << OLDCFG_VAL_TRUE;
   else
     cfgFile << OLDCFG_VAL_FALSE;
@@ -3793,27 +4000,28 @@ void WindowFilterBoolOpFromTo::printLine( ostream& cfgFile,
 
 string WindowFilterBoolOpTagSize::tagCFG = OLDCFG_TAG_WNDW_COMM_TAGSIZE;
 
-bool WindowFilterBoolOpTagSize::parseLine( KernelConnection *whichKernel, istringstream& line,
-    Trace *whichTrace,
-    vector<Timeline *>& windows,
-    vector<Histogram *>& histograms )
+bool WindowFilterBoolOpTagSize::parseLine( KernelConnection *whichKernel,
+                                           istringstream &line,
+                                           Trace *whichTrace,
+                                           vector< Timeline * > &windows,
+                                           vector< Histogram * > &histograms )
 {
   string strBool;
   Filter *filter;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
-  if ( windows[ windows.size() - 1 ]->isDerivedWindow() )
+  if( windows[ windows.size() - 1 ]->isDerivedWindow() )
     return true;
 
   getline( line, strBool, ' ' );
 
   filter = windows[ windows.size() - 1 ]->getFilter();
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
     filter->setOpTagSizeOr();
-  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
     filter->setOpTagSizeAnd();
   else
     return false;
@@ -3825,7 +4033,7 @@ void WindowFilterBoolOpTagSize::printLine( ostream& cfgFile,
     const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_COMM_TAGSIZE << " ";
-  if ( ( *it )->getFilter()->getOpTagSize() )
+  if( ( *it )->getFilter()->getOpTagSize() )
     cfgFile << OLDCFG_VAL_TRUE;
   else
     cfgFile << OLDCFG_VAL_FALSE;
@@ -3835,27 +4043,28 @@ void WindowFilterBoolOpTagSize::printLine( ostream& cfgFile,
 
 string WindowFilterBoolOpTypeVal::tagCFG = OLDCFG_TAG_WNDW_TYPEVAL;
 
-bool WindowFilterBoolOpTypeVal::parseLine( KernelConnection *whichKernel, istringstream& line,
-    Trace *whichTrace,
-    vector<Timeline *>& windows,
-    vector<Histogram *>& histograms )
+bool WindowFilterBoolOpTypeVal::parseLine( KernelConnection *whichKernel,
+                                           istringstream &line,
+                                           Trace *whichTrace,
+                                           vector< Timeline * > &windows,
+                                           vector< Histogram * > &histograms )
 {
   string strBool;
   Filter *filter;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
-  if ( windows[ windows.size() - 1 ]->isDerivedWindow() )
+  if( windows[ windows.size() - 1 ]->isDerivedWindow() )
     return true;
 
   getline( line, strBool, ' ' );
 
   filter = windows[ windows.size() - 1 ]->getFilter();
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
     filter->setOpTypeValueOr();
-  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
     filter->setOpTypeValueAnd();
   else
     return false;
@@ -3867,7 +4076,7 @@ void WindowFilterBoolOpTypeVal::printLine( ostream& cfgFile,
     const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_TYPEVAL << " ";
-  if ( ( *it )->getFilter()->getOpTypeValue() )
+  if( ( *it )->getFilter()->getOpTypeValue() )
     cfgFile << OLDCFG_VAL_TRUE;
   else
     cfgFile << OLDCFG_VAL_FALSE;
@@ -3877,21 +4086,22 @@ void WindowFilterBoolOpTypeVal::printLine( ostream& cfgFile,
 
 string WindowOpen::tagCFG = OLDCFG_TAG_WNDW_OPEN;
 
-bool WindowOpen::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowOpen::parseLine( KernelConnection *whichKernel,
+                            istringstream &line,
                             Trace *whichTrace,
-                            vector<Timeline *>& windows,
-                            vector<Histogram *>& histograms )
+                            vector< Timeline * > &windows,
+                            vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
     windows[ windows.size() - 1 ]->setShowWindow( false );
-  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
     windows[ windows.size() - 1 ]->setShowWindow( true );
   else
     return false;
@@ -3911,7 +4121,7 @@ void WindowOpen::printLine( ostream& cfgFile,
   {
     if( !( *it )->getUsedByHistogram() )
     {
-      if ( ( *it )->getChild() != nullptr )
+      if( ( *it )->getChild() != nullptr )
         cfgFile << OLDCFG_VAL_FALSE;
       else
         cfgFile << OLDCFG_VAL_TRUE;
@@ -3932,19 +4142,19 @@ void WindowOpen::printLine( ostream& cfgFile,
 string WindowDrawMode::tagCFG = OLDCFG_TAG_WNDW_DRAW_MODE;
 
 bool WindowDrawMode::parseLine( KernelConnection *whichKernel,
-                                istringstream& line,
+                                istringstream &line,
                                 Trace *whichTrace,
-                                vector<Timeline *>& windows,
-                                vector<Histogram *>& histograms )
+                                vector< Timeline * > &windows,
+                                vector< Histogram * > &histograms )
 {
   string strMode;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strMode, ' ' );
 
-  if ( drawModeCodes.find( strMode ) != drawModeCodes.end() )
+  if( drawModeCodes.find( strMode ) != drawModeCodes.end() )
     windows[ windows.size() - 1 ]->setDrawModeTime( drawModeCodes[ strMode ] );
 
   return true;
@@ -3956,7 +4166,7 @@ void WindowDrawMode::printLine( ostream& cfgFile,
 {
   cfgFile << OLDCFG_TAG_WNDW_DRAW_MODE << " ";
 
-  if ( drawModeTags.find( ( *it )->getDrawModeTime() ) != drawModeTags.end() )
+  if( drawModeTags.find( ( *it )->getDrawModeTime() ) != drawModeTags.end() )
     cfgFile << drawModeTags[ ( *it )->getDrawModeTime() ];
 
   cfgFile << endl;
@@ -3965,19 +4175,20 @@ void WindowDrawMode::printLine( ostream& cfgFile,
 
 string WindowDrawModeRows::tagCFG = OLDCFG_TAG_WNDW_DRAW_MODE_ROWS;
 
-bool WindowDrawModeRows::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowDrawModeRows::parseLine( KernelConnection *whichKernel,
+                                    istringstream &line,
                                     Trace *whichTrace,
-                                    vector<Timeline *>& windows,
-                                    vector<Histogram *>& histograms )
+                                    vector< Timeline * > &windows,
+                                    vector< Histogram * > &histograms )
 {
   string strMode;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strMode, ' ' );
 
-  if ( drawModeCodes.find( strMode ) != drawModeCodes.end() )
+  if( drawModeCodes.find( strMode ) != drawModeCodes.end() )
     windows[ windows.size() - 1 ]->setDrawModeObject( drawModeCodes[ strMode ] );
 
   return true;
@@ -3988,7 +4199,7 @@ void WindowDrawModeRows::printLine( ostream& cfgFile,
 {
   cfgFile << OLDCFG_TAG_WNDW_DRAW_MODE_ROWS << " ";
 
-  if ( drawModeTags.find( ( *it )->getDrawModeObject() ) != drawModeTags.end() )
+  if( drawModeTags.find( ( *it )->getDrawModeObject() ) != drawModeTags.end() )
     cfgFile << drawModeTags[ ( *it )->getDrawModeObject() ];
 
   cfgFile << endl;
@@ -3997,21 +4208,22 @@ void WindowDrawModeRows::printLine( ostream& cfgFile,
 
 string WindowPixelSize::tagCFG = OLDCFG_TAG_WNDW_PIXEL_SIZE;
 
-bool WindowPixelSize::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowPixelSize::parseLine( KernelConnection *whichKernel,
+                                 istringstream &line,
                                  Trace *whichTrace,
-                                 vector<Timeline *>& windows,
-                                 vector<Histogram *>& histograms )
+                                 vector< Timeline * > &windows,
+                                 vector< Histogram * > &histograms )
 {
   string strSize;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strSize, ' ' );
   istringstream tmpStream( strSize );
   PRV_UINT16 size;
 
-  if ( !( tmpStream >> size ) )
+  if( !( tmpStream >> size ) )
     return false;
 
   windows[ windows.size() - 1 ]->setPixelSize( size );
@@ -4022,30 +4234,31 @@ bool WindowPixelSize::parseLine( KernelConnection *whichKernel, istringstream& l
 void WindowPixelSize::printLine( ostream& cfgFile,
                                  const vector<Timeline *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_PIXEL_SIZE << " " << (*it)->getPixelSize() << endl;
+  cfgFile << OLDCFG_TAG_WNDW_PIXEL_SIZE << " " << ( *it )->getPixelSize() << endl;
 }
 
 
 string WindowLabelsToDraw::tagCFG = OLDCFG_TAG_WNDW_LABELS_TO_DRAW;
 
-bool WindowLabelsToDraw::parseLine( KernelConnection *whichKernel, istringstream& line,
-                                 Trace *whichTrace,
-                                 vector<Timeline *>& windows,
-                                 vector<Histogram *>& histograms )
+bool WindowLabelsToDraw::parseLine( KernelConnection *whichKernel,
+                                    istringstream &line,
+                                    Trace *whichTrace,
+                                    vector< Timeline * > &windows,
+                                    vector< Histogram * > &histograms )
 {
   string strLabels;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strLabels, ' ' );
   istringstream tmpStream( strLabels );
   PRV_UINT16 labels;
 
-  if ( !( tmpStream >> labels ) )
+  if( !( tmpStream >> labels ) )
     return false;
 
-  windows[ windows.size() - 1 ]->setObjectLabels( ( TObjectLabels )labels );
+  windows[ windows.size() - 1 ]->setObjectLabels( (TObjectLabels)labels );
 
   return true;
 }
@@ -4053,30 +4266,31 @@ bool WindowLabelsToDraw::parseLine( KernelConnection *whichKernel, istringstream
 void WindowLabelsToDraw::printLine( ostream& cfgFile,
                                  const vector<Timeline *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_LABELS_TO_DRAW << " " << static_cast< int > ( (*it)->getObjectLabels() ) << endl;
+  cfgFile << OLDCFG_TAG_WNDW_LABELS_TO_DRAW << " " << static_cast< int >( ( *it )->getObjectLabels() ) << endl;
 }
 
 
 string WindowObjectAxisSize::tagCFG = OLDCFG_TAG_WNDW_OBJECT_AXIS_SIZE;
 
-bool WindowObjectAxisSize::parseLine( KernelConnection *whichKernel, istringstream& line,
-                                     Trace *whichTrace,
-                                     vector<Timeline *>& windows,
-                                     vector<Histogram *>& histograms )
+bool WindowObjectAxisSize::parseLine( KernelConnection *whichKernel,
+                                      istringstream &line,
+                                      Trace *whichTrace,
+                                      vector< Timeline * > &windows,
+                                      vector< Histogram * > &histograms )
 {
   string strObjectAxisSize;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strObjectAxisSize, ' ' );
   istringstream tmpStream( strObjectAxisSize );
   PRV_UINT16 objectAxisSize;
 
-  if ( !( tmpStream >> objectAxisSize ) )
+  if( !( tmpStream >> objectAxisSize ) )
     return false;
 
-  windows[ windows.size() - 1 ]->setObjectAxisSize( ( TObjectAxisSize )objectAxisSize );
+  windows[ windows.size() - 1 ]->setObjectAxisSize( (TObjectAxisSize)objectAxisSize );
 
   return true;
 }
@@ -4084,29 +4298,64 @@ bool WindowObjectAxisSize::parseLine( KernelConnection *whichKernel, istringstre
 void WindowObjectAxisSize::printLine( ostream& cfgFile,
                                  const vector<Timeline *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_OBJECT_AXIS_SIZE << " " << static_cast< int > ( (*it)->getObjectAxisSize() ) << endl;
+  cfgFile << OLDCFG_TAG_WNDW_OBJECT_AXIS_SIZE << " " << static_cast< int >( ( *it )->getObjectAxisSize() ) << endl;
+}
+
+
+string WindowObjectAxisCustomSize::tagCFG = OLDCFG_TAG_WNDW_OBJECT_AXIS_CUSTOM_SIZE;
+
+bool WindowObjectAxisCustomSize::parseLine( KernelConnection *whichKernel,
+                                            istringstream &line,
+                                            Trace *whichTrace,
+                                            vector< Timeline * > &windows,
+                                            vector< Histogram * > &histograms )
+{
+  string strCustomSize;
+
+  if( windows[ windows.size() - 1 ] == nullptr )
+    return false;
+
+  getline( line, strCustomSize, ' ' );
+  istringstream tmpStream( strCustomSize );
+  PRV_UINT16 customSize;
+
+  if( !( tmpStream >> customSize ) )
+    return false;
+
+  windows[ windows.size() - 1 ]->setObjectAxisCustomSize( customSize );
+
+  return true;
+}
+
+void WindowObjectAxisCustomSize::printLine( ostream &cfgFile, const vector< Timeline * >::const_iterator it )
+{
+  if( ( *it )->getObjectAxisSize() == TObjectAxisSize::CUSTOM_PERC )
+  {
+    cfgFile << OLDCFG_TAG_WNDW_OBJECT_AXIS_CUSTOM_SIZE << " " << ( *it )->getObjectAxisCustomSize() << endl;
+  }
 }
 
 
 string WindowPunctualColorWindow::tagCFG = OLDCFG_TAG_WNDW_PUNCTUAL_COLOR_WIN;
 
-bool WindowPunctualColorWindow::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowPunctualColorWindow::parseLine( KernelConnection *whichKernel,
+                                           istringstream &line,
                                            Trace *whichTrace,
-                                           vector<Timeline *>& windows,
-                                           vector<Histogram *>& histograms )
+                                           vector< Timeline * > &windows,
+                                           vector< Histogram * > &histograms )
 {
   string strID;
   PRV_UINT16 id;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strID );
   istringstream tmpStream( strID );
-  if ( !( tmpStream >> id ) )
+  if( !( tmpStream >> id ) )
     return false;
 
-  if ( windows[ id - 1 ] == nullptr )
+  if( windows[ id - 1 ] == nullptr )
     return false;
 
   windows[ windows.size() - 1 ]->setPunctualColorWindow( windows[ id - 1 ] );
@@ -4118,36 +4367,38 @@ void WindowPunctualColorWindow::printLine( ostream& cfgFile,
                                            const vector<Timeline *>& allWindows,
                                            const vector<Timeline *>::const_iterator it )
 {
-  if( (*it)->isPunctualColorSet() && (*it)->getPunctualColorWindow() != nullptr )
+  if( ( *it )->isPunctualColorSet() && ( *it )->getPunctualColorWindow() != nullptr )
   {
-    cfgFile << OLDCFG_TAG_WNDW_PUNCTUAL_COLOR_WIN << " " \
-            << CFGLoader::findWindowBackwards( (*it)->getPunctualColorWindow(), allWindows, it ) + 1 << endl;
+    cfgFile << OLDCFG_TAG_WNDW_PUNCTUAL_COLOR_WIN << " " << CFGLoader::findWindowBackwards( ( *it )->getPunctualColorWindow(), allWindows, it ) + 1
+            << endl;
   }
 }
 
 
 string WindowSynchronize::tagCFG = OLDCFG_TAG_WNDW_SYNCHRONIZE;
 
-bool WindowSynchronize::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowSynchronize::parseLine( KernelConnection *whichKernel,
+                                   istringstream &line,
                                    Trace *whichTrace,
-                                   vector<Timeline *>& windows,
-                                   vector<Histogram *>& histograms )
+                                   vector< Timeline * > &windows,
+                                   vector< Histogram * > &histograms )
 {
   string strGroupID;
   TGroupId groupID;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strGroupID );
   istringstream tmpStream( strGroupID );
-  if ( !( tmpStream >> groupID ) )
+  if( !( tmpStream >> groupID ) )
     return false;
 
   TGroupId realGroupID;
+  groupID = groupID;
   if( syncRealGroup.find( groupID ) == syncRealGroup.end() )
   {
-    realGroupID = SyncWindows::getInstance()->newGroup();
+    realGroupID              = SyncWindows::getInstance()->newGroup();
     syncRealGroup[ groupID ] = realGroupID;
   }
   else
@@ -4161,18 +4412,9 @@ bool WindowSynchronize::parseLine( KernelConnection *whichKernel, istringstream&
 void WindowSynchronize::printLine( ostream& cfgFile,
                                    const vector<Timeline *>::const_iterator it )
 {
-  if( (*it)->isSync() )
+  if( ( *it )->isSync() )
   {
-    TGroupId realGroupID;
-    if( syncRealGroup.find( (*it)->getSyncGroup() ) == syncRealGroup.end() )
-    {
-      realGroupID = ++lastSyncGroupUsed;
-      syncRealGroup[ (*it)->getSyncGroup() ] = realGroupID;
-    }
-    else
-      realGroupID = syncRealGroup[ (*it)->getSyncGroup() ];
-
-    cfgFile << OLDCFG_TAG_WNDW_SYNCHRONIZE << " " << realGroupID << endl;
+    cfgFile << OLDCFG_TAG_WNDW_SYNCHRONIZE << " " << ( *it )->getSyncGroup() << endl;
   }
 }
 
@@ -4180,12 +4422,12 @@ void WindowSynchronize::printLine( ostream& cfgFile,
 string Analyzer2DCreate::tagCFG = OLDCFG_TAG_AN2D_NEW;
 
 bool Analyzer2DCreate::parseLine( KernelConnection *whichKernel,
-                                  istringstream& line,
+                                  istringstream &line,
                                   Trace *whichTrace,
-                                  vector<Timeline *>& windows,
-                                  vector<Histogram *>& histograms )
+                                  vector< Timeline * > &windows,
+                                  vector< Histogram * > &histograms )
 {
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
   {
     histograms[ histograms.size() - 1 ] = Histogram::create( whichKernel );
   }
@@ -4206,20 +4448,108 @@ void Analyzer2DCreate::printLine( ostream& cfgFile,
   cfgFile << OLDCFG_TAG_AN2D_NEW << endl;
 }
 
+string Analyzer2DType::tagCFG = CFG_TAG_AN2D_TYPE;
+
+bool Analyzer2DType::parseLine( KernelConnection *whichKernel,
+                                istringstream &line,
+                                Trace *whichTrace,
+                                vector< Timeline * > &windows,
+                                vector< Histogram * > &histograms )
+{
+  string type;
+
+  getline( line, type );
+  if( type.compare( CFG_VAL_AN2D_TYPE_SINGLE ) == 0 )
+    return true;
+
+  if( type.compare( CFG_VAL_AN2D_TYPE_COMPOSED ) != 0 )
+    return false;
+
+  if( !histograms.empty() )
+    histograms.pop_back();
+  histograms.push_back( Histogram::create( whichKernel, {} ) );
+
+  histograms[ histograms.size() - 1 ]->setCFG4DMode( false );
+
+  return true;
+}
+
+void Analyzer2DType::printLine( ostream &cfgFile, const vector< Histogram * >::const_iterator it )
+{
+  cfgFile << Analyzer2DType::tagCFG << " ";
+  if( ( *it )->isDerivedHistogram() )
+    cfgFile << CFG_VAL_AN2D_TYPE_COMPOSED << endl;
+  else
+    cfgFile << CFG_VAL_AN2D_TYPE_SINGLE << endl;
+}
+
+
+string Analyzer2DIdentifiers::tagCFG = CFG_TAG_AN2D_IDENTIFIERS;
+
+bool Analyzer2DIdentifiers::parseLine( KernelConnection *whichKernel,
+                                       istringstream &line,
+                                       Trace *whichTrace,
+                                       vector< Timeline * > &windows,
+                                       vector< Histogram * > &histograms )
+{
+  string strID;
+  PRV_UINT16 id;
+
+  std::vector< Histogram * > parents;
+
+  if( ( windows[ windows.size() - 1 ] == nullptr ) || ( histograms[ histograms.size() - 1 ] == nullptr ) ||
+      ( !histograms[ histograms.size() - 1 ]->isDerivedHistogram() ) )
+    return false;
+
+  while( !line.eof() )
+  {
+    getline( line, strID, ' ' );
+    istringstream tmpStream( strID );
+    if( !( tmpStream >> id ) )
+      return false;
+
+    if( ( id < 1 ) || ( id > histograms.size() - 1 ) )
+      return false;
+
+    if( histograms[ id - 1 ] == nullptr )
+      return false;
+
+    parents.push_back( histograms[ id - 1 ] );
+    histograms[ id - 1 ]->addChild( histograms[ histograms.size() - 1 ] );
+  }
+
+  if( !histograms[ histograms.size() - 1 ]->setParents( parents ) )
+    return false;
+
+  return true;
+}
+
+void Analyzer2DIdentifiers::printLine( ostream &cfgFile, const vector< Histogram * > &histograms, const vector< Histogram * >::const_iterator it )
+{
+  cfgFile << CFG_TAG_AN2D_IDENTIFIERS << " ";
+  for( auto parent = 0; parent < ( *it )->getNumParents(); ++parent )
+  {
+    cfgFile << CFGLoader::findWindowBackwards( ( *it )->getParent( parent ), histograms, it ) + 1;
+    if( parent != ( *it )->getNumParents() - 1 )
+      cfgFile << " ";
+  }
+  cfgFile << endl;
+}
+
 
 string Analyzer2DName::tagCFG = OLDCFG_TAG_AN2D_NAME;
 
 bool Analyzer2DName::parseLine( KernelConnection *whichKernel,
-                                istringstream& line,
+                                istringstream &line,
                                 Trace *whichTrace,
-                                vector<Timeline *>& windows,
-                                vector<Histogram *>& histograms )
+                                vector< Timeline * > &windows,
+                                vector< Histogram * > &histograms )
 {
   string strName;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strName );
@@ -4237,23 +4567,24 @@ void Analyzer2DName::printLine( ostream& cfgFile,
 
 string Analyzer2DX::tagCFG = OLDCFG_TAG_AN2D_X;
 
-bool Analyzer2DX::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DX::parseLine( KernelConnection *whichKernel,
+                             istringstream &line,
                              Trace *whichTrace,
-                             vector<Timeline *>& windows,
-                             vector<Histogram *>& histograms )
+                             vector< Timeline * > &windows,
+                             vector< Histogram * > &histograms )
 {
   string strX;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strX, ' ' );
   istringstream tmpStream( strX );
   PRV_UINT16 x;
 
-  if ( !( tmpStream >> x ) )
+  if( !( tmpStream >> x ) )
     return false;
 
   histograms[ histograms.size() - 1 ]->setPosX( x );
@@ -4270,23 +4601,24 @@ void Analyzer2DX::printLine( ostream& cfgFile,
 
 string Analyzer2DY::tagCFG = OLDCFG_TAG_AN2D_Y;
 
-bool Analyzer2DY::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DY::parseLine( KernelConnection *whichKernel,
+                             istringstream &line,
                              Trace *whichTrace,
-                             vector<Timeline *>& windows,
-                             vector<Histogram *>& histograms )
+                             vector< Timeline * > &windows,
+                             vector< Histogram * > &histograms )
 {
   string strY;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strY, ' ' );
   istringstream tmpStream( strY );
   PRV_UINT16 y;
 
-  if ( !( tmpStream >> y ) )
+  if( !( tmpStream >> y ) )
     return false;
 
   histograms[ histograms.size() - 1 ]->setPosY( y );
@@ -4303,23 +4635,24 @@ void Analyzer2DY::printLine( ostream& cfgFile,
 
 string Analyzer2DWidth::tagCFG = OLDCFG_TAG_AN2D_WIDTH;
 
-bool Analyzer2DWidth::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DWidth::parseLine( KernelConnection *whichKernel,
+                                 istringstream &line,
                                  Trace *whichTrace,
-                                 vector<Timeline *>& windows,
-                                 vector<Histogram *>& histograms )
+                                 vector< Timeline * > &windows,
+                                 vector< Histogram * > &histograms )
 {
   string strWidth;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strWidth, ' ' );
   istringstream tmpStream( strWidth );
   PRV_UINT16 width;
 
-  if ( !( tmpStream >> width ) )
+  if( !( tmpStream >> width ) )
     return false;
 
   histograms[ histograms.size() - 1 ]->setWidth( width );
@@ -4337,23 +4670,23 @@ void Analyzer2DWidth::printLine( ostream& cfgFile,
 string Analyzer2DHeight::tagCFG = OLDCFG_TAG_AN2D_HEIGHT;
 
 bool Analyzer2DHeight::parseLine( KernelConnection *whichKernel,
-                                  istringstream& line,
+                                  istringstream &line,
                                   Trace *whichTrace,
-                                  vector<Timeline *>& windows,
-                                  vector<Histogram *>& histograms )
+                                  vector< Timeline * > &windows,
+                                  vector< Histogram * > &histograms )
 {
   string strHeight;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strHeight, ' ' );
   istringstream tmpStream( strHeight );
   PRV_UINT16 height;
 
-  if ( !( tmpStream >> height ) )
+  if( !( tmpStream >> height ) )
     return false;
 
   histograms[ histograms.size() - 1 ]->setHeight( height );
@@ -4371,36 +4704,33 @@ void Analyzer2DHeight::printLine( ostream& cfgFile,
 string Analyzer2DControlWindow::tagCFG = OLDCFG_TAG_AN2D_CONTROL_WINDOW;
 
 bool Analyzer2DControlWindow::parseLine( KernelConnection *whichKernel,
-                                         istringstream& line,
+                                         istringstream &line,
                                          Trace *whichTrace,
-                                         vector<Timeline *>& windows,
-                                         vector<Histogram *>& histograms )
+                                         vector< Timeline * > &windows,
+                                         vector< Histogram * > &histograms )
 {
   string strIndexControlWindow;
   PRV_UINT32 indexControlWindow;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strIndexControlWindow );
   istringstream tmpWindow( strIndexControlWindow );
-  if ( !( tmpWindow >> indexControlWindow ) )
+  if( !( tmpWindow >> indexControlWindow ) )
     return false;
 
-  if ( indexControlWindow > windows.size() ||
-       windows[ indexControlWindow - 1 ] == nullptr )
+  if( indexControlWindow > windows.size() || windows[ indexControlWindow - 1 ] == nullptr )
     return false;
 
   if( histograms[ histograms.size() - 1 ]->getDataWindow() != nullptr &&
-      !LoadedWindows::validDataWindow( histograms[ histograms.size() - 1 ]->getDataWindow(),
-                                       windows[ indexControlWindow - 1 ] ) )
+      !LoadedWindows::validDataWindow( histograms[ histograms.size() - 1 ]->getDataWindow(), windows[ indexControlWindow - 1 ] ) )
     return false;
 
   if( histograms[ histograms.size() - 1 ]->getExtraControlWindow() != nullptr &&
-      !LoadedWindows::validDataWindow( windows[ indexControlWindow - 1 ],
-                                       histograms[ histograms.size() - 1 ]->getExtraControlWindow() ) )
+      !LoadedWindows::validDataWindow( windows[ indexControlWindow - 1 ], histograms[ histograms.size() - 1 ]->getExtraControlWindow() ) )
     return false;
 
   histograms[ histograms.size() - 1 ]->setControlWindow( windows[ indexControlWindow - 1 ] );
@@ -4420,36 +4750,34 @@ void Analyzer2DControlWindow::printLine( ostream& cfgFile,
 
 string Analyzer2DDataWindow::tagCFG = OLDCFG_TAG_AN2D_DATA_WINDOW;
 
-bool Analyzer2DDataWindow::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DDataWindow::parseLine( KernelConnection *whichKernel,
+                                      istringstream &line,
                                       Trace *whichTrace,
-                                      vector<Timeline *>& windows,
-                                      vector<Histogram *>& histograms )
+                                      vector< Timeline * > &windows,
+                                      vector< Histogram * > &histograms )
 {
   string strIndexDataWindow;
   PRV_UINT32 indexDataWindow;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strIndexDataWindow );
   istringstream tmpWindow( strIndexDataWindow );
-  if ( !( tmpWindow >> indexDataWindow ) )
+  if( !( tmpWindow >> indexDataWindow ) )
     return false;
 
-  if ( indexDataWindow > windows.size() ||
-       windows[ indexDataWindow - 1 ] == nullptr )
+  if( indexDataWindow > windows.size() || windows[ indexDataWindow - 1 ] == nullptr )
     return false;
 
   if( histograms[ histograms.size() - 1 ]->getControlWindow() != nullptr &&
-      !LoadedWindows::validDataWindow( windows[ indexDataWindow - 1 ],
-                                       histograms[ histograms.size() - 1 ]->getControlWindow() ) )
+      !LoadedWindows::validDataWindow( windows[ indexDataWindow - 1 ], histograms[ histograms.size() - 1 ]->getControlWindow() ) )
     return false;
 
   if( histograms[ histograms.size() - 1 ]->getExtraControlWindow() != nullptr &&
-      !LoadedWindows::validDataWindow( windows[ indexDataWindow - 1 ],
-                                       histograms[ histograms.size() - 1 ]->getExtraControlWindow() ) )
+      !LoadedWindows::validDataWindow( windows[ indexDataWindow - 1 ], histograms[ histograms.size() - 1 ]->getExtraControlWindow() ) )
     return false;
 
   histograms[ histograms.size() - 1 ]->setDataWindow( windows[ indexDataWindow - 1 ] );
@@ -4469,21 +4797,22 @@ void Analyzer2DDataWindow::printLine( ostream& cfgFile,
 
 string Analyzer2DStatistic::tagCFG = OLDCFG_TAG_AN2D_STATISTIC;
 
-bool Analyzer2DStatistic::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DStatistic::parseLine( KernelConnection *whichKernel,
+                                     istringstream &line,
                                      Trace *whichTrace,
-                                     vector<Timeline *>& windows,
-                                     vector<Histogram *>& histograms )
+                                     vector< Timeline * > &windows,
+                                     vector< Histogram * > &histograms )
 {
   string strStatistic;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strStatistic );
 
-  if ( !histograms[ histograms.size() - 1 ]->getCalculateAll() )
+  if( !histograms[ histograms.size() - 1 ]->getCalculateAll() )
     histograms[ histograms.size() - 1 ]->pushbackStatistic( strStatistic );
 
   histograms[ histograms.size() - 1 ]->setCurrentStat( strStatistic );
@@ -4501,16 +4830,17 @@ void Analyzer2DStatistic::printLine( ostream& cfgFile,
 
 string Analyzer2DCalculateAll::tagCFG = OLDCFG_TAG_AN2D_CALCULATE_ALL;
 
-bool Analyzer2DCalculateAll::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DCalculateAll::parseLine( KernelConnection *whichKernel,
+                                        istringstream &line,
                                         Trace *whichTrace,
-                                        vector<Timeline *>& windows,
-                                        vector<Histogram *>& histograms )
+                                        vector< Timeline * > &windows,
+                                        vector< Histogram * > &histograms )
 {
   string strBoolAll;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   histograms[ histograms.size() - 1 ]->setCalculateAll( true );
@@ -4530,7 +4860,7 @@ void Analyzer2DCalculateAll::printLine( ostream& cfgFile,
                                         const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_CALCULATE_ALL << " ";
-  if ( ( *it )->getCalculateAll() )
+  if( ( *it )->getCalculateAll() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
@@ -4540,23 +4870,24 @@ void Analyzer2DCalculateAll::printLine( ostream& cfgFile,
 
 string Analyzer2DHideColumns::tagCFG = OLDCFG_TAG_AN2D_HIDE_COLS;
 
-bool Analyzer2DHideColumns::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DHideColumns::parseLine( KernelConnection *whichKernel,
+                                       istringstream &line,
                                        Trace *whichTrace,
-                                       vector<Timeline *>& windows,
-                                       vector<Histogram *>& histograms )
+                                       vector< Timeline * > &windows,
+                                       vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setHideColumns( true );
-  else if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setHideColumns( false );
   else
     return false;
@@ -4568,7 +4899,7 @@ void Analyzer2DHideColumns::printLine( ostream& cfgFile,
                                        const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_HIDE_COLS << " ";
-  if ( ( *it )->getHideColumns() )
+  if( ( *it )->getHideColumns() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
@@ -4578,23 +4909,24 @@ void Analyzer2DHideColumns::printLine( ostream& cfgFile,
 
 string Analyzer2DHorizontal::tagCFG = OLDCFG_TAG_AN2D_HORIZONTAL;
 
-bool Analyzer2DHorizontal::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DHorizontal::parseLine( KernelConnection *whichKernel,
+                                      istringstream &line,
                                       Trace *whichTrace,
-                                      vector<Timeline *>& windows,
-                                      vector<Histogram *>& histograms )
+                                      vector< Timeline * > &windows,
+                                      vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_HORIZONTAL ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_HORIZONTAL ) == 0 )
     histograms[ histograms.size() - 1 ]->setHorizontal( true );
-  else if ( strBool.compare( OLDCFG_VAL_VERTICAL ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_VERTICAL ) == 0 )
     histograms[ histograms.size() - 1 ]->setHorizontal( false );
   else
     return false;
@@ -4606,7 +4938,7 @@ void Analyzer2DHorizontal::printLine( ostream& cfgFile,
                                       const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_HORIZONTAL << " ";
-  if ( ( *it )->getHorizontal() )
+  if( ( *it )->getHorizontal() )
     cfgFile << OLDCFG_VAL_HORIZONTAL;
   else
     cfgFile << OLDCFG_VAL_VERTICAL;
@@ -4616,23 +4948,24 @@ void Analyzer2DHorizontal::printLine( ostream& cfgFile,
 
 string Analyzer2DColor::tagCFG = OLDCFG_TAG_AN2D_COLOR;
 
-bool Analyzer2DColor::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DColor::parseLine( KernelConnection *whichKernel,
+                                 istringstream &line,
                                  Trace *whichTrace,
-                                 vector<Timeline *>& windows,
-                                 vector<Histogram *>& histograms )
+                                 vector< Timeline * > &windows,
+                                 vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setShowColor( true );
-  else if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setShowColor( false );
 
   return true;
@@ -4642,7 +4975,7 @@ void Analyzer2DColor::printLine( ostream& cfgFile,
                                  const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_COLOR << " ";
-  if ( ( *it )->getShowColor() )
+  if( ( *it )->getShowColor() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
@@ -4652,23 +4985,24 @@ void Analyzer2DColor::printLine( ostream& cfgFile,
 
 string Analyzer2DSemanticColor::tagCFG = OLDCFG_TAG_AN2D_SEMANTIC_COLOR;
 
-bool Analyzer2DSemanticColor::parseLine( KernelConnection *whichKernel, istringstream& line,
-    Trace *whichTrace,
-    vector<Timeline *>& windows,
-    vector<Histogram *>& histograms )
+bool Analyzer2DSemanticColor::parseLine( KernelConnection *whichKernel,
+                                         istringstream &line,
+                                         Trace *whichTrace,
+                                         vector< Timeline * > &windows,
+                                         vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setFirstRowColored( true );
-  else if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setFirstRowColored( false );
 
   return true;
@@ -4678,7 +5012,7 @@ void Analyzer2DSemanticColor::printLine( ostream& cfgFile,
     const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_SEMANTIC_COLOR << " ";
-  if ( ( *it )->getFirstRowColored() )
+  if( ( *it )->getFirstRowColored() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
@@ -4688,23 +5022,24 @@ void Analyzer2DSemanticColor::printLine( ostream& cfgFile,
 
 string Analyzer2DZoom::tagCFG = OLDCFG_TAG_AN2D_ZOOM;
 
-bool Analyzer2DZoom::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DZoom::parseLine( KernelConnection *whichKernel,
+                                istringstream &line,
                                 Trace *whichTrace,
-                                vector<Timeline *>& windows,
-                                vector<Histogram *>& histograms )
+                                vector< Timeline * > &windows,
+                                vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_ENABLED ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_ENABLED ) == 0 )
     histograms[ histograms.size() - 1 ]->setZoom( true );
-  else if ( strBool.compare( OLDCFG_VAL_DISABLED ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_DISABLED ) == 0 )
     histograms[ histograms.size() - 1 ]->setZoom( false );
 
   return true;
@@ -4714,7 +5049,7 @@ void Analyzer2DZoom::printLine( ostream& cfgFile,
                                 const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_ZOOM << " ";
-  if ( ( *it )->getZoom() )
+  if( ( *it )->getZoom() )
     cfgFile << OLDCFG_VAL_ENABLED;
   else
     cfgFile << OLDCFG_VAL_DISABLED;
@@ -4724,16 +5059,17 @@ void Analyzer2DZoom::printLine( ostream& cfgFile,
 
 string Analyzer2DAccumulator::tagCFG = OLDCFG_TAG_AN2D_ACCUMULATOR;
 
-bool Analyzer2DAccumulator::parseLine( KernelConnection *whichKernel, istringstream& line,
-                                        Trace *whichTrace,
-                                        vector<Timeline *>& windows,
-                                        vector<Histogram *>& histograms )
+bool Analyzer2DAccumulator::parseLine( KernelConnection *whichKernel,
+                                       istringstream &line,
+                                       Trace *whichTrace,
+                                       vector< Timeline * > &windows,
+                                       vector< Histogram * > &histograms )
 {
   string strAccumulator;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   return true;
@@ -4743,35 +5079,37 @@ void Analyzer2DAccumulator::printLine( ostream& cfgFile,
                                        const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_ACCUMULATOR << " ";
-  if ( ( *it )->isCommunicationStat( ( *it )->getCurrentStat() ) )
-    cfgFile << levelToStringHisto( static_cast<TWindowLevel>( ( *it )->getControlWindow()->getLevel() ) );
+  if( ( *it )->isCommunicationStat( ( *it )->getCurrentStat() ) )
+    cfgFile << levelToStringHisto( static_cast< TWindowLevel >( ( *it )->getControlWindow()->getLevel() ) );
   else
     cfgFile << OLDCFG_VAL_AN2D_ACCUM_SEMANTIC;
   cfgFile << endl;
 }
 
 
-
 string Analyzer2DAccumulateByControlWindow::tagCFG = "";
 
-bool Analyzer2DAccumulateByControlWindow::parseLine( KernelConnection *whichKernel, istringstream& line,
-    Trace *whichTrace,
-    vector<Timeline *>& windows,
-    vector<Histogram *>& histograms )
+bool Analyzer2DAccumulateByControlWindow::parseLine( KernelConnection *whichKernel,
+                                                     istringstream &line,
+                                                     Trace *whichTrace,
+                                                     vector< Timeline * > &windows,
+                                                     vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
-    {}
-  else if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
-    {}
+  if( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+  {
+  }
+  else if( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+  {
+  }
   else
     return false;
 
@@ -4786,25 +5124,26 @@ void Analyzer2DAccumulateByControlWindow::printLine( ostream& cfgFile,
 
 string Analyzer2DSortCols::tagCFG = OLDCFG_TAG_AN2D_SORTCOLS;
 
-bool Analyzer2DSortCols::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DSortCols::parseLine( KernelConnection *whichKernel,
+                                    istringstream &line,
                                     Trace *whichTrace,
-                                    vector<Timeline *>& windows,
-                                    vector<Histogram *>& histograms )
+                                    vector< Timeline * > &windows,
+                                    vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
   {
     histograms[ histograms.size() - 1 ]->setSemanticSortColumns( true );
   }
-  else if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
   {
     histograms[ histograms.size() - 1 ]->setSemanticSortColumns( false );
   }
@@ -4818,7 +5157,7 @@ void Analyzer2DSortCols::printLine( ostream& cfgFile,
                                     const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_SORTCOLS << " ";
-  if ( ( *it )->getSemanticSortColumns() )
+  if( ( *it )->getSemanticSortColumns() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
@@ -4828,33 +5167,34 @@ void Analyzer2DSortCols::printLine( ostream& cfgFile,
 
 string Analyzer2DSortCriteria::tagCFG = OLDCFG_TAG_AN2D_SORTCRITERIA;
 
-bool Analyzer2DSortCriteria::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DSortCriteria::parseLine( KernelConnection *whichKernel,
+                                        istringstream &line,
                                         Trace *whichTrace,
-                                        vector<Timeline *>& windows,
-                                        vector<Histogram *>& histograms )
+                                        vector< Timeline * > &windows,
+                                        vector< Histogram * > &histograms )
 {
   string strSortCriteria;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strSortCriteria );
 
-  if ( strSortCriteria.compare( OLDCFG_VAL_SORT_AVERAGE ) == 0 )
+  if( strSortCriteria.compare( OLDCFG_VAL_SORT_AVERAGE ) == 0 )
     histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( THistoSortCriteria::AVERAGE );
-  else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_TOTAL ) == 0 )
+  else if( strSortCriteria.compare( OLDCFG_VAL_SORT_TOTAL ) == 0 )
     histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( THistoSortCriteria::TOTAL );
-  else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_MAXIMUM ) == 0 )
+  else if( strSortCriteria.compare( OLDCFG_VAL_SORT_MAXIMUM ) == 0 )
     histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( THistoSortCriteria::MAXIMUM );
-  else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_MINIMUM ) == 0 )
+  else if( strSortCriteria.compare( OLDCFG_VAL_SORT_MINIMUM ) == 0 )
     histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( THistoSortCriteria::MINIMUM );
-  else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_STDEV ) == 0 )
+  else if( strSortCriteria.compare( OLDCFG_VAL_SORT_STDEV ) == 0 )
     histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( THistoSortCriteria::STDEV );
-  else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_AVGDIVMAX ) == 0 )
+  else if( strSortCriteria.compare( OLDCFG_VAL_SORT_AVGDIVMAX ) == 0 )
     histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( THistoSortCriteria::AVGDIVMAX );
-  else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_CUSTOM ) == 0 )
+  else if( strSortCriteria.compare( OLDCFG_VAL_SORT_CUSTOM ) == 0 )
   {
     histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( THistoSortCriteria::CUSTOM );
     histograms[ histograms.size() - 1 ]->setSemanticSortColumns( false );
@@ -4869,7 +5209,7 @@ void Analyzer2DSortCriteria::printLine( ostream& cfgFile,
                                         const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_SORTCRITERIA << " ";
-  switch ( ( *it )->getSemanticSortCriteria() )
+  switch( ( *it )->getSemanticSortCriteria() )
   {
     case THistoSortCriteria::AVERAGE:
       cfgFile << OLDCFG_VAL_SORT_AVERAGE;
@@ -4901,25 +5241,26 @@ void Analyzer2DSortCriteria::printLine( ostream& cfgFile,
 
 string Analyzer2DSortReverse::tagCFG = OLDCFG_TAG_AN2D_SORTREVERSE;
 
-bool Analyzer2DSortReverse::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DSortReverse::parseLine( KernelConnection *whichKernel,
+                                       istringstream &line,
                                        Trace *whichTrace,
-                                       vector<Timeline *>& windows,
-                                       vector<Histogram *>& histograms )
+                                       vector< Timeline * > &windows,
+                                       vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
   {
     histograms[ histograms.size() - 1 ]->setSemanticSortReverse( true );
   }
-  else if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
   {
     histograms[ histograms.size() - 1 ]->setSemanticSortReverse( false );
   }
@@ -4933,7 +5274,7 @@ void Analyzer2DSortReverse::printLine( ostream& cfgFile,
                                        const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_SORTREVERSE << " ";
-  if ( ( *it )->getSemanticSortReverse() )
+  if( ( *it )->getSemanticSortReverse() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
@@ -4948,51 +5289,44 @@ void Analyzer2DSortReverse::printLine( ostream& cfgFile,
 
 string Analyzer2DParameters::tagCFG = OLDCFG_TAG_AN2D_PARAMETERS;
 
-bool Analyzer2DParameters::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DParameters::parseLine( KernelConnection *whichKernel,
+                                      istringstream &line,
                                       Trace *whichTrace,
-                                      vector<Timeline *>& windows,
-                                      vector<Histogram *>& histograms )
+                                      vector< Timeline * > &windows,
+                                      vector< Histogram * > &histograms )
 {
   string strNumParams, strValue;
   PRV_UINT16 numParams;
   double dataValue;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strNumParams, ' ' ); // Number of following parameters.
   istringstream tmpNumParams( strNumParams );
 
-  if ( !( tmpNumParams >> numParams ) )
+  if( !( tmpNumParams >> numParams ) )
     return false;
 
-  for ( PRV_UINT16 ii = 0; ii < numParams; ii++ )
+  for( PRV_UINT16 ii = 0; ii < numParams; ii++ )
   {
     getline( line, strValue, ' ' );
     istringstream tmpValue( strValue );
-    if ( !( tmpValue >> dataValue ) )
+    if( !( tmpValue >> dataValue ) )
       continue;
-    if ( ii == 0 )
+    if( ii == 0 )
     {
       histograms[ histograms.size() - 1 ]->setDataMin( dataValue );
-      //histograms[ histograms.size() - 1 ]->setCommSizeMin( ( TCommSize ) dataValue );
     }
-    else if ( ii == 1 )
+    else if( ii == 1 )
     {
       histograms[ histograms.size() - 1 ]->setDataMax( dataValue );
-      //histograms[ histograms.size() - 1 ]->setCommSizeMax( ( TCommSize ) dataValue );
     }
-    else if ( ii == 2 )
+    else // ii == 2 or 3 => old values for setBurst{Min,Max}
     {
-      histograms[ histograms.size() - 1 ]->setBurstMin( dataValue );
-      //histograms[ histograms.size() - 1 ]->setCommTagMin( ( TCommTag ) dataValue );
-    }
-    else if ( ii == 3 )
-    {
-      histograms[ histograms.size() - 1 ]->setBurstMax( dataValue );
-      //histograms[ histograms.size() - 1 ]->setCommTagMax( ( TCommTag ) dataValue );
+      break;
     }
   }
 
@@ -5004,9 +5338,7 @@ void Analyzer2DParameters::printLine( ostream& cfgFile,
 {
   cfgFile << OLDCFG_TAG_AN2D_PARAMETERS << " 4 ";
   cfgFile << ( *it )->getDataMin() << " ";
-  cfgFile << ( *it )->getDataMax() << " ";
-  cfgFile << ( *it )->getBurstMin() << " ";
-  cfgFile << ( *it )->getBurstMax();
+  cfgFile << ( *it )->getDataMax();
   cfgFile << endl;
 }
 
@@ -5014,31 +5346,31 @@ void Analyzer2DParameters::printLine( ostream& cfgFile,
 string Analyzer2DAnalysisLimits::tagCFG = OLDCFG_TAG_AN2D_ANALYSISLIMITS;
 
 bool Analyzer2DAnalysisLimits::parseLine( KernelConnection *whichKernel,
-                                          istringstream& line,
+                                          istringstream &line,
                                           Trace *whichTrace,
-                                          vector<Timeline *>& windows,
-                                          vector<Histogram *>& histograms )
+                                          vector< Timeline * > &windows,
+                                          vector< Histogram * > &histograms )
 {
   string strLimit;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strLimit );
 
-  if ( strLimit.compare( OLDCFG_VAL_LIMIT_ALLTRACE ) == 0 )
+  if( strLimit.compare( OLDCFG_VAL_LIMIT_ALLTRACE ) == 0 )
   {
     histograms[ histograms.size() - 1 ]->setWindowBeginTime( 0.0 );
     histograms[ histograms.size() - 1 ]->setWindowEndTime( whichTrace->getEndTime() );
   }
-  else if ( strLimit.compare( OLDCFG_VAL_LIMIT_ALLWINDOW ) == 0 )
+  else if( strLimit.compare( OLDCFG_VAL_LIMIT_ALLWINDOW ) == 0 )
   {
     histograms[ histograms.size() - 1 ]->setWindowBeginTime( histograms[ histograms.size() - 1 ]->getControlWindow()->getWindowBeginTime() );
     histograms[ histograms.size() - 1 ]->setWindowEndTime( histograms[ histograms.size() - 1 ]->getControlWindow()->getWindowEndTime() );
   }
-  else if ( strLimit.compare( OLDCFG_VAL_LIMIT_REGION ) == 0 )
+  else if( strLimit.compare( OLDCFG_VAL_LIMIT_REGION ) == 0 )
   {
     // Not implemented yet
     histograms[ histograms.size() - 1 ]->setWindowBeginTime( 0.0 );
@@ -5055,7 +5387,7 @@ void Analyzer2DAnalysisLimits::printLine( ostream& cfgFile,
                                           const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_ANALYSISLIMITS << " ";
-  if ( options.histoAllTrace )
+  if( options.histoAllTrace )
     cfgFile << OLDCFG_VAL_LIMIT_ALLTRACE;
   else
     cfgFile << OLDCFG_VAL_LIMIT_ALLWINDOW;
@@ -5066,24 +5398,26 @@ void Analyzer2DAnalysisLimits::printLine( ostream& cfgFile,
 string Analyzer2DRelativeTime::tagCFG = "";
 
 bool Analyzer2DRelativeTime::parseLine( KernelConnection *whichKernel,
-                                        istringstream& line,
+                                        istringstream &line,
                                         Trace *whichTrace,
-                                        vector<Timeline *>& windows,
-                                        vector<Histogram *>& histograms )
+                                        vector< Timeline * > &windows,
+                                        vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
-    {}
-  else if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
-    {}
+  if( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+  {
+  }
+  else if( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+  {
+  }
   else
     return false;
 
@@ -5099,23 +5433,23 @@ void Analyzer2DRelativeTime::printLine( ostream& cfgFile,
 string Analyzer2DComputeYScale::tagCFG = OLDCFG_TAG_AN2D_COMPUTEYSCALE;
 
 bool Analyzer2DComputeYScale::parseLine( KernelConnection *whichKernel,
-                                         istringstream& line,
+                                         istringstream &line,
                                          Trace *whichTrace,
-                                         vector<Timeline *>& windows,
-                                         vector<Histogram *>& histograms )
+                                         vector< Timeline * > &windows,
+                                         vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setCompute2DScale( false );
-  else if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setCompute2DScale( true );
   else
     return false;
@@ -5128,7 +5462,7 @@ void Analyzer2DComputeYScale::printLine( ostream& cfgFile,
     const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_COMPUTEYSCALE << " ";
-  if ( ( *it )->getCompute2DScale() )
+  if( ( *it )->getCompute2DScale() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
@@ -5139,23 +5473,23 @@ void Analyzer2DComputeYScale::printLine( ostream& cfgFile,
 string Analyzer2DComputeYScaleZero::tagCFG = CFG_TAG_AN2D_COMPUTEYSCALE_ZERO;
 
 bool Analyzer2DComputeYScaleZero::parseLine( KernelConnection *whichKernel,
-                                             istringstream& line,
+                                             istringstream &line,
                                              Trace *whichTrace,
-                                             vector<Timeline *>& windows,
-                                             vector<Histogram *>& histograms )
+                                             vector< Timeline * > &windows,
+                                             vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setCompute2DScaleZero( false );
-  else if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setCompute2DScaleZero( true );
   else
     return false;
@@ -5168,7 +5502,7 @@ void Analyzer2DComputeYScaleZero::printLine( ostream& cfgFile,
                                              const vector<Histogram *>::const_iterator it )
 {
   cfgFile << CFG_TAG_AN2D_COMPUTEYSCALE_ZERO << " ";
-  if ( ( *it )->getCompute2DScaleZero() )
+  if( ( *it )->getCompute2DScaleZero() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
@@ -5178,22 +5512,23 @@ void Analyzer2DComputeYScaleZero::printLine( ostream& cfgFile,
 
 string Analyzer2DMinimum::tagCFG = OLDCFG_TAG_AN2D_MINIMUM;
 
-bool Analyzer2DMinimum::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DMinimum::parseLine( KernelConnection *whichKernel,
+                                   istringstream &line,
                                    Trace *whichTrace,
-                                   vector<Timeline *>& windows,
-                                   vector<Histogram *>& histograms )
+                                   vector< Timeline * > &windows,
+                                   vector< Histogram * > &histograms )
 {
   string strMinimum;
   THistogramLimit dataMinimum;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strMinimum );
   istringstream tmpValue( strMinimum );
-  if ( !( tmpValue >> dataMinimum ) )
+  if( !( tmpValue >> dataMinimum ) )
     return false;
   histograms[ histograms.size() - 1 ]->setControlMin( dataMinimum );
 
@@ -5209,22 +5544,23 @@ void Analyzer2DMinimum::printLine( ostream& cfgFile,
 
 string Analyzer2DMaximum::tagCFG = OLDCFG_TAG_AN2D_MAXIMUM;
 
-bool Analyzer2DMaximum::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DMaximum::parseLine( KernelConnection *whichKernel,
+                                   istringstream &line,
                                    Trace *whichTrace,
-                                   vector<Timeline *>& windows,
-                                   vector<Histogram *>& histograms )
+                                   vector< Timeline * > &windows,
+                                   vector< Histogram * > &histograms )
 {
   string strMaximum;
   THistogramLimit dataMaximum;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strMaximum );
   istringstream tmpValue( strMaximum );
-  if ( !( tmpValue >> dataMaximum ) )
+  if( !( tmpValue >> dataMaximum ) )
     return false;
   histograms[ histograms.size() - 1 ]->setControlMax( dataMaximum );
 
@@ -5238,27 +5574,30 @@ void Analyzer2DMaximum::printLine( ostream& cfgFile,
 }
 
 
+string Analyzer2DDelta::tagCFG = OLDCFG_TAG_AN2D_DELTA;
 
-
-string  Analyzer2DDelta::tagCFG = OLDCFG_TAG_AN2D_DELTA;
-
-bool Analyzer2DDelta::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DDelta::parseLine( KernelConnection *whichKernel,
+                                 istringstream &line,
                                  Trace *whichTrace,
-                                 vector<Timeline *>& windows,
-                                 vector<Histogram *>& histograms )
+                                 vector< Timeline * > &windows,
+                                 vector< Histogram * > &histograms )
 {
   string strDelta;
   THistogramLimit dataDelta;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strDelta );
   istringstream tmpValue( strDelta );
-  if ( !( tmpValue >> dataDelta ) )
+
+  if( !( tmpValue >> dataDelta ) )
     return false;
+  if( dataDelta <= 0 )
+    return false;
+
   histograms[ histograms.size() - 1 ]->setControlDelta( dataDelta );
 
   return true;
@@ -5272,18 +5611,19 @@ void Analyzer2DDelta::printLine( ostream& cfgFile,
 
 
 // Analyzer2DUseCustomDelta deprecated. Only parsed for compatibility purposes.
-string  Analyzer2DUseCustomDelta::tagCFG = CFG_TAG_AN2D_USE_CUSTOM_DELTA;
+string Analyzer2DUseCustomDelta::tagCFG = CFG_TAG_AN2D_USE_CUSTOM_DELTA;
 
-bool Analyzer2DUseCustomDelta::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DUseCustomDelta::parseLine( KernelConnection *whichKernel,
+                                          istringstream &line,
                                           Trace *whichTrace,
-                                          vector<Timeline *>& windows,
-                                          vector<Histogram *>& histograms )
+                                          vector< Timeline * > &windows,
+                                          vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool );
@@ -5297,25 +5637,26 @@ void Analyzer2DUseCustomDelta::printLine( ostream& cfgFile,
 }
 
 
-string  Analyzer2DUseFixedDelta::tagCFG = CFG_TAG_AN2D_USE_FIXED_DELTA;
+string Analyzer2DUseFixedDelta::tagCFG = CFG_TAG_AN2D_USE_FIXED_DELTA;
 
-bool Analyzer2DUseFixedDelta::parseLine( KernelConnection *whichKernel, istringstream& line,
-                                 Trace *whichTrace,
-                                 vector<Timeline *>& windows,
-                                 vector<Histogram *>& histograms )
+bool Analyzer2DUseFixedDelta::parseLine( KernelConnection *whichKernel,
+                                         istringstream &line,
+                                         Trace *whichTrace,
+                                         vector< Timeline * > &windows,
+                                         vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool );
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setUseFixedDelta( false );
-  else if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setUseFixedDelta( true );
   else
     return false;
@@ -5327,7 +5668,7 @@ void Analyzer2DUseFixedDelta::printLine( ostream& cfgFile,
                                  const vector<Histogram *>::const_iterator it )
 {
   cfgFile << CFG_TAG_AN2D_USE_FIXED_DELTA << " ";
-  if ( ( *it )->getUseFixedDelta() )
+  if( ( *it )->getUseFixedDelta() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
@@ -5335,25 +5676,25 @@ void Analyzer2DUseFixedDelta::printLine( ostream& cfgFile,
 }
 
 
-string  Analyzer2DNumColumns::tagCFG = CFG_TAG_AN2D_NUMCOLUMNS;
+string Analyzer2DNumColumns::tagCFG = CFG_TAG_AN2D_NUMCOLUMNS;
 
 bool Analyzer2DNumColumns::parseLine( KernelConnection *whichKernel,
-                                      istringstream& line,
+                                      istringstream &line,
                                       Trace *whichTrace,
-                                      vector<Timeline *>& windows,
-                                      vector<Histogram *>& histograms )
+                                      vector< Timeline * > &windows,
+                                      vector< Histogram * > &histograms )
 {
   string strColumn;
   THistogramColumn dataColumn;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strColumn );
   istringstream tmpValue( strColumn );
-  if ( !( tmpValue >> dataColumn ) )
+  if( !( tmpValue >> dataColumn ) )
     return false;
   histograms[ histograms.size() - 1 ]->setNumColumns( dataColumn );
 
@@ -5369,23 +5710,24 @@ void Analyzer2DNumColumns::printLine( ostream& cfgFile,
 
 string Analyzer2DComputeGradient::tagCFG = OLDCFG_TAG_AN2D_COMPUTEGRADIENT;
 
-bool Analyzer2DComputeGradient::parseLine( KernelConnection *whichKernel, istringstream& line,
-    Trace *whichTrace,
-    vector<Timeline *>& windows,
-    vector<Histogram *>& histograms )
+bool Analyzer2DComputeGradient::parseLine( KernelConnection *whichKernel,
+                                           istringstream &line,
+                                           Trace *whichTrace,
+                                           vector< Timeline * > &windows,
+                                           vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setComputeGradient( false );
-  else if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setComputeGradient( true );
   else
     return false;
@@ -5398,7 +5740,7 @@ void Analyzer2DComputeGradient::printLine( ostream& cfgFile,
     const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_COMPUTEGRADIENT << " ";
-  if ( options.histoComputeGradient || ( *it )->getComputeGradient() )
+  if( options.histoComputeGradient || ( *it )->getComputeGradient() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
@@ -5406,25 +5748,25 @@ void Analyzer2DComputeGradient::printLine( ostream& cfgFile,
 }
 
 
-
 string Analyzer2DMinimumGradient::tagCFG = OLDCFG_TAG_AN2D_MINIMUMGRADIENT;
 
-bool Analyzer2DMinimumGradient::parseLine( KernelConnection *whichKernel, istringstream& line,
-    Trace *whichTrace,
-    vector<Timeline *>& windows,
-    vector<Histogram *>& histograms )
+bool Analyzer2DMinimumGradient::parseLine( KernelConnection *whichKernel,
+                                           istringstream &line,
+                                           Trace *whichTrace,
+                                           vector< Timeline * > &windows,
+                                           vector< Histogram * > &histograms )
 {
   string strMinimumGradient;
   THistogramLimit dataMinimumGradient;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strMinimumGradient );
   istringstream tmpValue( strMinimumGradient );
-  if ( !( tmpValue >> dataMinimumGradient ) )
+  if( !( tmpValue >> dataMinimumGradient ) )
     return false;
   histograms[ histograms.size() - 1 ]->setMinGradient( dataMinimumGradient );
 
@@ -5441,22 +5783,22 @@ void Analyzer2DMinimumGradient::printLine( ostream& cfgFile,
 string Analyzer2DMaximumGradient::tagCFG = OLDCFG_TAG_AN2D_MAXIMUMGRADIENT;
 
 bool Analyzer2DMaximumGradient::parseLine( KernelConnection *whichKernel,
-                                           istringstream& line,
+                                           istringstream &line,
                                            Trace *whichTrace,
-                                           vector<Timeline *>& windows,
-                                           vector<Histogram *>& histograms )
+                                           vector< Timeline * > &windows,
+                                           vector< Histogram * > &histograms )
 {
   string strMaximumGradient;
   THistogramLimit dataMaximumGradient;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strMaximumGradient );
   istringstream tmpValue( strMaximumGradient );
-  if ( !( tmpValue >> dataMaximumGradient ) )
+  if( !( tmpValue >> dataMaximumGradient ) )
     return false;
   histograms[ histograms.size() - 1 ]->setMaxGradient( dataMaximumGradient );
 
@@ -5470,41 +5812,41 @@ void Analyzer2DMaximumGradient::printLine( ostream& cfgFile,
 }
 
 
-
-string Analyzer2DObjects::tagCFG = CFG_TAG_OBJECTS;
+// DEPRECATED
+string Analyzer2DObjects::tagCFG = CFG_TAG_AN2D_OBJECTS;
 
 bool Analyzer2DObjects::parseLine( KernelConnection *whichKernel,
-                                           istringstream& line,
-                                           Trace *whichTrace,
-                                           vector<Timeline *>& windows,
-                                           vector<Histogram *>& histograms )
+                                   istringstream &line,
+                                   Trace *whichTrace,
+                                   vector< Timeline * > &windows,
+                                   vector< Histogram * > &histograms )
 {
   string strObject;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strObject );
   vector< TObjectOrder > myRows;
 
-  stringstream ss(strObject);
+  stringstream ss( strObject );
 
-  if ( strObject == "All" )
+  if( strObject == "All" )
   {
-     Histogram *tmpHisto = histograms[ histograms.size() - 1 ];     
-     TObjectOrder totalRows = tmpHisto->getTrace()->getLevelObjects( tmpHisto->getControlWindow()->getLevel() );
-     for( TObjectOrder i = 0; i < totalRows; ++i )
-     {
-       myRows.push_back( i );
-     }
+    Histogram *tmpHisto    = histograms[ histograms.size() - 1 ];
+    TObjectOrder totalRows = tmpHisto->getTrace()->getLevelObjects( tmpHisto->getControlWindow()->getLevel() );
+    for( TObjectOrder i = 0; i < totalRows; ++i )
+    {
+      myRows.push_back( i );
+    }
   }
   else
   {
     string token;
     char separator = ',';
-    while ( getline( ss, token, separator ) )
+    while( getline( ss, token, separator ) )
     {
       TObjectOrder tmpOrder;
       istringstream tmpToken( token );
@@ -5521,22 +5863,23 @@ bool Analyzer2DObjects::parseLine( KernelConnection *whichKernel,
 void Analyzer2DObjects::printLine( ostream& cfgFile,
                                   const vector<Histogram *>::const_iterator it )
 {
-  vector< TObjectOrder > myRows = ( *it )->getSelectedRows();
+  vector< TObjectOrder > myRows;
+  ( *it )->getSelectedRows( myRows );
 
-  cfgFile << CFG_TAG_OBJECTS << " ";
+  cfgFile << CFG_TAG_AN2D_OBJECTS << " ";
 
   TObjectOrder totalRows = ( *it )->getTrace()->getLevelObjects( ( *it )->getControlWindow()->getLevel() );
-  if ( myRows.size() == (size_t)totalRows )
+  if( myRows.size() == (size_t)totalRows )
   {
     cfgFile << "All";
   }
   else
   {
     size_t i;
-    for ( i = 0; i < myRows.size() - 1; ++i )
+    for( i = 0; i < myRows.size() - 1; ++i )
       cfgFile << myRows[ i ] << ",";
 
-    if ( i == myRows.size() - 1 )
+    if( i == myRows.size() - 1 )
       cfgFile << myRows[ i ];
   }
 
@@ -5544,25 +5887,49 @@ void Analyzer2DObjects::printLine( ostream& cfgFile,
 }
 
 
+string Analyzer2DObject::tagCFG = CFG_TAG_AN2D_OBJECT;
 
-string Analyzer2DDrawModeObjects::tagCFG = CFG_TAG_DRAWMODE_OBJECTS;
+bool Analyzer2DObject::parseLine( KernelConnection *whichKernel,
+                                  istringstream &line,
+                                  Trace *whichTrace,
+                                  vector< Timeline * > &windows,
+                                  vector< Histogram * > &histograms )
+{
+  if( windows[ windows.size() - 1 ] == nullptr )
+    return false;
+
+  Histogram *histo = histograms.back();
+
+  if( histo == nullptr )
+    return false;
+
+  return objectGenericParseLine( whichKernel, line, whichTrace, histo );
+}
+
+void Analyzer2DObject::printLine( ostream &cfgFile, const vector< Histogram * >::const_iterator it )
+{
+  objectGenericPrintLine( Analyzer2DObject::tagCFG, cfgFile, it );
+}
+
+
+string Analyzer2DDrawModeObjects::tagCFG = CFG_TAG_AN2D_DRAWMODE_OBJECTS;
 
 bool Analyzer2DDrawModeObjects::parseLine( KernelConnection *whichKernel,
-                                           istringstream& line,
+                                           istringstream &line,
                                            Trace *whichTrace,
-                                           vector<Timeline *>& windows,
-                                           vector<Histogram *>& histograms )
+                                           vector< Timeline * > &windows,
+                                           vector< Histogram * > &histograms )
 {
   string strDrawMode;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strDrawMode );
 
-  if ( drawModeCodes.find( strDrawMode ) != drawModeCodes.end() )
+  if( drawModeCodes.find( strDrawMode ) != drawModeCodes.end() )
     histograms[ histograms.size() - 1 ]->setDrawModeObjects( drawModeCodes[ strDrawMode ] );
 
   return true;
@@ -5572,28 +5939,28 @@ bool Analyzer2DDrawModeObjects::parseLine( KernelConnection *whichKernel,
 void Analyzer2DDrawModeObjects::printLine( ostream& cfgFile,
                                            const vector<Histogram *>::const_iterator it )
 {
-  cfgFile << CFG_TAG_DRAWMODE_OBJECTS << " " << drawModeTags[ (*it)->getDrawModeObjects() ] << endl;
+  cfgFile << CFG_TAG_AN2D_DRAWMODE_OBJECTS << " " << drawModeTags[ ( *it )->getDrawModeObjects() ] << endl;
 }
 
 
-string Analyzer2DDrawModeColumns::tagCFG = CFG_TAG_DRAWMODE_COLUMNS;
+string Analyzer2DDrawModeColumns::tagCFG = CFG_TAG_AN2D_DRAWMODE_COLUMNS;
 
 bool Analyzer2DDrawModeColumns::parseLine( KernelConnection *whichKernel,
-                                           istringstream& line,
+                                           istringstream &line,
                                            Trace *whichTrace,
-                                           vector<Timeline *>& windows,
-                                           vector<Histogram *>& histograms )
+                                           vector< Timeline * > &windows,
+                                           vector< Histogram * > &histograms )
 {
   string strDrawMode;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strDrawMode );
 
-  if ( drawModeCodes.find( strDrawMode ) != drawModeCodes.end() )
+  if( drawModeCodes.find( strDrawMode ) != drawModeCodes.end() )
     histograms[ histograms.size() - 1 ]->setDrawModeColumns( drawModeCodes[ strDrawMode ] );
 
   return true;
@@ -5603,30 +5970,30 @@ bool Analyzer2DDrawModeColumns::parseLine( KernelConnection *whichKernel,
 void Analyzer2DDrawModeColumns::printLine( ostream& cfgFile,
                                            const vector<Histogram *>::const_iterator it )
 {
-  cfgFile << CFG_TAG_DRAWMODE_COLUMNS << " " << drawModeTags[ (*it)->getDrawModeColumns() ] << endl;
+  cfgFile << CFG_TAG_AN2D_DRAWMODE_COLUMNS << " " << drawModeTags[ ( *it )->getDrawModeColumns() ] << endl;
 }
 
 
 string Analyzer2DPixelSize::tagCFG = OLDCFG_TAG_AN2D_PIXEL_SIZE;
 
 bool Analyzer2DPixelSize::parseLine( KernelConnection *whichKernel,
-                                     istringstream& line,
+                                     istringstream &line,
                                      Trace *whichTrace,
-                                     vector<Timeline *>& windows,
-                                     vector<Histogram *>& histograms )
+                                     vector< Timeline * > &windows,
+                                     vector< Histogram * > &histograms )
 {
   string strSize;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strSize );
   istringstream tmpStream( strSize );
   PRV_UINT16 size;
 
-  if ( !( tmpStream >> size ) )
+  if( !( tmpStream >> size ) )
     return false;
 
   histograms[ histograms.size() - 1 ]->setPixelSize( size );
@@ -5638,29 +6005,30 @@ bool Analyzer2DPixelSize::parseLine( KernelConnection *whichKernel,
 void Analyzer2DPixelSize::printLine( ostream& cfgFile,
                                      const vector<Histogram *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_AN2D_PIXEL_SIZE << " " << (*it)->getPixelSize() << endl;
+  cfgFile << OLDCFG_TAG_AN2D_PIXEL_SIZE << " " << ( *it )->getPixelSize() << endl;
 }
 
 
 string Analyzer2DCodeColor::tagCFG = OLDCFG_TAG_AN2D_CODE_COLOR;
 // DEPRECATED
-bool Analyzer2DCodeColor::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DCodeColor::parseLine( KernelConnection *whichKernel,
+                                     istringstream &line,
                                      Trace *whichTrace,
-                                     vector<Timeline *>& windows,
-                                     vector<Histogram *>& histograms )
+                                     vector< Timeline * > &windows,
+                                     vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setCodeColor( false );
-  else if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setCodeColor( true );
   else
     return false;
@@ -5672,38 +6040,38 @@ void Analyzer2DCodeColor::printLine( ostream& cfgFile,
                                      const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_CODE_COLOR << " ";
-  if ( ( *it )->isCodeColorSet() )
+  if( ( *it )->isCodeColorSet() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
   cfgFile << endl;
-
 }
 
 
 string Analyzer2DColorMode::tagCFG = OLDCFG_TAG_AN2D_COLOR_MODE;
 
-bool Analyzer2DColorMode::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DColorMode::parseLine( KernelConnection *whichKernel,
+                                     istringstream &line,
                                      Trace *whichTrace,
-                                     vector<Timeline *>& windows,
-                                     vector<Histogram *>& histograms )
+                                     vector< Timeline * > &windows,
+                                     vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_COLOR_MODE_CODE ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_COLOR_MODE_CODE ) == 0 )
     histograms[ histograms.size() - 1 ]->setColorMode( TColorFunction::CODE_COLOR );
-  else if ( strBool.compare( OLDCFG_VAL_COLOR_MODE_GRADIENT ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_COLOR_MODE_GRADIENT ) == 0 )
     histograms[ histograms.size() - 1 ]->setColorMode( TColorFunction::GRADIENT );
-  else if ( strBool.compare( OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT ) == 0 )
     histograms[ histograms.size() - 1 ]->setColorMode( TColorFunction::NOT_NULL_GRADIENT );
-  else if ( strBool.compare( CFG_VAL_COLOR_MODE_ALTERNATIVE_GRADIENT ) == 0 )
+  else if( strBool.compare( CFG_VAL_COLOR_MODE_ALTERNATIVE_GRADIENT ) == 0 )
     histograms[ histograms.size() - 1 ]->setColorMode( TColorFunction::ALTERNATIVE_GRADIENT );
   else
     return false;
@@ -5715,7 +6083,7 @@ void Analyzer2DColorMode::printLine( ostream& cfgFile,
                                      const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_COLOR_MODE << " ";
-  if ( ( *it )->getColorMode() == TColorFunction::CODE_COLOR )
+  if( ( *it )->getColorMode() == TColorFunction::CODE_COLOR )
     cfgFile << OLDCFG_VAL_COLOR_MODE_CODE;
   else if( ( *it )->getColorMode() == TColorFunction::GRADIENT )
     cfgFile << OLDCFG_VAL_COLOR_MODE_GRADIENT;
@@ -5730,23 +6098,24 @@ void Analyzer2DColorMode::printLine( ostream& cfgFile,
 
 string Analyzer2DOnlyTotals::tagCFG = OLDCFG_TAG_AN2D_ONLY_TOTALS;
 
-bool Analyzer2DOnlyTotals::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DOnlyTotals::parseLine( KernelConnection *whichKernel,
+                                      istringstream &line,
                                       Trace *whichTrace,
-                                      vector<Timeline *>& windows,
-                                      vector<Histogram *>& histograms )
+                                      vector< Timeline * > &windows,
+                                      vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setOnlyTotals( false );
-  else if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setOnlyTotals( true );
   else
     return false;
@@ -5758,7 +6127,7 @@ void Analyzer2DOnlyTotals::printLine( ostream& cfgFile,
                                       const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_ONLY_TOTALS << " ";
-  if ( ( *it )->getOnlyTotals() )
+  if( ( *it )->getOnlyTotals() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
@@ -5768,23 +6137,24 @@ void Analyzer2DOnlyTotals::printLine( ostream& cfgFile,
 
 string Analyzer2DShortLabels::tagCFG = OLDCFG_TAG_AN2D_SHORT_LABELS;
 
-bool Analyzer2DShortLabels::parseLine( KernelConnection *whichKernel, istringstream& line,
-                                      Trace *whichTrace,
-                                      vector<Timeline *>& windows,
-                                      vector<Histogram *>& histograms )
+bool Analyzer2DShortLabels::parseLine( KernelConnection *whichKernel,
+                                       istringstream &line,
+                                       Trace *whichTrace,
+                                       vector< Timeline * > &windows,
+                                       vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setShortLabels( false );
-  else if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setShortLabels( true );
   else
     return false;
@@ -5796,7 +6166,7 @@ void Analyzer2DShortLabels::printLine( ostream& cfgFile,
                                       const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_SHORT_LABELS << " ";
-  if ( ( *it )->getShortLabels() )
+  if( ( *it )->getShortLabels() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
@@ -5806,28 +6176,30 @@ void Analyzer2DShortLabels::printLine( ostream& cfgFile,
 
 string Analyzer2DSynchronize::tagCFG = OLDCFG_TAG_AN2D_SYNCHRONIZE;
 
-bool Analyzer2DSynchronize::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DSynchronize::parseLine( KernelConnection *whichKernel,
+                                       istringstream &line,
                                        Trace *whichTrace,
-                                       vector<Timeline *>& windows,
-                                       vector<Histogram *>& histograms )
+                                       vector< Timeline * > &windows,
+                                       vector< Histogram * > &histograms )
 {
   string strGroupID;
   TGroupId groupID;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strGroupID );
   istringstream tmpStream( strGroupID );
-  if ( !( tmpStream >> groupID ) )
+  if( !( tmpStream >> groupID ) )
     return false;
 
   TGroupId realGroupID;
+  groupID = groupID;
   if( syncRealGroup.find( groupID ) == syncRealGroup.end() )
   {
-    realGroupID = SyncWindows::getInstance()->newGroup();
+    realGroupID              = SyncWindows::getInstance()->newGroup();
     syncRealGroup[ groupID ] = realGroupID;
   }
   else
@@ -5841,53 +6213,42 @@ bool Analyzer2DSynchronize::parseLine( KernelConnection *whichKernel, istringstr
 void Analyzer2DSynchronize::printLine( ostream& cfgFile,
                                        const vector<Histogram *>::const_iterator it )
 {
-  if( (*it)->isSync() )
+  if( ( *it )->isSync() )
   {
-    TGroupId realGroupID;
-    if( syncRealGroup.find( (*it)->getSyncGroup() ) == syncRealGroup.end() )
-    {
-      realGroupID = ++lastSyncGroupUsed;
-      syncRealGroup[ (*it)->getSyncGroup() ] = realGroupID;
-    }
-    else
-      realGroupID = syncRealGroup[ (*it)->getSyncGroup() ];
-
-    cfgFile << OLDCFG_TAG_AN2D_SYNCHRONIZE << " " << realGroupID << endl;
+    cfgFile << OLDCFG_TAG_AN2D_SYNCHRONIZE << " " << ( *it )->getSyncGroup() << endl;
   }
 }
 
 string Analyzer3DControlWindow::tagCFG = OLDCFG_TAG_AN3D_CONTROLWINDOW;
 
-bool Analyzer3DControlWindow::parseLine( KernelConnection *whichKernel, istringstream& line,
-    Trace *whichTrace,
-    vector<Timeline *>& windows,
-    vector<Histogram *>& histograms )
+bool Analyzer3DControlWindow::parseLine( KernelConnection *whichKernel,
+                                         istringstream &line,
+                                         Trace *whichTrace,
+                                         vector< Timeline * > &windows,
+                                         vector< Histogram * > &histograms )
 {
   string str3DControlWindow;
   PRV_UINT32 controlWindow;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, str3DControlWindow );
   istringstream tmpValue( str3DControlWindow );
-  if ( !( tmpValue >> controlWindow ) )
+  if( !( tmpValue >> controlWindow ) )
     return false;
 
-  if ( controlWindow > windows.size() ||
-       windows[ controlWindow - 1 ] == nullptr )
+  if( controlWindow > windows.size() || windows[ controlWindow - 1 ] == nullptr )
     return false;
 
   if( histograms[ histograms.size() - 1 ]->getControlWindow() != nullptr &&
-      !LoadedWindows::validDataWindow( histograms[ histograms.size() - 1 ]->getControlWindow(),
-                                       windows[ controlWindow - 1 ] ) )
+      !LoadedWindows::validDataWindow( histograms[ histograms.size() - 1 ]->getControlWindow(), windows[ controlWindow - 1 ] ) )
     return false;
 
   if( histograms[ histograms.size() - 1 ]->getDataWindow() != nullptr &&
-      !LoadedWindows::validDataWindow( histograms[ histograms.size() - 1 ]->getDataWindow(),
-                                       windows[ controlWindow - 1 ] ) )
+      !LoadedWindows::validDataWindow( histograms[ histograms.size() - 1 ]->getDataWindow(), windows[ controlWindow - 1 ] ) )
     return false;
 
   histograms[ histograms.size() - 1 ]->setExtraControlWindow( windows[ controlWindow - 1 ] );
@@ -5908,23 +6269,23 @@ void Analyzer3DControlWindow::printLine( ostream& cfgFile,
 string Analyzer3DComputeYScale::tagCFG = OLDCFG_TAG_AN3D_COMPUTEYSCALE;
 
 bool Analyzer3DComputeYScale::parseLine( KernelConnection *whichKernel,
-                                         istringstream& line,
+                                         istringstream &line,
                                          Trace *whichTrace,
-                                         vector<Timeline *>& windows,
-                                         vector<Histogram *>& histograms )
+                                         vector< Timeline * > &windows,
+                                         vector< Histogram * > &histograms )
 {
   string strBool;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+  if( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setCompute3DScale( false );
-  else if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+  else if( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setCompute3DScale( true );
   else
     return false;
@@ -5937,7 +6298,7 @@ void Analyzer3DComputeYScale::printLine( ostream& cfgFile,
     const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN3D_COMPUTEYSCALE << " ";
-  if ( ( *it )->getCompute3DScale() )
+  if( ( *it )->getCompute3DScale() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
@@ -5947,22 +6308,23 @@ void Analyzer3DComputeYScale::printLine( ostream& cfgFile,
 
 string Analyzer3DMinimum::tagCFG = OLDCFG_TAG_AN3D_MINIMUM;
 
-bool Analyzer3DMinimum::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer3DMinimum::parseLine( KernelConnection *whichKernel,
+                                   istringstream &line,
                                    Trace *whichTrace,
-                                   vector<Timeline *>& windows,
-                                   vector<Histogram *>& histograms )
+                                   vector< Timeline * > &windows,
+                                   vector< Histogram * > &histograms )
 {
   string str3DMinimum;
   THistogramLimit data3DMinimum;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, str3DMinimum );
   istringstream tmpValue( str3DMinimum );
-  if ( !( tmpValue >> data3DMinimum ) )
+  if( !( tmpValue >> data3DMinimum ) )
     return false;
   histograms[ histograms.size() - 1 ]->setExtraControlMin( data3DMinimum );
 
@@ -5978,22 +6340,23 @@ void Analyzer3DMinimum::printLine( ostream& cfgFile,
 
 string Analyzer3DMaximum::tagCFG = OLDCFG_TAG_AN3D_MAXIMUM;
 
-bool Analyzer3DMaximum::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer3DMaximum::parseLine( KernelConnection *whichKernel,
+                                   istringstream &line,
                                    Trace *whichTrace,
-                                   vector<Timeline *>& windows,
-                                   vector<Histogram *>& histograms )
+                                   vector< Timeline * > &windows,
+                                   vector< Histogram * > &histograms )
 {
   string str3DMaximum;
   THistogramLimit data3DMaximum;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, str3DMaximum );
   istringstream tmpValue( str3DMaximum );
-  if ( !( tmpValue >> data3DMaximum ) )
+  if( !( tmpValue >> data3DMaximum ) )
     return false;
   histograms[ histograms.size() - 1 ]->setExtraControlMax( data3DMaximum );
 
@@ -6009,22 +6372,23 @@ void Analyzer3DMaximum::printLine( ostream& cfgFile,
 
 string Analyzer3DDelta::tagCFG = OLDCFG_TAG_AN3D_DELTA;
 
-bool Analyzer3DDelta::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer3DDelta::parseLine( KernelConnection *whichKernel,
+                                 istringstream &line,
                                  Trace *whichTrace,
-                                 vector<Timeline *>& windows,
-                                 vector<Histogram *>& histograms )
+                                 vector< Timeline * > &windows,
+                                 vector< Histogram * > &histograms )
 {
   string str3DDelta;
   THistogramLimit data3DDelta;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, str3DDelta );
   istringstream tmpValue( str3DDelta );
-  if ( !( tmpValue >> data3DDelta ) )
+  if( !( tmpValue >> data3DDelta ) )
     return false;
   histograms[ histograms.size() - 1 ]->setExtraControlDelta( data3DDelta );
 
@@ -6040,22 +6404,23 @@ void Analyzer3DDelta::printLine( ostream& cfgFile,
 
 string Analyzer3DFixedValue::tagCFG = OLDCFG_TAG_AN3D_FIXEDVALUE;
 
-bool Analyzer3DFixedValue::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer3DFixedValue::parseLine( KernelConnection *whichKernel,
+                                      istringstream &line,
                                       Trace *whichTrace,
-                                      vector<Timeline *>& windows,
-                                      vector<Histogram *>& histograms )
+                                      vector< Timeline * > &windows,
+                                      vector< Histogram * > &histograms )
 {
   string str3DFixedValue;
   double data3DFixedValue;
 
-  if ( windows[ windows.size() - 1 ] == nullptr )
+  if( windows[ windows.size() - 1 ] == nullptr )
     return false;
-  if ( histograms[ histograms.size() - 1 ] == nullptr )
+  if( histograms[ histograms.size() - 1 ] == nullptr )
     return false;
 
   getline( line, str3DFixedValue );
   istringstream tmpValue( str3DFixedValue );
-  if ( !( tmpValue >> data3DFixedValue ) )
+  if( !( tmpValue >> data3DFixedValue ) )
     return false;
   histograms[ histograms.size() - 1 ]->setPlaneMinValue( data3DFixedValue );
 
@@ -6065,21 +6430,18 @@ bool Analyzer3DFixedValue::parseLine( KernelConnection *whichKernel, istringstre
 void Analyzer3DFixedValue::printLine( ostream& cfgFile,
                                       const vector<Histogram *>::const_iterator it )
 {
-  double planeMinValue =
-    ( *it )->getSelectedPlane() * ( *it )->getExtraControlDelta()
-    + ( *it )->getExtraControlMin();
+  double planeMinValue = ( *it )->getSelectedPlane() * ( *it )->getExtraControlDelta() + ( *it )->getExtraControlMin();
   cfgFile << OLDCFG_TAG_AN3D_FIXEDVALUE << " " << planeMinValue << endl;
 }
-
 
 
 string TagAliasCFG4D::tagCFG = "";
 
 bool TagAliasCFG4D::parseLine( KernelConnection *whichKernel,
-                               istringstream& line,
+                               istringstream &line,
                                Trace *whichTrace,
-                               vector<Timeline *>& windows,
-                               vector<Histogram *>& histograms )
+                               vector< Timeline * > &windows,
+                               vector< Histogram * > &histograms )
 {
   string currentCFG4DTag;
   string currentCFG4DAlias;
@@ -6087,10 +6449,10 @@ bool TagAliasCFG4D::parseLine( KernelConnection *whichKernel,
   getline( line, currentCFG4DTag, '|' );
   getline( line, currentCFG4DAlias );
 
-  if ( isWindowTag )
+  if( isWindowTag )
   {
     // WINDOW/TIMELINE
-    if ( windows[ windows.size() - 1 ] == nullptr )
+    if( windows[ windows.size() - 1 ] == nullptr )
       return false;
 
     // It has been created
@@ -6099,7 +6461,7 @@ bool TagAliasCFG4D::parseLine( KernelConnection *whichKernel,
   else
   {
     // HISTOGRAM
-    if ( histograms[ histograms.size() - 1 ] == nullptr )
+    if( histograms[ histograms.size() - 1 ] == nullptr )
       return false;
 
     // It has been created
@@ -6113,9 +6475,9 @@ bool TagAliasCFG4D::parseLine( KernelConnection *whichKernel,
 void TagAliasCFG4D::printAliasList( std::ostream& cfgFile,
                                     const vector<Timeline *>::const_iterator it )
 {
-  map< string, string > tmpAlias( (*it)->getCFG4DAliasList() );
+  map< string, string > tmpAlias( ( *it )->getCFG4DAliasList() );
 
-  for ( map< string, string >::iterator item = tmpAlias.begin(); item != tmpAlias.end(); ++item )
+  for( map< string, string >::iterator item = tmpAlias.begin(); item != tmpAlias.end(); ++item )
   {
     cfgFile << CFG_TAG_ALIAS_CFG4D << " ";
     cfgFile << item->first << "|" << item->second << endl;
@@ -6126,9 +6488,9 @@ void TagAliasCFG4D::printAliasList( std::ostream& cfgFile,
 void TagAliasCFG4D::printAliasList( std::ostream& cfgFile,
                                     const vector<Histogram *>::const_iterator it )
 {
-  map< string, string > tmpAlias( (*it)->getCFG4DAliasList() );
+  map< string, string > tmpAlias( ( *it )->getCFG4DAliasList() );
 
-  for ( map< string, string >::iterator item = tmpAlias.begin(); item != tmpAlias.end(); ++item )
+  for( map< string, string >::iterator item = tmpAlias.begin(); item != tmpAlias.end(); ++item )
   {
     cfgFile << CFG_TAG_ALIAS_CFG4D << " ";
     cfgFile << item->first << "|" << item->second << endl;
@@ -6136,14 +6498,13 @@ void TagAliasCFG4D::printAliasList( std::ostream& cfgFile,
 }
 
 
-
 string TagLinkCFG4D::tagCFG = CFG_TAG_LINK_CFG4D;
 
 bool TagLinkCFG4D::parseLine( KernelConnection *whichKernel,
-                              istringstream& line,
+                              istringstream &line,
                               Trace *whichTrace,
-                              vector<Timeline *>& windows,
-                              vector<Histogram *>& histograms )
+                              vector< Timeline * > &windows,
+                              vector< Histogram * > &histograms )
 {
   TCFGS4DGroup indexGroup;
   string originalName;
@@ -6156,12 +6517,14 @@ bool TagLinkCFG4D::parseLine( KernelConnection *whichKernel,
   if( isWindowTag )
   {
     currentWindow = windows[ windows.size() - 1 ];
-    if( currentWindow == nullptr ) return false;
+    if( currentWindow == nullptr )
+      return false;
   }
   else
   {
     currentHisto = histograms[ histograms.size() - 1 ];
-    if( currentHisto == nullptr ) return false;
+    if( currentHisto == nullptr )
+      return false;
   }
 
   getline( line, tmpString, '|' );
@@ -6191,7 +6554,7 @@ bool TagLinkCFG4D::parseLine( KernelConnection *whichKernel,
     CFGS4DGlobalManager::getInstance()->insertLink( lastGlobalLinkIndex, indexGroup, originalName, currentHisto );
     currentHisto->setCFGS4DGroupLink( originalName, indexGroup );
   }
-  
+
   return true;
 }
 
@@ -6204,7 +6567,7 @@ void TagLinkCFG4D::printLinkList( std::ostream& cfgFile,
   linkedProperties.getLinksName( window, linksNames );
   for( auto it : linksNames )
   {
-    cfgFile << CFG_TAG_LINK_CFG4D << " " << linkedProperties.getGroup( window, it )  << "|\"" << it << "\"";
+    cfgFile << CFG_TAG_LINK_CFG4D << " " << linkedProperties.getGroup( window, it ) << "|\"" << it << "\"";
     cfgFile << std::endl;
   }
 }
@@ -6213,10 +6576,10 @@ void TagLinkCFG4D::printLinkList( std::ostream& cfgFile,
 string TagAliasStatisticCFG4D::tagCFG = "";
 
 bool TagAliasStatisticCFG4D::parseLine( KernelConnection *whichKernel,
-                                        istringstream& line,
+                                        istringstream &line,
                                         Trace *whichTrace,
-                                        vector<Timeline *>& windows,
-                                        vector<Histogram *>& histograms )
+                                        vector< Timeline * > &windows,
+                                        vector< Histogram * > &histograms )
 {
   string currentStatisticCFG4DTag;
   string currentStatisticCFG4DAlias;
@@ -6224,15 +6587,14 @@ bool TagAliasStatisticCFG4D::parseLine( KernelConnection *whichKernel,
   getline( line, currentStatisticCFG4DTag, '|' );
   getline( line, currentStatisticCFG4DAlias );
 
-  if ( !isWindowTag )
+  if( !isWindowTag )
   {
     // HISTOGRAM
-    if ( histograms[ histograms.size() - 1 ] == nullptr )
+    if( histograms[ histograms.size() - 1 ] == nullptr )
       return false;
 
     // It has been created
-    histograms[ histograms.size() - 1 ]->setCFG4DStatisticAlias(
-            currentStatisticCFG4DTag, currentStatisticCFG4DAlias );
+    histograms[ histograms.size() - 1 ]->setCFG4DStatisticAlias( currentStatisticCFG4DTag, currentStatisticCFG4DAlias );
   }
 
   return true;
@@ -6241,9 +6603,9 @@ bool TagAliasStatisticCFG4D::parseLine( KernelConnection *whichKernel,
 void TagAliasStatisticCFG4D::printAliasList( std::ostream& cfgFile,
                                              const vector<Histogram *>::const_iterator it )
 {
-  map< string, string > tmpAlias( (*it)->getCFG4DStatisticsAliasList() );
+  map< string, string > tmpAlias( ( *it )->getCFG4DStatisticsAliasList() );
 
-  for ( map< string, string >::iterator item = tmpAlias.begin(); item != tmpAlias.end(); ++item )
+  for( map< string, string >::iterator item = tmpAlias.begin(); item != tmpAlias.end(); ++item )
   {
     cfgFile << CFG_TAG_STATISTIC_ALIAS_CFG4D << " ";
     cfgFile << item->first << "|" << item->second << endl;
@@ -6253,10 +6615,10 @@ void TagAliasStatisticCFG4D::printAliasList( std::ostream& cfgFile,
 string TagAliasParamCFG4D::tagCFG = "";
 
 bool TagAliasParamCFG4D::parseLine( KernelConnection *whichKernel,
-                                    istringstream& line,
+                                    istringstream &line,
                                     Trace *whichTrace,
-                                    vector<Timeline *>& windows,
-                                    vector<Histogram *>& histograms )
+                                    vector< Timeline * > &windows,
+                                    vector< Histogram * > &histograms )
 {
   string currentStatisticCFG4DSemanticLevel;
   string currentStatisticCFG4DSemanticFunction;
@@ -6268,23 +6630,22 @@ bool TagAliasParamCFG4D::parseLine( KernelConnection *whichKernel,
   getline( line, currentStatisticCFG4DSemanticNumParam, '|' );
   getline( line, currentStatisticCFG4DAlias );
 
-  if ( isWindowTag )
+  if( isWindowTag )
   {
     // HISTOGRAM
-    if ( windows[ windows.size() - 1 ] == nullptr )
+    if( windows[ windows.size() - 1 ] == nullptr )
       return false;
 
     PRV_UINT32 auxNumParam;
     istringstream tmpValue( currentStatisticCFG4DSemanticNumParam );
-    if ( !( tmpValue >> auxNumParam ) )
+    if( !( tmpValue >> auxNumParam ) )
       return false;
 
     // It has been created
-    windows[ windows.size() - 1 ]->setCFG4DParamAlias(
-            currentStatisticCFG4DSemanticLevel,
-            currentStatisticCFG4DSemanticFunction,
-            auxNumParam,
-            currentStatisticCFG4DAlias );
+    windows[ windows.size() - 1 ]->setCFG4DParamAlias( currentStatisticCFG4DSemanticLevel,
+                                                       currentStatisticCFG4DSemanticFunction,
+                                                       auxNumParam,
+                                                       currentStatisticCFG4DAlias );
   }
 
   return true;
@@ -6300,17 +6661,16 @@ void TagAliasParamCFG4D::printAliasList( std::ostream& cfgFile,
   TParamIndex param;
   string aliasName;
 
-  Timeline::TParamAlias tmpAlias( (*it)->getCFG4DParamAliasList() ); // funcion + num param
+  Timeline::TParamAlias tmpAlias( ( *it )->getCFG4DParamAliasList() ); // funcion + num param
 
-  for ( Timeline::TParamAlias::iterator item = tmpAlias.begin(); item != tmpAlias.end(); ++item )
+  for( Timeline::TParamAlias::iterator item = tmpAlias.begin(); item != tmpAlias.end(); ++item )
   {
     cfgFile << CFG_TAG_PARAM_ALIAS_CFG4D << " ";
 
-    aliasKey  = (*it)->getCFG4DParamAliasKey( item );
-    (*it)->splitCFG4DParamAliasKey( aliasKey, level, function, param );
-    aliasName = (*it)->getCFG4DParamAlias( item );
+    aliasKey = ( *it )->getCFG4DParamAliasKey( item );
+    ( *it )->splitCFG4DParamAliasKey( aliasKey, level, function, param );
+    aliasName = ( *it )->getCFG4DParamAlias( item );
 
     cfgFile << level << "|" << function << "|" << param << "|" << aliasName << endl;
   }
 }
-

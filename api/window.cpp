@@ -22,25 +22,25 @@
 \*****************************************************************************/
 
 
+#include "window.h"
+
+#include "config.h"
+#include "filter.h"
+#include "kernelconnection.h"
+#include "loadedwindows.h"
+#include "paraverconfig.h"
+#include "progresscontroller.h"
+#include "recordlist.h"
+#include "selectionrowsutils.h"
+#include "trace.h"
+
+#include <algorithm> // CFG4D
+#include <cmath>
 #include <iostream>
 #include <sstream>
 
-#include <cmath>
-#include <algorithm> // CFG4D
-
-#include "config.h"
-#include "kernelconnection.h"
-#include "filter.h"
-#include "trace.h"
-#include "window.h"
-#include "recordlist.h"
-#include "loadedwindows.h"
-#include "paraverconfig.h"
-#include "selectionrowsutils.h"
-#include "progresscontroller.h"
-
 #ifdef PARALLEL_ENABLED
-#include "omp.h"
+#  include "omp.h"
 #endif
 
 using namespace std;
@@ -66,38 +66,34 @@ Timeline *Timeline::create( KernelConnection *whichKernel, Timeline *parent1, Ti
 bool Timeline::compatibleLevels( Timeline *window1, Timeline *window2 )
 {
   return ( window1->getLevel() >= TTraceLevel::WORKLOAD && window1->getLevel() <= TTraceLevel::THREAD &&
-           window2->getLevel() >= TTraceLevel::WORKLOAD && window2->getLevel() <= TTraceLevel::THREAD )
-         ||
-         ( window1->getLevel() >= TTraceLevel::SYSTEM && window1->getLevel() <= TTraceLevel::CPU &&
-           window2->getLevel() >= TTraceLevel::SYSTEM && window2->getLevel() <= TTraceLevel::CPU );
+           window2->getLevel() >= TTraceLevel::WORKLOAD && window2->getLevel() <= TTraceLevel::THREAD ) ||
+         ( window1->getLevel() >= TTraceLevel::SYSTEM && window1->getLevel() <= TTraceLevel::CPU && window2->getLevel() >= TTraceLevel::SYSTEM &&
+           window2->getLevel() <= TTraceLevel::CPU );
 }
 
 Timeline::Timeline( KernelConnection *whichKernel ) : myKernel( whichKernel )
-{}
+{
+}
 
 TimelineProxy::TimelineProxy()
 {
-  parent1 = nullptr;
-  parent2 = nullptr;
-  myTrace = nullptr;
+  parent1  = nullptr;
+  parent2  = nullptr;
+  myTrace  = nullptr;
   myFilter = nullptr;
   init();
 }
 
-TimelineProxy::TimelineProxy( KernelConnection *whichKernel, Trace *whichTrace ):
-  Timeline( whichKernel ), myTrace( whichTrace )
+TimelineProxy::TimelineProxy( KernelConnection *whichKernel, Trace *whichTrace ) : Timeline( whichKernel ), myTrace( whichTrace )
 {
-  parent1 = nullptr;
-  parent2 = nullptr;
+  parent1  = nullptr;
+  parent2  = nullptr;
   myWindow = myKernel->newSingleWindow( whichTrace );
   myFilter = myKernel->newFilter( myWindow->getFilter() );
   init();
 }
 
-TimelineProxy::TimelineProxy( KernelConnection *whichKernel,
-                              Timeline *whichParent1,
-                              Timeline *whichParent2 ):
-  Timeline( whichKernel )
+TimelineProxy::TimelineProxy( KernelConnection *whichKernel, Timeline *whichParent1, Timeline *whichParent2 ) : Timeline( whichKernel )
 {
   parent1 = whichParent1;
   parent1->setChild( this );
@@ -114,11 +110,10 @@ TimelineProxy::TimelineProxy( KernelConnection *whichKernel,
   init();
 }
 
-TimelineProxy::TimelineProxy( KernelConnection *whichKernel ):
-  Timeline( whichKernel ), myTrace( nullptr )
+TimelineProxy::TimelineProxy( KernelConnection *whichKernel ) : Timeline( whichKernel ), myTrace( nullptr )
 {
-  parent1 = nullptr;
-  parent2 = nullptr;
+  parent1  = nullptr;
+  parent2  = nullptr;
   myWindow = myKernel->newDerivedWindow();
   myFilter = nullptr;
   init();
@@ -126,15 +121,15 @@ TimelineProxy::TimelineProxy( KernelConnection *whichKernel ):
 
 void TimelineProxy::init()
 {
-  ready = false;
-  destroy = false;
-  number_of_clones = 0;
-  winBeginTime = 0.0;
-  computeYMaxOnInit = false;
-  yScaleComputed = false;
-  maximumY = Timeline::getMaximumY();
-  minimumY = Timeline::getMinimumY();
-  existSemanticZero = Timeline::getExistSemanticZero();
+  ready                  = false;
+  destroy                = false;
+  number_of_clones       = 0;
+  winBeginTime           = 0.0;
+  computeYMaxOnInit      = false;
+  yScaleComputed         = false;
+  maximumY               = Timeline::getMaximumY();
+  minimumY               = Timeline::getMinimumY();
+  existSemanticZero      = Timeline::getExistSemanticZero();
   semanticScaleMinAtZero = ParaverConfig::getInstance()->getTimelineSemanticScaleMinAtZero();
 
   if( myTrace != nullptr )
@@ -147,24 +142,25 @@ void TimelineProxy::init()
   backgroundAsZero = Timeline::getBackgroundAsZero();
 
   drawModeObject = ParaverConfig::getInstance()->getTimelineDrawmodeObjects();
-  drawModeTime = ParaverConfig::getInstance()->getTimelineDrawmodeTime();
+  drawModeTime   = ParaverConfig::getInstance()->getTimelineDrawmodeTime();
   if( ParaverConfig::getInstance()->getTimelinePixelSize() <= 3 )
-    pixelSize = (PRV_UINT16)pow( float(2), (int)ParaverConfig::getInstance()->getTimelinePixelSize() );
+    pixelSize = (PRV_UINT16)pow( float( 2 ), (int)ParaverConfig::getInstance()->getTimelinePixelSize() );
   else
     pixelSize = ParaverConfig::getInstance()->getTimelinePixelSize();
-  showWindow = true;
-  raise = false;
-  changed = false;
-  redraw = false;
+  showWindow  = true;
+  raise       = false;
+  changed     = false;
+  redraw      = false;
   forceRedraw = false;
-  commLines = ParaverConfig::getInstance()->getTimelineViewCommunicationsLines();
-  flags = ParaverConfig::getInstance()->getTimelineViewEventsLines();
-  child = nullptr;
+  commLines   = ParaverConfig::getInstance()->getTimelineViewCommunicationsLines();
+  flags       = ParaverConfig::getInstance()->getTimelineViewEventsLines();
+  child       = nullptr;
 
   punctualColorWindow = nullptr;
 
-  objectLabels = ParaverConfig::getInstance()->getTimelineLabels();
+  objectLabels   = ParaverConfig::getInstance()->getTimelineLabels();
   objectAxisSize = ParaverConfig::getInstance()->getTimelineObjectAxisSize();
+  objectAxisCustomSize = 10;
 
   if( myTrace != nullptr )
   {
@@ -173,24 +169,24 @@ void TimelineProxy::init()
     zoomHistory.addZoom( 0, winEndTime, 0, getWindowLevelObjects() - 1 );
   }
 
-  sync = false;
+  sync      = false;
   syncGroup = 0;
 
-  isCFG4DEnabled = false;
-  CFG4DMode = false;
+  isCFG4DEnabled  = false;
+  CFG4DMode       = false;
   globalIndexLink = 0;
 }
 
 TimelineProxy::~TimelineProxy()
 {
-  if ( !myWindow->isDerivedWindow() && myFilter != nullptr )
+  if( !myWindow->isDerivedWindow() && myFilter != nullptr )
     delete myFilter;
   LoadedWindows::getInstance()->eraseWindow( this );
   if( sync )
     SyncWindows::getInstance()->removeWindow( this, syncGroup );
   delete myWindow;
 
-  for ( vector< RecordList *>::iterator it = myLists.begin(); it != myLists.end(); ++it )
+  for( vector< RecordList * >::iterator it = myLists.begin(); it != myLists.end(); ++it )
   {
     if( *it != nullptr )
       delete *it;
@@ -199,14 +195,14 @@ TimelineProxy::~TimelineProxy()
 
 Filter *TimelineProxy::getFilter() const
 {
-  if ( myWindow->isDerivedWindow() )
+  if( myWindow->isDerivedWindow() )
     return parent1->getFilter();
   return myFilter;
 }
 
 void TimelineProxy::setFactor( PRV_UINT16 whichFactor, TSemanticValue newValue )
 {
-  if ( myWindow->isDerivedWindow() )
+  if( myWindow->isDerivedWindow() )
   {
     yScaleComputed = false;
 
@@ -221,7 +217,7 @@ TSemanticValue TimelineProxy::getFactor( PRV_UINT16 whichFactor ) const
 
 void TimelineProxy::setShift( PRV_UINT16 whichShift, TSemanticValue newValue )
 {
-  if ( myWindow->isDerivedWindow() )
+  if( myWindow->isDerivedWindow() )
   {
     yScaleComputed = false;
 
@@ -236,19 +232,19 @@ PRV_INT16 TimelineProxy::getShift( PRV_UINT16 whichShift ) const
 
 void TimelineProxy::setParent( PRV_UINT16 whichParent, Timeline *whichWindow )
 {
-  if ( myWindow->isDerivedWindow() )
+  if( myWindow->isDerivedWindow() )
   {
     yScaleComputed = false;
 
-    if ( whichParent == 0 )
+    if( whichParent == 0 )
     {
-      if ( parent1 != nullptr )
+      if( parent1 != nullptr )
         parent1->setChild( nullptr );
       parent1 = whichWindow;
     }
-    else if ( whichParent == 1 )
+    else if( whichParent == 1 )
     {
-      if ( parent2 != nullptr )
+      if( parent2 != nullptr )
         parent2->setChild( nullptr );
       parent2 = whichWindow;
     }
@@ -256,7 +252,7 @@ void TimelineProxy::setParent( PRV_UINT16 whichParent, Timeline *whichWindow )
 
     whichWindow->setChild( this );
 
-    if ( parent1 != nullptr && parent2 != nullptr && myTrace == nullptr )
+    if( parent1 != nullptr && parent2 != nullptr && myTrace == nullptr )
     {
       if( parent1->getTrace()->getEndTime() >= parent2->getTrace()->getEndTime() )
         myTrace = parent1->getTrace();
@@ -280,7 +276,7 @@ Timeline *TimelineProxy::getChild()
 
 Timeline *TimelineProxy::getParent( PRV_UINT16 whichParent ) const
 {
-  switch ( whichParent )
+  switch( whichParent )
   {
     case 0:
       return parent1;
@@ -297,7 +293,7 @@ Timeline *TimelineProxy::getParent( PRV_UINT16 whichParent ) const
 
 void TimelineProxy::copy( TimelineProxy *clonedWindow )
 {
-  if ( isDerivedWindow() )
+  if( clonedWindow->isDerivedWindow() )
   {
     clonedWindow->parent1 = parent1->clone();
     clonedWindow->myWindow->setParent( 0, clonedWindow->parent1->getConcrete() );
@@ -311,40 +307,41 @@ void TimelineProxy::copy( TimelineProxy *clonedWindow )
   else
     clonedWindow->myFilter = myKernel->newFilter( clonedWindow->myWindow->getFilter() );
 
-  clonedWindow->winBeginTime = winBeginTime;
-  clonedWindow->winEndTime = winEndTime;
+  clonedWindow->winBeginTime      = winBeginTime;
+  clonedWindow->winEndTime        = winEndTime;
   clonedWindow->computeYMaxOnInit = computeYMaxOnInit;
-  clonedWindow->yScaleComputed = yScaleComputed;
+  clonedWindow->yScaleComputed    = yScaleComputed;
   clonedWindow->computeYMaxOnInit = computeYMaxOnInit;
-  clonedWindow->computedMaxY = computedMaxY;
-  clonedWindow->computedMinY = computedMinY;
-  clonedWindow->computedZeros = computedZeros;
-  clonedWindow->maximumY = maximumY;
-  clonedWindow->minimumY = minimumY;
+  clonedWindow->computedMaxY      = computedMaxY;
+  clonedWindow->computedMinY      = computedMinY;
+  clonedWindow->computedZeros     = computedZeros;
+  clonedWindow->maximumY          = maximumY;
+  clonedWindow->minimumY          = minimumY;
   clonedWindow->existSemanticZero = existSemanticZero;
 
   std::ostringstream tmp;
   tmp << ++number_of_clones;
   clonedWindow->name = name + ".c" + tmp.str();
 
-  clonedWindow->mySemanticColor = mySemanticColor;
-  clonedWindow->punctualColorWindow = punctualColorWindow;
+  clonedWindow->mySemanticColor        = mySemanticColor;
+  clonedWindow->punctualColorWindow    = punctualColorWindow;
   clonedWindow->semanticScaleMinAtZero = semanticScaleMinAtZero;
-  clonedWindow->drawModeObject = drawModeObject;
-  clonedWindow->drawModeTime = drawModeTime;
-  clonedWindow->showWindow = showWindow;
-  clonedWindow->changed = changed;
-  clonedWindow->redraw = redraw;
-  clonedWindow->commLines = commLines;
-  clonedWindow->flags = flags;
-  clonedWindow->child = nullptr;
-  clonedWindow->posX = posX;
-  clonedWindow->posY = posY;
-  clonedWindow->width = width;
-  clonedWindow->height = height;
+  clonedWindow->drawModeObject         = drawModeObject;
+  clonedWindow->drawModeTime           = drawModeTime;
+  clonedWindow->showWindow             = showWindow;
+  clonedWindow->changed                = changed;
+  clonedWindow->redraw                 = redraw;
+  clonedWindow->commLines              = commLines;
+  clonedWindow->flags                  = flags;
+  clonedWindow->child                  = nullptr;
+  clonedWindow->posX                   = posX;
+  clonedWindow->posY                   = posY;
+  clonedWindow->width                  = width;
+  clonedWindow->height                 = height;
 
-  clonedWindow->objectLabels = objectLabels;
-  clonedWindow->objectAxisSize = objectAxisSize;
+  clonedWindow->objectLabels         = objectLabels;
+  clonedWindow->objectAxisSize       = objectAxisSize;
+  clonedWindow->objectAxisCustomSize = objectAxisCustomSize;
   /*
     for ( vector<RecordList *>::iterator it = myLists.begin(); it != myLists.end(); it++ )
       clonedWindow->myLists.push_back( (*it)->create( *it ) );
@@ -353,17 +350,17 @@ void TimelineProxy::copy( TimelineProxy *clonedWindow )
 
   clonedWindow->selectedRow.copy( selectedRow );
 
-  if ( ParaverConfig::getInstance()->getTimelineKeepSyncGroupClone() )
+  if( ParaverConfig::getInstance()->getTimelineKeepSyncGroupClone() )
   {
-    clonedWindow->sync = sync;
+    clonedWindow->sync      = sync;
     clonedWindow->syncGroup = syncGroup;
     if( clonedWindow->sync )
-      SyncWindows::getInstance()->addWindow( clonedWindow, syncGroup );
+      SyncWindows::getInstance()->addWindow( (Timeline *)clonedWindow, syncGroup );
   }
 
   // CFG4D
-  clonedWindow->isCFG4DEnabled   = isCFG4DEnabled;
-  clonedWindow->CFG4DMode   = CFG4DMode;
+  clonedWindow->isCFG4DEnabled       = isCFG4DEnabled;
+  clonedWindow->CFG4DMode            = CFG4DMode;
   clonedWindow->propertiesAliasCFG4D = propertiesAliasCFG4D;
   clonedWindow->paramAliasCFG4D = paramAliasCFG4D;
 }
@@ -372,9 +369,9 @@ void TimelineProxy::copy( TimelineProxy *clonedWindow )
 Timeline *TimelineProxy::clone( Trace *whichTrace, TTimeUnit whichTimeUnit, bool recursiveClone )
 {
   TimelineProxy *clonedWindow = new TimelineProxy();
-  clonedWindow->myKernel = myKernel;
-  clonedWindow->myTrace = whichTrace;
-  clonedWindow->myWindow = myWindow->clone();
+  clonedWindow->myKernel      = myKernel;
+  clonedWindow->myTrace       = whichTrace;
+  clonedWindow->myWindow      = myWindow->clone();
   
   copy( clonedWindow );
 
@@ -387,9 +384,9 @@ Timeline *TimelineProxy::clone( Trace *whichTrace, TTimeUnit whichTimeUnit, bool
 Timeline *TimelineProxy::clone( bool recursiveClone )
 {
   TimelineProxy *clonedWindow = new TimelineProxy();
-  clonedWindow->myKernel = myKernel;
-  clonedWindow->myTrace  = myTrace;
-  clonedWindow->myWindow = myWindow->clone();
+  clonedWindow->myKernel      = myKernel;
+  clonedWindow->myTrace       = myTrace;
+  clonedWindow->myWindow      = myWindow->clone();
 
   copy( clonedWindow );
 
@@ -399,7 +396,7 @@ Timeline *TimelineProxy::clone( bool recursiveClone )
 
 bool TimelineProxy::getShowProgressBar() const
 {
-  if ( !myWindow->isDerivedWindow() )
+  if( !myWindow->isDerivedWindow() )
     return myTrace->getShowProgressBar();
 
   return parent1->getShowProgressBar() || parent2->getShowProgressBar();
@@ -448,24 +445,23 @@ bool TimelineProxy::getUsedByHistogram() const
 }
 
 
-set<Histogram *> TimelineProxy::getHistograms() const
+set< Histogram * > TimelineProxy::getHistograms() const
 {
   return usedByHistogram;
 }
 
-
-void TimelineProxy::setWindowBeginTime( TRecordTime whichTime, bool isBroadcast )
+void TimelineProxy::setWindowBeginTime( TRecordTime whichTime )
 {
   winBeginTime = whichTime;
-  if( sync && !isBroadcast )
-    SyncWindows::getInstance()->broadcastTime( syncGroup, this, winBeginTime, winEndTime );
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_TIME ) )
+    SyncWindows::getInstance()->broadcastTimeAll( syncGroup, winBeginTime, winEndTime );
 }
 
-void TimelineProxy::setWindowEndTime( TRecordTime whichTime, bool isBroadcast )
+void TimelineProxy::setWindowEndTime( TRecordTime whichTime )
 {
   winEndTime = whichTime;
-  if( sync && !isBroadcast )
-    SyncWindows::getInstance()->broadcastTime( syncGroup, this, winBeginTime, winEndTime );
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_TIME ) )
+    SyncWindows::getInstance()->broadcastTimeAll( syncGroup, winBeginTime, winEndTime );
 }
 
 TRecordTime TimelineProxy::getWindowBeginTime() const
@@ -485,19 +481,17 @@ bool TimelineProxy::getYScaleComputed() const
 
 void TimelineProxy::computeYScaleMin()
 {
-  if ( !yScaleComputed )
+  if( !yScaleComputed )
   {
     vector< TObjectOrder > selected;
-    getSelectedRows( getLevel(), selected,
-                     getZoomSecondDimension().first, getZoomSecondDimension().second, true );
+    getSelectedRows( getLevel(), selected, getZoomSecondDimension().first, getZoomSecondDimension().second, true );
 
     init( winBeginTime, NOCREATE );
 
-    for ( vector< TObjectOrder >::iterator obj = selected.begin(); obj != selected.end(); ++obj )
+    for( vector< TObjectOrder >::iterator obj = selected.begin(); obj != selected.end(); ++obj )
     {
       initRow( *obj, winBeginTime, NOCREATE );
-      while ( getBeginTime( *obj ) < getTrace()->getEndTime() &&
-              getBeginTime( *obj ) < myTrace->getEndTime() )
+      while( getBeginTime( *obj ) < getTrace()->getEndTime() && getBeginTime( *obj ) < myTrace->getEndTime() )
         calcNext( *obj );
     }
   }
@@ -507,19 +501,17 @@ void TimelineProxy::computeYScaleMin()
 
 void TimelineProxy::computeYScaleMax()
 {
-  if ( !yScaleComputed )
+  if( !yScaleComputed )
   {
     vector< TObjectOrder > selected;
-    getSelectedRows( getLevel(), selected,
-                     getZoomSecondDimension().first, getZoomSecondDimension().second, true );
+    getSelectedRows( getLevel(), selected, getZoomSecondDimension().first, getZoomSecondDimension().second, true );
 
     init( winBeginTime, NOCREATE );
 
-    for ( vector< TObjectOrder >::iterator obj = selected.begin(); obj != selected.end(); ++obj )
+    for( vector< TObjectOrder >::iterator obj = selected.begin(); obj != selected.end(); ++obj )
     {
       initRow( *obj, winBeginTime, NOCREATE );
-      while ( getBeginTime( *obj ) < getTrace()->getEndTime() &&
-              getBeginTime( *obj ) < myTrace->getEndTime() )
+      while( getBeginTime( *obj ) < getTrace()->getEndTime() && getBeginTime( *obj ) < myTrace->getEndTime() )
         calcNext( *obj );
     }
   }
@@ -533,18 +525,17 @@ void TimelineProxy::computeYScale( ProgressController *progress )
   vector< TSemanticValue > tmpComputedMinY;
   vector< int > tmpComputedZeros;
 
-  if ( !yScaleComputed )
+  if( !yScaleComputed )
   {
     vector< TObjectOrder > selected;
-    getSelectedRows( getLevel(), selected,
-                     getZoomSecondDimension().first, getZoomSecondDimension().second, true );
+    getSelectedRows( getLevel(), selected, getZoomSecondDimension().first, getZoomSecondDimension().second, true );
 
     setComputeYMaxOnInit( false );
     init( winBeginTime, NOCREATE );
 
     std::string previousMessage;
     double currentObject = 0.0;
-    int progressSteps = 0;
+    int progressSteps    = 0;
     if( progress != nullptr )
     {
       previousMessage = progress->getMessage();
@@ -557,56 +548,59 @@ void TimelineProxy::computeYScale( ProgressController *progress )
     tmpComputedMinY.reserve( selected.size() );
     tmpComputedZeros.reserve( selected.size() );
 
-    #pragma omp parallel
+#pragma omp parallel
     {
-      #pragma omp single
+#pragma omp single
       {
-
 #ifdef PARALLEL_ENABLED
         if( selected.size() > 1 ||
             ( myWindow->isDerivedWindow() && myWindow->getTrace()->getLevelObjects( myWindow->getParent( 0 )->getLevel() ) !=
-                                             myWindow->getTrace()->getLevelObjects( myWindow->getParent( 1 )->getLevel() )
-            )
-          )
+                                               myWindow->getTrace()->getLevelObjects( myWindow->getParent( 1 )->getLevel() ) ) )
         {
           for( int i = 0; i != omp_get_num_threads(); ++i )
             parallelClone.push_back( myWindow->clone( true ) );
         }
 #endif // PARALLEL_ENABLED
-        for ( int i = 0; i < selected.size(); ++i )
+        for( int i = 0; i < selected.size(); ++i )
         {
           tmpComputedMaxY.push_back( 0.0 );
           tmpComputedMinY.push_back( 0.0 );
           tmpComputedZeros.push_back( false );
-          
-          int tmpComputedMaxYSize = tmpComputedMaxY.size();
-          int tmpComputedMinYSize = tmpComputedMinY.size();
+
+          int tmpComputedMaxYSize  = tmpComputedMaxY.size();
+          int tmpComputedMinYSize  = tmpComputedMinY.size();
           int tmpComputedZerosSize = tmpComputedZeros.size();
 
-          #pragma omp task shared ( currentObject, progressSteps, progress, tmpComputedMaxY, tmpComputedMinY, tmpComputedZeros ) \
-                           firstprivate( tmpComputedMaxYSize, tmpComputedMinYSize, tmpComputedZerosSize )
+#pragma omp task shared( currentObject, progressSteps, progress, tmpComputedMaxY, tmpComputedMinY, tmpComputedZeros ) \
+  firstprivate( tmpComputedMaxYSize, tmpComputedMinYSize, tmpComputedZerosSize )
           {
             TObjectOrder obj = selected[ i ];
-            initRow( obj, winBeginTime, NOCREATE, tmpComputedMaxY[ tmpComputedMaxYSize - 1 ], tmpComputedMinY[ tmpComputedMinYSize - 1 ], tmpComputedZeros[ tmpComputedZerosSize - 1 ]  );
+            initRow( obj,
+                     winBeginTime,
+                     NOCREATE,
+                     tmpComputedMaxY[ tmpComputedMaxYSize - 1 ],
+                     tmpComputedMinY[ tmpComputedMinYSize - 1 ],
+                     tmpComputedZeros[ tmpComputedZerosSize - 1 ] );
             if( progress == nullptr || ( progress != nullptr && !progress->getStop() ) )
             {
-              while ( getBeginTime( obj ) < winEndTime &&
-                      getBeginTime( obj ) < myTrace->getEndTime() )
-                calcNext( obj, tmpComputedMaxY[ tmpComputedMaxYSize - 1 ], tmpComputedMinY[ tmpComputedMinYSize - 1 ], tmpComputedZeros[ tmpComputedZerosSize - 1 ] );
+              while( getBeginTime( obj ) < winEndTime && getBeginTime( obj ) < myTrace->getEndTime() )
+                calcNext( obj,
+                          tmpComputedMaxY[ tmpComputedMaxYSize - 1 ],
+                          tmpComputedMinY[ tmpComputedMinYSize - 1 ],
+                          tmpComputedZeros[ tmpComputedZerosSize - 1 ] );
 
-              #pragma omp atomic
-                ++progressSteps;
+#pragma omp atomic
+              ++progressSteps;
 
-              #pragma omp atomic
-                ++currentObject;
+#pragma omp atomic
+              ++currentObject;
 
               if( progress != nullptr )
               {
-                if( selected.size() <= 200 ||
-                    ( selected.size() <= 1000 && progressSteps == 10 ) ||
+                if( selected.size() <= 200 || ( selected.size() <= 1000 && progressSteps == 10 ) ||
                     ( selected.size() > 1000 && progressSteps == 100 ) )
                 {
-                  #pragma omp critical
+#pragma omp critical
                   {
                     progressSteps = 0;
                     progress->setCurrentProgress( currentObject );
@@ -620,11 +614,11 @@ void TimelineProxy::computeYScale( ProgressController *progress )
       } // omp single
     } // omp parallel
 
-    for ( int pos = 0; pos < selected.size(); ++pos )
+    for( int pos = 0; pos < selected.size(); ++pos )
     {
       computedZeros = computedZeros || tmpComputedZeros[ pos ];
-      computedMaxY = computedMaxY > tmpComputedMaxY[ pos ] ? computedMaxY : tmpComputedMaxY[ pos ];
-      if ( computedMinY == 0.0 )
+      computedMaxY  = computedMaxY > tmpComputedMaxY[ pos ] ? computedMaxY : tmpComputedMaxY[ pos ];
+      if( computedMinY == 0.0 )
         computedMinY = tmpComputedMinY[ pos ];
       else if( tmpComputedMinY[ pos ] != 0.0 )
         computedMinY = computedMinY < tmpComputedMinY[ pos ] ? computedMinY : tmpComputedMinY[ pos ];
@@ -632,7 +626,7 @@ void TimelineProxy::computeYScale( ProgressController *progress )
 
 
 #ifdef PARALLEL_ENABLED
-    for( vector<Timeline *>::iterator it = parallelClone.begin(); it != parallelClone.end(); ++it )
+    for( vector< Timeline * >::iterator it = parallelClone.begin(); it != parallelClone.end(); ++it )
       delete *it;
     parallelClone.clear();
 #endif // PARALLEL_ENABLED
@@ -643,8 +637,8 @@ void TimelineProxy::computeYScale( ProgressController *progress )
     }
   }
 
-  maximumY = computedMaxY;
-  minimumY = computedMinY;
+  maximumY          = computedMaxY;
+  minimumY          = computedMinY;
   existSemanticZero = computedZeros;
 }
 
@@ -661,16 +655,20 @@ bool TimelineProxy::getComputeYMaxOnInit() const
 void TimelineProxy::setMaximumY( TSemanticValue whichMax )
 {
   maximumY = whichMax;
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_MAX ) )
+    SyncWindows::getInstance()->broadcastMaxAll( syncGroup, whichMax );
 }
 
 void TimelineProxy::setMinimumY( TSemanticValue whichMin )
 {
   minimumY = whichMin;
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_MIN ) )
+    SyncWindows::getInstance()->broadcastMinAll( syncGroup, whichMin );
 }
 
 TSemanticValue TimelineProxy::getMaximumY()
 {
-  if ( computeYMaxOnInit )
+  if( computeYMaxOnInit )
   {
     computeYScale();
     computeYMaxOnInit = false;
@@ -680,7 +678,7 @@ TSemanticValue TimelineProxy::getMaximumY()
 
 TSemanticValue TimelineProxy::getMinimumY()
 {
-  if ( computeYMaxOnInit )
+  if( computeYMaxOnInit )
   {
     computeYScale();
     computeYMaxOnInit = false;
@@ -705,7 +703,7 @@ TTraceLevel TimelineProxy::getLevel() const
 
 void TimelineProxy::setLevel( TTraceLevel whichLevel )
 {
-  if ( whichLevel == myWindow->getLevel() )
+  if( whichLevel == myWindow->getLevel() )
     return;
 
   yScaleComputed = false;
@@ -742,11 +740,10 @@ TWindowLevel TimelineProxy::getComposeLevel( TTraceLevel whichLevel ) const
   return myWindow->getComposeLevel( whichLevel );
 }
 
-bool TimelineProxy::setLevelFunction( TWindowLevel whichLevel,
-                                      const string& whichFunction )
+bool TimelineProxy::setLevelFunction( TWindowLevel whichLevel, const string &whichFunction )
 {
   bool result = myWindow->setLevelFunction( whichLevel, whichFunction );
-  if ( result )
+  if( result )
     yScaleComputed = false;
 
   return result;
@@ -757,7 +754,7 @@ string TimelineProxy::getLevelFunction( TWindowLevel whichLevel ) const
   return myWindow->getLevelFunction( whichLevel );
 }
 
-string TimelineProxy::getFirstUsefulFunction( )
+string TimelineProxy::getFirstUsefulFunction()
 {
   return myWindow->getFirstUsefulFunction();
 }
@@ -767,9 +764,7 @@ TWindowLevel TimelineProxy::getFirstFreeCompose() const
   return myWindow->getFirstFreeCompose();
 }
 
-void TimelineProxy::setFunctionParam( TWindowLevel whichLevel,
-                                    TParamIndex whichParam,
-                                    const TParamValue& newValue )
+void TimelineProxy::setFunctionParam( TWindowLevel whichLevel, TParamIndex whichParam, const TParamValue &newValue )
 {
   yScaleComputed = false;
 
@@ -781,14 +776,12 @@ TParamIndex TimelineProxy::getFunctionNumParam( TWindowLevel whichLevel ) const
   return myWindow->getFunctionNumParam( whichLevel );
 }
 
-TParamValue TimelineProxy::getFunctionParam( TWindowLevel whichLevel,
-    TParamIndex whichParam ) const
+TParamValue TimelineProxy::getFunctionParam( TWindowLevel whichLevel, TParamIndex whichParam ) const
 {
   return myWindow->getFunctionParam( whichLevel, whichParam );
 }
 
-string TimelineProxy::getFunctionParamName( TWindowLevel whichLevel,
-    TParamIndex whichParam ) const
+string TimelineProxy::getFunctionParamName( TWindowLevel whichLevel, TParamIndex whichParam ) const
 {
   return myWindow->getFunctionParamName( whichLevel, whichParam );
 }
@@ -809,23 +802,17 @@ size_t TimelineProxy::getExtraNumPositions( TWindowLevel whichLevel ) const
   return myWindow->getExtraNumPositions( whichLevel );
 }
 
-bool TimelineProxy::setExtraLevelFunction( TWindowLevel whichLevel,
-                                         size_t whichPosition,
-                                         const string& whichFunction )
+bool TimelineProxy::setExtraLevelFunction( TWindowLevel whichLevel, size_t whichPosition, const string &whichFunction )
 {
   return myWindow->setExtraLevelFunction( whichLevel, whichPosition, whichFunction );
 }
 
-string TimelineProxy::getExtraLevelFunction( TWindowLevel whichLevel,
-                                           size_t whichPosition )
+string TimelineProxy::getExtraLevelFunction( TWindowLevel whichLevel, size_t whichPosition )
 {
   return myWindow->getExtraLevelFunction( whichLevel, whichPosition );
 }
 
-void TimelineProxy::setExtraFunctionParam( TWindowLevel whichLevel,
-                                         size_t whichPosition,
-                                         TParamIndex whichParam,
-                                         const TParamValue& newValue )
+void TimelineProxy::setExtraFunctionParam( TWindowLevel whichLevel, size_t whichPosition, TParamIndex whichParam, const TParamValue &newValue )
 {
   myWindow->setExtraFunctionParam( whichLevel, whichPosition, whichParam, newValue );
 }
@@ -835,16 +822,12 @@ TParamIndex TimelineProxy::getExtraFunctionNumParam( TWindowLevel whichLevel, si
   return myWindow->getExtraFunctionNumParam( whichLevel, whichPosition );
 }
 
-TParamValue TimelineProxy::getExtraFunctionParam( TWindowLevel whichLevel,
-                                                size_t whichPosition,
-                                                TParamIndex whichParam ) const
+TParamValue TimelineProxy::getExtraFunctionParam( TWindowLevel whichLevel, size_t whichPosition, TParamIndex whichParam ) const
 {
   return myWindow->getExtraFunctionParam( whichLevel, whichPosition, whichParam );
 }
 
-string TimelineProxy::getExtraFunctionParamName( TWindowLevel whichLevel,
-                                               size_t whichPosition,
-                                               TParamIndex whichParam ) const
+string TimelineProxy::getExtraFunctionParamName( TWindowLevel whichLevel, size_t whichPosition, TParamIndex whichParam ) const
 {
   return myWindow->getExtraFunctionParamName( whichLevel, whichPosition, whichParam );
 }
@@ -852,36 +835,36 @@ string TimelineProxy::getExtraFunctionParamName( TWindowLevel whichLevel,
 
 RecordList *TimelineProxy::getRecordList( TObjectOrder whichObject )
 {
-  if ( myLists.begin() == myLists.end() )
+  if( myLists.begin() == myLists.end() )
     return nullptr;
   return myLists[ whichObject ];
 }
 
 void TimelineProxy::init( TRecordTime initialTime, TCreateList create, bool updateLimits )
 {
-  if ( getComputeYMaxOnInit() )
+  if( getComputeYMaxOnInit() )
   {
     setComputeYMaxOnInit( false );
     computeYScale();
   }
 
-  if ( myLists.begin() != myLists.end() )
+  if( myLists.begin() != myLists.end() )
   {
-    for ( vector<RecordList *>::iterator it = myLists.begin(); it != myLists.end(); ++it )
+    for( vector< RecordList * >::iterator it = myLists.begin(); it != myLists.end(); ++it )
       delete *it;
-    if ( myLists.begin() != myLists.end() )
+    if( myLists.begin() != myLists.end() )
       myLists.clear();
   }
 
-  for ( int i = 0; i < myWindow->getWindowLevelObjects(); ++i )
+  for( int i = 0; i < myWindow->getWindowLevelObjects(); ++i )
     myLists.push_back( nullptr );
 
   myWindow->init( initialTime, create );
-  if ( updateLimits )
+  if( updateLimits )
   {
     yScaleComputed = true;
     computedMaxY = computedMinY = 0.0;
-    computedZeros = false;
+    computedZeros               = false;
   }
 }
 
@@ -894,24 +877,27 @@ void TimelineProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCr
 #endif // PARALLEL_ENABLED
 
   tmpMyWindow->initRow( whichRow, initialTime, create );
-  if ( create != NOCREATE && myLists[ whichRow ] == nullptr )
+  if( create != NOCREATE && myLists[ whichRow ] == nullptr )
     myLists[ whichRow ] = RecordList::create( tmpMyWindow->getRecordList( whichRow ) );
 
-  if ( updateLimits )
+  if( updateLimits )
   {
     TSemanticValue objValue = tmpMyWindow->getValue( whichRow );
-    computedZeros = computedZeros || objValue == 0.0;
-    if ( computedMaxY < objValue )
+    computedZeros           = computedZeros || objValue == 0.0;
+    if( computedMaxY < objValue )
       computedMaxY = objValue;
-    if ( computedMinY == 0 || ( computedMinY > objValue && objValue != 0 ) )
+    if( computedMinY == 0 || ( computedMinY > objValue && objValue != 0 ) )
       computedMinY = objValue;
   }
 }
 
-void TimelineProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create,
-                           TSemanticValue& rowComputedMaxY, TSemanticValue& rowComputedMinY,
-                           int& rowComputedZeros,
-                           bool updateLimits )
+void TimelineProxy::initRow( TObjectOrder whichRow,
+                             TRecordTime initialTime,
+                             TCreateList create,
+                             TSemanticValue &rowComputedMaxY,
+                             TSemanticValue &rowComputedMinY,
+                             int &rowComputedZeros,
+                             bool updateLimits )
 {
   Timeline *tmpMyWindow = myWindow;
 #ifdef PARALLEL_ENABLED
@@ -920,16 +906,16 @@ void TimelineProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCr
 #endif // PARALLEL_ENABLED
 
   tmpMyWindow->initRow( whichRow, initialTime, create );
-  if ( create != NOCREATE && myLists[ whichRow ] == nullptr )
+  if( create != NOCREATE && myLists[ whichRow ] == nullptr )
     myLists[ whichRow ] = RecordList::create( tmpMyWindow->getRecordList( whichRow ) );
 
-  if ( updateLimits )
+  if( updateLimits )
   {
     TSemanticValue objValue = tmpMyWindow->getValue( whichRow );
-    rowComputedZeros = rowComputedZeros || objValue == 0.0;
-    if ( rowComputedMaxY < objValue )
+    rowComputedZeros        = rowComputedZeros || objValue == 0.0;
+    if( rowComputedMaxY < objValue )
       rowComputedMaxY = objValue;
-    if ( rowComputedMinY == 0 || ( rowComputedMinY > objValue && objValue != 0 ) )
+    if( rowComputedMinY == 0 || ( rowComputedMinY > objValue && objValue != 0 ) )
       rowComputedMinY = objValue;
   }
 }
@@ -942,18 +928,18 @@ RecordList *TimelineProxy::calcNext( TObjectOrder whichObject, bool updateLimits
     tmpMyWindow = parallelClone[ omp_get_thread_num() ];
 #endif // PARALLEL_ENABLED
 
-  if ( myLists[ whichObject ] == nullptr )
+  if( myLists[ whichObject ] == nullptr )
     myLists[ whichObject ] = RecordList::create( tmpMyWindow->calcNext( whichObject ) );
   else
     tmpMyWindow->calcNext( whichObject );
 
-  if ( updateLimits )
+  if( updateLimits )
   {
     TSemanticValue objValue = tmpMyWindow->getValue( whichObject );
-    computedZeros = computedZeros || objValue == 0.0;
-    if ( computedMaxY < objValue )
+    computedZeros           = computedZeros || objValue == 0.0;
+    if( computedMaxY < objValue )
       computedMaxY = objValue;
-    if ( computedMinY == 0 || ( computedMinY > objValue && objValue != 0 ) )
+    if( computedMinY == 0 || ( computedMinY > objValue && objValue != 0 ) )
       computedMinY = objValue;
   }
 
@@ -961,9 +947,10 @@ RecordList *TimelineProxy::calcNext( TObjectOrder whichObject, bool updateLimits
 }
 
 RecordList *TimelineProxy::calcNext( TObjectOrder whichObject,
-                                   TSemanticValue& rowComputedMaxY, TSemanticValue& rowComputedMinY,
-                                   int& rowComputedZeros,
-                                   bool updateLimits )
+                                     TSemanticValue &rowComputedMaxY,
+                                     TSemanticValue &rowComputedMinY,
+                                     int &rowComputedZeros,
+                                     bool updateLimits )
 {
   Timeline *tmpMyWindow = myWindow;
 #ifdef PARALLEL_ENABLED
@@ -971,18 +958,18 @@ RecordList *TimelineProxy::calcNext( TObjectOrder whichObject,
     tmpMyWindow = parallelClone[ omp_get_thread_num() ];
 #endif // PARALLEL_ENABLED
 
-  if ( myLists[ whichObject ] == nullptr )
+  if( myLists[ whichObject ] == nullptr )
     myLists[ whichObject ] = RecordList::create( tmpMyWindow->calcNext( whichObject ) );
   else
     tmpMyWindow->calcNext( whichObject );
 
-  if ( updateLimits )
+  if( updateLimits )
   {
     TSemanticValue objValue = tmpMyWindow->getValue( whichObject );
-    rowComputedZeros = rowComputedZeros || objValue == 0.0;
-    if ( rowComputedMaxY < objValue )
+    rowComputedZeros        = rowComputedZeros || objValue == 0.0;
+    if( rowComputedMaxY < objValue )
       rowComputedMaxY = objValue;
-    if ( rowComputedMinY == 0 || ( rowComputedMinY > objValue && objValue != 0 ) )
+    if( rowComputedMinY == 0 || ( rowComputedMinY > objValue && objValue != 0 ) )
       rowComputedMinY = objValue;
   }
 
@@ -997,18 +984,18 @@ RecordList *TimelineProxy::calcPrev( TObjectOrder whichObject, bool updateLimits
     tmpMyWindow = parallelClone[ omp_get_thread_num() ];
 #endif // PARALLEL_ENABLED
 
-  if ( myLists[ whichObject ] == nullptr )
+  if( myLists[ whichObject ] == nullptr )
     myLists[ whichObject ] = RecordList::create( tmpMyWindow->calcPrev( whichObject ) );
   else
     tmpMyWindow->calcPrev( whichObject );
 
-  if ( updateLimits )
+  if( updateLimits )
   {
     TSemanticValue objValue = getValue( whichObject );
-    computedZeros = computedZeros || objValue == 0.0;
-    if ( computedMaxY < objValue )
+    computedZeros           = computedZeros || objValue == 0.0;
+    if( computedMaxY < objValue )
       computedMaxY = objValue;
-    if ( computedMinY == 0 || ( computedMinY > objValue && objValue != 0 ) )
+    if( computedMinY == 0 || ( computedMinY > objValue && objValue != 0 ) )
       computedMinY = objValue;
   }
 
@@ -1093,7 +1080,7 @@ Timeline *TimelineProxy::getConcrete() const
   return myWindow;
 }
 
-void TimelineProxy::setName( const string& whichName )
+void TimelineProxy::setName( const string &whichName )
 {
   name = whichName;
 }
@@ -1108,7 +1095,7 @@ PRV_UINT16 TimelineProxy::getPosX() const
   return posX;
 }
 
-void TimelineProxy::setPosX( PRV_UINT16 whichPos )
+void TimelineProxy::setPosX( PRV_UINT16 whichPos, bool broadcastValue )
 {
   posX = whichPos;
 }
@@ -1118,9 +1105,22 @@ PRV_UINT16 TimelineProxy::getPosY() const
   return posY;
 }
 
-void TimelineProxy::setPosY( PRV_UINT16 whichPos )
+void TimelineProxy::setPosY( PRV_UINT16 whichPos, bool broadcastValue )
 {
   posY = whichPos;
+}
+void TimelineProxy::setSize( PRV_UINT16 whichPosWidth, PRV_UINT16 whichPosHeigh, bool broadcastProperty )
+{
+  if( width != whichPosWidth || height != whichPosHeigh )
+  {
+    width  = whichPosWidth;
+    height = whichPosHeigh;
+
+    if( sync && broadcastProperty && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_WINDOWS_SIZE ) )
+    {
+      SyncWindows::getInstance()->broadcastSizeAll( syncGroup, width, height );
+    }
+  }
 }
 
 PRV_UINT16 TimelineProxy::getWidth() const
@@ -1128,9 +1128,17 @@ PRV_UINT16 TimelineProxy::getWidth() const
   return width;
 }
 
-void TimelineProxy::setWidth( PRV_UINT16 whichPos )
+void TimelineProxy::setWidth( PRV_UINT16 whichPos, bool broadcastProperty )
 {
-  width = whichPos;
+  if( width != whichPos )
+  {
+    width = whichPos;
+
+    if( sync && broadcastProperty && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_WINDOWS_SIZE ) )
+    {
+      SyncWindows::getInstance()->broadcastSizeAll( syncGroup, width, height );
+    }
+  }
 }
 
 PRV_UINT16 TimelineProxy::getHeight() const
@@ -1138,9 +1146,17 @@ PRV_UINT16 TimelineProxy::getHeight() const
   return height;
 }
 
-void TimelineProxy::setHeight( PRV_UINT16 whichPos )
+void TimelineProxy::setHeight( PRV_UINT16 whichPos, bool broadcastProperty )
 {
-  height = whichPos;
+  if( height != whichPos )
+  {
+    height = whichPos;
+
+    if( sync && broadcastProperty && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_WINDOWS_SIZE ) )
+    {
+      SyncWindows::getInstance()->broadcastSizeAll( syncGroup, width, height );
+    }
+  }
 }
 
 void TimelineProxy::setDrawModeObject( DrawModeMethod method )
@@ -1163,7 +1179,7 @@ DrawModeMethod TimelineProxy::getDrawModeTime() const
   return drawModeTime;
 }
 
-SemanticColor& TimelineProxy::getSemanticColor()
+SemanticColor &TimelineProxy::getSemanticColor()
 {
   return mySemanticColor;
 }
@@ -1185,9 +1201,9 @@ void TimelineProxy::setShowWindow( bool newValue )
 
 void TimelineProxy::setShowChildrenWindow( bool newValue )
 {
-  if ( getParent( 0 ) != nullptr )
+  if( getParent( 0 ) != nullptr )
   {
-    for ( PRV_UINT16 i = 0; i < 2; ++i )
+    for( PRV_UINT16 i = 0; i < 2; ++i )
     {
       getParent( i )->setShowWindow( newValue );
       getParent( i )->setShowChildrenWindow( newValue );
@@ -1295,7 +1311,7 @@ void TimelineProxy::setPunctualColorWindow( Timeline *whichWindow )
   punctualColorWindow = whichWindow;
 }
 
-void  TimelineProxy::setSemanticScaleMinAtZero( bool newValue )
+void TimelineProxy::setSemanticScaleMinAtZero( bool newValue )
 {
   semanticScaleMinAtZero = newValue;
 }
@@ -1310,7 +1326,7 @@ void TimelineProxy::allowOutliers( bool activate )
   mySemanticColor.allowOutliers( activate );
 }
 
-rgb TimelineProxy::calcColor( TSemanticValue whichValue, Timeline& whichWindow )
+rgb TimelineProxy::calcColor( TSemanticValue whichValue, Timeline &whichWindow )
 {
   return mySemanticColor.calcColor( whichValue, minimumY, maximumY );
 }
@@ -1339,7 +1355,7 @@ rgb TimelineProxy::getBackgroundColor() const
 {
   if( mySemanticColor.getUseCustomPalette() )
     return mySemanticColor.getCustomBackgroundColor();
-  
+
   return ParaverConfig::getInstance()->getColorsTimelineBackground();
 }
 
@@ -1347,7 +1363,7 @@ rgb TimelineProxy::getAxisColor() const
 {
   if( mySemanticColor.getUseCustomPalette() )
     return mySemanticColor.getCustomAxisColor();
-  
+
   return ParaverConfig::getInstance()->getColorsTimelineAxis();
 }
 
@@ -1355,7 +1371,7 @@ rgb TimelineProxy::getPunctualColor() const
 {
   if( mySemanticColor.getUseCustomPalette() )
     return mySemanticColor.getCustomPunctualColor();
-  
+
   return ParaverConfig::getInstance()->getColorsTimelinePunctual();
 }
 
@@ -1367,11 +1383,25 @@ bool TimelineProxy::getBackgroundAsZero() const
 void TimelineProxy::setCustomBackgroundColor( rgb whichColor )
 {
   mySemanticColor.setCustomBackgroundColor( whichColor );
+
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_COLOR_PALETTE ) )
+    SyncWindows::getInstance()->broadcastColorPaletteAll( syncGroup, std::nullopt, whichColor, std::nullopt, std::nullopt );
 }
 
 void TimelineProxy::setCustomAxisColor( rgb whichColor )
 {
   mySemanticColor.setCustomAxisColor( whichColor );
+
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_COLOR_PALETTE ) )
+    SyncWindows::getInstance()->broadcastColorPaletteAll( syncGroup, std::nullopt, std::nullopt, whichColor, std::nullopt );
+}
+
+void TimelineProxy::setCustomPalette( const std::map< TSemanticValue, rgb > &whichPalette )
+{
+  this->getSemanticColor().setCustomPalette( whichPalette );
+
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_COLOR_PALETTE ) )
+    SyncWindows::getInstance()->broadcastColorPaletteAll( syncGroup, whichPalette, std::nullopt, std::nullopt, std::nullopt );
 }
 
 void TimelineProxy::setCustomPunctualColor( rgb whichColor )
@@ -1382,6 +1412,9 @@ void TimelineProxy::setCustomPunctualColor( rgb whichColor )
 void TimelineProxy::setBackgroundAsZero( bool newValue )
 {
   backgroundAsZero = newValue;
+
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_COLOR_PALETTE ) )
+    SyncWindows::getInstance()->broadcastColorPaletteAll( syncGroup, std::nullopt, std::nullopt, std::nullopt, newValue );
 }
 
 bool TimelineProxy::getChanged() const
@@ -1439,8 +1472,7 @@ SemanticInfoType TimelineProxy::getSemanticInfoType() const
   return myWindow->getSemanticInfoType();
 }
 
-void TimelineProxy::getAllSemanticFunctions( TSemanticGroup whichGroup,
-    vector<string>& onVector ) const
+void TimelineProxy::getAllSemanticFunctions( TSemanticGroup whichGroup, vector< string > &onVector ) const
 {
   myKernel->getAllSemanticFunctions( whichGroup, onVector );
 }
@@ -1462,8 +1494,8 @@ void TimelineProxy::nextZoom()
   {
     TTime nanoBeginTime, nanoEndTime;
     nanoBeginTime = traceUnitsToCustomUnits( zoomHistory.getFirstDimension().first, NS );
-    nanoEndTime = traceUnitsToCustomUnits( zoomHistory.getFirstDimension().second, NS );
-    SyncWindows::getInstance()->broadcastTime( syncGroup, this, nanoBeginTime, nanoEndTime );
+    nanoEndTime   = traceUnitsToCustomUnits( zoomHistory.getFirstDimension().second, NS );
+    SyncWindows::getInstance()->broadcastTimeAll( syncGroup, nanoBeginTime, nanoEndTime );
   }
 }
 
@@ -1474,58 +1506,64 @@ void TimelineProxy::prevZoom()
   {
     TTime nanoBeginTime, nanoEndTime;
     nanoBeginTime = traceUnitsToCustomUnits( zoomHistory.getFirstDimension().first, NS );
-    nanoEndTime = traceUnitsToCustomUnits( zoomHistory.getFirstDimension().second, NS );
-    SyncWindows::getInstance()->broadcastTime( syncGroup, this, nanoBeginTime, nanoEndTime );
+    nanoEndTime   = traceUnitsToCustomUnits( zoomHistory.getFirstDimension().second, NS );
+    SyncWindows::getInstance()->broadcastTimeAll( syncGroup, nanoBeginTime, nanoEndTime );
   }
 }
 
-void TimelineProxy::addZoom( TTime beginTime, TTime endTime,
-                           TObjectOrder beginObject, TObjectOrder endObject,
-                           bool isBroadCast )
+void TimelineProxy::addZoom( TTime beginTime, TTime endTime, TObjectOrder beginObject, TObjectOrder endObject )
 {
-  if( sync && !isBroadCast )
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_TIME ) )
   {
     TTime nanoBeginTime, nanoEndTime;
     nanoBeginTime = traceUnitsToCustomUnits( beginTime, NS );
-    nanoEndTime = traceUnitsToCustomUnits( endTime, NS );
-    SyncWindows::getInstance()->broadcastTime( syncGroup, this, nanoBeginTime, nanoEndTime );
+    nanoEndTime   = traceUnitsToCustomUnits( endTime, NS );
+    SyncWindows::getInstance()->broadcastTimeAll( syncGroup, nanoBeginTime, nanoEndTime );
+  }
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_OBJECT_ZOOM ) )
+  {
+    SyncWindows::getInstance()->broadcastObjectZoomAll( syncGroup, beginObject, endObject );
   }
   zoomHistory.addZoom( beginTime, endTime, beginObject, endObject );
 }
 
-void TimelineProxy::addZoom( TTime beginTime, TTime endTime, bool isBroadCast )
+void TimelineProxy::addZoom( TTime beginTime, TTime endTime )
 {
-  if( sync && !isBroadCast )
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_TIME ) )
   {
     TTime nanoBeginTime, nanoEndTime;
     nanoBeginTime = traceUnitsToCustomUnits( beginTime, NS );
-    nanoEndTime = traceUnitsToCustomUnits( endTime, NS );
-    SyncWindows::getInstance()->broadcastTime( syncGroup, this, nanoBeginTime, nanoEndTime );
+    nanoEndTime   = traceUnitsToCustomUnits( endTime, NS );
+    SyncWindows::getInstance()->broadcastTimeAll( syncGroup, nanoBeginTime, nanoEndTime );
   }
   zoomHistory.addZoom( beginTime, endTime );
 }
 
 void TimelineProxy::addZoom( TObjectOrder beginObject, TObjectOrder endObject )
 {
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_OBJECT_ZOOM ) )
+  {
+    SyncWindows::getInstance()->broadcastObjectZoomAll( syncGroup, beginObject, endObject );
+  }
   zoomHistory.addZoom( beginObject, endObject );
 }
 
-void TimelineProxy::setZoomFirstDimension( pair<TTime, TTime> &dim )
+void TimelineProxy::setZoomFirstDimension( pair< TTime, TTime > &dim )
 {
   zoomHistory.setFirstDimension( dim );
 }
 
-void TimelineProxy::setZoomSecondDimension( pair<TObjectOrder, TObjectOrder>  &dim )
+void TimelineProxy::setZoomSecondDimension( pair< TObjectOrder, TObjectOrder > &dim )
 {
   zoomHistory.setSecondDimension( dim );
 }
 
-pair<TTime, TTime> TimelineProxy::getZoomFirstDimension() const
+pair< TTime, TTime > TimelineProxy::getZoomFirstDimension() const
 {
   return zoomHistory.getFirstDimension();
 }
 
-pair<TObjectOrder, TObjectOrder> TimelineProxy::getZoomSecondDimension() const
+pair< TObjectOrder, TObjectOrder > TimelineProxy::getZoomSecondDimension() const
 {
   return zoomHistory.getSecondDimension();
 }
@@ -1536,32 +1574,32 @@ std::vector< TObjectOrder > TimelineProxy::getCurrentZoomRange() const
 
   zoomRange.push_back( getZoomSecondDimension().first );
   zoomRange.push_back( getZoomSecondDimension().second );
-  
+
   return zoomRange;
 }
 
-pair<TObjectOrder, TObjectOrder> TimelineProxy::getPrevZoomSecondDimension() const
+pair< TObjectOrder, TObjectOrder > TimelineProxy::getPrevZoomSecondDimension() const
 {
   return zoomHistory.getSecondDimension( TZoomPosition::PREV_ZOOM );
 }
 
-pair<TObjectOrder, TObjectOrder> TimelineProxy::getNextZoomSecondDimension() const
+pair< TObjectOrder, TObjectOrder > TimelineProxy::getNextZoomSecondDimension() const
 {
   return zoomHistory.getSecondDimension( TZoomPosition::NEXT_ZOOM );
 }
 
 void TimelineProxy::addToSyncGroup( TGroupId whichGroup )
 {
-  SyncWindows::getInstance()->removeWindow( this, syncGroup );
+  SyncWindows::getInstance()->removeWindow( (Timeline *)this, syncGroup );
   syncGroup = whichGroup;
-  sync = SyncWindows::getInstance()->addWindow( this, whichGroup );
+  sync      = SyncWindows::getInstance()->addWindow( (Timeline *)this, whichGroup );
 }
 
 void TimelineProxy::removeFromSync()
 {
   if( !sync )
     return;
-  SyncWindows::getInstance()->removeWindow( this, syncGroup );
+  SyncWindows::getInstance()->removeWindow( (Timeline *)this, syncGroup );
   sync = false;
 }
 
@@ -1580,123 +1618,84 @@ bool TimelineProxy::areAllSelectedRows( TTraceLevel onLevel ) const
   return selectedRow.areAllSelected( onLevel );
 }
 
-SelectionManagement< TObjectOrder, TTraceLevel > *TimelineProxy::getSelectedRows()
+const SelectionManagement< TObjectOrder, TTraceLevel > &TimelineProxy::getRowSelectionManager() const
 {
-  return &selectedRow;
+  return selectedRow;
+}
+
+void TimelineProxy::setRowSelectionManager( const SelectionManagement< TObjectOrder, TTraceLevel > &whichSelectionManagement )
+{
+  selectedRow = whichSelectionManagement;
 }
 
 void TimelineProxy::setSelectedRows( TTraceLevel onLevel, vector< bool > &selected )
 {
   if( selected.size() == myTrace->getLevelObjects( onLevel ) )
+  {
     selectedRow.setSelected( selected, onLevel );
+
+    if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_OBJECT_SELECTION ) )
+      SyncWindows::getInstance()->broadcastObjectSelectionAll( syncGroup, onLevel, selected );
+  }
 }
 
 void TimelineProxy::setSelectedRows( TTraceLevel onLevel, vector< TObjectOrder > &selected )
 {
   selectedRow.setSelected( selected, myTrace->getLevelObjects( onLevel ), onLevel );
+  vector< bool > tmpSelectedRows;
+  selectedRow.getSelected( tmpSelectedRows, onLevel );
+
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_OBJECT_SELECTION ) )
+    SyncWindows::getInstance()->broadcastObjectSelectionAll( syncGroup, onLevel, tmpSelectedRows );
 }
 
 
-void TimelineProxy::getSelectedRows( TTraceLevel onLevel, vector< bool > &selected, bool lookUpLevels )
+void TimelineProxy::getSelectedRows( TTraceLevel onLevel, vector< bool > &selected, bool lookUpLevels ) const
 {
   selectedRow.getSelected( selected, onLevel );
 
-  if ( lookUpLevels )
+  if( lookUpLevels )
   {
-    TObjectOrder iAppl, jTask, globalTask, iNode, aux;
-    // Only deselect those with higher levels deselected
-    switch ( onLevel )
+    TObjectOrder first, last;
+    first = 0;
+    switch( onLevel )
     {
       case TTraceLevel::TASK:
-        for ( TTaskOrder iTask = 0; iTask < getTrace()->totalTasks(); ++iTask )
-        {
-          getTrace()->getTaskLocation( iTask, iAppl, aux );
-          selected[ iTask ] = selectedRow.isSelectedPosition( iAppl, TTraceLevel::APPLICATION ) &&
-                              selected[ iTask ];
-        }
-
+        last = getTrace()->totalTasks() - 1;
         break;
 
       case TTraceLevel::THREAD:
-        for ( TThreadOrder iThread = 0; iThread < getTrace()->totalThreads(); ++iThread )
-        {
-          getTrace()->getThreadLocation( iThread, iAppl, jTask, aux );
-          globalTask = getTrace()->getGlobalTask( iAppl, jTask );
-          selected[ iThread ] = selectedRow.isSelectedPosition( iAppl, TTraceLevel::APPLICATION ) &&
-                                selectedRow.isSelectedPosition( globalTask, TTraceLevel::TASK ) &&
-                                selected[ iThread ];
-        }
-
+        last = getTrace()->totalThreads() - 1;
         break;
 
       case TTraceLevel::CPU:
-        for ( TCPUOrder iCPU = 0; iCPU < getTrace()->totalCPUs(); ++iCPU )
-        {
-          getTrace()->getCPULocation( iCPU, iNode, aux );
-          selected[ iCPU ] = selected[ iCPU ] &&
-                             selectedRow.isSelectedPosition( iNode, TTraceLevel::NODE );
-        }
+        last = getTrace()->totalCPUs() - 1;
         break;
 
       default:
         break;
     }
+
+    SelectionRowsUtils::getAllLevelsSelectedRows( getTrace(), selectedRow, onLevel, first, last, selected );
   }
 }
 
-void TimelineProxy::getSelectedRows( TTraceLevel onLevel, vector< bool > &selected,
-                                     TObjectOrder first, TObjectOrder last, bool lookUpLevels )
+void TimelineProxy::getSelectedRows( TTraceLevel onLevel, vector< bool > &selected, TObjectOrder first, TObjectOrder last, bool lookUpLevels ) const
 {
   selectedRow.getSelected( selected, first, last, onLevel );
 
-  if ( lookUpLevels )
+  if( lookUpLevels )
   {
-    TObjectOrder iAppl, jTask, globalTask, iNode, aux;
-    switch ( onLevel )
-    {
-      case TTraceLevel::TASK:
-        for ( TObjectOrder iTask = first; iTask <= last; ++iTask )
-        {
-          getTrace()->getTaskLocation( iTask, iAppl, aux );
-          selected[ iTask ] = selectedRow.isSelectedPosition( iAppl, TTraceLevel::APPLICATION ) &&
-                              selected[ iTask ];
-        }
-
-        break;
-
-      case TTraceLevel::THREAD:
-        for ( TObjectOrder iThread = first; iThread <= last; ++iThread )
-        {
-          getTrace()->getThreadLocation( iThread, iAppl, jTask, aux );
-          globalTask = getTrace()->getGlobalTask( iAppl, jTask );
-          selected[ iThread ] = selectedRow.isSelectedPosition( iAppl, TTraceLevel::APPLICATION ) &&
-                                selectedRow.isSelectedPosition( globalTask, TTraceLevel::TASK ) &&
-                                selected[ iThread ];
-        }
-
-        break;
-
-      case TTraceLevel::CPU:
-        for ( TObjectOrder iCPU = first; iCPU <= last; ++iCPU )
-        {
-          getTrace()->getCPULocation( iCPU, iNode, aux );
-          selected[ iCPU ] = selected[ iCPU ] &&
-                             selectedRow.isSelectedPosition( iNode, TTraceLevel::NODE );
-        }
-        break;
-
-      default:
-        break;
-    }
+    SelectionRowsUtils::getAllLevelsSelectedRows( getTrace(), selectedRow, onLevel, first, last, selected );
   }
 }
 
 
-void TimelineProxy::getSelectedRows( TTraceLevel onLevel, vector< TObjectOrder > &selected, bool lookUpLevels )
+void TimelineProxy::getSelectedRows( TTraceLevel onLevel, vector< TObjectOrder > &selected, bool lookUpLevels ) const
 {
   selectedRow.getSelected( selected, onLevel );
 
-  if ( lookUpLevels )
+  if( lookUpLevels )
   {
     SelectionRowsUtils::getAllLevelsSelectedRows( getTrace(), selectedRow, onLevel, selected );
   }
@@ -1704,40 +1703,39 @@ void TimelineProxy::getSelectedRows( TTraceLevel onLevel, vector< TObjectOrder >
 
 void TimelineProxy::getSelectedRows( TTraceLevel onLevel,
                                      vector< TObjectOrder > &selected,
-                                     TObjectOrder first, TObjectOrder last, bool lookUpLevels )
+                                     TObjectOrder first,
+                                     TObjectOrder last,
+                                     bool lookUpLevels ) const
 {
   selectedRow.getSelected( selected, first, last, onLevel );
 
-  if ( lookUpLevels )
+  if( lookUpLevels )
   {
     SelectionRowsUtils::getAllLevelsSelectedRows( getTrace(), selectedRow, onLevel, selected );
   }
 }
 
-TObjectOrder TimelineProxy::shiftFirst( TObjectOrder whichFirst, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TTraceLevel level ) const
+TObjectOrder TimelineProxy::shiftFirst( TObjectOrder whichFirst, PRV_INT64 shiftAmount, PRV_INT64 &appliedAmount, TTraceLevel level ) const
 {
   return selectedRow.shiftFirst( whichFirst, shiftAmount, appliedAmount, level );
 }
 
-TObjectOrder TimelineProxy::shiftLast( TObjectOrder whichLast, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TTraceLevel level ) const
+TObjectOrder TimelineProxy::shiftLast( TObjectOrder whichLast, PRV_INT64 shiftAmount, PRV_INT64 &appliedAmount, TTraceLevel level ) const
 {
   return selectedRow.shiftLast( whichLast, shiftAmount, appliedAmount, level );
 }
 
-void TimelineProxy::getGroupLabels( PRV_UINT32 whichGroup, vector<string>& onVector ) const
+void TimelineProxy::getGroupLabels( PRV_UINT32 whichGroup, vector< string > &onVector ) const
 {
   myWindow->getGroupLabels( whichGroup, onVector );
 }
 
 bool TimelineProxy::getParametersOfFunction( string whichFunction,
-    PRV_UINT32 &numParameters,
-    vector<string> &nameParameters,
-    vector< vector< double > >&defaultParameters ) const
+                                             PRV_UINT32 &numParameters,
+                                             vector< string > &nameParameters,
+                                             vector< vector< double > > &defaultParameters ) const
 {
-  return myWindow->getParametersOfFunction( whichFunction,
-         numParameters,
-         nameParameters,
-         defaultParameters );
+  return myWindow->getParametersOfFunction( whichFunction, numParameters, nameParameters, defaultParameters );
 }
 
 void TimelineProxy::setObjectLabels( TObjectLabels whichLabels )
@@ -1760,6 +1758,16 @@ TObjectAxisSize TimelineProxy::getObjectAxisSize() const
   return objectAxisSize;
 }
 
+void TimelineProxy::setObjectAxisCustomSize( PRV_UINT16 whichSize )
+{
+  objectAxisCustomSize = whichSize;
+}
+
+PRV_UINT16 TimelineProxy::getObjectAxisCustomSize() const
+{
+  return objectAxisCustomSize;
+}
+
 
 bool TimelineProxy::hasLevelSomeSelectedObject( TTraceLevel onLevel )
 {
@@ -1775,17 +1783,17 @@ void TimelineProxy::setCFG4DMode( bool mode )
 {
   if( isDerivedWindow() )
   {
-    if ( parent1 != nullptr)
+    if( parent1 != nullptr )
       parent1->setCFG4DMode( mode );
 
-    if ( parent2 != nullptr)
+    if( parent2 != nullptr )
       parent2->setCFG4DMode( mode );
   }
 
   CFG4DMode = mode;
 }
 
-bool TimelineProxy::getCFG4DMode( ) const
+bool TimelineProxy::getCFG4DMode() const
 {
   return CFG4DMode;
 }
@@ -1799,10 +1807,10 @@ void TimelineProxy::setCFG4DEnabled( bool enabled )
 {
   if( isDerivedWindow() )
   {
-    if ( parent1 != nullptr)
+    if( parent1 != nullptr )
       parent1->setCFG4DEnabled( enabled );
 
-    if ( parent2 != nullptr)
+    if( parent2 != nullptr )
       parent2->setCFG4DEnabled( enabled );
   }
 
@@ -1813,10 +1821,10 @@ bool TimelineProxy::existsCFG4DAlias( const string &property ) const
 {
   bool found = false;
 
-  if ( propertiesAliasCFG4D.size() > 0 )
+  if( propertiesAliasCFG4D.size() > 0 )
   {
     map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
-    if ( itAlias != propertiesAliasCFG4D.end() )
+    if( itAlias != propertiesAliasCFG4D.end() )
     {
       found = true;
     }
@@ -1826,17 +1834,16 @@ bool TimelineProxy::existsCFG4DAlias( const string &property ) const
 }
 
 
-
 bool TimelineProxy::existsCFG4DAlias( const TSingleTimelineProperties &propertyIndex ) const
 {
   bool found = false;
 
-  if ( propertiesAliasCFG4D.size() > 0 )
+  if( propertiesAliasCFG4D.size() > 0 )
   {
     string property( SingleTimelinePropertyLabels[ propertyIndex ] );
 
     map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
-    if ( itAlias != propertiesAliasCFG4D.end() )
+    if( itAlias != propertiesAliasCFG4D.end() )
     {
       found = true;
     }
@@ -1850,12 +1857,12 @@ bool TimelineProxy::existsCFG4DAlias( const TDerivedTimelineProperties &property
 {
   bool found = false;
 
-  if ( propertiesAliasCFG4D.size() > 0 )
+  if( propertiesAliasCFG4D.size() > 0 )
   {
     string property( DerivedTimelinePropertyLabels[ propertyIndex ] );
 
     map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
-    if ( itAlias != propertiesAliasCFG4D.end() )
+    if( itAlias != propertiesAliasCFG4D.end() )
     {
       found = true;
     }
@@ -1869,10 +1876,10 @@ string TimelineProxy::getCFG4DAlias( const string &property ) const
 {
   string alias = "";
 
-  if ( propertiesAliasCFG4D.size() > 0 )
+  if( propertiesAliasCFG4D.size() > 0 )
   {
     map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
-    if ( itAlias != propertiesAliasCFG4D.end() )
+    if( itAlias != propertiesAliasCFG4D.end() )
     {
       alias = itAlias->second;
     }
@@ -1886,12 +1893,12 @@ string TimelineProxy::getCFG4DAlias( const TSingleTimelineProperties &propertyIn
 {
   string alias = "";
 
-  if ( propertiesAliasCFG4D.size() > 0 )
+  if( propertiesAliasCFG4D.size() > 0 )
   {
     string property( SingleTimelinePropertyLabels[ propertyIndex ] );
 
     map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
-    if ( itAlias != propertiesAliasCFG4D.end() )
+    if( itAlias != propertiesAliasCFG4D.end() )
     {
       alias = itAlias->second;
     }
@@ -1905,12 +1912,12 @@ string TimelineProxy::getCFG4DAlias( const TDerivedTimelineProperties &propertyI
 {
   string alias = "";
 
-  if ( propertiesAliasCFG4D.size() > 0 )
+  if( propertiesAliasCFG4D.size() > 0 )
   {
     string property( DerivedTimelinePropertyLabels[ propertyIndex ] );
 
     map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
-    if ( itAlias != propertiesAliasCFG4D.end() )
+    if( itAlias != propertiesAliasCFG4D.end() )
     {
       alias = itAlias->second;
     }
@@ -1926,7 +1933,7 @@ void TimelineProxy::setCFG4DAlias( const string &property, const string &alias )
 }
 
 
-void TimelineProxy::setCFG4DAliasList( const map< string, string >& aliasList )
+void TimelineProxy::setCFG4DAliasList( const map< string, string > &aliasList )
 {
   propertiesAliasCFG4D = aliasList;
 }
@@ -1941,16 +1948,16 @@ const vector< string > TimelineProxy::getCFG4DFullTagList()
 {
   vector< string > tags;
 
-  if ( isDerivedWindow() )
+  if( isDerivedWindow() )
   {
-    for ( int iTag = 0; iTag < TOTAL_DERIVED_PROPERTIES; ++iTag )
+    for( int iTag = 0; iTag < TOTAL_DERIVED_PROPERTIES; ++iTag )
     {
       tags.push_back( DerivedTimelinePropertyLabels[ iTag ] );
     }
   }
   else
   {
-    for ( int iTag = 0; iTag < TOTAL_SINGLE_PROPERTIES; ++iTag )
+    for( int iTag = 0; iTag < TOTAL_SINGLE_PROPERTIES; ++iTag )
     {
       tags.push_back( SingleTimelinePropertyLabels[ iTag ] );
     }
@@ -1970,34 +1977,34 @@ const vector< Timeline::TParamAliasKey > TimelineProxy::getCFG4DCurrentSelectedF
   PRV_UINT32 numParameter;
   TParamAliasKey key;
 
-  beginLevel = static_cast<TWindowLevel>( getLevel() );
+  beginLevel = static_cast< TWindowLevel >( getLevel() );
 
-  switch ( beginLevel )
+  switch( beginLevel )
   {
     case WORKLOAD:
     case APPLICATION:
     case TASK:
     case THREAD:
-      if ( isDerivedWindow() )
+      if( isDerivedWindow() )
       {
-        endLevel = TASK;
+        endLevel     = TASK;
         beginCompose = COMPOSEWORKLOAD;
-        endCompose = COMPOSETHREAD;
+        endCompose   = COMPOSETHREAD;
       }
       else
       {
-        endLevel = THREAD;
+        endLevel     = THREAD;
         beginCompose = COMPOSEWORKLOAD;
-        endCompose = COMPOSETHREAD;
+        endCompose   = COMPOSETHREAD;
       }
       break;
 
     case SYSTEM:
     case NODE:
     case CPU:
-      endLevel = CPU;
+      endLevel     = CPU;
       beginCompose = COMPOSESYSTEM;
-      endCompose = COMPOSECPU;
+      endCompose   = COMPOSECPU;
       break;
 
     default:
@@ -2006,10 +2013,10 @@ const vector< Timeline::TParamAliasKey > TimelineProxy::getCFG4DCurrentSelectedF
 
   for( int level = TOPCOMPOSE1; level <= TOPCOMPOSE2; ++level )
   {
-    curLevel = static_cast< TWindowLevel >( level );
-    semanticLevel = TimelineLevelLabels[ curLevel ];
+    curLevel         = static_cast< TWindowLevel >( level );
+    semanticLevel    = TimelineLevelLabels[ curLevel ];
     semanticFunction = getLevelFunction( curLevel );
-    numParameter = getFunctionNumParam( curLevel );
+    numParameter     = getFunctionNumParam( curLevel );
     for( PRV_UINT32 i = 0; i < (PRV_UINT32)numParameter; ++i )
     {
       key = make_pair( make_pair( semanticLevel, semanticFunction ), i );
@@ -2019,10 +2026,10 @@ const vector< Timeline::TParamAliasKey > TimelineProxy::getCFG4DCurrentSelectedF
 
   for( int level = beginCompose; level <= endCompose; ++level )
   {
-    curLevel = static_cast< TWindowLevel >( level );
-    semanticLevel = TimelineLevelLabels[ curLevel ];
+    curLevel         = static_cast< TWindowLevel >( level );
+    semanticLevel    = TimelineLevelLabels[ curLevel ];
     semanticFunction = getLevelFunction( curLevel );
-    numParameter = getFunctionNumParam( curLevel );
+    numParameter     = getFunctionNumParam( curLevel );
     for( PRV_UINT32 i = 0; i < (PRV_UINT32)numParameter; ++i )
     {
       key = make_pair( make_pair( semanticLevel, semanticFunction ), i );
@@ -2032,10 +2039,10 @@ const vector< Timeline::TParamAliasKey > TimelineProxy::getCFG4DCurrentSelectedF
 
   for( int level = beginLevel; level <= endLevel; ++level )
   {
-    curLevel = static_cast< TWindowLevel >( level );
-    semanticLevel = TimelineLevelLabels[ curLevel ];
+    curLevel         = static_cast< TWindowLevel >( level );
+    semanticLevel    = TimelineLevelLabels[ curLevel ];
     semanticFunction = getLevelFunction( curLevel );
-    numParameter = getFunctionNumParam( curLevel );
+    numParameter     = getFunctionNumParam( curLevel );
     for( PRV_UINT32 i = 0; i < (PRV_UINT32)numParameter; ++i )
     {
       key = make_pair( make_pair( semanticLevel, semanticFunction ), i );
@@ -2053,10 +2060,7 @@ void TimelineProxy::setCFG4DParamAlias( const TParamAlias &whichParamAlias )
 }
 
 
-void TimelineProxy::setCFG4DParamAlias( string semanticLevel,
-                                      string function,
-                                      PRV_UINT32 numParameter,
-                                      string paramAlias )
+void TimelineProxy::setCFG4DParamAlias( string semanticLevel, string function, PRV_UINT32 numParameter, string paramAlias )
 {
   TParamAliasKey key( make_pair( make_pair( semanticLevel, function ), numParameter ) );
   paramAliasCFG4D[ key ] = paramAlias;
@@ -2067,14 +2071,11 @@ const Timeline::TParamAlias TimelineProxy::getCFG4DParamAliasList() const
   return paramAliasCFG4D;
 }
 
-void TimelineProxy::splitCFG4DParamAliasKey( const TParamAliasKey &pk,
-                                             string &semanticLevel,
-                                             string &function,
-                                             TParamIndex &numParameter ) const
+void TimelineProxy::splitCFG4DParamAliasKey( const TParamAliasKey &pk, string &semanticLevel, string &function, TParamIndex &numParameter ) const
 {
   semanticLevel = pk.first.first;
-  function = pk.first.second;
-  numParameter = pk.second;
+  function      = pk.first.second;
+  numParameter  = pk.second;
 }
 
 
@@ -2092,8 +2093,8 @@ void TimelineProxy::splitCFG4DParamAliasKey( const TParamAliasKey &pk,
   }
 
   semanticLevel = TWindowLevel( iSemLevel );
-  function = pk.first.second;
-  numParameter = pk.second;
+  function      = pk.first.second;
+  numParameter  = pk.second;
 }
 
 
@@ -2109,8 +2110,8 @@ std::string TimelineProxy::getCFG4DParameterOriginalName( TWindowLevel whichLeve
 {
   sstrCFGS4DOriginalName.clear();
   sstrCFGS4DOriginalName.str( "" );
-  sstrCFGS4DOriginalName << TimelineLevelLabels[ whichLevel ] << PARAM_SEPARATOR << whichParam << PARAM_SEPARATOR
-                         << getLevelFunction( whichLevel ) << "." << getFunctionParamName( whichLevel, whichParam );
+  sstrCFGS4DOriginalName << TimelineLevelLabels[ whichLevel ] << PARAM_SEPARATOR << whichParam << PARAM_SEPARATOR << getLevelFunction( whichLevel )
+                         << "." << getFunctionParamName( whichLevel, whichParam );
 
   return sstrCFGS4DOriginalName.str();
 }
@@ -2130,24 +2131,25 @@ const string TimelineProxy::getCFG4DParamAlias( const TParamAlias::iterator &it 
 const string TimelineProxy::getCFG4DParamAlias( const TParamAliasKey &pk ) const
 {
   TParamAlias::const_iterator it = paramAliasCFG4D.find( pk );
-  return ( it != paramAliasCFG4D.end()? it->second:string("") );
+  return ( it != paramAliasCFG4D.end() ? it->second : string( "" ) );
 }
 
 
-vector< Timeline::TParamAliasKey > TimelineProxy::getCFG4DParamKeysBySemanticLevel( string whichSemanticLevel,
-                                                                                const vector< Timeline::TParamAliasKey > &whichParamAliasKey ) const
+vector< Timeline::TParamAliasKey > TimelineProxy::getCFG4DParamKeysBySemanticLevel(
+  string whichSemanticLevel,
+  const vector< Timeline::TParamAliasKey > &whichParamAliasKey ) const
 {
   vector< TParamAliasKey > retKeys;
   string semanticLevel, function;
   TParamIndex numParameter;
 
   // change to a single class, inside Window
-  if ( whichParamAliasKey.size() > 0 )
+  if( whichParamAliasKey.size() > 0 )
   {
     for( vector< TParamAliasKey >::const_iterator it = whichParamAliasKey.begin(); it != whichParamAliasKey.end(); ++it )
     {
       splitCFG4DParamAliasKey( *it, semanticLevel, function, numParameter );
-      if ( semanticLevel == whichSemanticLevel )
+      if( semanticLevel == whichSemanticLevel )
       {
         retKeys.push_back( *it );
       }
@@ -2158,10 +2160,10 @@ vector< Timeline::TParamAliasKey > TimelineProxy::getCFG4DParamKeysBySemanticLev
     for( TParamAlias::const_iterator it = paramAliasCFG4D.begin(); it != paramAliasCFG4D.end(); ++it )
     {
       splitCFG4DParamAliasKey( it->first, semanticLevel, function, numParameter );
-      
-      if ( semanticLevel == whichSemanticLevel )
+
+      if( semanticLevel == whichSemanticLevel )
       {
-        retKeys.push_back( (Timeline::TParamAliasKey) it->first );
+        retKeys.push_back( (Timeline::TParamAliasKey)it->first );
       }
     }
   }
@@ -2194,32 +2196,61 @@ TCFGS4DGroup TimelineProxy::getCFGS4DGroupLink( std::string originalName ) const
   return NO_GROUP_LINK;
 }
 
+void TimelineProxy::registerResizeFunctionCallback( const std::function< void( int, int ) > &callbackFunction )
+{
+  resizeFunctionCallback = callbackFunction;
+}
+
+void TimelineProxy::onResizeFunctionCallback( int height, int width )
+{
+  if( resizeFunctionCallback != nullptr )
+    resizeFunctionCallback( height, width );
+}
+
+void TimelineProxy::registerPositionFunctionCallback( const std::function< void( int, int ) > &callbackFunction )
+{
+  positionFunctionCallback = callbackFunction;
+}
+void TimelineProxy::onPositionFunctionCallback( int height, int width )
+{
+  if( positionFunctionCallback != nullptr )
+    positionFunctionCallback( height, width );
+}
+
+void TimelineProxy::addOffsetPosition( int posXDiff, int posYDiff )
+{
+  if( sync && SyncWindows::getInstance()->isPropertySelected( syncGroup, SyncPropertiesType::SYNC_WINDOWS_POSITION ) )
+    SyncWindows::getInstance()->broadcastPositionAll( syncGroup, posYDiff, posXDiff );
+}
+
 #ifdef _MSC_VER
-void TimelineProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
-                                           vector< bool >& selected,
-                                           TTime timeStep,
-                                           PRV_INT32 timePos,
-                                           PRV_INT32 objectAxisPos,
-                                           vector< PRV_INT32 >& objectPosList,
-                                           TObjectOrder maxObj,
-                                           bool& drawCaution,
-                                           vector< vector< TSemanticValue > >& valuesToDraw,
-                                           vector< hash_set< PRV_INT32 > >& eventsToDraw,
-                                           vector< hash_set< commCoord > >& commsToDraw,
-                                           ProgressController *progress )
+void TimelineProxy::computeSemanticParallel( vector< TObjectOrder > &selectedSet,
+                                             vector< bool > &selected,
+                                             TTime timeStep,
+                                             PRV_INT32 timePos,
+                                             PRV_INT32 objectAxisPos,
+                                             vector< PRV_INT32 > &objectPosList,
+                                             TObjectOrder maxObj,
+                                             bool &drawCaution,
+                                             vector< vector< TSemanticValue > > &valuesToDraw,
+                                             vector< int > &rowWithSemanticValuesNotZero,
+                                             vector< hash_set< PRV_INT32 > > &eventsToDraw,
+                                             vector< hash_set< commCoord > > &commsToDraw,
+                                             ProgressController *progress )
 #else
-void TimelineProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
-                                           vector< bool >& selected,
-                                           TTime timeStep,
-                                           PRV_INT32 timePos,
-                                           PRV_INT32 objectAxisPos,
-                                           vector< PRV_INT32 >& objectPosList,
-                                           TObjectOrder maxObj,
-                                           bool& drawCaution,
-                                           vector< vector< TSemanticValue > >& valuesToDraw,
-                                           vector< unordered_set< PRV_INT32 > >& eventsToDraw,
-                                           vector< unordered_set< commCoord, hashCommCoord > >& commsToDraw,
-                                           ProgressController *progress )
+void TimelineProxy::computeSemanticParallel( vector< TObjectOrder > &selectedSet,
+                                             vector< bool > &selected,
+                                             TTime timeStep,
+                                             PRV_INT32 timePos,
+                                             PRV_INT32 objectAxisPos,
+                                             vector< PRV_INT32 > &objectPosList,
+                                             TObjectOrder maxObj,
+                                             bool &drawCaution,
+                                             vector< vector< TSemanticValue > > &valuesToDraw,
+                                             vector< int > &rowWithSemanticValuesNotZero,
+                                             vector< unordered_set< PRV_INT32 > > &eventsToDraw,
+                                             vector< unordered_set< commCoord, hashCommCoord > > &commsToDraw,
+                                             ProgressController *progress )
 #endif
 {
   vector< int > tmpDrawCaution;
@@ -2241,7 +2272,7 @@ void TimelineProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet
     for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
     {
       TObjectOrder firstObj = *obj;
-      TObjectOrder lastObj = firstObj;
+      TObjectOrder lastObj  = firstObj;
       while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
       {
         ++obj;
@@ -2262,7 +2293,7 @@ void TimelineProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet
 
   paramProgress = progress;
 
-  if ( progress != nullptr )
+  if( progress != nullptr )
   {
     if( numRows > 1 )
       progress->setEndLimit( numRows );
@@ -2272,17 +2303,14 @@ void TimelineProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet
     progress->setCurrentProgress( 0 );
   }
 
-  // Drawmode: Group objects with same wxCoord in objectPosList
-  #pragma omp parallel
+// Drawmode: Group objects with same wxCoord in objectPosList
+#pragma omp parallel
   {
-    #pragma omp single
+#pragma omp single
     {
 #ifdef PARALLEL_ENABLED
-      if( selected.size() > 1 ||
-          ( myWindow->isDerivedWindow() && myWindow->getTrace()->getLevelObjects( myWindow->getParent( 0 )->getLevel() ) !=
-                                           myWindow->getTrace()->getLevelObjects( myWindow->getParent( 1 )->getLevel() )
-          )
-        )
+      if( selected.size() > 1 || ( myWindow->isDerivedWindow() && myWindow->getTrace()->getLevelObjects( myWindow->getParent( 0 )->getLevel() ) !=
+                                                                    myWindow->getTrace()->getLevelObjects( myWindow->getParent( 1 )->getLevel() ) ) )
       {
         for( int i = 0; i != omp_get_num_threads(); ++i )
           parallelClone.push_back( myWindow->clone( true ) );
@@ -2293,7 +2321,7 @@ void TimelineProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet
       for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
       {
         TObjectOrder firstObj = *obj;
-        TObjectOrder lastObj = firstObj;
+        TObjectOrder lastObj  = firstObj;
         if( !isFusedLinesColorSet() )
         {
           while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
@@ -2316,54 +2344,85 @@ void TimelineProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet
         tmpComputedMinY.push_back( 0.0 );
         tmpComputedZeros.push_back( false );
 
-        int tmpDrawCautionSize = tmpDrawCaution.size();
-        int tmpComputedMaxYSize = tmpComputedMaxY.size();
-        int tmpComputedMinYSize = tmpComputedMinY.size();
+        int tmpDrawCautionSize   = tmpDrawCaution.size();
+        int tmpComputedMaxYSize  = tmpComputedMaxY.size();
+        int tmpComputedMinYSize  = tmpComputedMinY.size();
         int tmpComputedZerosSize = tmpComputedZeros.size();
-        int valuesToDrawSize = valuesToDraw.size();
-        int eventsToDrawSize = eventsToDraw.size();
-        int commsToDrawSize = eventsToDraw.size();
+        int valuesToDrawSize     = valuesToDraw.size();
+        int eventsToDrawSize     = eventsToDraw.size();
+        int commsToDrawSize      = eventsToDraw.size();
 
         if( numRows == 1 )
         {
-          computeSemanticRowParallel(
-                  numRows, firstObj, lastObj, selectedSet, selected, timeStep, timePos,
-                  objectAxisPos, objectPosList,
-                  tmpDrawCaution[ tmpDrawCautionSize - 1 ],
-                  tmpComputedMaxY[ tmpComputedMaxYSize - 1 ],
-                  tmpComputedMinY[ tmpComputedMinYSize - 1 ],
-                  tmpComputedZeros[ tmpComputedZerosSize - 1 ],
-                  valuesToDraw[ valuesToDrawSize - 1 ],
-                  eventsToDraw[ eventsToDrawSize - 1 ],
-                  commsToDraw[ commsToDrawSize - 1 ],
-                  paramProgress );
+          computeSemanticRowParallel( numRows,
+                                      firstObj,
+                                      lastObj,
+                                      selectedSet,
+                                      selected,
+                                      timeStep,
+                                      timePos,
+                                      objectAxisPos,
+                                      objectPosList,
+                                      tmpDrawCaution[ tmpDrawCautionSize - 1 ],
+                                      tmpComputedMaxY[ tmpComputedMaxYSize - 1 ],
+                                      tmpComputedMinY[ tmpComputedMinYSize - 1 ],
+                                      tmpComputedZeros[ tmpComputedZerosSize - 1 ],
+                                      valuesToDraw[ valuesToDrawSize - 1 ],
+                                      rowWithSemanticValuesNotZero,
+                                      eventsToDraw[ eventsToDrawSize - 1 ],
+                                      commsToDraw[ commsToDrawSize - 1 ],
+                                      paramProgress );
         }
         else if( numRows > 1 )
         {
-          #pragma omp task firstprivate(numRows, firstObj, lastObj, timeStep, timePos, objectAxisPos) \
-                          shared(currentRow, paramProgress, selectedSet, selected, objectPosList, tmpDrawCaution, tmpComputedMaxY, tmpComputedMinY, tmpComputedZeros, valuesToDraw, eventsToDraw, commsToDraw) \
-                          firstprivate(tmpDrawCautionSize, tmpComputedMaxYSize, tmpComputedMinYSize, tmpComputedZerosSize, valuesToDrawSize, eventsToDrawSize, commsToDrawSize) \
-                          default(none)
+#pragma omp task firstprivate( numRows, firstObj, lastObj, timeStep, timePos, objectAxisPos ) \
+                 shared( currentRow,                    \
+                         paramProgress,                 \
+                         selectedSet,                   \
+                         selected,                      \
+                         objectPosList,                 \
+                         tmpDrawCaution,                \
+                         tmpComputedMaxY,               \
+                         tmpComputedMinY,               \
+                         tmpComputedZeros,              \
+                         valuesToDraw,                  \
+                         rowWithSemanticValuesNotZero, \
+                         eventsToDraw,                  \
+                         commsToDraw )                  \
+                 firstprivate( tmpDrawCautionSize,   \
+                               tmpComputedMaxYSize,  \
+                               tmpComputedMinYSize,  \
+                               tmpComputedZerosSize, \
+                               valuesToDrawSize,     \
+                               eventsToDrawSize,     \
+                               commsToDrawSize )     \
+                 default( none )
           {
-            if( paramProgress == nullptr ||
-                ( paramProgress != nullptr && !paramProgress->getStop() ) )
+            if( paramProgress == nullptr || ( paramProgress != nullptr && !paramProgress->getStop() ) )
             {
-              computeSemanticRowParallel(
-                      numRows, firstObj, lastObj, selectedSet, selected, timeStep, timePos,
-                      objectAxisPos, objectPosList,
-                      tmpDrawCaution[ tmpDrawCautionSize - 1 ],
-                      tmpComputedMaxY[ tmpComputedMaxYSize - 1 ],
-                      tmpComputedMinY[ tmpComputedMinYSize - 1 ],
-                      tmpComputedZeros[ tmpComputedZerosSize - 1 ],
-                      valuesToDraw[ valuesToDrawSize - 1 ],
-                      eventsToDraw[ eventsToDrawSize - 1 ],
-                      commsToDraw[ commsToDrawSize - 1 ],
-                      paramProgress );
+              computeSemanticRowParallel( numRows,
+                                          firstObj,
+                                          lastObj,
+                                          selectedSet,
+                                          selected,
+                                          timeStep,
+                                          timePos,
+                                          objectAxisPos,
+                                          objectPosList,
+                                          tmpDrawCaution[ tmpDrawCautionSize - 1 ],
+                                          tmpComputedMaxY[ tmpComputedMaxYSize - 1 ],
+                                          tmpComputedMinY[ tmpComputedMinYSize - 1 ],
+                                          tmpComputedZeros[ tmpComputedZerosSize - 1 ],
+                                          valuesToDraw[ valuesToDrawSize - 1 ],
+                                          rowWithSemanticValuesNotZero,
+                                          eventsToDraw[ eventsToDrawSize - 1 ],
+                                          commsToDraw[ commsToDrawSize - 1 ],
+                                          paramProgress );
             }
 
             if( paramProgress != nullptr && !paramProgress->getStop() )
             {
-              #pragma omp critical
+#pragma omp critical
               paramProgress->setCurrentProgress( ++currentRow );
             }
 
@@ -2378,17 +2437,17 @@ void TimelineProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet
 
   for( size_t pos = 0; pos < tmpComputedMaxY.size(); ++pos )
   {
-    drawCaution = drawCaution || tmpDrawCaution[ pos ];
+    drawCaution   = drawCaution || tmpDrawCaution[ pos ];
     computedZeros = computedZeros || tmpComputedZeros[ pos ];
-    computedMaxY = computedMaxY > tmpComputedMaxY[ pos ] ? computedMaxY : tmpComputedMaxY[ pos ];
-    if ( computedMinY == 0.0 )
+    computedMaxY  = computedMaxY > tmpComputedMaxY[ pos ] ? computedMaxY : tmpComputedMaxY[ pos ];
+    if( computedMinY == 0.0 )
       computedMinY = tmpComputedMinY[ pos ];
     else if( tmpComputedMinY[ pos ] != 0.0 )
       computedMinY = computedMinY < tmpComputedMinY[ pos ] ? computedMinY : tmpComputedMinY[ pos ];
   }
 
 #ifdef PARALLEL_ENABLED
-  for( vector<Timeline *>::iterator it = parallelClone.begin(); it != parallelClone.end(); ++it )
+  for( vector< Timeline * >::iterator it = parallelClone.begin(); it != parallelClone.end(); ++it )
     delete *it;
   parallelClone.clear();
 #endif // PARALLEL_ENABLED
@@ -2396,53 +2455,55 @@ void TimelineProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet
 
 #ifdef _MSC_VER
 void TimelineProxy::computeSemanticRowParallel( int numRows,
-                                              TObjectOrder firstRow,
-                                              TObjectOrder lastRow,
-                                              vector< TObjectOrder >& selectedSet,
-                                              vector< bool >& selected,
-                                              TTime timeStep,
-                                              PRV_INT32 timePos,
-                                              PRV_INT32 objectAxisPos,
-                                              vector< PRV_INT32 >& objectPosList,
-                                              int& drawCaution,
-                                              TSemanticValue& rowComputedMaxY,
-                                              TSemanticValue& rowComputedMinY,
-                                              int& rowComputedZeros,
-                                              vector< TSemanticValue >& valuesToDraw,
-                                              hash_set< PRV_INT32 >& eventsToDraw,
-                                              hash_set< commCoord >& commsToDraw,
-                                              ProgressController *progress )
+                                                TObjectOrder firstRow,
+                                                TObjectOrder lastRow,
+                                                vector< TObjectOrder > &selectedSet,
+                                                vector< bool > &selected,
+                                                TTime timeStep,
+                                                PRV_INT32 timePos,
+                                                PRV_INT32 objectAxisPos,
+                                                vector< PRV_INT32 > &objectPosList,
+                                                int &drawCaution,
+                                                TSemanticValue &rowComputedMaxY,
+                                                TSemanticValue &rowComputedMinY,
+                                                int &rowComputedZeros,
+                                                vector< TSemanticValue > &valuesToDraw,
+                                                vector< int > &rowWithSemanticValuesNotZero,
+                                                hash_set< PRV_INT32 > &eventsToDraw,
+                                                hash_set< commCoord > &commsToDraw,
+                                                ProgressController *progress )
 #else
 void TimelineProxy::computeSemanticRowParallel( int numRows,
-                                              TObjectOrder firstRow,
-                                              TObjectOrder lastRow,
-                                              vector< TObjectOrder >& selectedSet,
-                                              vector< bool >& selected,
-                                              TTime timeStep,
-                                              PRV_INT32 timePos,
-                                              PRV_INT32 objectAxisPos,
-                                              vector< PRV_INT32 >& objectPosList,
-                                              int& drawCaution,
-                                              TSemanticValue& rowComputedMaxY,
-                                              TSemanticValue& rowComputedMinY,
-                                              int& rowComputedZeros,
-                                              vector< TSemanticValue >& valuesToDraw,
-                                              unordered_set< PRV_INT32 >& eventsToDraw,
-                                              unordered_set< commCoord, hashCommCoord >& commsToDraw,
-                                              ProgressController *progress )
+                                                TObjectOrder firstRow,
+                                                TObjectOrder lastRow,
+                                                vector< TObjectOrder > &selectedSet,
+                                                vector< bool > &selected,
+                                                TTime timeStep,
+                                                PRV_INT32 timePos,
+                                                PRV_INT32 objectAxisPos,
+                                                vector< PRV_INT32 > &objectPosList,
+                                                int &drawCaution,
+                                                TSemanticValue &rowComputedMaxY,
+                                                TSemanticValue &rowComputedMinY,
+                                                int &rowComputedZeros,
+                                                vector< TSemanticValue > &valuesToDraw,
+                                                vector< int > &rowWithSemanticValuesNotZero,
+                                                unordered_set< PRV_INT32 > &eventsToDraw,
+                                                unordered_set< commCoord, hashCommCoord > &commsToDraw,
+                                                ProgressController *progress )
 #endif
 {
   float magnify = float( getPixelSize() );
 
-  vector<TSemanticValue> timeValues;
-  vector<TSemanticValue> rowValues;
+  vector< TSemanticValue > timeValues;
+  vector< TSemanticValue > rowValues;
 
-  vector<TObjectOrder>::iterator first = find( selectedSet.begin(), selectedSet.end(), firstRow );
-  vector<TObjectOrder>::iterator last  = find( selectedSet.begin(), selectedSet.end(), lastRow );
+  vector< TObjectOrder >::iterator first = find( selectedSet.begin(), selectedSet.end(), firstRow );
+  vector< TObjectOrder >::iterator last  = find( selectedSet.begin(), selectedSet.end(), lastRow );
 
   TRecordTime tmpLastTime = getWindowBeginTime();
 
-  for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
+  for( vector< TObjectOrder >::iterator row = first; row <= last; ++row )
   {
     if( isFusedLinesColorSet() )
       initRow( *row, getWindowBeginTime(), NOCREATE, rowComputedMaxY, rowComputedMinY, rowComputedZeros );
@@ -2454,14 +2515,21 @@ void TimelineProxy::computeSemanticRowParallel( int numRows,
   while( currentTime <= getWindowEndTime() && currentTime <= getTrace()->getEndTime() )
   {
     rowValues.clear();
-    for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
+
+    for( vector< TObjectOrder >::iterator row = first; row <= last; ++row )
     {
       timeValues.clear();
 
       while( getEndTime( *row ) <= currentTime - timeStep )
         calcNext( *row, rowComputedMaxY, rowComputedMinY, rowComputedZeros );
 
-      timeValues.push_back( getValue( *row ) );
+      TSemanticValue currentValue = getValue( *row );
+      timeValues.push_back( currentValue );
+      if( currentValue != 0 ) 
+      {
+        rowWithSemanticValuesNotZero[ *row ] = 1;
+      }
+
       while( getEndTime( *row ) < currentTime )
       {
         // Making cancel button more responsive for 1 row drawing
@@ -2469,24 +2537,36 @@ void TimelineProxy::computeSemanticRowParallel( int numRows,
           break;
 
         calcNext( *row, rowComputedMaxY, rowComputedMinY, rowComputedZeros );
-        TSemanticValue currentValue = getValue( *row );
+
+        currentValue = getValue( *row );
         timeValues.push_back( currentValue );
-        if( currentValue != 0 && ( currentValue < getMinimumY()
-                                   || currentValue > getMaximumY() ) )
-          drawCaution = true;
+        if( currentValue != 0 ) 
+        {
+          rowWithSemanticValuesNotZero[ *row ] = 1; // Before drawmode.
+          
+          if( currentValue < getMinimumY() || currentValue > getMaximumY() )
+          {
+            drawCaution = true;
+          }
+        }
       }
       rowValues.push_back( DrawMode::selectValue( timeValues, getDrawModeTime() ) );
 
       RecordList *rl = getRecordList( *row );
       if( rl != nullptr && !isFusedLinesColorSet() )
         computeEventsCommsParallel( rl,
-                                    currentTime - timeStep, currentTime, timeStep / magnify,
-                                    timePos, objectAxisPos,
-                                    selected, objectPosList,
-                                    eventsToDraw, commsToDraw );
+                                    currentTime - timeStep,
+                                    currentTime,
+                                    timeStep / magnify,
+                                    timePos,
+                                    objectAxisPos,
+                                    selected,
+                                    objectPosList,
+                                    eventsToDraw,
+                                    commsToDraw );
     }
     valuesToDraw.push_back( DrawMode::selectValue( rowValues, getDrawModeObject() ) );
-    timePos += (int) magnify;
+    timePos += (int)magnify;
 
     if( progress != nullptr )
     {
@@ -2496,7 +2576,7 @@ void TimelineProxy::computeSemanticRowParallel( int numRows,
       {
         if( currentTime - tmpLastTime > ( getWindowEndTime() - getWindowBeginTime() ) / 50 )
         {
-          #pragma omp critical
+#pragma omp critical
           {
             progress->setCurrentProgress( currentTime - getWindowBeginTime() );
           }
@@ -2515,22 +2595,28 @@ void TimelineProxy::computeSemanticRowParallel( int numRows,
     }
   }
 
-  for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
+
+  for( vector< TObjectOrder >::iterator row = first; row <= last; ++row )
   {
     TSemanticValue dumbMinMax = 0.0;
-    int dumbZeros = 0;
+    int dumbZeros             = 0;
     calcNext( *row, dumbMinMax, dumbMinMax, dumbZeros );
     RecordList *rl = getRecordList( *row );
     if( rl != nullptr && !isFusedLinesColorSet() )
       computeEventsCommsParallel( rl,
-                                  currentTime - timeStep, currentTime, timeStep / magnify,
-                                  timePos, objectAxisPos,
-                                  selected, objectPosList,
-                                  eventsToDraw, commsToDraw );
+                                  currentTime - timeStep,
+                                  currentTime,
+                                  timeStep / magnify,
+                                  timePos,
+                                  objectAxisPos,
+                                  selected,
+                                  objectPosList,
+                                  eventsToDraw,
+                                  commsToDraw );
   }
 
   // Erase events and comms remaining in RecordLists
-  for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
+  for( vector< TObjectOrder >::iterator row = first; row <= last; ++row )
   {
     RecordList *rl = getRecordList( *row );
     rl->erase( rl->begin(), rl->end() );
@@ -2539,31 +2625,31 @@ void TimelineProxy::computeSemanticRowParallel( int numRows,
 
 #ifdef _MSC_VER
 void TimelineProxy::computeEventsCommsParallel( RecordList *records,
-                                              TTime from,
-                                              TTime to,
-                                              TTime step,
-                                              PRV_INT32 timePos,
-                                              PRV_INT32 objectAxisPos,
-                                              vector< bool >& selected,
-                                              vector< PRV_INT32 >& objectPosList,
-                                              hash_set< PRV_INT32 >& eventsToDraw,
-                                              hash_set< commCoord >& commsToDraw )
+                                                TTime from,
+                                                TTime to,
+                                                TTime step,
+                                                PRV_INT32 timePos,
+                                                PRV_INT32 objectAxisPos,
+                                                vector< bool > &selected,
+                                                vector< PRV_INT32 > &objectPosList,
+                                                hash_set< PRV_INT32 > &eventsToDraw,
+                                                hash_set< commCoord > &commsToDraw )
 #else
 void TimelineProxy::computeEventsCommsParallel( RecordList *records,
-                                              TTime from,
-                                              TTime to,
-                                              TTime step,
-                                              PRV_INT32 timePos,
-                                              PRV_INT32 objectAxisPos,
-                                              vector< bool >& selected,
-                                              vector< PRV_INT32 >& objectPosList,
-                                              unordered_set< PRV_INT32 >& eventsToDraw,
-                                              unordered_set< commCoord, hashCommCoord >& commsToDraw )
+                                                TTime from,
+                                                TTime to,
+                                                TTime step,
+                                                PRV_INT32 timePos,
+                                                PRV_INT32 objectAxisPos,
+                                                vector< bool > &selected,
+                                                vector< PRV_INT32 > &objectPosList,
+                                                unordered_set< PRV_INT32 > &eventsToDraw,
+                                                unordered_set< commCoord, hashCommCoord > &commsToDraw )
 #endif
 {
-  bool existEvents = false;
+  bool existEvents      = false;
   TObjectOrder beginRow = getZoomSecondDimension().first;
-  TObjectOrder endRow =  getZoomSecondDimension().second;
+  TObjectOrder endRow   = getZoomSecondDimension().second;
 
   RecordList::iterator it = records->begin();
 
@@ -2580,18 +2666,15 @@ void TimelineProxy::computeEventsCommsParallel( RecordList *records,
     else
     {
       TObjectOrder partnerObject;
-      if ( getLevel() >= TTraceLevel::WORKLOAD && getLevel() <= TTraceLevel::THREAD )
+      if( getLevel() >= TTraceLevel::WORKLOAD && getLevel() <= TTraceLevel::THREAD )
         partnerObject = threadObjectToWindowObject( it->getCommPartnerObject() );
       else if( getLevel() >= TTraceLevel::SYSTEM && getLevel() <= TTraceLevel::NODE )
         partnerObject = cpuObjectToWindowObject( it->getCommPartnerObject() );
-      else //CPU
+      else // CPU
         partnerObject = cpuObjectToWindowObject( it->getCommPartnerObject() ) - 1;
 
-      if( ( recType & COMM ) &&
-          /*partnerObject >= beginRow && partnerObject <= endRow &&*/ selected[ partnerObject ] &&
-          ( ( recType & RECV ) ||
-            ( ( recType & SEND ) && it->getCommPartnerTime() > getWindowEndTime() ) )
-        )
+      if( ( recType & COMM ) && selected[ partnerObject ] &&
+          ( ( recType & RECV ) || ( ( recType & SEND ) && it->getCommPartnerTime() > getWindowEndTime() ) ) )
       {
         PRV_INT32 posPartner = ( ( it->getCommPartnerTime() - getWindowBeginTime() ) * step );
         posPartner += objectAxisPos;
@@ -2600,9 +2683,9 @@ void TimelineProxy::computeEventsCommsParallel( RecordList *records,
         else if( posPartner < -10000 )
           posPartner = -10000;
         commCoord tmpComm;
-        tmpComm.recType = recType;
+        tmpComm.recType  = recType;
         tmpComm.fromTime = timePos;
-        tmpComm.toTime = posPartner;
+        tmpComm.toTime   = posPartner;
         PRV_INT32 tmpPixelDensity;
         if( endRow - beginRow > 0 )
           tmpPixelDensity = objectPosList[ endRow ] - objectPosList[ beginRow ] + 1;
@@ -2634,31 +2717,31 @@ void TimelineProxy::computeEventsCommsParallel( RecordList *records,
 }
 
 #ifdef _MSC_VER
-void TimelineProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selectedSet,
-                                                   vector< bool >& selected,
-                                                   TTime timeStep,
-                                                   PRV_INT32 timePos,
-                                                   PRV_INT32 objectAxisPos,
-                                                   vector< PRV_INT32 >& objectPosList,
-                                                   TObjectOrder maxObj,
-                                                   bool& drawCaution,
-                                                   vector< vector< vector< pair<TSemanticValue,TSemanticValue> > > >& valuesToDraw,
-                                                   vector< hash_set< PRV_INT32 > >& eventsToDraw,
-                                                   vector< hash_set< commCoord > >& commsToDraw,
-                                                   ProgressController *progress )
+void TimelineProxy::computeSemanticPunctualParallel( vector< TObjectOrder > &selectedSet,
+                                                     vector< bool > &selected,
+                                                     TTime timeStep,
+                                                     PRV_INT32 timePos,
+                                                     PRV_INT32 objectAxisPos,
+                                                     vector< PRV_INT32 > &objectPosList,
+                                                     TObjectOrder maxObj,
+                                                     bool &drawCaution,
+                                                     vector< vector< vector< pair< TSemanticValue, TSemanticValue > > > > &valuesToDraw,
+                                                     vector< hash_set< PRV_INT32 > > &eventsToDraw,
+                                                     vector< hash_set< commCoord > > &commsToDraw,
+                                                     ProgressController *progress )
 #else
-void TimelineProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selectedSet,
-                                                   vector< bool >& selected,
-                                                   TTime timeStep,
-                                                   PRV_INT32 timePos,
-                                                   PRV_INT32 objectAxisPos,
-                                                   vector< PRV_INT32 >& objectPosList,
-                                                   TObjectOrder maxObj,
-                                                   bool& drawCaution,
-                                                   vector< vector< vector< pair<TSemanticValue,TSemanticValue> > > >& valuesToDraw,
-                                                   vector< unordered_set< PRV_INT32 > >& eventsToDraw,
-                                                   vector< unordered_set< commCoord, hashCommCoord > >& commsToDraw,
-                                                   ProgressController *progress )
+void TimelineProxy::computeSemanticPunctualParallel( vector< TObjectOrder > &selectedSet,
+                                                     vector< bool > &selected,
+                                                     TTime timeStep,
+                                                     PRV_INT32 timePos,
+                                                     PRV_INT32 objectAxisPos,
+                                                     vector< PRV_INT32 > &objectPosList,
+                                                     TObjectOrder maxObj,
+                                                     bool &drawCaution,
+                                                     vector< vector< vector< pair< TSemanticValue, TSemanticValue > > > > &valuesToDraw,
+                                                     vector< unordered_set< PRV_INT32 > > &eventsToDraw,
+                                                     vector< unordered_set< commCoord, hashCommCoord > > &commsToDraw,
+                                                     ProgressController *progress )
 #endif
 {
   vector< int > tmpDrawCaution;
@@ -2674,7 +2757,7 @@ void TimelineProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& sel
   for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
   {
     TObjectOrder firstObj = *obj;
-    TObjectOrder lastObj = firstObj;
+    TObjectOrder lastObj  = firstObj;
     while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
     {
       ++obj;
@@ -2703,17 +2786,14 @@ void TimelineProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& sel
   }
 #endif // PARALLEL_ENABLED
 
-  // Drawmode: Group objects with same wxCoord in objectPosList
-  #pragma omp parallel
+// Drawmode: Group objects with same wxCoord in objectPosList
+#pragma omp parallel
   {
-    #pragma omp single
+#pragma omp single
     {
 #ifdef PARALLEL_ENABLED
-      if( selected.size() > 1 ||
-          ( myWindow->isDerivedWindow() && myWindow->getTrace()->getLevelObjects( myWindow->getParent( 0 )->getLevel() ) !=
-                                           myWindow->getTrace()->getLevelObjects( myWindow->getParent( 1 )->getLevel() )
-          )
-        )
+      if( selected.size() > 1 || ( myWindow->isDerivedWindow() && myWindow->getTrace()->getLevelObjects( myWindow->getParent( 0 )->getLevel() ) !=
+                                                                    myWindow->getTrace()->getLevelObjects( myWindow->getParent( 1 )->getLevel() ) ) )
       {
         for( int i = 0; i != omp_get_num_threads(); ++i )
           parallelClone.push_back( myWindow->clone( true ) );
@@ -2723,13 +2803,13 @@ void TimelineProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& sel
       for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
       {
         TObjectOrder firstObj = *obj;
-        TObjectOrder lastObj = firstObj;
+        TObjectOrder lastObj  = firstObj;
         while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
         {
           ++obj;
           lastObj = *obj;
         }
-        valuesToDraw.push_back( vector< vector< pair<TSemanticValue,TSemanticValue> > >() );
+        valuesToDraw.push_back( vector< vector< pair< TSemanticValue, TSemanticValue > > >() );
 
         eventsToDraw.push_back( unordered_set< PRV_INT32 >() );
 #ifdef _MSC_VER
@@ -2743,30 +2823,49 @@ void TimelineProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& sel
         tmpComputedMinY.push_back( 0.0 );
         tmpComputedZeros.push_back( false );
 
-        int tmpDrawCautionSize = tmpDrawCaution.size();
-        int tmpComputedMaxYSize = tmpComputedMaxY.size();
-        int tmpComputedMinYSize = tmpComputedMinY.size();
+        int tmpDrawCautionSize   = tmpDrawCaution.size();
+        int tmpComputedMaxYSize  = tmpComputedMaxY.size();
+        int tmpComputedMinYSize  = tmpComputedMinY.size();
         int tmpComputedZerosSize = tmpComputedZeros.size();
-        int valuesToDrawSize = valuesToDraw.size();
-        int eventsToDrawSize = eventsToDraw.size();
-        int commsToDrawSize = eventsToDraw.size();
+        int valuesToDrawSize     = valuesToDraw.size();
+        int eventsToDrawSize     = eventsToDraw.size();
+        int commsToDrawSize      = eventsToDraw.size();
 
-        #pragma omp task firstprivate(numRows, firstObj, lastObj, timeStep, timePos, objectAxisPos, paramProgress) \
-                        shared(selectedSet, selected, objectPosList, tmpDrawCaution, tmpComputedMaxY, tmpComputedMinY, tmpComputedZeros, valuesToDraw, eventsToDraw, commsToDraw) \
-                        firstprivate(tmpDrawCautionSize, tmpComputedMaxYSize, tmpComputedMinYSize, tmpComputedZerosSize, valuesToDrawSize, eventsToDrawSize, commsToDrawSize) \
-                        default(none)
+#pragma omp task firstprivate( numRows, firstObj, lastObj, timeStep, timePos, objectAxisPos, paramProgress ) shared( selectedSet,        \
+                                                                                                                       selected,         \
+                                                                                                                       objectPosList,    \
+                                                                                                                       tmpDrawCaution,   \
+                                                                                                                       tmpComputedMaxY,  \
+                                                                                                                       tmpComputedMinY,  \
+                                                                                                                       tmpComputedZeros, \
+                                                                                                                       valuesToDraw,     \
+                                                                                                                       eventsToDraw,     \
+                                                                                                                       commsToDraw )     \
+  firstprivate( tmpDrawCautionSize,                                                                                                      \
+                  tmpComputedMaxYSize,                                                                                                   \
+                  tmpComputedMinYSize,                                                                                                   \
+                  tmpComputedZerosSize,                                                                                                  \
+                  valuesToDrawSize,                                                                                                      \
+                  eventsToDrawSize,                                                                                                      \
+                  commsToDrawSize ) default( none )
         {
-            computeSemanticRowPunctualParallel(
-                    numRows, firstObj, lastObj, selectedSet, selected, timeStep, timePos,
-                    objectAxisPos, objectPosList,
-                    tmpDrawCaution[ tmpDrawCautionSize - 1 ],
-                    tmpComputedMaxY[ tmpComputedMaxYSize - 1 ],
-                    tmpComputedMinY[ tmpComputedMinYSize - 1 ],
-                    tmpComputedZeros[ tmpComputedZerosSize - 1 ],
-                    valuesToDraw[ valuesToDrawSize - 1 ],
-                    eventsToDraw[ eventsToDrawSize - 1 ],
-                    commsToDraw[ commsToDrawSize - 1 ],
-                    paramProgress );
+          computeSemanticRowPunctualParallel( numRows,
+                                              firstObj,
+                                              lastObj,
+                                              selectedSet,
+                                              selected,
+                                              timeStep,
+                                              timePos,
+                                              objectAxisPos,
+                                              objectPosList,
+                                              tmpDrawCaution[ tmpDrawCautionSize - 1 ],
+                                              tmpComputedMaxY[ tmpComputedMaxYSize - 1 ],
+                                              tmpComputedMinY[ tmpComputedMinYSize - 1 ],
+                                              tmpComputedZeros[ tmpComputedZerosSize - 1 ],
+                                              valuesToDraw[ valuesToDrawSize - 1 ],
+                                              eventsToDraw[ eventsToDrawSize - 1 ],
+                                              commsToDraw[ commsToDrawSize - 1 ],
+                                              paramProgress );
         }
 
 #ifndef PARALLEL_ENABLED
@@ -2784,7 +2883,7 @@ void TimelineProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& sel
 
   for( vector< int >::iterator it = tmpDrawCaution.begin(); it != tmpDrawCaution.end(); ++it )
   {
-    if ( *it )
+    if( *it )
     {
       drawCaution = true;
       break;
@@ -2793,17 +2892,17 @@ void TimelineProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& sel
 
   for( size_t pos = 0; pos < tmpComputedMaxY.size(); ++pos )
   {
-    drawCaution = drawCaution || tmpDrawCaution[ pos ];
+    drawCaution   = drawCaution || tmpDrawCaution[ pos ];
     computedZeros = computedZeros || tmpComputedZeros[ pos ];
-    computedMaxY = computedMaxY > tmpComputedMaxY[ pos ] ? computedMaxY : tmpComputedMaxY[ pos ];
-    if ( computedMinY == 0.0 )
+    computedMaxY  = computedMaxY > tmpComputedMaxY[ pos ] ? computedMaxY : tmpComputedMaxY[ pos ];
+    if( computedMinY == 0.0 )
       computedMinY = tmpComputedMinY[ pos ];
     else if( tmpComputedMinY[ pos ] != 0.0 )
       computedMinY = computedMinY < tmpComputedMinY[ pos ] ? computedMinY : tmpComputedMinY[ pos ];
   }
 
 #ifdef PARALLEL_ENABLED
-  for( vector<Timeline *>::iterator it = parallelClone.begin(); it != parallelClone.end(); ++it )
+  for( vector< Timeline * >::iterator it = parallelClone.begin(); it != parallelClone.end(); ++it )
     delete *it;
   parallelClone.clear();
 #endif // PARALLEL_ENABLED
@@ -2811,53 +2910,53 @@ void TimelineProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& sel
 
 #ifdef _MSC_VER
 void TimelineProxy::computeSemanticRowPunctualParallel( int numRows,
-                                                      TObjectOrder firstRow,
-                                                      TObjectOrder lastRow,
-                                                      vector< TObjectOrder >& selectedSet,
-                                                      vector< bool >& selected,
-                                                      TTime timeStep,
-                                                      PRV_INT32 timePos,
-                                                      PRV_INT32 objectAxisPos,
-                                                      vector< PRV_INT32 >& objectPosList,
-                                                      int& drawCaution,
-                                                      TSemanticValue& rowComputedMaxY,
-                                                      TSemanticValue& rowComputedMinY,
-                                                      int& rowComputedZeros,
-                                                      vector< vector< pair<TSemanticValue,TSemanticValue> > >& valuesToDraw,
-                                                      hash_set< PRV_INT32 >& eventsToDraw,
-                                                      hash_set< commCoord >& commsToDraw,
-                                                      ProgressController *progress )
+                                                        TObjectOrder firstRow,
+                                                        TObjectOrder lastRow,
+                                                        vector< TObjectOrder > &selectedSet,
+                                                        vector< bool > &selected,
+                                                        TTime timeStep,
+                                                        PRV_INT32 timePos,
+                                                        PRV_INT32 objectAxisPos,
+                                                        vector< PRV_INT32 > &objectPosList,
+                                                        int &drawCaution,
+                                                        TSemanticValue &rowComputedMaxY,
+                                                        TSemanticValue &rowComputedMinY,
+                                                        int &rowComputedZeros,
+                                                        vector< vector< pair< TSemanticValue, TSemanticValue > > > &valuesToDraw,
+                                                        hash_set< PRV_INT32 > &eventsToDraw,
+                                                        hash_set< commCoord > &commsToDraw,
+                                                        ProgressController *progress )
 #else
 void TimelineProxy::computeSemanticRowPunctualParallel( int numRows,
-                                                      TObjectOrder firstRow,
-                                                      TObjectOrder lastRow,
-                                                      vector< TObjectOrder >& selectedSet,
-                                                      vector< bool >& selected,
-                                                      TTime timeStep,
-                                                      PRV_INT32 timePos,
-                                                      PRV_INT32 objectAxisPos,
-                                                      vector< PRV_INT32 >& objectPosList,
-                                                      int& drawCaution,
-                                                      TSemanticValue& rowComputedMaxY,
-                                                      TSemanticValue& rowComputedMinY,
-                                                      int& rowComputedZeros,
-                                                      vector< vector< pair<TSemanticValue,TSemanticValue> > >& valuesToDraw,
-                                                      unordered_set< PRV_INT32 >& eventsToDraw,
-                                                      unordered_set< commCoord, hashCommCoord >& commsToDraw,
-                                                      ProgressController *progress )
+                                                        TObjectOrder firstRow,
+                                                        TObjectOrder lastRow,
+                                                        vector< TObjectOrder > &selectedSet,
+                                                        vector< bool > &selected,
+                                                        TTime timeStep,
+                                                        PRV_INT32 timePos,
+                                                        PRV_INT32 objectAxisPos,
+                                                        vector< PRV_INT32 > &objectPosList,
+                                                        int &drawCaution,
+                                                        TSemanticValue &rowComputedMaxY,
+                                                        TSemanticValue &rowComputedMinY,
+                                                        int &rowComputedZeros,
+                                                        vector< vector< pair< TSemanticValue, TSemanticValue > > > &valuesToDraw,
+                                                        unordered_set< PRV_INT32 > &eventsToDraw,
+                                                        unordered_set< commCoord, hashCommCoord > &commsToDraw,
+                                                        ProgressController *progress )
 #endif
 {
   float magnify = float( getPixelSize() );
 
-  vector<pair<TSemanticValue,TSemanticValue> > values;
-  pair<TSemanticValue,TSemanticValue> tmpPairSemantic;
+  vector< pair< TSemanticValue, TSemanticValue > > values;
+  pair< TSemanticValue, TSemanticValue > tmpPairSemantic;
 
-  vector<TObjectOrder>::iterator first = find( selectedSet.begin(), selectedSet.end(), firstRow );
-  vector<TObjectOrder>::iterator last  = find( selectedSet.begin(), selectedSet.end(), lastRow );
+  vector< TObjectOrder >::iterator first = find( selectedSet.begin(), selectedSet.end(), firstRow );
+  vector< TObjectOrder >::iterator last  = find( selectedSet.begin(), selectedSet.end(), lastRow );
 
   TSemanticValue dummyMaxY, dummyMinY;
   int dummyZeros;
-  for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
+  for( vector< TObjectOrder >::iterator row = first; row <= last; ++row )
   {
     initRow( *row, getWindowBeginTime(), CREATECOMMS + CREATEEVENTS, rowComputedMaxY, rowComputedMinY, rowComputedZeros );
     if( punctualColorWindow != nullptr )
@@ -2865,12 +2964,11 @@ void TimelineProxy::computeSemanticRowPunctualParallel( int numRows,
   }
 
   TTime currentTime;
-  for( currentTime = getWindowBeginTime() + timeStep;
-       currentTime <= getWindowEndTime() && currentTime <= getTrace()->getEndTime();
+  for( currentTime = getWindowBeginTime() + timeStep; currentTime <= getWindowEndTime() && currentTime <= getTrace()->getEndTime();
        currentTime += timeStep )
   {
     values.clear();
-    for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
+    for( vector< TObjectOrder >::iterator row = first; row <= last; ++row )
     {
       while( getEndTime( *row ) <= currentTime - timeStep )
         calcNext( *row, rowComputedMaxY, rowComputedMinY, rowComputedZeros );
@@ -2883,7 +2981,7 @@ void TimelineProxy::computeSemanticRowPunctualParallel( int numRows,
           while( getBeginTime( *row ) >= punctualColorWindow->getEndTime( *row ) )
             punctualColorWindow->calcNext( *row, dummyMaxY, dummyMinY, dummyZeros );
 
-          vector<TSemanticValue> tmpValues;
+          vector< TSemanticValue > tmpValues;
           while( getEndTime( *row ) >= punctualColorWindow->getEndTime( *row ) )
           {
             tmpValues.push_back( punctualColorWindow->getValue( *row ) );
@@ -2915,21 +3013,25 @@ void TimelineProxy::computeSemanticRowPunctualParallel( int numRows,
           values.push_back( tmpPairSemantic );
         }
 
-        if( currentValue != 0 && ( currentValue < getMinimumY()
-                                   || currentValue > getMaximumY() ) )
+        if( currentValue != 0 && ( currentValue < getMinimumY() || currentValue > getMaximumY() ) )
           drawCaution = true;
       }
 
       RecordList *rl = getRecordList( *row );
       if( rl != nullptr )
         computeEventsCommsParallel( rl,
-                                    currentTime - timeStep, currentTime, timeStep / magnify,
-                                    timePos, objectAxisPos,
-                                    selected, objectPosList,
-                                    eventsToDraw, commsToDraw );
+                                    currentTime - timeStep,
+                                    currentTime,
+                                    timeStep / magnify,
+                                    timePos,
+                                    objectAxisPos,
+                                    selected,
+                                    objectPosList,
+                                    eventsToDraw,
+                                    commsToDraw );
     }
     valuesToDraw.push_back( values );
-    timePos += (int) magnify;
+    timePos += (int)magnify;
 
     if( progress != nullptr )
     {
@@ -2948,7 +3050,7 @@ void TimelineProxy::computeSemanticRowPunctualParallel( int numRows,
     }
   }
 
-  for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
+  for( vector< TObjectOrder >::iterator row = first; row <= last; ++row )
   {
     TSemanticValue dumbMinMax;
     int dumbZeros;
@@ -2956,14 +3058,19 @@ void TimelineProxy::computeSemanticRowPunctualParallel( int numRows,
     RecordList *rl = getRecordList( *row );
     if( rl != nullptr )
       computeEventsCommsParallel( rl,
-                                  currentTime - timeStep, currentTime, timeStep / magnify,
-                                  timePos, objectAxisPos,
-                                  selected, objectPosList,
-                                  eventsToDraw, commsToDraw );
+                                  currentTime - timeStep,
+                                  currentTime,
+                                  timeStep / magnify,
+                                  timePos,
+                                  objectAxisPos,
+                                  selected,
+                                  objectPosList,
+                                  eventsToDraw,
+                                  commsToDraw );
   }
 
   // Erase events and comms remaining in RecordLists
-  for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
+  for( vector< TObjectOrder >::iterator row = first; row <= last; ++row )
   {
     RecordList *rl = getRecordList( *row );
     rl->erase( rl->begin(), rl->end() );

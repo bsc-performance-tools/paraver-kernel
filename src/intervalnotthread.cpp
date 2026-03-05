@@ -22,77 +22,75 @@
 \*****************************************************************************/
 
 
-#include "kwindow.h"
 #include "intervalnotthread.h"
+
+#include "kwindow.h"
 
 using std::multimap;
 using std::pair;
 
-KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList create,
-                                      KRecordList *displayList )
+KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList create, KRecordList *displayList )
 {
   TRecordTime myInitTime;
   info.values.clear();
   info.callingInterval = this;
-  info.lastChanged = 0;
+  info.lastChanged     = 0;
   orderedChildren.clear();
 
-  createList = create;
+  createList   = create;
   currentValue = 0.0;
 
-  if ( displayList == nullptr )
+  if( displayList == nullptr )
     displayList = &myDisplayList;
 
-  function = ( SemanticNotThread * ) window->getSemanticFunction( level );
+  function = (SemanticNotThread *)window->getSemanticFunction( level );
 
   setChildren();
-  if ( begin != nullptr )
+  if( begin != nullptr )
   {
     delete begin;
     begin = nullptr;
   }
-  if ( end != nullptr )
+  if( end != nullptr )
   {
     delete end;
     end = nullptr;
   }
 
-  if ( function->getInitFromBegin() )
+  if( function->getInitFromBegin() )
     myInitTime = 0.0;
   else
     myInitTime = initialTime;
 
   info.callingInterval = this;
 
-  for ( TObjectOrder i = 0; i < childIntervals.size(); ++i )
+  for( TObjectOrder i = 0; i < childIntervals.size(); ++i )
   {
     childIntervals[ i ]->init( myInitTime, createList, displayList );
 
-    if ( begin == nullptr ||
-         childIntervals[ i ]->getBegin()->getTime() > begin->getTime() )
+    if( begin == nullptr || childIntervals[ i ]->getBegin()->getTime() > begin->getTime() )
     {
-      if ( begin == nullptr )
+      if( begin == nullptr )
         begin = childIntervals[ i ]->getBegin()->clone();
       else
         *begin = *childIntervals[ i ]->getBegin();
     }
 
-    if ( end == nullptr ||
-         childIntervals[ i ]->getEnd()->getTime() < end->getTime() )
+    if( end == nullptr || childIntervals[ i ]->getEnd()->getTime() < end->getTime() )
     {
-      if ( end == nullptr )
+      if( end == nullptr )
         end = childIntervals[ i ]->getEnd()->clone();
       else
         *end = *childIntervals[ i ]->getEnd();
     }
 
     info.values.push_back( childIntervals[ i ]->getValue() );
-    pair<TRecordTime,TObjectOrder> tmpChild( childIntervals[ i ]->getEnd()->getTime(), i );
+    pair< TRecordTime, TObjectOrder > tmpChild( childIntervals[ i ]->getEnd()->getTime(), i );
     orderedChildren.insert( tmpChild );
   }
   currentValue = function->execute( &info );
 
-  while ( end->getTime() < initialTime && begin->getTime() < window->getTrace()->getEndTime() )
+  while( end->getTime() < initialTime && begin->getTime() < window->getTrace()->getEndTime() )
     calcNext( displayList );
 
   return displayList;
@@ -101,32 +99,38 @@ KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList creat
 
 KRecordList *IntervalNotThread::calcNext( KRecordList *displayList, bool initCalc )
 {
-  if ( displayList == nullptr )
+  if( displayList == nullptr )
     displayList = &myDisplayList;
 
   *begin = *end;
 
-  TObjectOrder i = 0;
-  std::multimap<TRecordTime,TObjectOrder>::iterator itChild = orderedChildren.begin();
-  while( itChild->first == begin->getTime() )
+  TObjectOrder i                                               = 0;
+  std::multimap< TRecordTime, TObjectOrder >::iterator itChild = orderedChildren.begin();
+  while( itChild->first <= begin->getTime() )
   {
-    if ( childIntervals[ itChild->second ]->getEnd()->getTime() <= begin->getTime() )
+    if( childIntervals[ itChild->second ]->getEnd()->getTime() <= begin->getTime() )
     {
       childIntervals[ itChild->second ]->calcNext( displayList );
       info.lastChanged = itChild->second;
     }
 
     info.values[ itChild->second ] = childIntervals[ itChild->second ]->getValue();
-    pair<TRecordTime,TObjectOrder> tmpChild( childIntervals[ itChild->second ]->getEnd()->getTime(), itChild->second );
+    pair< TRecordTime, TObjectOrder > tmpChild( childIntervals[ itChild->second ]->getEnd()->getTime(), itChild->second );
     orderedChildren.erase( itChild );
     orderedChildren.insert( tmpChild );
     itChild = orderedChildren.begin();
 
     ++i;
-    if( i >= childIntervals.size() ) break;
+    if( i >= childIntervals.size() )
+      break;
   }
 
-  *end = *childIntervals[ itChild->second ]->getEnd();
+  *end = *childIntervals[ 0 ]->getEnd();
+  for( i = 1; i < childIntervals.size(); ++i )
+  {
+    if( childIntervals[ i ]->getEnd()->getTime() < end->getTime() )
+      *end = *childIntervals[ i ]->getEnd();
+  }
 
   currentValue = function->execute( &info );
 
@@ -136,26 +140,27 @@ KRecordList *IntervalNotThread::calcNext( KRecordList *displayList, bool initCal
 
 KRecordList *IntervalNotThread::calcPrev( KRecordList *displayList, bool initCalc )
 {
-  if ( displayList == nullptr )
+  if( displayList == nullptr )
     displayList = &myDisplayList;
 
   *end = *begin;
 
-  TObjectOrder i = 0;
-  std::multimap<TRecordTime,TObjectOrder>::iterator itChild = orderedChildren.begin();
+  TObjectOrder i                                               = 0;
+  std::multimap< TRecordTime, TObjectOrder >::iterator itChild = orderedChildren.begin();
   while( itChild->first == end->getTime() )
   {
-    if ( childIntervals[ itChild->second ]->getBegin()->getTime() >= end->getTime() )
+    if( childIntervals[ itChild->second ]->getBegin()->getTime() >= end->getTime() )
       childIntervals[ itChild->second ]->calcPrev( displayList );
 
     info.values[ itChild->second ] = childIntervals[ itChild->second ]->getValue();
-    pair<TRecordTime,TObjectOrder> tmpChild( childIntervals[ itChild->second ]->getEnd()->getTime(), itChild->second );
+    pair< TRecordTime, TObjectOrder > tmpChild( childIntervals[ itChild->second ]->getEnd()->getTime(), itChild->second );
     orderedChildren.erase( itChild );
     orderedChildren.insert( tmpChild );
     itChild = orderedChildren.begin();
 
     ++i;
-    if( i >= childIntervals.size() ) break;
+    if( i >= childIntervals.size() )
+      break;
   }
 
   *begin = *childIntervals[ itChild->second ]->getBegin();
@@ -172,8 +177,7 @@ TTraceLevel IntervalNotThread::getWindowLevel() const
 }
 
 
-Interval *IntervalNotThread::getWindowInterval( TWindowLevel whichLevel,
-    TObjectOrder whichOrder )
+Interval *IntervalNotThread::getWindowInterval( TWindowLevel whichLevel, TObjectOrder whichOrder )
 {
   return window->getLevelInterval( whichLevel, whichOrder );
 }
@@ -193,5 +197,5 @@ TWindowLevel IntervalNotThread::getComposeLevel( TTraceLevel whichLevel ) const
 
 KTrace *IntervalNotThread::getWindowTrace() const
 {
-  return (KTrace*)window->getTrace();
+  return (KTrace *)window->getTrace();
 }

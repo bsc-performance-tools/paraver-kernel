@@ -22,8 +22,11 @@
 \*****************************************************************************/
 
 
+#include <cerrno>
+#include <cstring>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
@@ -45,6 +48,19 @@
 #include "utils/traceparser/processmodel.h"
 #include "utils/traceparser/resourcemodel.h"
 #include "utils/traceparser/traceheader.h"
+
+// Helper function to check stream state and throw with file path on error
+static void checkStreamWrite( std::fstream& stream, const std::string& filePath )
+{
+  if( stream.fail() || stream.bad() )
+  {
+    int savedErrno = errno;
+    std::string errMsg = "Write failed to file: " + filePath;
+    if( savedErrno != 0 )
+      errMsg += " (" + std::string( std::strerror( savedErrno ) ) + ")";
+    throw std::runtime_error( errMsg );
+  }
+}
 
 
 #ifdef _WIN32
@@ -375,6 +391,14 @@ void KTraceFilter::execute( char *trace_in, char *trace_out, ProgressController 
 
   inFile = TraceStream::openFile( trace_in );
   outfile.open( trace_out, ios_base::out );
+  if( !outfile.is_open() )
+  {
+    int savedErrno = errno;
+    std::string errMsg = "Cannot open output file: " + traceOut;
+    if( savedErrno != 0 )
+      errMsg += " (" + std::string( std::strerror( savedErrno ) ) + ")";
+    throw std::runtime_error( errMsg );
+  }
 
   is_zip_filter = inFile->isCompressed();
 
@@ -682,6 +706,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out, ProgressController 
     }
   }
 
+  checkStreamWrite( outfile, traceOut );
   outfile.close();
   inFile->close();
   delete inFile;
