@@ -488,7 +488,8 @@ bool CFGLoader::loadDescription( const std::string &filename, std::string &descr
   return false;
 }
 
-bool CFGLoader::getCFGTag( ifstream &cfgFile, string &strLine, istringstream &auxStream, string &cfgTag )
+
+bool CFGLoader::getCFGTag( istream& cfgFile, string& strLine, istringstream& auxStream, string& cfgTag )
 {
   getline( cfgFile, strLine );
 
@@ -510,11 +511,12 @@ bool CFGLoader::getCFGTag( ifstream &cfgFile, string &strLine, istringstream &au
 
 
 bool CFGLoader::loadCFG( KernelConnection *whichKernel,
-                         const string &filename,
                          Trace *whichTrace,
-                         vector< Timeline * > &windows,
-                         vector< Histogram * > &histograms,
-                         SaveOptions &options )
+                         std::istream& cfgFile,
+                         vector<Timeline *>& windows,
+                         vector<Histogram *>& histograms,
+                         SaveOptions &options,
+                         bool overrideChecks )
 {
   someEventsExist     = false;
   someEventsNotExist  = false;
@@ -522,11 +524,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 
   lastGlobalLinkIndex = 0;
 
-  ifstream cfgFile( filename.c_str() );
-  if( !cfgFile )
-    return false;
-
-  if( !firstMapLoaded )
+  if ( !firstMapLoaded ) 
   {
     loadMap();
     firstMapLoaded = true;
@@ -600,9 +598,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
     }
   }
 
-  cfgFile.close();
-
-  // unLoadMap();
+  //unLoadMap();
 
   if( histograms[ histograms.size() - 1 ] == nullptr )
     histograms.pop_back();
@@ -637,12 +633,15 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   }
 
   bool continueLoading = true;
-  if( !someEventsExist )
-    continueLoading = whichKernel->userMessage( UserMessageID::MessageCFGNoneEvents );
-  else if( someEventsNotExist )
-    continueLoading = whichKernel->userMessage( UserMessageID::MessageCFGSomeEvents );
-  else if( multipleLabelValues )
-    continueLoading = whichKernel->userMessage( UserMessageID::MessageCFGMultipleValues );
+  if ( !overrideChecks )
+  {
+    if ( !someEventsExist )
+      continueLoading = whichKernel->userMessage( UserMessageID::MessageCFGNoneEvents );
+    else if ( someEventsNotExist )
+      continueLoading = whichKernel->userMessage( UserMessageID::MessageCFGSomeEvents );
+    else if ( multipleLabelValues )
+      continueLoading = whichKernel->userMessage( UserMessageID::MessageCFGMultipleValues );
+  }
 
   // Check if there are some objects in the selected level
   bool someWindowWithSelectedLevelEmpty = false;
@@ -654,7 +653,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
       break;
     }
   }
-  if( someWindowWithSelectedLevelEmpty )
+  if ( !overrideChecks && someWindowWithSelectedLevelEmpty )
     continueLoading = whichKernel->userMessage( UserMessageID::MessageCFGZeroObjects );
 
   if( !continueLoading )
@@ -699,7 +698,8 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   return true;
 }
 
-void CFGLoader::pushbackWindow( Timeline *whichWindow, vector< Timeline * > &allWindows )
+
+void CFGLoader::pushbackWindow( Timeline *whichWindow, vector<Timeline *>& allWindows )
 {
   if( whichWindow->isDerivedWindow() )
   {
@@ -775,19 +775,15 @@ void CFGLoader::pushbackAllHistograms( const vector< Histogram * > &selectedHist
 }
 
 
-bool CFGLoader::saveCFG( const string &filename,
-                         const SaveOptions &options,
-                         const vector< Timeline * > &windows,
-                         const vector< Histogram * > &histograms,
-                         const vector< CFGS4DLinkedPropertiesManager > &linkedProperties )
+bool CFGLoader::saveCFG( std::ostream& cfgFile,
+                         const SaveOptions& options,
+                         const vector< Timeline * >& windows,
+                         const vector< Histogram * >& histograms,
+                         const vector< CFGS4DLinkedPropertiesManager >& linkedProperties )
 {
   vector< Timeline * > allWindows;
   vector< Timeline * > forcedOpenWindows;
   vector< Histogram * > allHistograms;
-
-  ofstream cfgFile( filename.c_str() );
-  if( !cfgFile )
-    return false;
 
   syncRealGroup.clear();
   lastSyncGroupUsed = 0;
@@ -971,8 +967,6 @@ bool CFGLoader::saveCFG( const string &filename,
     cfgFile << endl;
   }
 
-  cfgFile.close();
-
   return true;
 }
 
@@ -1018,6 +1012,96 @@ int CFGLoader::findWindowBackwards( const WindowType *whichWindow,
   }
 
   return i;
+}
+
+
+TTimeUnit CFGLoader::parseTimeUnit( const std::string& strUnits )
+{
+  if ( strUnits.compare( OLDCFG_VAL_TIMEUNIT_NS ) == 0 )
+    return NS;
+  else if ( strUnits.compare( OLDCFG_VAL_TIMEUNIT_US ) == 0 )
+    return US;
+  else if ( strUnits.compare( OLDCFG_VAL_TIMEUNIT_MS ) == 0 )
+    return MS;
+  else if ( strUnits.compare( OLDCFG_VAL_TIMEUNIT_S ) == 0 )
+    return SEC;
+  else if ( strUnits.compare( OLDCFG_VAL_TIMEUNIT_M ) == 0 )
+    return MIN;
+  else if ( strUnits.compare( OLDCFG_VAL_TIMEUNIT_H ) == 0 )
+    return HOUR;
+  else if ( strUnits.compare( OLDCFG_VAL_TIMEUNIT_D ) == 0 )
+    return DAY;
+
+  return NS;
+}
+
+
+void CFGLoader::dumpTimeUnits( TTimeUnit whichUnit, std::ostream& whichFile )
+{
+  switch ( whichUnit )
+  {
+    case NS:
+      whichFile << OLDCFG_VAL_TIMEUNIT_NS;
+      break;
+    case US:
+      whichFile << OLDCFG_VAL_TIMEUNIT_US;
+      break;
+    case MS:
+      whichFile << OLDCFG_VAL_TIMEUNIT_MS;
+      break;
+    case SEC:
+      whichFile << OLDCFG_VAL_TIMEUNIT_S;
+      break;
+    case MIN:
+      whichFile << OLDCFG_VAL_TIMEUNIT_M;
+      break;
+    case HOUR:
+      whichFile << OLDCFG_VAL_TIMEUNIT_H;
+      break;
+    case DAY:
+      whichFile << OLDCFG_VAL_TIMEUNIT_D;
+      break;
+  }
+}
+
+
+TColorFunction CFGLoader::parseColorMode( const std::string& strMode )
+{
+  if ( strMode.compare( OLDCFG_VAL_COLOR_MODE_CODE ) == 0 )
+    return TColorFunction::CODE_COLOR;
+  else if ( strMode.compare( OLDCFG_VAL_COLOR_MODE_GRADIENT ) == 0 )
+    return TColorFunction::GRADIENT;
+  else if ( strMode.compare( OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT ) == 0 )
+    return TColorFunction::NOT_NULL_GRADIENT;
+  else if ( strMode.compare( CFG_VAL_COLOR_MODE_ALTERNATIVE_GRADIENT ) == 0 )
+    return TColorFunction::ALTERNATIVE_GRADIENT;
+  else if( strMode.compare( CFG_VAL_COLOR_MODE_PUNCTUAL ) == 0 )
+    return TColorFunction::PUNCTUAL;
+  else if( strMode.compare( CFG_VAL_COLOR_MODE_FUSED_LINES ) == 0 )
+    return TColorFunction::FUSED_LINES;
+  else if( strMode.compare( CFG_VAL_COLOR_MODE_FUNCTION_LINE ) == 0 )
+    return TColorFunction::FUNCTION_LINE;
+
+  return TColorFunction::CODE_COLOR;
+}
+
+
+void CFGLoader::dumpColorMode( TColorFunction whichColorMode, std::ostream& whichFile )
+{
+  if ( whichColorMode == TColorFunction::CODE_COLOR )
+    whichFile << OLDCFG_VAL_COLOR_MODE_CODE;
+  else if ( whichColorMode == TColorFunction::GRADIENT )
+    whichFile << OLDCFG_VAL_COLOR_MODE_GRADIENT;
+  else if ( whichColorMode == TColorFunction::NOT_NULL_GRADIENT )
+    whichFile << OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT;
+  else if ( whichColorMode == TColorFunction::ALTERNATIVE_GRADIENT )
+    whichFile << CFG_VAL_COLOR_MODE_ALTERNATIVE_GRADIENT;
+  else if ( whichColorMode == TColorFunction::PUNCTUAL )
+    whichFile << CFG_VAL_COLOR_MODE_PUNCTUAL;
+  else if ( whichColorMode == TColorFunction::FUSED_LINES )
+    whichFile << CFG_VAL_COLOR_MODE_FUSED_LINES;
+  else if ( whichColorMode == TColorFunction::FUNCTION_LINE )
+    whichFile << CFG_VAL_COLOR_MODE_FUNCTION_LINE;
 }
 
 
@@ -1243,7 +1327,7 @@ bool SyncWindowsGroups::parseLine( KernelConnection *whichKernel, istringstream 
   return true;
 }
 
-void SyncWindowsGroups::printLine( ofstream &cfgFile, const vector< Timeline * > &windows, const vector< Histogram * > &histograms )
+void SyncWindowsGroups::printLine( ostream &cfgFile, const vector< Timeline * > &windows, const vector< Histogram * > &histograms )
 {
   cfgFile << CFG_HEADER_SYNC_GROUPS << " ";
 
@@ -1320,7 +1404,8 @@ bool WindowName::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowName::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowName::printLine( ostream& cfgFile,
+                            const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_NAME << " " << ( *it )->getName() << endl;
 }
@@ -1378,7 +1463,8 @@ bool WindowType::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowType::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowType::printLine( ostream& cfgFile,
+                            const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_TYPE << " ";
   if( ( *it )->isDerivedWindow() )
@@ -1423,7 +1509,8 @@ bool WindowFactors::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowFactors::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowFactors::printLine( ostream& cfgFile,
+                               const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_FACTORS << " " << ( *it )->getFactor( 0 ) << " " << ( *it )->getFactor( 1 ) << endl;
 }
@@ -1464,7 +1551,8 @@ bool WindowShifts::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowShifts::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowShifts::printLine( ostream& cfgFile,
+                              const vector<Timeline *>::const_iterator it )
 {
   cfgFile << CFG_TAG_WNDW_SHIFTS << " " << ( *it )->getShift( 0 ) << " " << ( *it )->getShift( 1 ) << endl;
 }
@@ -1495,7 +1583,8 @@ bool WindowPositionX::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowPositionX::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowPositionX::printLine( ostream& cfgFile,
+                                 const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_POSX << " " << ( *it )->getPosX() << endl;
 }
@@ -1526,7 +1615,8 @@ bool WindowPositionY::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowPositionY::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowPositionY::printLine( ostream& cfgFile,
+                                 const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_POSY << " " << ( *it )->getPosY() << endl;
 }
@@ -1557,7 +1647,8 @@ bool WindowWidth::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowWidth::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowWidth::printLine( ostream& cfgFile,
+                             const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_WIDTH << " " << ( *it )->getWidth() << endl;
 }
@@ -1588,7 +1679,8 @@ bool WindowHeight::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowHeight::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowHeight::printLine( ostream& cfgFile,
+                              const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_HEIGHT << " " << ( *it )->getHeight() << endl;
 }
@@ -1619,7 +1711,8 @@ bool WindowCommLines::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowCommLines::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowCommLines::printLine( ostream& cfgFile,
+                                 const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_COMM_LINES << " " << ( ( *it )->getDrawCommLines() ? OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
 }
@@ -1650,7 +1743,8 @@ bool WindowFlagsEnabled::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowFlagsEnabled::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowFlagsEnabled::printLine( ostream& cfgFile,
+                                    const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_FLAGS_ENABLED << " " << ( ( *it )->getDrawFlags() ? OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
 }
@@ -1682,7 +1776,8 @@ bool WindowNonColorMode::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowNonColorMode::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowNonColorMode::printLine( ostream& cfgFile,
+                                    const vector<Timeline *>::const_iterator it )
 {
   // TODO: non color mode is color mode !!
   cfgFile << OLDCFG_TAG_WNDW_NON_COLOR_MODE << " " << ( ( *it )->isFunctionLineColorSet() ? OLDCFG_VAL_FALSE : OLDCFG_VAL_TRUE ) << endl;
@@ -1707,32 +1802,18 @@ bool WindowColorMode::parseLine( KernelConnection *whichKernel,
   if( windows[ windows.size() - 1 ]->isFunctionLineColorSet() )
     return true;
 
-  if( strMode.compare( OLDCFG_VAL_COLOR_MODE_GRADIENT ) == 0 )
-    windows[ windows.size() - 1 ]->setGradientColorMode();
-  else if( strMode.compare( OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT ) == 0 )
-    windows[ windows.size() - 1 ]->setNotNullGradientColorMode();
-  else if( strMode.compare( CFG_VAL_COLOR_MODE_ALTERNATIVE_GRADIENT ) == 0 )
-    windows[ windows.size() - 1 ]->setAlternativeGradientColorMode();
-  else if( strMode.compare( CFG_VAL_COLOR_MODE_PUNCTUAL ) == 0 )
-    windows[ windows.size() - 1 ]->setPunctualColorMode();
-  else if( strMode.compare( CFG_VAL_COLOR_MODE_FUSED_LINES ) == 0 )
-    windows[ windows.size() - 1 ]->setFusedLinesColorMode();
+  windows[ windows.size() - 1 ]->getSemanticColor().setColorMode( CFGLoader::parseColorMode( strMode ) );
 
   return true;
 }
 
-void WindowColorMode::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+
+void WindowColorMode::printLine( ostream& cfgFile,
+                                 const vector<Timeline *>::const_iterator it )
 {
-  if( ( *it )->isGradientColorSet() )
-    cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << OLDCFG_VAL_COLOR_MODE_GRADIENT << endl;
-  else if( ( *it )->isNotNullGradientColorSet() )
-    cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT << endl;
-  else if( ( *it )->isAlternativeGradientColorSet() )
-    cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_ALTERNATIVE_GRADIENT << endl;
-  else if( ( *it )->isPunctualColorSet() )
-    cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_PUNCTUAL << endl;
-  else if( ( *it )->isFusedLinesColorSet() )
-    cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_FUSED_LINES << endl;
+  cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " ";
+  CFGLoader::dumpColorMode( (*it)->getSemanticColor().getColorMode(), cfgFile );
+  cfgFile << std::endl;
 }
 
 
@@ -1765,7 +1846,8 @@ bool WindowGradientFunction::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowGradientFunction::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowGradientFunction::printLine( ostream& cfgFile,
+                                        const vector<Timeline *>::const_iterator it )
 {
   auto currentGradientFunction = ( *it )->getSemanticColor().getGradientFunction();
 
@@ -1809,7 +1891,8 @@ bool WindowCustomColorEnabled::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowCustomColorEnabled::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowCustomColorEnabled::printLine( ostream& cfgFile,
+                                 const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED << " " << ( ( *it )->getUseCustomPalette() ? OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
 }
@@ -1867,7 +1950,8 @@ bool WindowCustomBackgroundColor::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowCustomBackgroundColor::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowCustomBackgroundColor::printLine( ostream& cfgFile,
+                                             const vector<Timeline *>::const_iterator it )
 {
   rgb tmprgb = ( *it )->getBackgroundColor();
   if( tmprgb != ParaverConfig::getInstance()->getColorsTimelineBackground() )
@@ -1899,7 +1983,8 @@ bool WindowCustomAxisColor::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowCustomAxisColor::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowCustomAxisColor::printLine( ostream& cfgFile,
+                                             const vector<Timeline *>::const_iterator it )
 {
   rgb tmprgb = ( *it )->getAxisColor();
   if( tmprgb != ParaverConfig::getInstance()->getColorsTimelineAxis() )
@@ -1931,7 +2016,8 @@ bool WindowCustomPunctualColor::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowCustomPunctualColor::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowCustomPunctualColor::printLine( ostream& cfgFile,
+                                             const vector<Timeline *>::const_iterator it )
 {
   rgb tmprgb = ( *it )->getPunctualColor();
   if( tmprgb != ParaverConfig::getInstance()->getColorsTimelinePunctual() )
@@ -2003,7 +2089,8 @@ bool WindowCustomColorPalette::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowCustomColorPalette::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowCustomColorPalette::printLine( ostream& cfgFile,
+                                 const vector<Timeline *>::const_iterator it )
 {
   const SemanticColor &tmpCodeColor = ( *it )->getSemanticColor();
 
@@ -2049,7 +2136,8 @@ bool WindowCustomBackgroundAsZero::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowCustomBackgroundAsZero::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowCustomBackgroundAsZero::printLine( ostream& cfgFile,
+                                 const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_CUSTOM_BACKGROUND_AS_ZERO << " " << ( ( *it )->getBackgroundAsZero() ? OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
 }
@@ -2080,7 +2168,8 @@ bool WindowSemanticScaleMinAtZero::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowSemanticScaleMinAtZero::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowSemanticScaleMinAtZero::printLine( ostream& cfgFile,
+                                              const vector<Timeline *>::const_iterator it )
 {
   cfgFile << WindowSemanticScaleMinAtZero::tagCFG << " " << ( ( *it )->getSemanticScaleMinAtZero() ? OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
 }
@@ -2101,52 +2190,16 @@ bool WindowUnits::parseLine( KernelConnection *whichKernel,
 
   getline( line, strUnits, ' ' );
 
-  if( strUnits.compare( OLDCFG_VAL_TIMEUNIT_NS ) == 0 )
-    windows[ windows.size() - 1 ]->setTimeUnit( NS );
-  else if( strUnits.compare( OLDCFG_VAL_TIMEUNIT_US ) == 0 )
-    windows[ windows.size() - 1 ]->setTimeUnit( US );
-  else if( strUnits.compare( OLDCFG_VAL_TIMEUNIT_MS ) == 0 )
-    windows[ windows.size() - 1 ]->setTimeUnit( MS );
-  else if( strUnits.compare( OLDCFG_VAL_TIMEUNIT_S ) == 0 )
-    windows[ windows.size() - 1 ]->setTimeUnit( SEC );
-  else if( strUnits.compare( OLDCFG_VAL_TIMEUNIT_M ) == 0 )
-    windows[ windows.size() - 1 ]->setTimeUnit( MIN );
-  else if( strUnits.compare( OLDCFG_VAL_TIMEUNIT_H ) == 0 )
-    windows[ windows.size() - 1 ]->setTimeUnit( HOUR );
-  else if( strUnits.compare( OLDCFG_VAL_TIMEUNIT_D ) == 0 )
-    windows[ windows.size() - 1 ]->setTimeUnit( DAY );
+  windows[ windows.size() - 1 ]->setTimeUnit( CFGLoader::parseTimeUnit( strUnits ) );
 
   return true;
 }
 
-void WindowUnits::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowUnits::printLine( ostream& cfgFile,
+                             const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_UNITS << " ";
-  switch( ( *it )->getTimeUnit() )
-  {
-    case NS:
-      cfgFile << OLDCFG_VAL_TIMEUNIT_NS;
-      break;
-    case US:
-      cfgFile << OLDCFG_VAL_TIMEUNIT_US;
-      break;
-    case MS:
-      cfgFile << OLDCFG_VAL_TIMEUNIT_MS;
-      break;
-    case SEC:
-      cfgFile << OLDCFG_VAL_TIMEUNIT_S;
-      break;
-    case MIN:
-      cfgFile << OLDCFG_VAL_TIMEUNIT_M;
-      break;
-    case HOUR:
-      cfgFile << OLDCFG_VAL_TIMEUNIT_H;
-      break;
-    case DAY:
-      cfgFile << OLDCFG_VAL_TIMEUNIT_D;
-      break;
-  }
-
+  CFGLoader::dumpTimeUnits( (*it)->getTimeUnit(), cfgFile );
   cfgFile << endl;
 }
 
@@ -2172,7 +2225,8 @@ bool WindowOperation::parseLine( KernelConnection *whichKernel,
   return windows[ windows.size() - 1 ]->setLevelFunction( DERIVED, strFunction );
 }
 
-void WindowOperation::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowOperation::printLine( ostream& cfgFile,
+                                 const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_OPERATION << " " << ( *it )->getLevelFunction( DERIVED ) << endl;
 }
@@ -2202,7 +2256,8 @@ bool WindowMaximumY::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowMaximumY::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowMaximumY::printLine( ostream& cfgFile,
+                                const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_MAXIMUM_Y << " " << ( *it )->getMaximumY() << endl;
 }
@@ -2232,7 +2287,8 @@ bool WindowMinimumY::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowMinimumY::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowMinimumY::printLine( ostream& cfgFile,
+                                const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_MINIMUM_Y << " " << ( *it )->getMinimumY() << endl;
 }
@@ -2263,10 +2319,12 @@ bool WindowComputeYMax::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowComputeYMax::printLine( ofstream &cfgFile, const SaveOptions &options, const vector< Timeline * >::const_iterator it )
+void WindowComputeYMax::printLine( ostream& cfgFile,
+                                   const SaveOptions& options,
+                                   const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_COMPUTE_Y_MAX << " ";
-  if( options.windowComputeYMaxOnLoad )
+  if ( options.timelineComputeYMaxOnLoad )
     cfgFile << OLDCFG_VAL_TRUE;
   else
     cfgFile << OLDCFG_VAL_FALSE;
@@ -2298,7 +2356,8 @@ bool WindowLevel::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowLevel::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowLevel::printLine( ostream& cfgFile,
+                             const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_LEVEL << " " << levelToString( static_cast< TWindowLevel >( ( *it )->getLevel() ) ) << endl;
 }
@@ -2338,7 +2397,9 @@ bool WindowIdentifiers::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowIdentifiers::printLine( ofstream &cfgFile, const vector< Timeline * > &allWindows, const vector< Timeline * >::const_iterator it )
+void WindowIdentifiers::printLine( ostream& cfgFile,
+                                   const vector<Timeline *>& allWindows,
+                                   const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_IDENTIFIERS << " ";
   cfgFile << CFGLoader::findWindowBackwards( ( *it )->getParent( 0 ), allWindows, it ) + 1 << " ";
@@ -2383,7 +2444,8 @@ bool WindowZoomObjects::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowZoomObjects::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowZoomObjects::printLine( ostream& cfgFile,
+                                   const vector<Timeline *>::const_iterator it )
 {
   pair< TObjectOrder, TObjectOrder > currentZoom = ( *it )->getZoomSecondDimension();
   if( currentZoom.first > 0 || currentZoom.second < ( *it )->getWindowLevelObjects() - 1 )
@@ -2420,13 +2482,23 @@ bool WindowScaleRelative::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowScaleRelative::printLine( ofstream &cfgFile, const SaveOptions &options, const vector< Timeline * >::const_iterator it )
+void WindowScaleRelative::printLine( ostream& cfgFile,
+                                     const SaveOptions& options,
+                                     const vector<Timeline *>::const_iterator it )
 {
-  if( options.windowScaleRelative )
+  if ( options.timelineScaleRelative )
   {
     cfgFile << OLDCFG_TAG_WNDW_SCALE_RELATIVE << " ";
-    double maxScale = ( *it )->getTrace()->getEndTime() / (double)( *it )->getWidth();
-    cfgFile << ( ( *it )->getWindowEndTime() / ( *it )->getWidth() ) / maxScale;
+    if ( options.timelineAllTrace )
+    {
+      cfgFile << 1.0;
+    }  
+    else
+    {
+      double maxScale = ( *it )->getTrace()->getEndTime() / ( double )( *it )->getWidth();
+      cfgFile << ( ( *it )->getWindowEndTime() / ( *it )->getWidth() ) / maxScale;
+    }
+
     cfgFile << endl;
   }
 }
@@ -2456,12 +2528,23 @@ bool WindowEndTimeRelative::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowEndTimeRelative::printLine( ofstream &cfgFile, const SaveOptions &options, const vector< Timeline * >::const_iterator it )
+void WindowEndTimeRelative::printLine( ostream& cfgFile,
+                                       const SaveOptions& options,
+                                       const vector<Timeline *>::const_iterator it )
 {
-  if( options.windowScaleRelative )
+  if ( options.timelineScaleRelative )
   {
     cfgFile << CFG_TAG_WNDW_END_TIME_RELATIVE << " ";
-    cfgFile << ( *it )->getWindowEndTime() / ( *it )->getTrace()->getEndTime();
+
+    if ( options.timelineAllTrace )
+    {
+      cfgFile << 1.0;
+    }  
+    else
+    {
+      cfgFile << ( *it )->getWindowEndTime() / ( *it )->getTrace()->getEndTime();
+    }
+
     cfgFile << endl;
   }
 }
@@ -2678,7 +2761,7 @@ bool WindowObject::parseLine( KernelConnection *whichKernel,
   return objectGenericParseLine( whichKernel, line, whichTrace, win );
 }
 
-void genericWriteObjects( ofstream &cfgFile, vector< bool > &selected, bool numbers )
+void genericWriteObjects( ostream &cfgFile, vector< bool > &selected, bool numbers )
 {
   for( vector< bool >::iterator it = selected.begin(); it != selected.end(); ++it )
   {
@@ -2702,7 +2785,9 @@ void genericWriteObjects( ofstream &cfgFile, vector< bool > &selected, bool numb
 }
 
 template< typename T >
-void writeAppl( const std::string &whichTag, ofstream &cfgFile, const T it )
+void writeAppl( const std::string& whichTag,
+                ostream& cfgFile,
+                const T it )
 {
   vector< bool > selectedSet;
 
@@ -2713,7 +2798,7 @@ void writeAppl( const std::string &whichTag, ofstream &cfgFile, const T it )
 }
 
 template< typename T >
-void writeTask( const std::string &whichTag, ofstream &cfgFile, const T it, TApplOrder whichAppl )
+void writeTask( const std::string &whichTag, ostream &cfgFile, const T it, TApplOrder whichAppl )
 {
   vector< bool > selectedSet;
 
@@ -2727,7 +2812,7 @@ void writeTask( const std::string &whichTag, ofstream &cfgFile, const T it, TApp
 }
 
 template< typename T >
-void writeTasks( const std::string &whichTag, ofstream &cfgFile, const T it )
+void writeTasks( const std::string &whichTag, ostream &cfgFile, const T it )
 {
   vector< TTaskOrder > tmpSel;
 
@@ -2742,7 +2827,7 @@ void writeTasks( const std::string &whichTag, ofstream &cfgFile, const T it )
 }
 
 template< typename T >
-void writeThread( const std::string &whichTag, ofstream &cfgFile, const T it, TApplOrder whichAppl, TTaskOrder whichTask )
+void writeThread( const std::string &whichTag, ostream &cfgFile, const T it, TApplOrder whichAppl, TTaskOrder whichTask )
 {
   vector< bool > selectedSet;
 
@@ -2757,7 +2842,7 @@ void writeThread( const std::string &whichTag, ofstream &cfgFile, const T it, TA
 }
 
 template< typename T >
-void writeThreads( const std::string &whichTag, ofstream &cfgFile, const T it )
+void writeThreads( const std::string &whichTag, ostream &cfgFile, const T it )
 {
   vector< TObjectOrder > tmpSel;
 
@@ -2781,7 +2866,7 @@ void writeThreads( const std::string &whichTag, ofstream &cfgFile, const T it )
 }
 
 template< typename T >
-void writeNode( const std::string &whichTag, ofstream &cfgFile, const T it )
+void writeNode( const std::string &whichTag, ostream &cfgFile, const T it )
 {
   vector< bool > selectedSet;
 
@@ -2792,7 +2877,7 @@ void writeNode( const std::string &whichTag, ofstream &cfgFile, const T it )
 }
 
 template< typename T >
-void writeCPU( const std::string &whichTag, ofstream &cfgFile, const T it, TNodeOrder whichNode )
+void writeCPU( const std::string &whichTag, ostream &cfgFile, const T it, TNodeOrder whichNode )
 {
   vector< bool > selectedSet;
 
@@ -2806,7 +2891,7 @@ void writeCPU( const std::string &whichTag, ofstream &cfgFile, const T it, TNode
 }
 
 template< typename T >
-void writeCPUs( const std::string &whichTag, ofstream &cfgFile, T it )
+void writeCPUs( const std::string &whichTag, ostream &cfgFile, T it )
 {
   vector< TObjectOrder > tmpSel;
 
@@ -2821,7 +2906,7 @@ void writeCPUs( const std::string &whichTag, ofstream &cfgFile, T it )
 }
 
 template< typename T >
-void objectGenericPrintLine( const std::string &whichTag, ofstream &cfgFile, const T it )
+void objectGenericPrintLine( const std::string &whichTag, ostream &cfgFile, const T it )
 {
   switch( ( *it )->getLevel() )
   {
@@ -2846,7 +2931,7 @@ void objectGenericPrintLine( const std::string &whichTag, ofstream &cfgFile, con
   }
 }
 
-void WindowObject::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowObject::printLine( ostream &cfgFile, const vector< Timeline * >::const_iterator it )
 {
   objectGenericPrintLine( WindowObject::tagCFG, cfgFile, it );
 }
@@ -2879,9 +2964,11 @@ bool WindowBeginTime::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowBeginTime::printLine( ofstream &cfgFile, const SaveOptions &options, const vector< Timeline * >::const_iterator it )
+void WindowBeginTime::printLine( ostream& cfgFile,
+                                 const SaveOptions& options,
+                                 const vector<Timeline *>::const_iterator it )
 {
-  if( !options.windowBeginTimeRelative )
+  if ( !options.timelineBeginTimeRelative )
   {
     cfgFile << OLDCFG_TAG_WNDW_BEGIN_TIME << " " << ( *it )->getWindowBeginTime() << endl;
   }
@@ -2913,7 +3000,9 @@ bool WindowEndTime::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowEndTime::printLine( ofstream &cfgFile, const SaveOptions &options, const vector< Timeline * >::const_iterator it )
+void WindowEndTime::printLine( ostream& cfgFile,
+                               const SaveOptions& options,
+                               const vector<Timeline *>::const_iterator it )
 {
 }
 
@@ -2945,9 +3034,11 @@ bool WindowStopTime::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowStopTime::printLine( ofstream &cfgFile, const SaveOptions &options, const vector< Timeline * >::const_iterator it )
+void WindowStopTime::printLine( ostream& cfgFile,
+                                const SaveOptions& options,
+                                const vector<Timeline *>::const_iterator it )
 {
-  if( !options.windowScaleRelative )
+  if ( !options.timelineScaleRelative )
   {
     cfgFile << OLDCFG_TAG_WNDW_STOP_TIME << " " << ( *it )->getWindowEndTime() << endl;
   }
@@ -2979,12 +3070,18 @@ bool WindowBeginTimeRelative::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowBeginTimeRelative::printLine( ofstream &cfgFile, const SaveOptions &options, const vector< Timeline * >::const_iterator it )
+void WindowBeginTimeRelative::printLine( ostream& cfgFile,
+                                         const SaveOptions& options,
+                                         const vector<Timeline *>::const_iterator it )
 {
-  if( options.windowBeginTimeRelative )
+  if ( options.timelineBeginTimeRelative )
   {
     cfgFile << OLDCFG_TAG_WNDW_BEGIN_TIME_RELATIVE << " ";
-    cfgFile << ( *it )->getWindowBeginTime() / ( *it )->getTrace()->getEndTime();
+    if ( options.timelineAllTrace )
+      cfgFile << 0.0;
+    else
+      cfgFile << ( *it )->getWindowBeginTime() / ( *it )->getTrace()->getEndTime();
+
     cfgFile << endl;
   }
 }
@@ -3002,7 +3099,8 @@ bool WindowNumberOfRow::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowNumberOfRow::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowNumberOfRow::printLine( ostream& cfgFile,
+                                   const vector<Timeline *>::const_iterator it )
 {
   // DEPRECATED
 }
@@ -3070,7 +3168,8 @@ bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowSelectedFunctions::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowSelectedFunctions::printLine( ostream& cfgFile,
+    const vector<Timeline *>::const_iterator it )
 {
   Filter *filter = nullptr;
   if( !( *it )->isDerivedWindow() )
@@ -3193,7 +3292,8 @@ bool WindowComposeFunctions::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowComposeFunctions::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowComposeFunctions::printLine( ostream& cfgFile,
+                                        const vector<Timeline *>::const_iterator it )
 {
   PRV_UINT16 numComposes = 9 + ( *it )->getExtraNumPositions( TOPCOMPOSE1 );
 
@@ -3328,7 +3428,8 @@ bool WindowSemanticModule::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowSemanticModule::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowSemanticModule::printLine( ostream& cfgFile,
+                                      const vector<Timeline *>::const_iterator it )
 {
   for( size_t position = 0; position < ( *it )->getExtraNumPositions( TOPCOMPOSE1 ); ++position )
   {
@@ -3545,7 +3646,8 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowFilterModule::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowFilterModule::printLine( ostream& cfgFile,
+                                    const vector<Timeline *>::const_iterator it )
 {
   Filter *filter            = ( *it )->getFilter();
   const EventLabels &labels = ( *it )->getTrace()->getEventLabels();
@@ -3712,7 +3814,8 @@ bool WindowFilterLogical::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowFilterLogical::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowFilterLogical::printLine( ostream& cfgFile,
+                                     const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_LOGICAL_FILTERED << " ";
   if( ( *it )->getFilter()->getLogical() )
@@ -3754,7 +3857,8 @@ bool WindowFilterPhysical::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowFilterPhysical::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowFilterPhysical::printLine( ostream& cfgFile,
+                                      const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_PHYSICAL_FILTERED << " ";
   if( ( *it )->getFilter()->getPhysical() )
@@ -3796,7 +3900,8 @@ bool WindowFilterIntraComms::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowFilterIntraComms::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowFilterIntraComms::printLine( ostream& cfgFile,
+                                      const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_INTRACOMMS_FILTERED << " ";
   if( ( *it )->getFilter()->getIntraCommsFilter() )
@@ -3838,7 +3943,8 @@ bool WindowFilterInterComms::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowFilterInterComms::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowFilterInterComms::printLine( ostream& cfgFile,
+                                      const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_INTERCOMMS_FILTERED << " ";
   if( ( *it )->getFilter()->getInterCommsFilter() )
@@ -3880,7 +3986,8 @@ bool WindowFilterBoolOpFromTo::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowFilterBoolOpFromTo::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowFilterBoolOpFromTo::printLine( ostream& cfgFile,
+    const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_FROMTO << " ";
   if( ( *it )->getFilter()->getOpFromTo() )
@@ -3922,7 +4029,8 @@ bool WindowFilterBoolOpTagSize::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowFilterBoolOpTagSize::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowFilterBoolOpTagSize::printLine( ostream& cfgFile,
+    const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_COMM_TAGSIZE << " ";
   if( ( *it )->getFilter()->getOpTagSize() )
@@ -3964,7 +4072,8 @@ bool WindowFilterBoolOpTypeVal::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowFilterBoolOpTypeVal::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowFilterBoolOpTypeVal::printLine( ostream& cfgFile,
+    const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_TYPEVAL << " ";
   if( ( *it )->getFilter()->getOpTypeValue() )
@@ -4000,7 +4109,9 @@ bool WindowOpen::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowOpen::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it, const vector< Timeline * > &forcedOpenWindows )
+void WindowOpen::printLine( ostream& cfgFile,
+                            const vector<Timeline *>::const_iterator it,
+                            const vector<Timeline *>& forcedOpenWindows )
 {
   cfgFile << OLDCFG_TAG_WNDW_OPEN << " ";
 
@@ -4050,7 +4161,8 @@ bool WindowDrawMode::parseLine( KernelConnection *whichKernel,
 }
 
 
-void WindowDrawMode::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowDrawMode::printLine( ostream& cfgFile,
+                                const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_DRAW_MODE << " ";
 
@@ -4082,7 +4194,8 @@ bool WindowDrawModeRows::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowDrawModeRows::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowDrawModeRows::printLine( ostream& cfgFile,
+                                    const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_DRAW_MODE_ROWS << " ";
 
@@ -4118,7 +4231,8 @@ bool WindowPixelSize::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowPixelSize::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowPixelSize::printLine( ostream& cfgFile,
+                                 const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_PIXEL_SIZE << " " << ( *it )->getPixelSize() << endl;
 }
@@ -4149,7 +4263,8 @@ bool WindowLabelsToDraw::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowLabelsToDraw::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowLabelsToDraw::printLine( ostream& cfgFile,
+                                 const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_LABELS_TO_DRAW << " " << static_cast< int >( ( *it )->getObjectLabels() ) << endl;
 }
@@ -4180,7 +4295,8 @@ bool WindowObjectAxisSize::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowObjectAxisSize::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowObjectAxisSize::printLine( ostream& cfgFile,
+                                 const vector<Timeline *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_OBJECT_AXIS_SIZE << " " << static_cast< int >( ( *it )->getObjectAxisSize() ) << endl;
 }
@@ -4211,7 +4327,7 @@ bool WindowObjectAxisCustomSize::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowObjectAxisCustomSize::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowObjectAxisCustomSize::printLine( ostream &cfgFile, const vector< Timeline * >::const_iterator it )
 {
   if( ( *it )->getObjectAxisSize() == TObjectAxisSize::CUSTOM_PERC )
   {
@@ -4247,7 +4363,9 @@ bool WindowPunctualColorWindow::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowPunctualColorWindow::printLine( ofstream &cfgFile, const vector< Timeline * > &allWindows, const vector< Timeline * >::const_iterator it )
+void WindowPunctualColorWindow::printLine( ostream& cfgFile,
+                                           const vector<Timeline *>& allWindows,
+                                           const vector<Timeline *>::const_iterator it )
 {
   if( ( *it )->isPunctualColorSet() && ( *it )->getPunctualColorWindow() != nullptr )
   {
@@ -4291,7 +4409,8 @@ bool WindowSynchronize::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void WindowSynchronize::printLine( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void WindowSynchronize::printLine( ostream& cfgFile,
+                                   const vector<Timeline *>::const_iterator it )
 {
   if( ( *it )->isSync() )
   {
@@ -4323,7 +4442,8 @@ bool Analyzer2DCreate::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DCreate::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DCreate::printLine( ostream& cfgFile,
+                                  const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_NEW << endl;
 }
@@ -4354,7 +4474,7 @@ bool Analyzer2DType::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DType::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DType::printLine( ostream &cfgFile, const vector< Histogram * >::const_iterator it )
 {
   cfgFile << Analyzer2DType::tagCFG << " ";
   if( ( *it )->isDerivedHistogram() )
@@ -4404,7 +4524,7 @@ bool Analyzer2DIdentifiers::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DIdentifiers::printLine( ofstream &cfgFile, const vector< Histogram * > &histograms, const vector< Histogram * >::const_iterator it )
+void Analyzer2DIdentifiers::printLine( ostream &cfgFile, const vector< Histogram * > &histograms, const vector< Histogram * >::const_iterator it )
 {
   cfgFile << CFG_TAG_AN2D_IDENTIFIERS << " ";
   for( auto parent = 0; parent < ( *it )->getNumParents(); ++parent )
@@ -4438,7 +4558,8 @@ bool Analyzer2DName::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DName::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DName::printLine( ostream& cfgFile,
+                                const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_NAME << " " << ( *it )->getName() << endl;
 }
@@ -4471,7 +4592,8 @@ bool Analyzer2DX::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DX::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DX::printLine( ostream& cfgFile,
+                             const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_X << " " << ( *it )->getPosX() << endl;
 }
@@ -4504,7 +4626,8 @@ bool Analyzer2DY::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DY::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DY::printLine( ostream& cfgFile,
+                             const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_Y << " " << ( *it )->getPosY() << endl;
 }
@@ -4537,7 +4660,8 @@ bool Analyzer2DWidth::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DWidth::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DWidth::printLine( ostream& cfgFile,
+                                 const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_WIDTH << " " << ( *it )->getWidth() << endl;
 }
@@ -4570,7 +4694,8 @@ bool Analyzer2DHeight::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DHeight::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DHeight::printLine( ostream& cfgFile,
+                                  const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_HEIGHT << " " << ( *it )->getHeight() << endl;
 }
@@ -4613,7 +4738,9 @@ bool Analyzer2DControlWindow::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DControlWindow::printLine( ofstream &cfgFile, const vector< Timeline * > &allWindows, const vector< Histogram * >::const_iterator it )
+void Analyzer2DControlWindow::printLine( ostream& cfgFile,
+    const vector<Timeline *>& allWindows,
+    const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_CONTROL_WINDOW << " ";
   cfgFile << CFGLoader::findWindow( ( *it )->getControlWindow(), allWindows ) + 1;
@@ -4658,7 +4785,9 @@ bool Analyzer2DDataWindow::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DDataWindow::printLine( ofstream &cfgFile, const vector< Timeline * > &allWindows, const vector< Histogram * >::const_iterator it )
+void Analyzer2DDataWindow::printLine( ostream& cfgFile,
+                                      const vector<Timeline *>& allWindows,
+                                      const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_DATA_WINDOW << " ";
   cfgFile << CFGLoader::findWindow( ( *it )->getDataWindow(), allWindows ) + 1;
@@ -4691,7 +4820,8 @@ bool Analyzer2DStatistic::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DStatistic::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DStatistic::printLine( ostream& cfgFile,
+                                     const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_STATISTIC << " ";
   cfgFile << ( *it )->getCurrentStat() << endl;
@@ -4726,7 +4856,8 @@ bool Analyzer2DCalculateAll::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DCalculateAll::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DCalculateAll::printLine( ostream& cfgFile,
+                                        const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_CALCULATE_ALL << " ";
   if( ( *it )->getCalculateAll() )
@@ -4764,7 +4895,8 @@ bool Analyzer2DHideColumns::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DHideColumns::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DHideColumns::printLine( ostream& cfgFile,
+                                       const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_HIDE_COLS << " ";
   if( ( *it )->getHideColumns() )
@@ -4802,7 +4934,8 @@ bool Analyzer2DHorizontal::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DHorizontal::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DHorizontal::printLine( ostream& cfgFile,
+                                      const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_HORIZONTAL << " ";
   if( ( *it )->getHorizontal() )
@@ -4838,7 +4971,8 @@ bool Analyzer2DColor::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DColor::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DColor::printLine( ostream& cfgFile,
+                                 const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_COLOR << " ";
   if( ( *it )->getShowColor() )
@@ -4874,7 +5008,8 @@ bool Analyzer2DSemanticColor::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DSemanticColor::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DSemanticColor::printLine( ostream& cfgFile,
+    const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_SEMANTIC_COLOR << " ";
   if( ( *it )->getFirstRowColored() )
@@ -4910,7 +5045,8 @@ bool Analyzer2DZoom::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DZoom::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DZoom::printLine( ostream& cfgFile,
+                                const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_ZOOM << " ";
   if( ( *it )->getZoom() )
@@ -4939,7 +5075,8 @@ bool Analyzer2DAccumulator::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DAccumulator::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DAccumulator::printLine( ostream& cfgFile,
+                                       const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_ACCUMULATOR << " ";
   if( ( *it )->isCommunicationStat( ( *it )->getCurrentStat() ) )
@@ -4979,7 +5116,8 @@ bool Analyzer2DAccumulateByControlWindow::parseLine( KernelConnection *whichKern
   return true;
 }
 
-void Analyzer2DAccumulateByControlWindow::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DAccumulateByControlWindow::printLine( ostream& cfgFile,
+    const vector<Histogram *>::const_iterator it )
 {
 }
 
@@ -5015,7 +5153,8 @@ bool Analyzer2DSortCols::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DSortCols::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DSortCols::printLine( ostream& cfgFile,
+                                    const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_SORTCOLS << " ";
   if( ( *it )->getSemanticSortColumns() )
@@ -5066,7 +5205,8 @@ bool Analyzer2DSortCriteria::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DSortCriteria::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DSortCriteria::printLine( ostream& cfgFile,
+                                        const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_SORTCRITERIA << " ";
   switch( ( *it )->getSemanticSortCriteria() )
@@ -5130,7 +5270,8 @@ bool Analyzer2DSortReverse::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DSortReverse::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DSortReverse::printLine( ostream& cfgFile,
+                                       const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_SORTREVERSE << " ";
   if( ( *it )->getSemanticSortReverse() )
@@ -5192,7 +5333,8 @@ bool Analyzer2DParameters::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DParameters::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DParameters::printLine( ostream& cfgFile,
+                                      const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_PARAMETERS << " 4 ";
   cfgFile << ( *it )->getDataMin() << " ";
@@ -5240,7 +5382,9 @@ bool Analyzer2DAnalysisLimits::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DAnalysisLimits::printLine( ofstream &cfgFile, const SaveOptions &options, const vector< Histogram * >::const_iterator it )
+void Analyzer2DAnalysisLimits::printLine( ostream& cfgFile,
+                                          const SaveOptions& options,
+                                          const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_ANALYSISLIMITS << " ";
   if( options.histoAllTrace )
@@ -5280,7 +5424,8 @@ bool Analyzer2DRelativeTime::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DRelativeTime::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DRelativeTime::printLine( ostream& cfgFile,
+                                        const vector<Histogram *>::const_iterator it )
 {
 }
 
@@ -5312,7 +5457,9 @@ bool Analyzer2DComputeYScale::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DComputeYScale::printLine( ofstream &cfgFile, const SaveOptions &options, const vector< Histogram * >::const_iterator it )
+void Analyzer2DComputeYScale::printLine( ostream& cfgFile,
+    const SaveOptions& options,
+    const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_COMPUTEYSCALE << " ";
   if( ( *it )->getCompute2DScale() )
@@ -5350,7 +5497,9 @@ bool Analyzer2DComputeYScaleZero::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DComputeYScaleZero::printLine( ofstream &cfgFile, const SaveOptions &options, const vector< Histogram * >::const_iterator it )
+void Analyzer2DComputeYScaleZero::printLine( ostream& cfgFile,
+                                             const SaveOptions& options,
+                                             const vector<Histogram *>::const_iterator it )
 {
   cfgFile << CFG_TAG_AN2D_COMPUTEYSCALE_ZERO << " ";
   if( ( *it )->getCompute2DScaleZero() )
@@ -5386,7 +5535,8 @@ bool Analyzer2DMinimum::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DMinimum::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DMinimum::printLine( ostream& cfgFile,
+                                   const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_MINIMUM << " " << ( *it )->getControlMin() << endl;
 }
@@ -5417,7 +5567,8 @@ bool Analyzer2DMaximum::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DMaximum::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DMaximum::printLine( ostream& cfgFile,
+                                   const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_MAXIMUM << " " << ( *it )->getControlMax() << endl;
 }
@@ -5452,7 +5603,8 @@ bool Analyzer2DDelta::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DDelta::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DDelta::printLine( ostream& cfgFile,
+                                 const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_DELTA << " " << ( *it )->getControlDelta() << endl;
 }
@@ -5479,7 +5631,8 @@ bool Analyzer2DUseCustomDelta::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DUseCustomDelta::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DUseCustomDelta::printLine( ostream& cfgFile,
+                                          const vector<Histogram *>::const_iterator it )
 {
 }
 
@@ -5511,7 +5664,8 @@ bool Analyzer2DUseFixedDelta::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DUseFixedDelta::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DUseFixedDelta::printLine( ostream& cfgFile,
+                                 const vector<Histogram *>::const_iterator it )
 {
   cfgFile << CFG_TAG_AN2D_USE_FIXED_DELTA << " ";
   if( ( *it )->getUseFixedDelta() )
@@ -5547,7 +5701,8 @@ bool Analyzer2DNumColumns::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DNumColumns::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DNumColumns::printLine( ostream& cfgFile,
+                                      const vector<Histogram *>::const_iterator it )
 {
   cfgFile << CFG_TAG_AN2D_NUMCOLUMNS << " " << ( *it )->getNumColumns() << endl;
 }
@@ -5580,7 +5735,9 @@ bool Analyzer2DComputeGradient::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DComputeGradient::printLine( ofstream &cfgFile, const SaveOptions &options, const vector< Histogram * >::const_iterator it )
+void Analyzer2DComputeGradient::printLine( ostream& cfgFile,
+    const SaveOptions& options,
+    const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_COMPUTEGRADIENT << " ";
   if( options.histoComputeGradient || ( *it )->getComputeGradient() )
@@ -5616,7 +5773,8 @@ bool Analyzer2DMinimumGradient::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DMinimumGradient::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DMinimumGradient::printLine( ostream& cfgFile,
+    const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_MINIMUMGRADIENT << " " << ( *it )->getMinGradient() << endl;
 }
@@ -5647,7 +5805,8 @@ bool Analyzer2DMaximumGradient::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DMaximumGradient::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DMaximumGradient::printLine( ostream& cfgFile,
+    const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_MAXIMUMGRADIENT << " " << ( *it )->getMaxGradient() << endl;
 }
@@ -5701,7 +5860,8 @@ bool Analyzer2DObjects::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DObjects::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DObjects::printLine( ostream& cfgFile,
+                                  const vector<Histogram *>::const_iterator it )
 {
   vector< TObjectOrder > myRows;
   ( *it )->getSelectedRows( myRows );
@@ -5746,7 +5906,7 @@ bool Analyzer2DObject::parseLine( KernelConnection *whichKernel,
   return objectGenericParseLine( whichKernel, line, whichTrace, histo );
 }
 
-void Analyzer2DObject::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DObject::printLine( ostream &cfgFile, const vector< Histogram * >::const_iterator it )
 {
   objectGenericPrintLine( Analyzer2DObject::tagCFG, cfgFile, it );
 }
@@ -5776,7 +5936,8 @@ bool Analyzer2DDrawModeObjects::parseLine( KernelConnection *whichKernel,
 }
 
 
-void Analyzer2DDrawModeObjects::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DDrawModeObjects::printLine( ostream& cfgFile,
+                                           const vector<Histogram *>::const_iterator it )
 {
   cfgFile << CFG_TAG_AN2D_DRAWMODE_OBJECTS << " " << drawModeTags[ ( *it )->getDrawModeObjects() ] << endl;
 }
@@ -5806,7 +5967,8 @@ bool Analyzer2DDrawModeColumns::parseLine( KernelConnection *whichKernel,
 }
 
 
-void Analyzer2DDrawModeColumns::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DDrawModeColumns::printLine( ostream& cfgFile,
+                                           const vector<Histogram *>::const_iterator it )
 {
   cfgFile << CFG_TAG_AN2D_DRAWMODE_COLUMNS << " " << drawModeTags[ ( *it )->getDrawModeColumns() ] << endl;
 }
@@ -5840,7 +6002,8 @@ bool Analyzer2DPixelSize::parseLine( KernelConnection *whichKernel,
 }
 
 
-void Analyzer2DPixelSize::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DPixelSize::printLine( ostream& cfgFile,
+                                     const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_PIXEL_SIZE << " " << ( *it )->getPixelSize() << endl;
 }
@@ -5873,7 +6036,8 @@ bool Analyzer2DCodeColor::parseLine( KernelConnection *whichKernel,
   return true;
 }
 // DEPRECATED
-void Analyzer2DCodeColor::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DCodeColor::printLine( ostream& cfgFile,
+                                     const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_CODE_COLOR << " ";
   if( ( *it )->isCodeColorSet() )
@@ -5915,7 +6079,8 @@ bool Analyzer2DColorMode::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DColorMode::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DColorMode::printLine( ostream& cfgFile,
+                                     const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_COLOR_MODE << " ";
   if( ( *it )->getColorMode() == TColorFunction::CODE_COLOR )
@@ -5958,7 +6123,8 @@ bool Analyzer2DOnlyTotals::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DOnlyTotals::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DOnlyTotals::printLine( ostream& cfgFile,
+                                      const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_ONLY_TOTALS << " ";
   if( ( *it )->getOnlyTotals() )
@@ -5996,7 +6162,8 @@ bool Analyzer2DShortLabels::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DShortLabels::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DShortLabels::printLine( ostream& cfgFile,
+                                      const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_SHORT_LABELS << " ";
   if( ( *it )->getShortLabels() )
@@ -6043,7 +6210,8 @@ bool Analyzer2DSynchronize::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer2DSynchronize::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer2DSynchronize::printLine( ostream& cfgFile,
+                                       const vector<Histogram *>::const_iterator it )
 {
   if( ( *it )->isSync() )
   {
@@ -6088,7 +6256,9 @@ bool Analyzer3DControlWindow::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer3DControlWindow::printLine( ofstream &cfgFile, const vector< Timeline * > &allWindows, const vector< Histogram * >::const_iterator it )
+void Analyzer3DControlWindow::printLine( ostream& cfgFile,
+    const vector<Timeline *>& allWindows,
+    const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN3D_CONTROLWINDOW << " ";
   cfgFile << CFGLoader::findWindow( ( *it )->getExtraControlWindow(), allWindows ) + 1;
@@ -6123,7 +6293,9 @@ bool Analyzer3DComputeYScale::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer3DComputeYScale::printLine( ofstream &cfgFile, const SaveOptions &options, const vector< Histogram * >::const_iterator it )
+void Analyzer3DComputeYScale::printLine( ostream& cfgFile,
+    const SaveOptions& options,
+    const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN3D_COMPUTEYSCALE << " ";
   if( ( *it )->getCompute3DScale() )
@@ -6159,7 +6331,8 @@ bool Analyzer3DMinimum::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer3DMinimum::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer3DMinimum::printLine( ostream& cfgFile,
+                                   const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN3D_MINIMUM << " " << ( *it )->getExtraControlMin() << endl;
 }
@@ -6190,7 +6363,8 @@ bool Analyzer3DMaximum::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer3DMaximum::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer3DMaximum::printLine( ostream& cfgFile,
+                                   const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN3D_MAXIMUM << " " << ( *it )->getExtraControlMax() << endl;
 }
@@ -6221,7 +6395,8 @@ bool Analyzer3DDelta::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer3DDelta::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer3DDelta::printLine( ostream& cfgFile,
+                                 const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN3D_DELTA << " " << ( *it )->getExtraControlDelta() << endl;
 }
@@ -6252,7 +6427,8 @@ bool Analyzer3DFixedValue::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void Analyzer3DFixedValue::printLine( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void Analyzer3DFixedValue::printLine( ostream& cfgFile,
+                                      const vector<Histogram *>::const_iterator it )
 {
   double planeMinValue = ( *it )->getSelectedPlane() * ( *it )->getExtraControlDelta() + ( *it )->getExtraControlMin();
   cfgFile << OLDCFG_TAG_AN3D_FIXEDVALUE << " " << planeMinValue << endl;
@@ -6296,7 +6472,8 @@ bool TagAliasCFG4D::parseLine( KernelConnection *whichKernel,
 }
 
 
-void TagAliasCFG4D::printAliasList( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void TagAliasCFG4D::printAliasList( std::ostream& cfgFile,
+                                    const vector<Timeline *>::const_iterator it )
 {
   map< string, string > tmpAlias( ( *it )->getCFG4DAliasList() );
 
@@ -6308,7 +6485,8 @@ void TagAliasCFG4D::printAliasList( ofstream &cfgFile, const vector< Timeline * 
 }
 
 
-void TagAliasCFG4D::printAliasList( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void TagAliasCFG4D::printAliasList( std::ostream& cfgFile,
+                                    const vector<Histogram *>::const_iterator it )
 {
   map< string, string > tmpAlias( ( *it )->getCFG4DAliasList() );
 
@@ -6381,7 +6559,9 @@ bool TagLinkCFG4D::parseLine( KernelConnection *whichKernel,
 }
 
 template< typename T >
-void TagLinkCFG4D::printLinkList( std::ofstream &cfgFile, const CFGS4DLinkedPropertiesManager &linkedProperties, const T *window )
+void TagLinkCFG4D::printLinkList( std::ostream& cfgFile,
+                                  const CFGS4DLinkedPropertiesManager& linkedProperties,
+                                  const T *window )
 {
   std::set< std::string > linksNames;
   linkedProperties.getLinksName( window, linksNames );
@@ -6420,7 +6600,8 @@ bool TagAliasStatisticCFG4D::parseLine( KernelConnection *whichKernel,
   return true;
 }
 
-void TagAliasStatisticCFG4D::printAliasList( ofstream &cfgFile, const vector< Histogram * >::const_iterator it )
+void TagAliasStatisticCFG4D::printAliasList( std::ostream& cfgFile,
+                                             const vector<Histogram *>::const_iterator it )
 {
   map< string, string > tmpAlias( ( *it )->getCFG4DStatisticsAliasList() );
 
@@ -6471,7 +6652,8 @@ bool TagAliasParamCFG4D::parseLine( KernelConnection *whichKernel,
 }
 
 
-void TagAliasParamCFG4D::printAliasList( ofstream &cfgFile, const vector< Timeline * >::const_iterator it )
+void TagAliasParamCFG4D::printAliasList( std::ostream& cfgFile,
+                                         const vector<Timeline *>::const_iterator it )
 {
   Timeline::TParamAliasKey aliasKey;
   string level;

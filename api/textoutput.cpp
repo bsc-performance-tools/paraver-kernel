@@ -21,11 +21,13 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-
 #include "textoutput.h"
 
 #include "histogram.h"
 #include "labelconstructor.h"
+#include "csvsymbolsparser.h"
+#include "cfg.h"
+#include "ParaverMetadataManager.h"
 #include "window.h"
 
 using namespace std;
@@ -38,12 +40,15 @@ TextOutput::~TextOutput()
 {
 }
 
-void TextOutput::dumpWindow( Timeline *whichWindow, string &strOutputFile, ProgressController *progress )
+void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, std::string whichOrigin, ProgressController *progress )
 {
   static short int progressSteps = 0;
 
-  if( strOutputFile.rfind( string( ".csv" ) ) == string::npos )
-    strOutputFile += ".csv";
+  if( strOutputFile.rfind( LabelConstructor::getDataFileSuffix( TTextFormat::CSV ) ) == string::npos )
+    strOutputFile += LabelConstructor::getDataFileSuffix( TTextFormat::CSV );
+  
+  string semanticLabel;
+  CSVSymbolsParser symbols;
 
   TRecordTime beginTime;
   TRecordTime endTime;
@@ -62,7 +67,10 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string &strOutputFile, Progr
     endTime = trace->getEndTime();
 
   if( !multipleFiles )
+  {
     outputFile.open( strOutputFile.c_str() );
+    dumpMetadata( whichWindow, outputFile, whichOrigin );
+  }
 
   maxTime = 0.0;
 
@@ -101,7 +109,40 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string &strOutputFile, Progr
     if( i == 0 || whichWindow->getBeginTime( i ) < minTime )
       minTime = whichWindow->getBeginTime( i );
 
-    while( whichWindow->getEndTime( i ) < endTime )
+    auto dumpLine = [&]()
+      {
+        outputFile << setprecision( config->getTimelinePrecision() );
+        if ( !multipleFiles )
+        {
+          outputFile << LabelConstructor::objectLabel( i, whichWindow->getLevel(), trace, false, false ) << "\t";
+        }
+        if( windowTimeUnits )
+        {
+          outputFile << whichWindow->traceUnitsToWindowUnits(
+            whichWindow->getBeginTime( i ) ) << "\t";
+          outputFile << whichWindow->traceUnitsToWindowUnits(
+            whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
+        }
+        else
+        {
+          outputFile << (PRV_UINT64)whichWindow->getBeginTime( i ) << "\t";
+          outputFile << (PRV_UINT64)( whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
+        }
+        
+        TSemanticValue tmpSemValue = whichWindow->getValue( i );
+        semanticLabel = LabelConstructor::semanticLabel( whichWindow, tmpSemValue, true, config->getTimelinePrecision(), false );
+        symbols.setEventValueLabel( 1, tmpSemValue, semanticLabel );
+        rgb tmpColor( whichWindow->getSemanticColor().calcColor( tmpSemValue, whichWindow->getMinimumY(), whichWindow->getMaximumY() ) );
+        CSVSymbolsParser::rgb tmprgb{ tmpColor.red, tmpColor.green, tmpColor.blue };
+        symbols.setSemanticColor( whichWindow->getValue( i ), tmprgb );
+
+        if( textualSemantic )
+          outputFile << semanticLabel << endl;
+        else
+          outputFile << whichWindow->getValue( i ) << endl;
+      };
+
+    while ( whichWindow->getEndTime( i ) < endTime )
     {
       if( progress != nullptr )
       {
@@ -115,50 +156,12 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string &strOutputFile, Progr
         }
       }
 
-      outputFile << setprecision( config->getTimelinePrecision() );
-      if( !multipleFiles )
-      {
-        outputFile << LabelConstructor::objectLabel( i, whichWindow->getLevel(), trace, false, false ) << "\t";
-      }
-
-      if( windowTimeUnits )
-      {
-        outputFile << whichWindow->traceUnitsToWindowUnits( whichWindow->getBeginTime( i ) ) << "\t";
-        outputFile << whichWindow->traceUnitsToWindowUnits( whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
-      }
-      else
-      {
-        outputFile << (PRV_UINT64)whichWindow->getBeginTime( i ) << "\t";
-        outputFile << (PRV_UINT64)( whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
-      }
-
-      if( textualSemantic )
-        outputFile << LabelConstructor::semanticLabel( whichWindow, whichWindow->getValue( i ), true, config->getTimelinePrecision(), false ) << endl;
-      else
-        outputFile << whichWindow->getValue( i ) << endl;
+      dumpLine();
 
       whichWindow->calcNext( i );
     }
-    outputFile << setprecision( config->getTimelinePrecision() );
-    if( !multipleFiles )
-    {
-      outputFile << LabelConstructor::objectLabel( i, whichWindow->getLevel(), trace, false, false ) << "\t";
-    }
-    if( windowTimeUnits )
-    {
-      outputFile << whichWindow->traceUnitsToWindowUnits( whichWindow->getBeginTime( i ) ) << "\t";
-      outputFile << whichWindow->traceUnitsToWindowUnits( whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
-    }
-    else
-    {
-      outputFile << (PRV_UINT64)whichWindow->getBeginTime( i ) << "\t";
-      outputFile << (PRV_UINT64)( whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
-    }
 
-    if( textualSemantic )
-      outputFile << LabelConstructor::semanticLabel( whichWindow, whichWindow->getValue( i ), true, config->getTimelinePrecision(), false ) << endl;
-    else
-      outputFile << whichWindow->getValue( i ) << endl;
+    dumpLine();
 
     if( whichWindow->getEndTime( i ) > maxTime )
       maxTime = whichWindow->getEndTime( i );
@@ -178,10 +181,11 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string &strOutputFile, Progr
   if( !multipleFiles )
     outputFile.close();
 
-  // if( progress != nullptr )
-  //{
-  //   progress->setMessage( previousMessage );
-  // }
+  string symbolsFilename( strOutputFile );
+  symbolsFilename.erase( strOutputFile.rfind( LabelConstructor::getDataFileSuffix( TTextFormat::CSV ) ) );
+  symbolsFilename += LabelConstructor::getDataFileSuffix( TTextFormat::LEGEND_CSV );
+
+  symbols.dumpToFile( symbolsFilename, whichWindow, !whichWindow->isCodeColorSet() );
 }
 
 
@@ -220,6 +224,9 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
                    };
 
   parentsExecute( whichHisto );
+
+  if( strOutputFile.rfind( string( ".csv" ) ) == string::npos )
+    strOutputFile += ".csv";
 
   outputFile.open( strOutputFile.c_str() );
 
@@ -554,6 +561,21 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
   }
 
   outputFile.close();
+}
+
+
+void TextOutput::dumpMetadata( Timeline *whichTimeline, std::ofstream& whichFile, std::string whichOrigin ) const
+{
+  CSVMetadataAction tmpMetadata( MetadataManager::getCurrentDate(),
+                                 whichOrigin,
+                                 whichTimeline->getTrace()->getFileName(),
+                                 whichTimeline->getTimeUnit(),
+                                 whichTimeline->getSemanticColor().getColorMode(),
+                                 whichTimeline->getMinimumY(),
+                                 whichTimeline->getMaximumY() );
+
+  tmpMetadata.write( whichFile );
+  whichFile << std::endl;
 }
 
 

@@ -220,38 +220,57 @@ Trace *LocalKernel::newTrace( const string& whichFile, bool noLoad, ProgressCont
 }
 
 
-string LocalKernel::getPCFFileLocation( const string& traceFile ) const
+string LocalKernel::getSymbolsFileLocation( const string& traceFilename ) const
 {
-  string pcfFile;
+  string symbolsFilename;
 
-  if( traceFile.length() > 3 )
+  enum class TraceType
+  {
+    PRV,
+    CSV
+  };
+  TraceType tmpTraceType = TraceType::PRV;
+
+  if( traceFilename.length() > 3 )
   { 
-    if ( traceFile.substr( traceFile.length() - 3 ) == "prv" )
-      pcfFile = traceFile.substr( 0, traceFile.length() - 3 );
-    else if ( traceFile.substr( traceFile.length() - 6 ) == "prv.gz" )
-      pcfFile = traceFile.substr( 0, traceFile.length() - 6 );
+    if ( traceFilename.substr( traceFilename.length() - 3 ) == "prv" )
+      symbolsFilename = traceFilename.substr( 0, traceFilename.length() - 3 );
+    else if ( traceFilename.substr( traceFilename.length() - 6 ) == "prv.gz" )
+      symbolsFilename = traceFilename.substr( 0, traceFilename.length() - 6 );
+    else if ( traceFilename.substr( traceFilename.length() - 3 ) == "csv" )
+    {
+      symbolsFilename = traceFilename.substr( 0, traceFilename.length() - 3 );
+      tmpTraceType = TraceType::CSV;
+    }
   }
   else
-    pcfFile = traceFile + ".";
-  pcfFile.append( "pcf" );
+    symbolsFilename = traceFilename + ".";
 
-  return pcfFile;
+  if( tmpTraceType == TraceType::PRV )
+    symbolsFilename.append( "pcf" );
+  else if( tmpTraceType == TraceType::CSV )
+  {
+    bool initWithDot = false;
+    symbolsFilename.append( LabelConstructor::getDataFileSuffix( TTextFormat::LEGEND_CSV, initWithDot ) );
+  }
+
+  return symbolsFilename;
 }
 
 
-string LocalKernel::getROWFileLocation( const string& traceFile ) const
+string LocalKernel::getROWFileLocation( const string& traceFilename ) const
 {
   string rowFile;
 
-  if( traceFile.length() > 3 )
+  if( traceFilename.length() > 3 )
   {
-    if ( traceFile.substr( traceFile.length() - 3 ) == "prv" )
-      rowFile = traceFile.substr( 0, traceFile.length() - 3 );
-    else if ( traceFile.substr( traceFile.length() - 6 ) == "prv.gz" )
-      rowFile = traceFile.substr( 0, traceFile.length() - 6 );
+    if ( traceFilename.substr( traceFilename.length() - 3 ) == "prv" )
+      rowFile = traceFilename.substr( 0, traceFilename.length() - 3 );
+    else if ( traceFilename.substr( traceFilename.length() - 6 ) == "prv.gz" )
+      rowFile = traceFilename.substr( 0, traceFilename.length() - 6 );
   }
   else
-    rowFile = traceFile + ".";
+    rowFile = traceFilename + ".";
   rowFile.append( "row" );
 
   return rowFile;

@@ -35,72 +35,142 @@ string TraceBodyIO_csv::tmpstring;
 string TraceBodyIO_csv::line;
 ostringstream TraceBodyIO_csv::ostr;
 
-// Optimization on conversion string to numbers, but with no error control
-// #define USE_ATOLL
-// Even more optimization using custom function instead of atoll with error checking
-#define USE_PRV_ATOLL
-template< typename T >
-bool prv_atoll( const char* p, T* result )
+constexpr bool prv_atoll_v( std::string::const_iterator& it, const std::string::const_iterator& end )
 {
-  long long int tmp  = 0;
-  long long int sign = 1;
-
-  if( *p == '-' )
-  {
-    sign = -1;
-    ++p;
-  }
-  while( *p >= '0' && *p <= '9' )
-  {
-    tmp = ( tmp * 10 ) + ( *p - '0' );
-    ++p;
-  }
-
-  if( *p != '\n' && *p != '\r' && *p != '\0' )
-    return false;
-
-  *result = tmp * sign;
   return true;
 }
 
-template< typename T >
-bool prv_atoll( const char* p, T* result, double* decimals )
+template<typename T,
+         typename std::enable_if<std::is_integral<T>::value, T>::type* = nullptr>
+constexpr bool prv_atoll_impl( std::string::const_iterator& it,
+                               const std::string::const_iterator& end,
+                               T& result )
+{
+  result = 0;
+  int negative = 1;
+
+  if( *it == '-' )
+  {
+    if( std::is_unsigned<T>::value )
+      return false;
+    negative = -1;
+    ++it;
+  }
+
+  if( *it >= '0' && *it <= '9' )
+  {
+    result = ( *it++ - '0' );
+    while( *it >= '0' && *it <= '9' )
+    {
+      result = ( result * 10 ) + ( *it - '0' );
+      ++it;
+    }
+
+    result *= negative;
+  }
+
+  return true;
+}
+
+
+template<typename T,
+         typename std::enable_if<std::is_floating_point<T>::value, T>::type* = nullptr>
+constexpr bool prv_atoll_impl( std::string::const_iterator& it,
+                               const std::string::const_iterator& end,
+                               T& result )
+{
+  result = 0.0;
+  int negative = 1;
+  double numDecimals = 1.0;
+  bool decimalPointFound = false;
+
+  if( *it == '-' )
+  {
+    negative = -1;
+    ++it;
+  }
+
+  if( *it >= '0' && *it <= '9' )
+  {
+    result = ( *it++ - '0' );
+    while( ( *it >= '0' && *it <= '9' ) || *it == '.' )
+    {
+      if( *it == '.' )
+        decimalPointFound = true;
+      else if( decimalPointFound )
+        numDecimals *= 0.1;
+      
+      if( *it != '.' )
+        result = ( result * 10 ) + ( *it - '0' );
+      ++it;
+    }
+
+    result *= numDecimals;
+    result *= negative;
+  }
+
+  return true;
+}
+
+template <typename T, typename... Targs>
+constexpr bool prv_atoll_v( std::string::const_iterator& it,
+                            const std::string::const_iterator& end,
+                            T& result,
+                            Targs&... Fargs )
+{
+  if( it == end )
+    return false;
+
+  while( *it == ' ' )
+    ++it;
+
+  if( !prv_atoll_impl( it, end, result ) )
+    return false;
+
+  if( it == end )
+    return sizeof...( Targs ) == 0;
+
+  return prv_atoll_v( ++it, end, Fargs... );
+}
+
+template <typename T>
+bool prv_atoll_precision( std::string::const_iterator& it,
+                          const std::string::const_iterator& end,
+                          T& result,
+                          double& decimals )
 {
   long long int tmp  = 0;
   double decs        = 1.0;
   long long int sign = 1;
 
-  if( *p == '-' )
+  if( *it == '-' )
   {
     sign = -1;
-    ++p;
+    ++it;
   }
-  bool dotFound = false;
-  while( ( '0' <= *p && *p <= '9' ) || *p == '.' )
+
+  while( ( '0' <= *it && *it <= '9' ) || *it == '.' )
   {
-    if( *p == '.' )
+    if ( *it == '.' )
     {
-      ++p;
+      ++it;
       break;
     }
     else
     {
-      tmp = ( tmp * 10 ) + ( *p - '0' );
-      ++p;
+      tmp = ( tmp * 10 ) + ( *it - '0' );
+      ++it;
     }
   }
-  while( '0' <= *p && *p <= '9' )
+  while( '0' <= *it && *it <= '9' )
   {
-    tmp  = ( tmp * 10 ) + ( *p - '0' );
+    tmp = ( tmp * 10 ) + ( *it - '0' );
     decs = decs / 10.0f;
-    ++p;
+    ++it;
   }
 
-  if( *p != '\n' && *p != '\r' && *p != '\0' )
-    return false;
-
-  *result   = tmp * sign;
-  *decimals = decs;
+  result = tmp * sign;
+  decimals = decs;
   return true;
 }
 
@@ -127,7 +197,13 @@ void TraceBodyIO_csv::read( TraceStream& file,
   if( line.size() == 0 )
     return;
 
-  readEvents( whichResourceModel, line, records, states, endTime );
+  if ( line[ 0 ] == '#' )
+  {
+    readTraceInfo( line, traceInfo );
+    return;
+  }
+
+  readEvents( whichResourceModel, line, records, events, endTime );
 }
 
 void TraceBodyIO_csv::bufferWrite( fstream& whichStream, bool writeReady, bool lineClear ) const
@@ -154,8 +230,7 @@ void TraceBodyIO_csv::write( std::fstream& whichStream,
 ***********************/
 inline void TraceBodyIO_csv::readTraceInfo( const std::string& line, MetadataManager& traceInfo ) const
 {
-  traceInfo.NewMetadata( line );
-  // dummy set also to false if it is a comment
+  traceInfo.newMetadata( line );
 }
 
 
@@ -179,7 +254,7 @@ inline void TraceBodyIO_csv::readEvents( const ResourceModel<>& whichResourceMod
   // Read the common info
   if( !readCommon( whichResourceModel, strLine, CPU, appl, task, thread, begintime, time, eventvalue, decimals ) )
   {
-    cerr << "Error reading state record (error in Common)." << endl;
+    cerr << "Error reading record (CSV file)." << endl;
     cerr << line << endl;
     return;
   }
@@ -215,52 +290,22 @@ inline bool TraceBodyIO_csv::readCommon( const ResourceModel<>& whichResourceMod
   static ProcessModel<>::ThreadLocation lastATT = { 0, 0, 0 };
 
   std::getline( line, tmpstring, '.' );
-#ifdef USE_ATOLL
-  appl = atoll( tmpstring.c_str() );
-#else
-#  ifdef USE_PRV_ATOLL
-  if( !prv_atoll< TApplOrder >( tmpstring.c_str(), &appl ) )
-#  else
-  fieldStream.clear();
-  fieldStream.str( tmpstring );
-  if( !( fieldStream >> appl ) )
-#  endif
-  {
-    return false;
-  }
-#endif
-
+  if( line.eof() ) return false;
+  auto it = tmpstring.cbegin();
+  if( !prv_atoll_v( it, tmpstring.cend(), appl ) || appl == 0 )
+    throw ParaverKernelException( TErrorCode::csvWrongFormat );
+    
   std::getline( line, tmpstring, '.' );
-#ifdef USE_ATOLL
-  task = atoll( tmpstring.c_str() );
-#else
-#  ifdef USE_PRV_ATOLL
-  if( !prv_atoll< TTaskOrder >( tmpstring.c_str(), &task ) )
-#  else
-  fieldStream.clear();
-  fieldStream.str( tmpstring );
-  if( !( fieldStream >> task ) )
-#  endif
-  {
-    return false;
-  }
-#endif
+  if( line.eof() ) return false;
+  it = tmpstring.cbegin();
+  if( !prv_atoll_v( it, tmpstring.end(), task ) || task == 0 )
+    throw ParaverKernelException( TErrorCode::csvWrongFormat );
 
   std::getline( line, tmpstring, '\t' );
-#ifdef USE_ATOLL
-  thread = atoll( tmpstring.c_str() );
-#else
-#  ifdef USE_PRV_ATOLL
-  if( !prv_atoll< TThreadOrder >( tmpstring.c_str(), &thread ) )
-#  else
-  fieldStream.clear();
-  fieldStream.str( tmpstring );
-  if( !( fieldStream >> thread ) )
-#  endif
-  {
-    return false;
-  }
-#endif
+  if( line.eof() ) return false;
+  it = tmpstring.cbegin();
+  if( !prv_atoll_v( it, tmpstring.end(), thread ) || thread == 0 )
+    throw ParaverKernelException( TErrorCode::csvWrongFormat );
 
   ProcessModel<>::ThreadLocation currATT = { appl, task, thread };
   if( !( currATT == lastATT ) )
@@ -272,56 +317,22 @@ inline bool TraceBodyIO_csv::readCommon( const ResourceModel<>& whichResourceMod
     myProcessModel->addApplTaskThread( currATT );
   }
 
-
-  std::getline( line, tmpstring, '.' );
-#ifdef USE_ATOLL
-  begintime = atoll( tmpstring.c_str() );
-#else
-#  ifdef USE_PRV_ATOLL
-  if( !prv_atoll< TRecordTime >( tmpstring.c_str(), &begintime ) )
-#  else
-  fieldStream.clear();
-  fieldStream.str( tmpstring );
-  if( !( fieldStream >> begintime ) )
-#  endif
-  {
-    return false;
-  }
-#endif
+  std::getline( line, tmpstring, '\t' ); 
+  if( line.eof() ) return false;
+  it = tmpstring.cbegin();
+  if( !prv_atoll_v( it, tmpstring.end(), begintime ) )
+    throw ParaverKernelException( TErrorCode::csvWrongFormat );
 
   std::getline( line, tmpstring, '\t' );
-  std::getline( line, tmpstring, '.' );
-#ifdef USE_ATOLL
-  time = atoll( tmpstring.c_str() );
-#else
-#  ifdef USE_PRV_ATOLL
-  if( !prv_atoll< TRecordTime >( tmpstring.c_str(), &time ) )
-#  else
-  fieldStream.clear();
-  fieldStream.str( tmpstring );
-  if( !( fieldStream >> time ) )
-#  endif
-  {
-    return false;
-  }
-#endif
+  if( line.eof() ) return false;
+  it = tmpstring.cbegin();
+  if( !prv_atoll_v( it, tmpstring.end(), time ) )
+    throw ParaverKernelException( TErrorCode::csvWrongFormat );
 
+  std::getline( line, tmpstring );
+  it = tmpstring.cbegin();
+  if( !prv_atoll_precision( it, tmpstring.end(), eventvalue, decimals ) )
+    throw ParaverKernelException( TErrorCode::csvWrongFormat );
 
-  std::getline( line, tmpstring, '\t' );
-  std::getline( line, tmpstring, '\n' );
-#ifdef USE_ATOLL
-  eventvalue = atoll( tmpstring.c_str() );
-#else
-#  ifdef USE_PRV_ATOLL
-  if( !prv_atoll< TEventValue >( tmpstring.c_str(), &eventvalue, &decimals ) )
-#  else
-  fieldStream.clear();
-  fieldStream.str( tmpstring );
-  if( !( fieldStream >> eventvalue ) )
-#  endif
-  {
-    return false;
-  }
-#endif
   return true;
 }

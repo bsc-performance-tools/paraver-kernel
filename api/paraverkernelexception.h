@@ -43,6 +43,7 @@ enum class TErrorCode
   undefinedToolName,
   indexOutOfRange,
   downloadFailed,
+  csvWrongFormat,
   LAST
 };
 

@@ -25,6 +25,7 @@
 #pragma once
 
 #include "utils/traceparser/tracelabels.h"
+#include "prvtime.h"
 
 constexpr char CFG_CURRENT_VERSION[] = "3.4";
 
@@ -188,6 +189,7 @@ constexpr char OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT[]     = "window_in_null_gradi
 constexpr char CFG_VAL_COLOR_MODE_ALTERNATIVE_GRADIENT[] = "window_in_alternative_gradient_mode";
 constexpr char CFG_VAL_COLOR_MODE_PUNCTUAL[]             = "window_in_punctual_mode";
 constexpr char CFG_VAL_COLOR_MODE_FUSED_LINES[]          = "window_in_fused_lines_mode";
+constexpr char CFG_VAL_COLOR_MODE_FUNCTION_LINE[]        = "window_in_function_line_mode";
 
 constexpr char CFG_VAL_GRADIENT_FUNCTION_LINEAR[] = "gradient_function_linear";
 constexpr char CFG_VAL_GRADIENT_FUNCTION_STEPS[]  = "gradient_function_steps";
@@ -273,9 +275,27 @@ constexpr char CFG_TAG_AN2D_USE_FIXED_DELTA[]    = "Analyzer2D.UseFixedDelta:";
 constexpr char CFG_VAL_AN2D_TYPE_SINGLE[]   = "single";
 constexpr char CFG_VAL_AN2D_TYPE_COMPOSED[] = "composed";
 
-static const std::string LABEL_TIMEUNIT[ DAY + 1 ] = { "ns", "us", "ms", "s", "m", "h", "d" };
+static const std::string LABEL_TIMEUNIT[ TIME_SCALE_SIZE ] =
+{
+  "ns",
+  "us",
+  "ms",
+  "s",
+  "m",
+  "h",
+  "d"
+};
 
-static const std::string FULL_LABEL_TIMEUNIT[ DAY + 1 ] = { "Nanoseconds", "Microseconds", "Milliseconds", "Seconds", "Minutes", "Hours", "Days" };
+static const std::string FULL_LABEL_TIMEUNIT[ TIME_SCALE_SIZE ] =
+{
+  "Nanoseconds",
+  "Microseconds",
+  "Milliseconds",
+  "Seconds",
+  "Minutes",
+  "Hours",
+  "Days"
+};
 
 // New cfg label definitions
 constexpr char CFG_SHEBANG[]                  = "#ParaverCFG";

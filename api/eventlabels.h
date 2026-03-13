@@ -27,6 +27,7 @@
 #include <functional>
 #include <set>
 #include <map>
+#include "csvsymbolsparser.h"
 #include "paraverkerneltypes.h"
 #include "utils/traceparser/pcffileparser.h"
 
@@ -37,6 +38,7 @@ class EventLabels
 
     EventLabels();
     EventLabels( const PCFFileParser<>& pcfParser );
+    EventLabels( const CSVSymbolsParser& csvParser );
     ~EventLabels();
 
     void getTypes( std::vector<TEventType>& onVector ) const;
@@ -58,7 +60,11 @@ class EventLabels
     std::map<TEventType, std::map<TEventValue, std::string> > eventValue2Label;
 
     std::map<std::string, TEventType> label2eventType;
+    std::map<std::string, TEventType> shortLabel2eventType;
     std::map<std::string, std::multimap< TEventType, TEventValue > > label2eventValue;
+
+    template< typename T >
+    friend void initFromParser( EventLabels&, const T& parser );
 };
 
 

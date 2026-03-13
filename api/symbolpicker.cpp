@@ -84,8 +84,17 @@ bool EventTypeSymbolPicker::pick( const EventLabels& eventLabels, vector<TEventT
 
 bool EventTypeSymbolPicker::makepick( const EventLabels& eventLabels, TEventType eventType, const string& eventLabel, vector<TEventType>& onVector ) const
 {
-  if( eventLabel == "" || eventLabel == EventLabels::unknownLabel || !eventLabels.getEventType( eventLabel, onVector ) )
+  if( eventLabel == "" || eventLabel == EventLabels::unknownLabel )
     onVector.push_back( eventType );
+  
+  if( !eventLabels.getEventType( eventLabel, onVector ) )
+  {
+    std::string tmpTypeLabel;
+    if( eventLabels.getEventTypeLabel( eventType, tmpTypeLabel ) )
+      return true;
+    else
+      onVector.push_back( eventType );
+  }
 
   return true;
 }

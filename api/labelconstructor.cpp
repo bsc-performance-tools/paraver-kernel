@@ -47,6 +47,9 @@ char         LabelConstructor::point;
 locale       LabelConstructor::myLocaleWithoutThousands;
 locale       LabelConstructor::myLocaleWithThousands;
 
+TTimeFactorTable    LabelConstructor::timeFactorsConversionTable    = timeFactorsTable< TIME_SCALE_SIZE >;
+TTimePrecisionTable LabelConstructor::timePrecisionsConversionTable = timePrecisionsTable< TIME_SCALE_SIZE >;
+
 // custom numpunct with grouping:
 struct numpunct_group : std::numpunct<char> {
   std::string do_grouping() const {return "\03";}
@@ -56,6 +59,7 @@ struct numpunct_group : std::numpunct<char> {
 struct numpunct_nogroup : std::numpunct<char> {
   std::string do_grouping() const {return "\0";}
 };
+
 
 void LabelConstructor::init()
 {
@@ -201,11 +205,11 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
 
 
 string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
-    const Timeline *whichWindow,
-    THistogramLimit min,
-    THistogramLimit max,
-    THistogramLimit delta,
-    bool shortLabels )
+                                           const Timeline *whichWindow,
+                                           THistogramLimit min,
+                                           THistogramLimit max,
+                                           THistogramLimit delta,
+                                           bool shortLabels )
 {
   columnLabel.clear();
   columnLabel.str( "" );
@@ -247,8 +251,7 @@ string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
 }
 
 
-string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
-    TSemanticValue value, bool showUnits )
+string LabelConstructor::histoCellLabel( const Histogram *whichHisto, TSemanticValue value, bool showUnits )
 {
   label.clear();
   label.str( "" );
@@ -391,33 +394,27 @@ string LabelConstructor::timeLabel( ptime value, PRV_UINT32 precision )
   return sstrTimeLabel.str();
 }
 
-// whichStream cleared and preset to myLocaleWithThousands
+
 void LabelConstructor::presetBaseFormat( std::stringstream &whichStream,
-                                         PRV_UINT32 precision )
+                                         PRV_UINT32 precision,
+                                         bool useLocale )
 {
   whichStream.clear();
   whichStream.str( "" );
 
   whichStream << fixed;
   whichStream.precision( precision );
-  whichStream.imbue( myLocaleWithThousands );
+  if ( useLocale )
+    whichStream.imbue( myLocaleWithThousands );
 }
 
 
-void LabelConstructor::presetBaseTimeFormat( std::stringstream &whichStream,
-                                             TTimeUnit unit,
-                                             PRV_UINT32 precision )
+string LabelConstructor::timeLabel( TTime value, TTimeUnit unit, PRV_UINT32 precision, bool useLocale )
 {
   if( unit == NS )
     precision = 0;
 
-  presetBaseFormat( whichStream, precision );
-}
-
-
-string LabelConstructor::timeLabel( TTime value, TTimeUnit unit, PRV_UINT32 precision )
-{
-  presetBaseTimeFormat( sstrTimeLabel, unit, precision );
+  presetBaseFormat( sstrTimeLabel, precision, useLocale );
 
   sstrTimeLabel << value;
   sstrTimeLabel << " " << LABEL_TIMEUNIT[ unit ];
@@ -675,12 +672,15 @@ string LabelConstructor::eventValueLabel( Timeline *whichWindow,
 }
 
 
-void LabelConstructor::transformToShort( std::string& onLabel, char beginDelimiter, char endDelimiter )
+std::string LabelConstructor::transformToShort( const std::string& onLabel, char beginDelimiter, char endDelimiter )
 {
-  string::size_type beginPos = onLabel.find_first_of( beginDelimiter );
-  string::size_type endPos = onLabel.find_last_of( endDelimiter );
+  std::string shortLabel{ onLabel };
+  string::size_type beginPos = shortLabel.find_first_of( beginDelimiter );
+  string::size_type endPos = shortLabel.find_last_of( endDelimiter );
   if( beginPos != string::npos && endPos != string::npos )
-    onLabel.erase( beginPos, endPos - beginPos + 1 );
+    shortLabel.erase( beginPos, endPos - beginPos + 1 );
+
+  return shortLabel;
 }
 
 
@@ -826,7 +826,7 @@ std::string LabelConstructor::getImageFileSuffix( const TImageFormat& format )
 }
 
 
-std::string LabelConstructor::getDataFileSuffix( const TTextFormat& format )
+std::string LabelConstructor::getDataFileSuffix( const TTextFormat& format, bool initWithDot )
 {
   string resultString;
 
@@ -834,6 +834,10 @@ std::string LabelConstructor::getDataFileSuffix( const TTextFormat& format )
   {
     case TTextFormat::CSV:
       resultString = string( "csv" );
+      break;
+
+    case TTextFormat::LEGEND_CSV:
+      resultString = string( "legend.csv" );
       break;
 
     case TTextFormat::GNUPLOT:
@@ -845,6 +849,9 @@ std::string LabelConstructor::getDataFileSuffix( const TTextFormat& format )
       resultString = string( "dat" );
       break;
   }
+
+  if ( initWithDot )
+    resultString = "." + resultString;
 
   return resultString;
 }

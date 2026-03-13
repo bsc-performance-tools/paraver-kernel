@@ -289,6 +289,12 @@ class Timeline
       return nullptr;
     }
 
+    virtual Timeline *clone( Trace *whichTrace, TTimeUnit whichTimeUnit, bool recursiveClone = false )
+    {
+      return nullptr;
+    }
+    
+
     virtual bool getShowProgressBar() const
     {
       return true;
@@ -1028,6 +1034,7 @@ class TimelineProxy : public Timeline
     virtual Timeline *getParent( PRV_UINT16 whichParent ) const override;
 
     virtual Timeline *clone( bool recursiveClone = false ) override;
+    virtual Timeline *clone( Trace *whichTrace, TTimeUnit whichTimeUnit, bool recursiveClone = false );
 
     // Other
     virtual void setDestroy( bool newValue ) override;
@@ -1466,6 +1473,7 @@ class TimelineProxy : public Timeline
     TimelineProxy( KernelConnection *whichKernel, Timeline *whichParent1, Timeline *whichParent2 );
 
     int number_of_clones;
+    void copy( TimelineProxy *clonedWindow );
 
     void init();
 

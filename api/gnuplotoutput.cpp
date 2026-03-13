@@ -29,7 +29,7 @@
 
 using namespace std;
 
-void GNUPlotOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, ProgressController *progress )
+void GNUPlotOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, std::string whichOrigin, ProgressController *progress )
 {
   if( strOutputFile.rfind( string( ".gnuplot" ) ) == string::npos )
     strOutputFile += ".gnuplot";
@@ -38,7 +38,7 @@ void GNUPlotOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, Pr
   string strTextOutputFilename = strOutputFile + string( ".csv" );
 
   textOutput->setMultipleFiles( false );
-  textOutput->dumpWindow( whichWindow, strTextOutputFilename, progress );
+  textOutput->dumpWindow( whichWindow, strTextOutputFilename, whichOrigin, progress );
 
   delete textOutput;
 

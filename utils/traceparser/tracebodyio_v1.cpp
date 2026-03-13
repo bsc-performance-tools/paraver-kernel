@@ -221,7 +221,7 @@ inline bool TraceBodyIO_v1< PARAM_LIST >::validRecordLocation( const ProcessMode
 template< PARAM_TYPENAME >
 inline void TraceBodyIO_v1< PARAM_LIST >::readTraceInfo( const std::string& line, MetadataManagerT& traceInfo ) const
 {
-  traceInfo.NewMetadata( line );
+  traceInfo.newMetadata( line );
   // dummy set also to false if it is a comment
 }
 

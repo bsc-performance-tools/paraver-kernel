@@ -44,6 +44,7 @@ enum class TSequenceStates
   traceOptionsState,
   sourceTimelineState,
   csvFileNameState,
+  csvLegendFileNameState,
   csvOutputState,
   outputDirSuffixState,
   outputTraceFileNameState,
@@ -57,6 +58,7 @@ enum class TSequenceStates
   copyAdditionalFilesState,
   onlyFilterState,
   acceptableAppsState,
+  usingWholeTraceState,
   numStates
 };
 
@@ -80,6 +82,7 @@ class TraceEditSequence
     static std::string dirNameClustering;
     static std::string dirNameFolding;
     static std::string dirNameDimemas;
+    static std::string dirNameCarm;
     static std::string dirNameMess;
     static std::string dirNameUserCommand;
 

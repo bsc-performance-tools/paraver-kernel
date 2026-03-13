@@ -101,12 +101,8 @@ bool TraceCutterAction::execute( std::string whichTrace )
     {
       if( errno != EEXIST )
       {
-        TraceCutter *myCutter = TraceCutter::create( mySequence->getKernelConnection(),
-                                                     whichTrace,
-                                                     newName,
-                                                     options,
-                                                     nullptr );
-        myCutter->setCutterApplicationCaller( CutterMetadata::RUNAPP_APPLICATION_ID );
+        TraceCutter *myCutter = TraceCutter::create( mySequence->getKernelConnection(), whichTrace, newName, options, nullptr );
+        myCutter->setCutterOriginCaller( MetadataAction::RUNAPP_ORIGIN_ID );
         myCutter->execute( whichTrace, newName, nullptr );
       }
     }
@@ -114,12 +110,8 @@ bool TraceCutterAction::execute( std::string whichTrace )
   else
   {
 #endif
-    TraceCutter *myCutter = TraceCutter::create( mySequence->getKernelConnection(),
-                                                whichTrace,
-                                                newName,
-                                                options,
-                                                nullptr );
-    myCutter->setCutterApplicationCaller( CutterMetadata::RUNAPP_APPLICATION_ID );
+    TraceCutter *myCutter = TraceCutter::create( mySequence->getKernelConnection(), whichTrace, newName, options, nullptr );
+    myCutter->setCutterOriginCaller( MetadataAction::RUNAPP_ORIGIN_ID );
     myCutter->execute( whichTrace, newName, nullptr );
 #ifndef _WIN32
   }
@@ -127,6 +119,16 @@ bool TraceCutterAction::execute( std::string whichTrace )
 
   mySequence->getKernelConnection()->copyPCF( whichTrace, newName );
   mySequence->getKernelConnection()->copyROW( whichTrace, newName );
+
+  UsingWholeTraceState *tmpUsingWholeTraceState = ( UsingWholeTraceState * )tmpSequence->getState( TSequenceStates::usingWholeTraceState ); 
+  bool usingWholeTrace = tmpUsingWholeTraceState != nullptr ? tmpUsingWholeTraceState->getData() :
+                                                              false;
+  if ( !usingWholeTrace )
+  {
+    OutputTraceFileNameState *tmpOutputTraceFileNameState = (OutputTraceFileNameState *)tmpSequence->getState( TSequenceStates::outputTraceFileNameState );
+    if ( tmpOutputTraceFileNameState != nullptr )
+      tmpOutputTraceFileNameState->setData( newName );  
+  }
 
   tmpSequence->executeNextAction( newName );
 
@@ -223,7 +225,7 @@ bool CSVOutputAction::execute( std::string whichTrace )
   std::string tmpFileName = ( (CSVFileNameState *)tmpSequence->getState( TSequenceStates::csvFileNameState ) )->getData();
   TextOutput output = ( (CSVOutputState *)tmpSequence->getState( TSequenceStates::csvOutputState ) )->getData();
 
-  output.dumpWindow( tmpWindow, tmpFileName );
+  output.dumpWindow( tmpWindow, tmpFileName, CSVMetadataAction::RUNAPP_ORIGIN_ID );
 
   TraceOptions *options = ( (TraceOptionsState *)tmpSequence->getState( TSequenceStates::traceOptionsState ) )->getData();
   if( options != nullptr )

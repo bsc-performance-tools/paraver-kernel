@@ -26,36 +26,40 @@
 #include <regex>
 
 #include "eventlabels.h"
+#include "labelconstructor.h"
 
 using namespace std;
 
 const string EventLabels::unknownLabel = "Unknown";
+
+template< typename T >
+void initFromParser( EventLabels& eventLabels, const T& parser )
+{
+  vector< TEventType > types;
+  parser.getEventTypes( types );
+  for ( auto it : types )
+  {
+    auto tmpEventLabel = parser.getEventLabel( it );
+    eventLabels.eventType2Label[ it ] = tmpEventLabel;
+    eventLabels.label2eventType[ tmpEventLabel ] = it;
+    eventLabels.shortLabel2eventType[ LabelConstructor::transformToShort( tmpEventLabel ) ] = it;
+    eventLabels.eventValue2Label[ it ] = parser.getEventValues( it );
+    for( auto itValue : eventLabels.eventValue2Label[ it ] )
+      eventLabels.label2eventValue[ itValue.second ].insert( make_pair( it, itValue.first ) );
+  }
+}
 
 EventLabels::EventLabels()
 {}
 
 EventLabels::EventLabels( const PCFFileParser<>& pcfParser )
 {
-  vector< TEventType > types;
-  pcfParser.getEventTypes( types );
-  for ( auto it : types )
-  {
-    eventType2Label[ it ] = pcfParser.getEventLabel( it );
-    label2eventType[ pcfParser.getEventLabel( it ) ] = it;
-    eventValue2Label[ it ] = pcfParser.getEventValues( it );
-    for( auto itValue : eventValue2Label[ it ] )
-      label2eventValue[ itValue.second ].insert( make_pair( it, itValue.first ) );
-  }
-/*
-      vector<unsigned int> values = config.getEventValues( *it );
-      for ( vector<unsigned int>::const_iterator itVal = values.begin(); itVal != values.end(); ++itVal )
-      {
-        ( eventValue2Label[ *it ] )[ *itVal ] = config.getEventValue( *it, *itVal );
+  initFromParser( *this, pcfParser );
+}
 
-        multimap< TEventType, TEventValue >& tmpEventMap = label2eventValue[ config.getEventValue( *it, *itVal ) ];
-        tmpEventMap.insert( make_pair( *it, *itVal ) );
-      }
-  */
+EventLabels::EventLabels( const CSVSymbolsParser& csvParser )
+{
+  initFromParser( *this, csvParser );
 }
 
 EventLabels::~EventLabels()
@@ -177,7 +181,11 @@ bool EventLabels::getEventType( const string& whichTypeLabel, vector<TEventType>
   {
     map<string, TEventType>::const_iterator it = label2eventType.find( whichTypeLabel );
     if( it == label2eventType.end() )
-      return false;
+    {
+      it = shortLabel2eventType.find( LabelConstructor::transformToShort( whichTypeLabel ) );
+      if( it == shortLabel2eventType.end() )
+        return false;
+    }
 
     onVector.push_back( (*it).second );
     return true;

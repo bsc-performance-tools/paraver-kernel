@@ -36,6 +36,7 @@
 #include "tracebodyio_v2.h"
 #include "tracestream.h"
 #include "kprogresscontroller.h"
+#include "labelconstructor.h"
 #include "plaintrace.h"
 #include "plainblocks.h"
 #include "noloadtrace.h"
@@ -360,22 +361,13 @@ TRecordTime KTrace::getPhysicalReceive( TCommID whichComm ) const
 TRecordTime KTrace::customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const
 {
   TRecordTime tmpTime;
-  TRecordTime factor = 1;
 
   if( getTimeUnit() == whichUnits )
     tmpTime = whichTime;
   else
   {
-    PRV_UINT16 from = getTimeUnit() > whichUnits ? whichUnits : getTimeUnit();
-    PRV_UINT16 to = getTimeUnit() > whichUnits ? getTimeUnit() : whichUnits;
 
-    for( PRV_UINT16 i = from + 1; i <= to; i++ )
-      factor *= factorTable[ i ];
-
-    if( getTimeUnit() > whichUnits )
-      tmpTime = whichTime / factor;
-    else
-      tmpTime = whichTime * factor;
+    tmpTime = whichTime * LabelConstructor::timeFactorsConversionTable[ whichUnits ][ getTimeUnit() ];
   }
 
   return tmpTime;
@@ -385,22 +377,13 @@ TRecordTime KTrace::customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit wh
 TRecordTime KTrace::traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const
 {
   TRecordTime tmpTime;
-  TRecordTime factor = 1;
 
   if( getTimeUnit() == whichUnits )
     tmpTime = whichTime;
   else
   {
-    PRV_UINT16 from = getTimeUnit() > whichUnits ? whichUnits : getTimeUnit();
-    PRV_UINT16 to = getTimeUnit() > whichUnits ? getTimeUnit() : whichUnits;
 
-    for( PRV_UINT16 i = from + 1; i <= to; i++ )
-      factor *= factorTable[ i ];
-
-    if( getTimeUnit() > whichUnits )
-      tmpTime = whichTime * factor;
-    else
-      tmpTime = whichTime / factor;
+    tmpTime = whichTime * LabelConstructor::timeFactorsConversionTable[ getTimeUnit() ][ whichUnits ];
   }
 
   return tmpTime;
@@ -597,7 +580,6 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   string fileType = whichFile.substr( whichFile.find_last_of( '.' ) + 1 );
   if ( fileType == "csv" )
   {
-    // Saved CSV traces are in nanoseconds.
     traceTimeUnit = NS;
     traceEndTime = 0;
     traceProcessModel = ProcessModel<>( );
@@ -720,6 +702,13 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   else
   {
     file->clear();
+  }
+
+  CSVMetadata *tmpCSVMetadata = nullptr;
+  myTraceInfo.getMetadata< MetadataManager::TAppID::CSV >( tmpCSVMetadata );
+  if( tmpCSVMetadata != nullptr )
+  {
+    traceTimeUnit = tmpCSVMetadata->getTimeUnits();
   }
 
   blocks->setFileLoaded( traceEndTime );
@@ -855,64 +844,34 @@ void KTrace::setFillStateGaps( bool fill )
 
 PRV_UINT64 KTrace::getCutterLastOffset()
 {
-  return myTraceInfo.GetCutterLastOffset();
+  CutterMetadata *tmpCutterMetadata = nullptr;
+  if( !myTraceInfo.getMetadata< MetadataManager::TAppID::CUTTER >( tmpCutterMetadata ) )
+    return 0;
+  return tmpCutterMetadata->getCutterLastOffset();
 }
 
 
 PRV_UINT64 KTrace::getCutterLastBeginTime()
 {
-  return myTraceInfo.GetCutterLastBeginTime();
+  CutterMetadata *tmpCutterMetadata = nullptr;
+  if( !myTraceInfo.getMetadata< MetadataManager::TAppID::CUTTER >( tmpCutterMetadata ) )
+    return 0;
+  return tmpCutterMetadata->getCutterLastBeginTime();
 }
 
 
 PRV_UINT64 KTrace::getCutterLastEndTime()
 {
-  return myTraceInfo.GetCutterLastEndTime();
+  CutterMetadata *tmpCutterMetadata = nullptr;
+  if( !myTraceInfo.getMetadata< MetadataManager::TAppID::CUTTER >( tmpCutterMetadata ) )
+    return 0;
+  return tmpCutterMetadata->getCutterLastEndTime();
 }
 
 
-PRV_UINT64 KTrace::getCutterOffset()
+const MetadataManager& KTrace::getMetadata() const
 {
-  //return myTraceInfo.cutterOffset;
-  PRV_UINT64 offset = 0;
-
-  vector<CutterMetadata*> cutterData = myTraceInfo.GetCutterMetadata();
-  if( !cutterData.empty() )
-    offset = cutterData[0]->GetOffset();
-
-  return offset;
-}
-
-
-PRV_UINT64 KTrace::getCutterBeginTime()
-{
-  //return myTraceInfo.cutterBeginTime;
-  PRV_UINT64 beginTime = 0;
-
-  if ( !myTraceInfo.GetError() )
-  {
-    vector<CutterMetadata*> cutterData = myTraceInfo.GetCutterMetadata();
-    if( !cutterData.empty() )
-      beginTime = cutterData[0]->GetBeginTime();
-  }
-
-  return beginTime;
-}
-
-
-PRV_UINT64 KTrace::getCutterEndTime()
-{
-  //return myTraceInfo.cutterEndTime;
-  PRV_UINT64 endTime = 0;
-
-  if ( !myTraceInfo.GetError() )
-  {
-    vector<CutterMetadata*> cutterData = myTraceInfo.GetCutterMetadata();
-    if( !cutterData.empty() )
-     endTime = cutterData[0]->GetEndTime();
-  }
-
-  return endTime;
+  return myTraceInfo;
 }
 
 

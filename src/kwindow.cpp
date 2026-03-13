@@ -23,6 +23,7 @@
 
 #include <typeinfo>
 #include "kwindow.h"
+#include "labelconstructor.h"
 #include "semanticcomposefunctions.h"
 #include "semanticderived.h"
 #include "semanticcpufunctions.h"
@@ -150,22 +151,13 @@ TRecordTime KTimeline::traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit
 TRecordTime KTimeline::traceUnitsToWindowUnits( TRecordTime whichTime ) const
 {
   TRecordTime tmpTime;
-  TRecordTime factor = 1;
 
   if( myTrace->getTimeUnit() == timeUnit )
     tmpTime = whichTime;
   else
   {
-    PRV_UINT16 from = myTrace->getTimeUnit() > timeUnit ? timeUnit : myTrace->getTimeUnit();
-    PRV_UINT16 to = myTrace->getTimeUnit() > timeUnit ? myTrace->getTimeUnit() : timeUnit;
 
-    for( PRV_UINT16 i = from + 1; i <= to; i++ )
-      factor *= factorTable[ i ];
-
-    if( myTrace->getTimeUnit() > timeUnit )
-      tmpTime = whichTime * factor;
-    else
-      tmpTime = whichTime / factor;
+    tmpTime = whichTime * LabelConstructor::timeFactorsConversionTable[ myTrace->getTimeUnit() ][ timeUnit ];
   }
 
   return tmpTime;
@@ -174,22 +166,13 @@ TRecordTime KTimeline::traceUnitsToWindowUnits( TRecordTime whichTime ) const
 TRecordTime KTimeline::windowUnitsToTraceUnits( TRecordTime whichTime ) const
 {
   TRecordTime tmpTime;
-  TRecordTime factor = 1;
 
   if( myTrace->getTimeUnit() == timeUnit )
     tmpTime = whichTime;
   else
   {
-    PRV_UINT16 from = myTrace->getTimeUnit() > timeUnit ? timeUnit : myTrace->getTimeUnit();
-    PRV_UINT16 to = myTrace->getTimeUnit() > timeUnit ? myTrace->getTimeUnit() : timeUnit;
+    tmpTime = whichTime * LabelConstructor::timeFactorsConversionTable[ timeUnit ][ myTrace->getTimeUnit() ];
 
-    for( PRV_UINT16 i = from + 1; i <= to; i++ )
-      factor *= factorTable[ i ];
-
-    if( myTrace->getTimeUnit() > timeUnit )
-      tmpTime = whichTime / factor;
-    else
-      tmpTime = whichTime * factor;
   }
 
   return tmpTime;

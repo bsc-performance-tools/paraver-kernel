@@ -27,13 +27,15 @@
 
 #include <locale>
 #include <sstream>
-#include "paraverkerneltypes.h"
+#include <utility>
+
 #include "paraverconfig.h"
+#include "paraverkerneltypes.h"
+#include "prvtime.h"
 #include "trace.h"
 
 // TODO: Improve to global parameter
 constexpr PRV_UINT16 PERCENT_PRECISION = 2;
-
 
 using boost::posix_time::ptime;
 
@@ -79,7 +81,7 @@ class LabelConstructor
 
     static SyncPropertiesType labelToProperty (const std::string &label);
 
-    static std::string timeLabel( TTime value, TTimeUnit unit, PRV_UINT32 precision );
+    static std::string timeLabel( TTime value, TTimeUnit unit, PRV_UINT32 precision, bool useLocale = true );
 
     static std::string timeLabel( ptime value, PRV_UINT32 precision );
 
@@ -105,20 +107,21 @@ class LabelConstructor
                               PRV_UINT32 precision,
                               TTime& value );
 
-    static void transformToShort( std::string& onLabel, char beginDelimiter = '[', char endDelimiter = ']' );
+    static std::string transformToShort( const std::string& onLabel, char beginDelimiter = '[', char endDelimiter = ']' );
 
     static void getGUIGroupLabels( const TGroupID group, std::vector< std::string > &labels );
 
     static std::string getDate( bool reverseOrder = false );
 
-    static std::string getImageFileSuffix( const TImageFormat& format =  TImageFormat::PNG );
-    static std::string getDataFileSuffix( const TTextFormat& format = TTextFormat::PLAIN );
+    static std::string getImageFileSuffix( const TImageFormat& format = TImageFormat::PNG );
+    static std::string getDataFileSuffix( const TTextFormat& format = TTextFormat::PLAIN, bool initWithDot = true );
 
     static void presetBaseFormat( std::stringstream &whichStream,
-                                  PRV_UINT32 precision = PERCENT_PRECISION );
-    static void presetBaseTimeFormat( std::stringstream &whichStream,
-                                      TTimeUnit unit = NS,
-                                      PRV_UINT32 precision = 0 );
+                                  PRV_UINT32 precision = PERCENT_PRECISION,
+                                  bool useLocale = true );
+
+    static TTimeFactorTable timeFactorsConversionTable;
+    static TTimePrecisionTable timePrecisionsConversionTable;
 
   private:
     static std::stringstream sstrObjectLabel;

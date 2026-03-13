@@ -291,13 +291,8 @@ Timeline *TimelineProxy::getParent( PRV_UINT16 whichParent ) const
 }
 
 
-Timeline *TimelineProxy::clone( bool recursiveClone )
+void TimelineProxy::copy( TimelineProxy *clonedWindow )
 {
-  TimelineProxy *clonedWindow = new TimelineProxy();
-  clonedWindow->myKernel      = myKernel;
-  clonedWindow->myTrace       = myTrace;
-  clonedWindow->myWindow      = myWindow->clone();
-
   if( clonedWindow->isDerivedWindow() )
   {
     clonedWindow->parent1 = parent1->clone();
@@ -344,8 +339,8 @@ Timeline *TimelineProxy::clone( bool recursiveClone )
   clonedWindow->width                  = width;
   clonedWindow->height                 = height;
 
-  clonedWindow->objectLabels   = objectLabels;
-  clonedWindow->objectAxisSize = objectAxisSize;
+  clonedWindow->objectLabels         = objectLabels;
+  clonedWindow->objectAxisSize       = objectAxisSize;
   clonedWindow->objectAxisCustomSize = objectAxisCustomSize;
   /*
     for ( vector<RecordList *>::iterator it = myLists.begin(); it != myLists.end(); it++ )
@@ -367,7 +362,33 @@ Timeline *TimelineProxy::clone( bool recursiveClone )
   clonedWindow->isCFG4DEnabled       = isCFG4DEnabled;
   clonedWindow->CFG4DMode            = CFG4DMode;
   clonedWindow->propertiesAliasCFG4D = propertiesAliasCFG4D;
-  clonedWindow->paramAliasCFG4D      = paramAliasCFG4D;
+  clonedWindow->paramAliasCFG4D = paramAliasCFG4D;
+}
+
+// Makes a copy of 
+Timeline *TimelineProxy::clone( Trace *whichTrace, TTimeUnit whichTimeUnit, bool recursiveClone )
+{
+  TimelineProxy *clonedWindow = new TimelineProxy();
+  clonedWindow->myKernel      = myKernel;
+  clonedWindow->myTrace       = whichTrace;
+  clonedWindow->myWindow      = myWindow->clone();
+  
+  copy( clonedWindow );
+
+  clonedWindow->setTimeUnit( whichTimeUnit );
+
+  return clonedWindow;
+}
+
+
+Timeline *TimelineProxy::clone( bool recursiveClone )
+{
+  TimelineProxy *clonedWindow = new TimelineProxy();
+  clonedWindow->myKernel      = myKernel;
+  clonedWindow->myTrace       = myTrace;
+  clonedWindow->myWindow      = myWindow->clone();
+
+  copy( clonedWindow );
 
   return clonedWindow;
 }

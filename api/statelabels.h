@@ -26,6 +26,7 @@
 
 #include <map>
 #include "paraverkerneltypes.h"
+#include "csvsymbolsparser.h"
 #include "utils/traceparser/pcffileparser.h"
 
 class StateLabels
@@ -35,6 +36,7 @@ class StateLabels
 
     StateLabels();
     StateLabels( const PCFFileParser<>& pcfParser );
+    StateLabels( const CSVSymbolsParser& csvParser );
     ~StateLabels();
 
     void getStates( std::vector<TState>& onVector ) const;

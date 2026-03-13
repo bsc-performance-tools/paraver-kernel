@@ -66,6 +66,7 @@ enum class TImageFormat
 enum class TTextFormat // << also matrix-row format
 {
   CSV = 0,
+  LEGEND_CSV,
   GNUPLOT,
   PLAIN
 };

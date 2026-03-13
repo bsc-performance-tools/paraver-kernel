@@ -78,7 +78,7 @@ class TraceCutter
     {}
     virtual void set_keep_all_events( bool keepAllEvents )
     {}
-    virtual void setCutterApplicationCaller( std::string caller ) = 0;
+    virtual void setCutterOriginCaller( std::string caller ) = 0;
 
 
   private:
@@ -108,7 +108,7 @@ class TraceCutterProxy : public TraceCutter
     virtual void set_remLastStates( bool remStates ) override;
     virtual void set_keep_boundary_events( bool keepBoundaryEvents ) override;
     virtual void set_keep_all_events( bool keepAllEvents ) override;
-    virtual void setCutterApplicationCaller( std::string caller ) override;
+    virtual void setCutterOriginCaller( std::string caller ) override;
 
   private:
     TraceCutter *myTraceCutter;

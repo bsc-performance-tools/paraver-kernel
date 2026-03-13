@@ -37,6 +37,7 @@ using boost::posix_time::ptime;
 
 class KernelConnection;
 class ProgressController;
+class MetadataManager;
 
 class Trace
 {
@@ -144,12 +145,11 @@ class Trace
 
     virtual void setFillStateGaps( bool fill ) = 0;
 
-    virtual PRV_UINT64 getCutterOffset() = 0;
     virtual PRV_UINT64 getCutterLastOffset() = 0;
     virtual PRV_UINT64 getCutterLastBeginTime() = 0;
     virtual PRV_UINT64 getCutterLastEndTime() = 0;
-    virtual PRV_UINT64 getCutterBeginTime() = 0;
-    virtual PRV_UINT64 getCutterEndTime() = 0;
+
+    virtual const MetadataManager& getMetadata() const = 0;
 
     virtual void setLogicalSend( TCommID whichComm, TRecordTime whichTime ) = 0;
     virtual void setLogicalReceive( TCommID whichComm, TRecordTime whichTime ) = 0;
@@ -203,11 +203,6 @@ class Trace
       return 0;
     }
 
-    virtual std::string getDefaultSemanticFunc( TWindowLevel whichLevel ) const
-    {
-      return "";
-    }
-
     virtual void setShowProgressBar( bool whichShow )
     {}
 
@@ -223,15 +218,6 @@ class Trace
 
     virtual void setSuitableApps( const std::vector< bool >& whichApps )
     {}
-
-    /*
-        virtual bool getFillStateGaps() const
-        {
-          return false;
-        }
-
-        void setFillStateGaps( bool fill ) {}
-    */
 
   protected:
     KernelConnection *myKernel;
@@ -328,7 +314,6 @@ class TraceProxy: public Trace
     virtual std::string getRowLabel( TTraceLevel whichLevel, TObjectOrder whichRow ) const override;
     virtual size_t getMaxLengthRow( TTraceLevel whichLevel ) const override;
 
-//    virtual std::string getDefaultSemanticFunc( TWindowLevel whichLevel ) const;
     virtual void setShowProgressBar( bool whichShow ) override;
     virtual bool getShowProgressBar() const override;
 
@@ -351,12 +336,11 @@ class TraceProxy: public Trace
     virtual bool getFillStateGaps() const override;
     virtual void setFillStateGaps( bool fill ) override;
 
-    virtual PRV_UINT64 getCutterOffset() override;
     virtual PRV_UINT64 getCutterLastOffset() override;
     virtual PRV_UINT64 getCutterLastBeginTime() override;
     virtual PRV_UINT64 getCutterLastEndTime() override;
-    virtual PRV_UINT64 getCutterBeginTime() override;
-    virtual PRV_UINT64 getCutterEndTime() override;
+
+    virtual const MetadataManager& getMetadata() const override;
 
     virtual void setLogicalSend( TCommID whichComm, TRecordTime whichTime ) override;
     virtual void setLogicalReceive( TCommID whichComm, TRecordTime whichTime ) override;
@@ -391,7 +375,8 @@ class TraceProxy: public Trace
     TraceProxy( KernelConnection *whichKernel, const std::string& whichFile,
                 bool noLoad, ProgressController *progress );
 
-    void parsePCF( const std::string& whichFile );
+    void parseSymbolsFile( const std::string& whichFile );
+    template< typename Parser > void fillSymbols( Parser& whichParser );
     void parseROW( const std::string& whichFile );
 
 #ifdef FIXED_LABELS

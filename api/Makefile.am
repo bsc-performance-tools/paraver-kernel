@@ -5,6 +5,7 @@ pkglib_LTLIBRARIES = libparaver-api.la
 libparaver_api_la_SOURCES = \
                     cfg.cpp \
                     cfgs4d.cpp \
+                    csvsymbolsparser.cpp \
                     drawmode.cpp \
                     eventdrivencutter.cpp \
                     eventlabels.cpp \
@@ -18,6 +19,7 @@ libparaver_api_la_SOURCES = \
                     localkernel.cpp \
                     output.cpp \
                     paraverconfig.cpp \
+                    ParaverMetadataManager.cpp \
                     previousfiles.cpp \
                     progresscontroller.cpp \
                     recordlist.cpp \
@@ -45,6 +47,7 @@ include_HEADERS = \
                   cfgs4d.h \
                   ../config_traits.h \
                   ../config_types.h \
+                  csvsymbolsparser.h \
                   cubecontainer.h \
                   cubecontainer_impl.h \
                   customalgorithms.h \
@@ -66,9 +69,11 @@ include_HEADERS = \
                   paraverkernelexception.h \
                   paraverkerneltypes.h \
                   paraverlabels.h \
+                  ParaverMetadataManager.h \
                   paravertypes.h \
                   previousfiles.h \
                   progresscontroller.h \
+                  prvtime.h \
                   prvtypes.h \
                   recordlist.h \
                   selectionmanagement.h \

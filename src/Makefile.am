@@ -35,7 +35,6 @@ libparaver_kernel_la_SOURCES = \
     noloadexception.cpp \
     noloadtrace.cpp \
     paraverkernelexception.cpp \
-    ParaverMetadataManager.cpp \
     plainblocks.cpp \
     plaintrace.cpp \
     semanticcomposefunctions.cpp \

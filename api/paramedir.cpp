@@ -22,14 +22,14 @@
 \*****************************************************************************/
 
 
-#include <iostream>
-#include <string>
-#include <stdexcept>
+#include <algorithm>
 #include <fstream>
 #include <iomanip>
+#include <iostream>
 #include <map>
 #include <set>
-#include <algorithm>
+#include <stdexcept>
+#include <string>
 
 //#include <boost/filesystem.hpp>
 //#include <boost/error_code.hpp>
@@ -44,6 +44,7 @@
 #include "histogramtotals.h"
 #include "paraverkernelexception.h"
 #include "paraverconfig.h"
+#include "ParaverMetadataManager.h"
 #include "textoutput.h"
 #include "traceoptions.h"
 #include "labelconstructor.h" // for getDate
@@ -77,6 +78,7 @@ enum TOptionID
   SHOW_VERSION,
 
   // FILES
+  ALL_WINDOWS,
   MANY_FILES,
   OUTPUT_NAME,
 
@@ -118,6 +120,7 @@ TOptionParamedir definedOption[] =
   { "-v", "--version", false, 0, "", "", "Show version" },
 
   // FILES
+  { "-a", "--all-windows", false, 0, "", "", "Print all windows in cfg. Output file names have a suffix with window number" },
   { "-m", "--many-files", false, 0, "", "", "Allows to separate cfg output (default in a unique file)" },
   { "-o", "--output-name", false, 1, "", "<tracename>",  "Output trace name (only for processing trace)" },
 
@@ -285,13 +288,13 @@ void printHelp()
 
   std::cout << std::endl;
   std::cout << "  General options:" << std::endl;
-  for ( int i = SHOW_HELP; i < MANY_FILES; ++i )
+  for ( int i = SHOW_HELP; i < ALL_WINDOWS; ++i )
     printOptionHelp( TOptionID( i ) );
 
   std::cout << std::endl;
   std::cout << "  Output file options:" << std::endl;
 
-  for ( int i = MANY_FILES; i < TIMELINE_TRACE_UNITS; ++i )
+  for ( int i = ALL_WINDOWS; i < TIMELINE_TRACE_UNITS; ++i )
     printOptionHelp( TOptionID( i ) );
 
   std::cout << std::endl;
@@ -759,55 +762,79 @@ void loadCFGs( KernelConnection *myKernel )
 {
   for( std::map< string, string >::iterator it = cfgs.begin(); it != cfgs.end(); ++it )
   {
-    vector<Timeline *> windows;
-    vector<Histogram *> histograms;
-    SaveOptions options; // P4D: Should options.enabledP4DMode be taken in this context?
-
-    currentCFG = it;
-    if ( CFGLoader::loadCFG( myKernel, it->first, trace, windows, histograms, options ) )
+    std::ifstream cfgFile( (it->first).c_str() );
+    if ( cfgFile.good() )
     {
-      if( !CFGLoader::errorLine.empty() )
-      {
-        std::cerr << "  [Warning] File '" << it->first << "'  with error in: \n'"  + CFGLoader::errorLine  +  "'" << std::endl;
-      }
-      else
+      vector<Timeline *> windows;
+      vector<Histogram *> histograms;
+      SaveOptions options; // P4D: Should options.enabledP4DMode be taken in this context?
+
+      currentCFG = it;
+      if ( CFGLoader::loadCFG( myKernel, trace, cfgFile, windows, histograms, options ) )
       {
         TextOutput output;
         output.setMultipleFiles( option[ MANY_FILES ].active );
         output.setWindowTimeUnits( !option[ TIMELINE_TRACE_UNITS ].active );
 
-        if ( histograms.begin() != histograms.end() &&
-            histograms[ histograms.size() - 1 ] != nullptr )
-          output.dumpHistogram( histograms[ histograms.size() - 1 ],
-                                it->second,
-                                option[ PRINT_PLANE ].active,
-                                option[ EMPTY_COLUMNS ].active,
-                                true,
-                                !option[ PREFERENCES_PRECISION ].active );
-        else if( windows.begin() != windows.end() &&
-                windows[ windows.size() - 1 ] != nullptr )
-          output.dumpWindow( windows[ windows.size() - 1 ], it->second );
-        std::cerr << "Correcty loaded file: '" << it->first << "'" << std::endl;
+        if( option[ ALL_WINDOWS ].active )
+        {
+          int numWindow = 1;
+          std::string tmpFilename{};
+          for( auto currentWindow : windows )
+          {
+            tmpFilename = it->second + "_" + std::to_string( numWindow );
+            output.dumpWindow( currentWindow, tmpFilename, CSVMetadataAction::MANUAL_ORIGIN_ID );
+            ++numWindow;
+          }
+
+          for( auto currentHisto : histograms )
+          {
+            tmpFilename = it->second + "_" + std::to_string( numWindow );
+            output.dumpHistogram( currentHisto,
+                                  tmpFilename,
+                                  option[ PRINT_PLANE ].active,
+                                  option[ EMPTY_COLUMNS ].active,
+                                  true,
+                                  !option[ PREFERENCES_PRECISION ].active );
+            ++numWindow;
+          }
+        }
+        else
+        {
+          if ( histograms.begin() != histograms.end() &&
+              histograms[ histograms.size() - 1 ] != nullptr )
+            output.dumpHistogram( histograms[ histograms.size() - 1 ],
+                                  it->second,
+                                  option[ PRINT_PLANE ].active,
+                                  option[ EMPTY_COLUMNS ].active,
+                                  true,
+                                  !option[ PREFERENCES_PRECISION ].active );
+          else if( windows.begin() != windows.end() &&
+                  windows[ windows.size() - 1 ] != nullptr )
+            output.dumpWindow( windows[ windows.size() - 1 ], it->second, CSVMetadataAction::MANUAL_ORIGIN_ID );
+        }
       }
+      else
+        std::cerr << "  [Warning] Cannot load '" << it->first << "' file." << std::endl;
+
+      for ( PRV_UINT32 i = 0; i < histograms.size(); ++i )
+      {
+        if ( histograms[ i ] != nullptr )
+          delete histograms[ i ];
+      }
+
+      histograms.clear();
+
+      for ( PRV_UINT32 i = 0; i < windows.size(); ++i )
+      {
+        if ( windows[ i ] != nullptr )
+          delete windows[ i ];
+      }
+
+      windows.clear();
     }
-    else
-      std::cerr << "  [Warning] Cannot load '" << it->first << "' file." << std::endl;
 
-    for ( PRV_UINT32 i = 0; i < histograms.size(); ++i )
-    {
-      if ( histograms[ i ] != nullptr )
-        delete histograms[ i ];
-    }
-
-    histograms.clear();
-
-    for ( PRV_UINT32 i = 0; i < windows.size(); ++i )
-    {
-      if ( windows[ i ] != nullptr )
-        delete windows[ i ];
-    }
-
-    windows.clear();
+    cfgFile.close();
   }
 }
 
