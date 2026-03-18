@@ -23,14 +23,14 @@
 
 #include "ParaverMetadataManager.h"
 
-#include <sstream>
-#include <iomanip>
-#include <ctime>
 #include <algorithm>
+#include <ctime>
+#include <iomanip>
+#include <sstream>
 #ifdef _WIN32
-#include <functional>
-#include <locale>
-#include <cctype>
+#  include <cctype>
+#  include <functional>
+#  include <locale>
 #endif
 
 #include "cfg.h"
@@ -50,16 +50,22 @@ class cepba_tools
 // trim from start
 std::string& cepba_tools::ltrim( std::string& s )
 {
-   s.erase( s.begin(), std::find_if( s.begin(), s.end(),
-                                     std::not1( std::ptr_fun< int, int >( std::isspace ) ) ) );
-   return s;
+  auto tmpf = []( int c )
+  {
+    return !std::isspace( c );
+  };
+  s.erase( s.begin(), std::find_if( s.begin(), s.end(), tmpf ) );
+  return s;
 }
 
 // trim from end
 std::string& cepba_tools::rtrim( std::string& s )
 {
-  s.erase( std::find_if( s.rbegin(), s.rend(),
-                         std::not1( std::ptr_fun< int, int >( std::isspace) ) ).base(), s.end() );
+  auto tmpf = []( int c )
+  {
+    return !std::isspace( c );
+  };
+  s.erase( std::find_if( s.rbegin(), s.rend(), tmpf ).base(), s.end() );
   return s;
 }
 
@@ -76,12 +82,10 @@ std::string& cepba_tools::trim( std::string& s )
 constexpr char MetadataAction::RUNAPP_ORIGIN_ID[];
 constexpr char MetadataAction::MANUAL_ORIGIN_ID[];
 
-MetadataAction::MetadataAction( string date,
-                    string action,
-                    string application,
-                    string originalTrace )
+MetadataAction::MetadataAction( string date, string action, string application, string originalTrace )
   : date( date ), action( action ), origin( application ), originalTrace( originalTrace )
-{}
+{
+}
 
 void MetadataAction::write( ostream& os ) const
 {
@@ -117,21 +121,21 @@ CutterMetadataAction::CutterMetadataAction( string date,
 
 CutterMetadataAction::CutterMetadataAction( vector< string >& cutterMetadataFields )
 {
-  if ( cutterMetadataFields.size() != FIELD_COUNT )
+  if( cutterMetadataFields.size() != FIELD_COUNT )
   {
     ostringstream errorMessageSStr;
     errorMessageSStr << "wrong number of fields value in cutter metadata record (";
     errorMessageSStr << cutterMetadataFields.size() << " read, ";
     errorMessageSStr << FIELD_COUNT << " expected)";
-    
-    error = true;
+
+    error        = true;
     errorMessage = errorMessageSStr.str();
-    
+
     return;
   }
 
   istringstream converter;
-  
+
   this->date          = cutterMetadataFields[ 0 ];
   this->action        = cutterMetadataFields[ 1 ];
   this->origin        = cutterMetadataFields[ 2 ];
@@ -140,13 +144,13 @@ CutterMetadataAction::CutterMetadataAction( vector< string >& cutterMetadataFiel
   /* FIELD 5: Offset */
   converter.clear();
   converter.str( cutterMetadataFields[ 4 ] );
-  if ( !( converter >> this->offset ) )
+  if( !( converter >> this->offset ) )
   {
     ostringstream errorMessageSStr;
     errorMessageSStr << "wrong offset value in cutter metadata record (";
     errorMessageSStr << cutterMetadataFields[ 4 ] << ")";
 
-    error = true;
+    error        = true;
     errorMessage = errorMessageSStr.str();
 
     return;
@@ -155,13 +159,13 @@ CutterMetadataAction::CutterMetadataAction( vector< string >& cutterMetadataFiel
   /* FIELD 6: BeginTime */
   converter.clear();
   converter.str( cutterMetadataFields[ 5 ] );
-  if ( !( converter >> this->beginTime ) )
+  if( !( converter >> this->beginTime ) )
   {
     ostringstream errorMessageSStr;
     errorMessageSStr << "wrong cut begin time value in cutter metadata record (";
     errorMessageSStr << cutterMetadataFields[ 5 ] << ")";
 
-    error = true;
+    error        = true;
     errorMessage = errorMessageSStr.str();
 
     return;
@@ -170,13 +174,13 @@ CutterMetadataAction::CutterMetadataAction( vector< string >& cutterMetadataFiel
   /* FIELD 7: EndTime */
   converter.clear();
   converter.str( cutterMetadataFields[ 6 ] );
-  if ( !( converter >> this->endTime ) )
+  if( !( converter >> this->endTime ) )
   {
     ostringstream errorMessageSStr;
     errorMessageSStr << "wrong cut end time value in cutter metadata record (";
     errorMessageSStr << cutterMetadataFields[ 6 ] << ")";
 
-    error = true;
+    error        = true;
     errorMessage = errorMessageSStr.str();
 
     return;
@@ -194,31 +198,31 @@ void CutterMetadataAction::flushSpecificFields( ostream& os ) const
  ******************************************************************************/
 constexpr char CSVMetadataAction::ACTION_ID[];
 
-CSVMetadataAction::CSVMetadataAction( string         date,
-                                      string         origin,
-                                      string         originalTrace,
-                                      TTimeUnit      timeUnits,
+CSVMetadataAction::CSVMetadataAction( string date,
+                                      string origin,
+                                      string originalTrace,
+                                      TTimeUnit timeUnits,
                                       TColorFunction colorMode,
                                       TSemanticValue semanticMin,
                                       TSemanticValue semanticMax )
   : MetadataAction( date, CSVMetadataAction::ACTION_ID, origin, originalTrace )
 {
-  this->timeUnits = timeUnits;
-  this->colorMode = colorMode;
+  this->timeUnits   = timeUnits;
+  this->colorMode   = colorMode;
   this->semanticMin = semanticMin;
   this->semanticMax = semanticMax;
 }
 
 CSVMetadataAction::CSVMetadataAction( vector< string >& csvMetadataFields )
 {
-  if ( csvMetadataFields.size() != FIELD_COUNT )
+  if( csvMetadataFields.size() != FIELD_COUNT )
   {
     ostringstream errorMessageSStr;
     errorMessageSStr << "wrong number of fields value in carm metadata record (";
     errorMessageSStr << csvMetadataFields.size() << " read, ";
     errorMessageSStr << FIELD_COUNT << " expected)";
 
-    error = true;
+    error        = true;
     errorMessage = errorMessageSStr.str() + "\n";
   }
 
@@ -271,7 +275,7 @@ bool CutterMetadata::newMetadata( std::vector< std::string > metadataFields )
 {
   CutterMetadataAction newCutterAction( metadataFields );
 
-  if ( newCutterAction.getError() )
+  if( newCutterAction.getError() )
   {
     // error = true;
     // errorMessage = newCutterMetadata->getErrorMessage();
@@ -324,7 +328,7 @@ bool CSVMetadata::newMetadata( std::vector< std::string > metadataFields )
 {
   CSVMetadataAction newCSVAction( metadataFields );
 
-  if ( newCSVAction.getError() )
+  if( newCSVAction.getError() )
   {
     // error = true;
     // errorMessage = newCutterMetadata->getErrorMessage();
@@ -379,7 +383,7 @@ bool MetadataManager::newMetadata( string metadataStr )
 
   populateRecord( metadataFields, metadataStr, ':' );
 
-  if ( metadataFields.size() < MetadataAction::FIELD_COUNT )
+  if( metadataFields.size() < MetadataAction::FIELD_COUNT )
   {
     ostringstream errorMessageSStr;
     error = true;
@@ -398,7 +402,7 @@ bool MetadataManager::newMetadata( string metadataStr )
    * FIELD 3: Original Trace
    */
 
-  if ( metadataFields[ 1 ].compare( CutterMetadataAction::ACTION_ID ) == 0 )
+  if( metadataFields[ 1 ].compare( CutterMetadataAction::ACTION_ID ) == 0 )
   {
     auto itCutter = metadataContainer.find( TAppID::CUTTER );
     if( itCutter == metadataContainer.end() )
@@ -409,7 +413,7 @@ bool MetadataManager::newMetadata( string metadataStr )
       return false;
     }
   }
-  else if ( metadataFields[ 1 ].compare( CSVMetadataAction::ACTION_ID ) == 0 )
+  else if( metadataFields[ 1 ].compare( CSVMetadataAction::ACTION_ID ) == 0 )
   {
     auto itCSV = metadataContainer.find( TAppID::CSV );
     if( itCSV == metadataContainer.end() )
@@ -426,7 +430,7 @@ bool MetadataManager::newMetadata( string metadataStr )
 
 
 bool MetadataManager::getError() const
-{ 
+{
   return error;
 }
 
@@ -441,8 +445,8 @@ string MetadataManager::getCurrentDate()
 {
   stringstream currentDate;
 
-  time_t t = time( 0 );   // get time now
-  struct tm *now = localtime( &t );
+  time_t t       = time( 0 ); // get time now
+  struct tm* now = localtime( &t );
 
   currentDate << ( now->tm_year + 1900 );
   currentDate << std::setw( 2 ) << std::setfill( '0' );
@@ -461,9 +465,7 @@ string MetadataManager::getCurrentDate()
 }
 
 
-void MetadataManager::populateRecord( vector< string >& record,
-                                      const string&     line,
-                                      char              delimiter )
+void MetadataManager::populateRecord( vector< string >& record, const string& line, char delimiter )
 {
   int linepos  = 0;
   int inquotes = false;
@@ -473,37 +475,37 @@ void MetadataManager::populateRecord( vector< string >& record,
   string curstring;
   record.clear();
 
-  while( line[ linepos ] !=0 && linepos < linemax )
+  while( line[ linepos ] != 0 && linepos < linemax )
   {
     c = line[ linepos ];
 
-    if ( !inquotes && curstring.length() == 0 && c == '"' )
+    if( !inquotes && curstring.length() == 0 && c == '"' )
     {
-      //beginquotechar
-      inquotes=true;
+      // beginquotechar
+      inquotes = true;
     }
-    else if ( inquotes && c == '"' )
+    else if( inquotes && c == '"' )
     {
-      //quotechar
-      if ( ( linepos + 1 <linemax ) && ( line[ linepos + 1 ] == '"' ) )
+      // quotechar
+      if( ( linepos + 1 < linemax ) && ( line[ linepos + 1 ] == '"' ) )
       {
-        //encountered 2 double quotes in a row (resolves to 1 double quote)
+        // encountered 2 double quotes in a row (resolves to 1 double quote)
         curstring.push_back( c );
         ++linepos;
       }
       else
       {
-        //endquotechar
+        // endquotechar
         inquotes = false;
       }
     }
-    else if ( !inquotes && c == delimiter )
+    else if( !inquotes && c == delimiter )
     {
-      //end of field
+      // end of field
       record.push_back( cepba_tools::trim( curstring ) );
       curstring = "";
     }
-    else if ( !inquotes && ( c == '\r' || c == '\n' ) )
+    else if( !inquotes && ( c == '\r' || c == '\n' ) )
     {
       record.push_back( cepba_tools::trim( curstring ) );
       return;
