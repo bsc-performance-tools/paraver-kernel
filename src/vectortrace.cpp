@@ -432,6 +432,9 @@ void VectorTrace::getRecordByTimeCPU( std::vector< MemoryTrace::iterator * > &li
                                 } );
     if( it == v.end() || ( it != v.begin() && ( *it )->time > whichTime ) )
       --it;
+
+    if( listIter[ iCPU ] != nullptr )
+      delete listIter[ iCPU ];
     listIter[ iCPU ] = new VectorTrace::CPUIterator( it, myTrace, myBlocks, iCPU );
 
     ++iCPU;
