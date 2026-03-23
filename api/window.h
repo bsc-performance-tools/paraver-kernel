@@ -1034,7 +1034,7 @@ class TimelineProxy : public Timeline
     virtual Timeline *getParent( PRV_UINT16 whichParent ) const override;
 
     virtual Timeline *clone( bool recursiveClone = false ) override;
-    virtual Timeline *clone( Trace *whichTrace, TTimeUnit whichTimeUnit, bool recursiveClone = false );
+    virtual Timeline *clone( Trace *whichTrace, TTimeUnit whichTimeUnit, bool recursiveClone = false ) override;
 
     // Other
     virtual void setDestroy( bool newValue ) override;
