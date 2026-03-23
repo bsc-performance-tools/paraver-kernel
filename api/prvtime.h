@@ -30,7 +30,7 @@
 
 constexpr TTimeUnit TIME_SCALE_SIZE = DAY + 1;
 
-static const TRecordTime factorTable[ TIME_SCALE_SIZE ] =
+constexpr TRecordTime factorTable[ TIME_SCALE_SIZE ] =
 {
   1,   // ns
   1E3, // us
@@ -41,7 +41,7 @@ static const TRecordTime factorTable[ TIME_SCALE_SIZE ] =
   24   // days
 };
 
-static const TTimeUnit precisionTable[ TIME_SCALE_SIZE ] =
+constexpr TTimeUnit precisionTable[ TIME_SCALE_SIZE ] =
 {
   0,   // ns
   3,   // us
