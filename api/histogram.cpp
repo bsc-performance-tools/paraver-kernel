@@ -1459,9 +1459,9 @@ Histogram *HistogramProxy::clone()
   {
     // Clone parents
     auto recursiveCloneHistogramProxies = []( auto &whichParent )
-                                          {
-                                            return whichParent->clone();
-                                          };
+    {
+      return whichParent->clone();
+    };
 
     std::vector< Histogram * > clonedParents;
     std::transform( parents.cbegin(), parents.cend(), std::back_inserter( clonedParents ), recursiveCloneHistogramProxies );
@@ -1473,9 +1473,9 @@ Histogram *HistogramProxy::clone()
                    } );
 
     auto getKHistoParent = []( auto &whichParent )
-                           {
-                             return whichParent->getConcrete();
-                           };
+    {
+      return whichParent->getConcrete();
+    };
     std::vector< Histogram * > clonedKParents;
     std::transform( clonedParents.cbegin(), clonedParents.cend(), std::back_inserter( clonedKParents ), getKHistoParent );
 
@@ -1648,7 +1648,6 @@ PRV_UINT16 HistogramProxy::getWidth() const
 
 void HistogramProxy::setWidth( PRV_UINT16 whichPos, bool broadcastValue )
 {
-
   if( width != whichPos )
   {
     width = whichPos;
@@ -2255,7 +2254,7 @@ bool HistogramProxy::compatibleForDerivation( Histogram *whichHistogram1, Histog
   std::string tmpStat1 = whichHistogram1->getCurrentStat();
   std::string tmpStat2 = whichHistogram2->getCurrentStat();
   bool sameStatType    = ( !whichHistogram1->isCommunicationStat( tmpStat1 ) && !whichHistogram2->isCommunicationStat( tmpStat2 ) ) ||
-                      ( whichHistogram1->isCommunicationStat( tmpStat1 ) && whichHistogram2->isCommunicationStat( tmpStat2 ) );
+                         ( whichHistogram1->isCommunicationStat( tmpStat1 ) && whichHistogram2->isCommunicationStat( tmpStat2 ) );
 
   // TODO: 3D? only showed plane or whole cube?
   bool sameRows    = whichHistogram1->getNumRows() == whichHistogram2->getNumRows();

@@ -21,14 +21,16 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#include <math.h>
-#include <boost/lexical_cast.hpp>
 #include "labelconstructor.h"
-#include "paraverlabels.h"
-#include "histogram.h"
-#include "window.h"
+
 #include "filter.h"
+#include "histogram.h"
 #include "kfilter.h"
+#include "paraverlabels.h"
+#include "window.h"
+
+#include <boost/lexical_cast.hpp>
+#include <math.h>
 
 
 using namespace std;
@@ -40,24 +42,32 @@ stringstream LabelConstructor::columnLabel;
 stringstream LabelConstructor::tmp;
 stringstream LabelConstructor::sstrTimeLabel;
 stringstream LabelConstructor::sstrSemanticLabel;
-string       LabelConstructor::rowStr;
-string       LabelConstructor::tmpStr;
-char         LabelConstructor::separator;
-char         LabelConstructor::point;
-locale       LabelConstructor::myLocaleWithoutThousands;
-locale       LabelConstructor::myLocaleWithThousands;
+string LabelConstructor::rowStr;
+string LabelConstructor::tmpStr;
+char LabelConstructor::separator;
+char LabelConstructor::point;
+locale LabelConstructor::myLocaleWithoutThousands;
+locale LabelConstructor::myLocaleWithThousands;
 
-TTimeFactorTable    LabelConstructor::timeFactorsConversionTable    = timeFactorsTable< TIME_SCALE_SIZE >;
+TTimeFactorTable LabelConstructor::timeFactorsConversionTable       = timeFactorsTable< TIME_SCALE_SIZE >;
 TTimePrecisionTable LabelConstructor::timePrecisionsConversionTable = timePrecisionsTable< TIME_SCALE_SIZE >;
 
 // custom numpunct with grouping:
-struct numpunct_group : std::numpunct<char> {
-  std::string do_grouping() const {return "\03";}
+struct numpunct_group : std::numpunct< char >
+{
+    std::string do_grouping() const
+    {
+      return "\03";
+    }
 };
 
 // custom numpunct without grouping:
-struct numpunct_nogroup : std::numpunct<char> {
-  std::string do_grouping() const {return "\0";}
+struct numpunct_nogroup : std::numpunct< char >
+{
+    std::string do_grouping() const
+    {
+      return "\0";
+    }
 };
 
 
@@ -68,31 +78,27 @@ void LabelConstructor::init()
     myLocaleWithoutThousands = locale( locale( "" ), new numpunct_nogroup );
     myLocaleWithThousands    = locale( locale( "" ), new numpunct_group );
   }
-  catch(...)
+  catch( ... )
   {
     myLocaleWithoutThousands = locale( std::locale::classic(), new numpunct_nogroup );
     myLocaleWithThousands    = locale( std::locale::classic(), new numpunct_group );
   }
 
-  point = use_facet<numpunct<char> >(myLocaleWithThousands).decimal_point();
+  point = use_facet< numpunct< char > >( myLocaleWithThousands ).decimal_point();
   label.imbue( myLocaleWithThousands );
   columnLabel.imbue( myLocaleWithThousands );
   tmp.imbue( myLocaleWithThousands );
   sstrTimeLabel.imbue( myLocaleWithThousands );
   sstrSemanticLabel.imbue( myLocaleWithThousands );
 
-  if ( point == ',' )
+  if( point == ',' )
     separator = '.';
   else
     separator = ',';
 }
 
 
-string LabelConstructor::objectLabel( TObjectOrder globalOrder,
-                                      TTraceLevel level,
-                                      Trace *whichTrace,
-                                      bool showLevelTag,
-                                      bool showRowText )
+string LabelConstructor::objectLabel( TObjectOrder globalOrder, TTraceLevel level, Trace *whichTrace, bool showLevelTag, bool showRowText )
 {
   if( showRowText )
   {
@@ -106,10 +112,10 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
   sstrObjectLabel.clear();
   sstrObjectLabel.str( "" );
 
-  if ( rowStr != "" )
+  if( rowStr != "" )
     return rowStr;
 
-  if ( level == TTraceLevel::THREAD )
+  if( level == TTraceLevel::THREAD )
   {
     TApplOrder appl;
     TTaskOrder task;
@@ -119,13 +125,13 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
     else
     {
       whichTrace->getThreadLocation( globalOrder, appl, task, thread );
-      if ( showLevelTag )
+      if( showLevelTag )
         sstrObjectLabel << LEVEL_THREAD << ' ' << appl + 1 << '.' << task + 1 << '.' << thread + 1;
       else
         sstrObjectLabel << appl + 1 << '.' << task + 1 << '.' << thread + 1;
     }
   }
-  else if ( level == TTraceLevel::TASK )
+  else if( level == TTraceLevel::TASK )
   {
     TApplOrder appl;
     TTaskOrder task;
@@ -134,34 +140,34 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
     else
     {
       whichTrace->getTaskLocation( globalOrder, appl, task );
-      if ( showLevelTag )
+      if( showLevelTag )
         sstrObjectLabel << LEVEL_TASK << ' ' << appl + 1 << '.' << task + 1;
       else
         sstrObjectLabel << appl + 1 << '.' << task + 1;
     }
   }
-  else if ( level == TTraceLevel::APPLICATION )
+  else if( level == TTraceLevel::APPLICATION )
   {
     if( globalOrder >= whichTrace->totalApplications() )
       sstrObjectLabel << "Not valid application: " << globalOrder + 1;
     else
     {
-      if ( showLevelTag )
+      if( showLevelTag )
         sstrObjectLabel << LEVEL_APPLICATION << ' ' << globalOrder + 1;
       else
         sstrObjectLabel << globalOrder + 1;
     }
   }
-  else if ( level == TTraceLevel::WORKLOAD )
+  else if( level == TTraceLevel::WORKLOAD )
   {
-    if ( showLevelTag )
+    if( showLevelTag )
       sstrObjectLabel << LEVEL_WORKLOAD;
   }
-  else if ( level == TTraceLevel::CPU )
+  else if( level == TTraceLevel::CPU )
   {
     if( globalOrder == 0 )
     {
-      if ( showLevelTag )
+      if( showLevelTag )
         sstrObjectLabel << LEVEL_CPU << ' ' << "0";
       else
         sstrObjectLabel << "0";
@@ -175,28 +181,28 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
       else
       {
         whichTrace->getCPULocation( globalOrder, node, cpu );
-        if ( showLevelTag )
+        if( showLevelTag )
           sstrObjectLabel << LEVEL_CPU << ' ' << node + 1 << '.' << cpu + 1;
         else
           sstrObjectLabel << node + 1 << '.' << cpu + 1;
       }
     }
   }
-  else if ( level == TTraceLevel::NODE )
+  else if( level == TTraceLevel::NODE )
   {
     if( globalOrder > whichTrace->totalNodes() )
       sstrObjectLabel << "Not valid node: " << globalOrder;
     else
     {
-      if ( showLevelTag )
+      if( showLevelTag )
         sstrObjectLabel << LEVEL_NODE << ' ' << globalOrder;
       else
         sstrObjectLabel << globalOrder;
     }
   }
-  else if ( level == TTraceLevel::SYSTEM )
+  else if( level == TTraceLevel::SYSTEM )
   {
-    if ( showLevelTag )
+    if( showLevelTag )
       sstrObjectLabel << LEVEL_SYSTEM;
   }
 
@@ -215,17 +221,17 @@ string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
   columnLabel.str( "" );
   double tmp;
 
-  if ( ParaverConfig::getInstance()->getHistogramScientificNotation() )
+  if( ParaverConfig::getInstance()->getHistogramScientificNotation() )
     columnLabel << scientific;
   else
     columnLabel << fixed;
 
-  if ( modf( min, &tmp ) != 0.0 || delta != 1.0 )
+  if( modf( min, &tmp ) != 0.0 || delta != 1.0 )
   {
     columnLabel.precision( ParaverConfig::getInstance()->getHistogramPrecision() );
     // Column range values
     columnLabel << '[' << ( whichColumn * delta ) + min << "..";
-    if ( ( ( whichColumn * delta ) + min + delta ) >= max )
+    if( ( ( whichColumn * delta ) + min + delta ) >= max )
     {
       columnLabel << max;
       columnLabel << ']';
@@ -241,9 +247,12 @@ string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
     columnLabel.precision( 0 );
     // Discrete integer value
     tmpStr = LabelConstructor::semanticLabel( whichWindow,
-        ( whichColumn * delta ) + min, true, ParaverConfig::getInstance()->getHistogramPrecision(), false );
+                                              ( whichColumn * delta ) + min,
+                                              true,
+                                              ParaverConfig::getInstance()->getHistogramPrecision(),
+                                              false );
     if( whichWindow->getSemanticInfoType() == EVENTVALUE_TYPE && shortLabels )
-      LabelConstructor::transformToShort( tmpStr );
+      tmpStr = LabelConstructor::transformToShort( tmpStr );
     columnLabel << tmpStr;
   }
 
@@ -256,10 +265,10 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto, TSemanticV
   label.clear();
   label.str( "" );
 
-  if ( value == numeric_limits<double>::infinity() )
+  if( value == numeric_limits< double >::infinity() )
     return "inf";
 
-  if ( ParaverConfig::getInstance()->getHistogramScientificNotation() )
+  if( ParaverConfig::getInstance()->getHistogramScientificNotation() )
     label << scientific;
   else
     label << fixed;
@@ -270,16 +279,14 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto, TSemanticV
   else
     label.precision( 0 );
 
-  if ( ParaverConfig::getInstance()->getHistogramThousandSep() &&
-       !ParaverConfig::getInstance()->getHistogramScientificNotation() )
+  if( ParaverConfig::getInstance()->getHistogramThousandSep() && !ParaverConfig::getInstance()->getHistogramScientificNotation() )
     label.imbue( myLocaleWithThousands );
   else
     label.imbue( myLocaleWithoutThousands );
 
   label << value;
 
-  if ( showUnits && ParaverConfig::getInstance()->getHistogramShowUnits() &&
-       !whichHisto->isCommunicationStat( whichHisto->getCurrentStat() ) )
+  if( showUnits && ParaverConfig::getInstance()->getHistogramShowUnits() && !whichHisto->isCommunicationStat( whichHisto->getCurrentStat() ) )
     label << " " << whichHisto->getUnitsLabel( whichHisto->getCurrentStat() );
 
   return label.str();
@@ -287,7 +294,7 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto, TSemanticV
 
 string LabelConstructor::histoTotalLabel( THistoTotals whichTotal )
 {
-  switch ( whichTotal )
+  switch( whichTotal )
   {
     case NUM_CELLS:
       return "Num. Cells";
@@ -310,64 +317,63 @@ string LabelConstructor::histoTotalLabel( THistoTotals whichTotal )
   return "";
 }
 
-string LabelConstructor::propertyToLabel (SyncPropertiesType prop)
+string LabelConstructor::propertyToLabel( SyncPropertiesType prop )
 {
-  switch (prop)
+  switch( prop )
   {
-  case SyncPropertiesType::SYNC_TIME:
-    return CFG_VAL_SYNC_TIME;
-  case SyncPropertiesType::SYNC_HISTOGRAM_COLUMNS:
-    return CFG_VAL_SYNC_HISTO_COLUMNS;
-  case SyncPropertiesType::SYNC_HISTOGRAM_DELTA:
-    return CFG_VAL_SYNC_HISTO_DELTA;
-  case SyncPropertiesType::SYNC_MIN:
-    return CFG_VAL_SYNC_SEM_MIN;
-  case SyncPropertiesType::SYNC_MAX:
-    return CFG_VAL_SYNC_SEM_MAX;
-  case SyncPropertiesType::SYNC_OBJECT_ZOOM:
-    return CFG_VAL_SYNC_OBJ_ZOOM;
-  case SyncPropertiesType::SYNC_OBJECT_SELECTION:
-    return CFG_VAL_SYNC_OBJ_SEL;
-  case SyncPropertiesType::SYNC_WINDOWS_SIZE:
-    return CFG_VAL_SYNC_WIN_SIZE;
-  case SyncPropertiesType::SYNC_WINDOWS_POSITION:
-    return CFG_VAL_SYNC_WIN_POSITION;
-  case SyncPropertiesType::SYNC_COLOR_PALETTE:
-    return CFG_VAL_SYNC_COLOR_PALETTE;
-  case SyncPropertiesType::SYNC_INFO_PANEL:
-    return CFG_VAL_SYNC_INFO_PANEL;
-  case SyncPropertiesType::SYNC_OBJECT_AXIS:
-    return CFG_VAL_SYNC_OBJECT_AXIS;
-  default:
-    return "";
+    case SyncPropertiesType::SYNC_TIME:
+      return CFG_VAL_SYNC_TIME;
+    case SyncPropertiesType::SYNC_HISTOGRAM_COLUMNS:
+      return CFG_VAL_SYNC_HISTO_COLUMNS;
+    case SyncPropertiesType::SYNC_HISTOGRAM_DELTA:
+      return CFG_VAL_SYNC_HISTO_DELTA;
+    case SyncPropertiesType::SYNC_MIN:
+      return CFG_VAL_SYNC_SEM_MIN;
+    case SyncPropertiesType::SYNC_MAX:
+      return CFG_VAL_SYNC_SEM_MAX;
+    case SyncPropertiesType::SYNC_OBJECT_ZOOM:
+      return CFG_VAL_SYNC_OBJ_ZOOM;
+    case SyncPropertiesType::SYNC_OBJECT_SELECTION:
+      return CFG_VAL_SYNC_OBJ_SEL;
+    case SyncPropertiesType::SYNC_WINDOWS_SIZE:
+      return CFG_VAL_SYNC_WIN_SIZE;
+    case SyncPropertiesType::SYNC_WINDOWS_POSITION:
+      return CFG_VAL_SYNC_WIN_POSITION;
+    case SyncPropertiesType::SYNC_COLOR_PALETTE:
+      return CFG_VAL_SYNC_COLOR_PALETTE;
+    case SyncPropertiesType::SYNC_INFO_PANEL:
+      return CFG_VAL_SYNC_INFO_PANEL;
+    case SyncPropertiesType::SYNC_OBJECT_AXIS:
+      return CFG_VAL_SYNC_OBJECT_AXIS;
+    default:
+      return "";
   }
 }
-SyncPropertiesType LabelConstructor::labelToProperty (const std::string &label)
+SyncPropertiesType LabelConstructor::labelToProperty( const std::string &label )
 {
-
-  if (label == CFG_VAL_SYNC_TIME)
+  if( label == CFG_VAL_SYNC_TIME )
     return SyncPropertiesType::SYNC_TIME;
-  else if (label == CFG_VAL_SYNC_HISTO_COLUMNS)
+  else if( label == CFG_VAL_SYNC_HISTO_COLUMNS )
     return SyncPropertiesType::SYNC_HISTOGRAM_COLUMNS;
-  else if (label == CFG_VAL_SYNC_HISTO_DELTA)
+  else if( label == CFG_VAL_SYNC_HISTO_DELTA )
     return SyncPropertiesType::SYNC_HISTOGRAM_DELTA;
-  else if (label == CFG_VAL_SYNC_SEM_MIN)
+  else if( label == CFG_VAL_SYNC_SEM_MIN )
     return SyncPropertiesType::SYNC_MIN;
-  else if (label == CFG_VAL_SYNC_SEM_MAX)
+  else if( label == CFG_VAL_SYNC_SEM_MAX )
     return SyncPropertiesType::SYNC_MAX;
-  else if (label == CFG_VAL_SYNC_OBJ_ZOOM)
+  else if( label == CFG_VAL_SYNC_OBJ_ZOOM )
     return SyncPropertiesType::SYNC_OBJECT_ZOOM;
-  else if (label == CFG_VAL_SYNC_OBJ_SEL)
+  else if( label == CFG_VAL_SYNC_OBJ_SEL )
     return SyncPropertiesType::SYNC_OBJECT_SELECTION;
-  else if (label == CFG_VAL_SYNC_WIN_SIZE)
+  else if( label == CFG_VAL_SYNC_WIN_SIZE )
     return SyncPropertiesType::SYNC_WINDOWS_SIZE;
-  else if (label == CFG_VAL_SYNC_WIN_POSITION)
+  else if( label == CFG_VAL_SYNC_WIN_POSITION )
     return SyncPropertiesType::SYNC_WINDOWS_POSITION;
-  else if (label == CFG_VAL_SYNC_COLOR_PALETTE)
+  else if( label == CFG_VAL_SYNC_COLOR_PALETTE )
     return SyncPropertiesType::SYNC_COLOR_PALETTE;
-  else if (label == CFG_VAL_SYNC_INFO_PANEL)
+  else if( label == CFG_VAL_SYNC_INFO_PANEL )
     return SyncPropertiesType::SYNC_INFO_PANEL;
-  else if (label == CFG_VAL_SYNC_OBJECT_AXIS)
+  else if( label == CFG_VAL_SYNC_OBJECT_AXIS )
     return SyncPropertiesType::SYNC_OBJECT_AXIS;
   else
     return SyncPropertiesType::SYNC_INIT;
@@ -384,9 +390,8 @@ string LabelConstructor::timeLabel( ptime value, PRV_UINT32 precision )
   {
     sstrTimeLabel.imbue( std::locale( locale( "" ), tmpFacet ) );
   }
-  catch(...)
+  catch( ... )
   {
-
     sstrTimeLabel.imbue( std::locale( std::locale::classic(), tmpFacet ) );
   }
   sstrTimeLabel << value;
@@ -395,16 +400,14 @@ string LabelConstructor::timeLabel( ptime value, PRV_UINT32 precision )
 }
 
 
-void LabelConstructor::presetBaseFormat( std::stringstream &whichStream,
-                                         PRV_UINT32 precision,
-                                         bool useLocale )
+void LabelConstructor::presetBaseFormat( std::stringstream &whichStream, PRV_UINT32 precision, bool useLocale )
 {
   whichStream.clear();
   whichStream.str( "" );
 
   whichStream << fixed;
   whichStream.precision( precision );
-  if ( useLocale )
+  if( useLocale )
     whichStream.imbue( myLocaleWithThousands );
 }
 
@@ -423,17 +426,14 @@ string LabelConstructor::timeLabel( TTime value, TTimeUnit unit, PRV_UINT32 prec
 }
 
 // "100,123.456789" --> 100123.456789
-bool LabelConstructor::getTimeValue( const string& timeLabel,
-                                     TTimeUnit unit,
-                                     PRV_UINT32 precision,
-                                     TTime& value )
+bool LabelConstructor::getTimeValue( const string &timeLabel, TTimeUnit unit, PRV_UINT32 precision, TTime &value )
 {
   bool done = false;
-  
+
   sstrTimeLabel.clear();
   sstrTimeLabel.str( "" );
 
-  if ( !sstrTimeLabel.eof() )
+  if( !sstrTimeLabel.eof() )
   {
     string sub;
 
@@ -441,7 +441,7 @@ bool LabelConstructor::getTimeValue( const string& timeLabel,
     tmp.clear();
     tmp.str( "" );
 
-    while ( !sstrTimeLabel.eof() )
+    while( !sstrTimeLabel.eof() )
     {
       std::getline( sstrTimeLabel, sub, separator );
       tmp << sub;
@@ -457,9 +457,7 @@ bool LabelConstructor::getTimeValue( const string& timeLabel,
 }
 
 
-string LabelConstructor::semanticLabel( const Timeline * whichWindow,
-                                        TSemanticValue value,
-                                        bool text, PRV_UINT32 precision, bool hexMode )
+string LabelConstructor::semanticLabel( const Timeline *whichWindow, TSemanticValue value, bool text, PRV_UINT32 precision, bool hexMode )
 {
   sstrSemanticLabel.clear();
   sstrSemanticLabel.str( "" );
@@ -467,81 +465,73 @@ string LabelConstructor::semanticLabel( const Timeline * whichWindow,
 
   sstrSemanticLabel << fixed;
   double dummyInt;
-  if ( modf( value, &dummyInt ) != 0.0 )
+  if( modf( value, &dummyInt ) != 0.0 )
     sstrSemanticLabel.precision( precision );
   else
     sstrSemanticLabel.precision( 0 );
 
   sstrSemanticLabel.imbue( myLocaleWithThousands );
 
-  if ( infoType == NO_TYPE || !text || hexMode )
+  if( infoType == NO_TYPE || !text || hexMode )
   {
-    if ( hexMode )
+    if( hexMode )
       sstrSemanticLabel << "0x" << std::hex << (PRV_INT64)value;
     else
       sstrSemanticLabel << value;
   }
   else
   {
-    if ( infoType == OBJECT_TYPE )
-      sstrSemanticLabel << LabelConstructor::objectLabel( value - 1, whichWindow->getLevel(),
-                                                          whichWindow->getTrace() );
-    else if ( infoType == APPL_TYPE )
-      sstrSemanticLabel << LabelConstructor::objectLabel( value - 1, TTraceLevel::APPLICATION,
-                                                          whichWindow->getTrace() );
-    else if ( infoType == TASK_TYPE )
-      sstrSemanticLabel << LabelConstructor::objectLabel( value - 1, TTraceLevel::TASK,
-                                                          whichWindow->getTrace() );
-    else if ( infoType == THREAD_TYPE )
-      sstrSemanticLabel << LabelConstructor::objectLabel( value - 1, TTraceLevel::THREAD,
-                                                          whichWindow->getTrace() );
-    else if ( infoType == NODE_TYPE )
-      sstrSemanticLabel << LabelConstructor::objectLabel( value, TTraceLevel::NODE,
-                                                          whichWindow->getTrace() );
-    else if ( infoType == CPU_TYPE )
-      sstrSemanticLabel << LabelConstructor::objectLabel( value, TTraceLevel::CPU,
-                                                          whichWindow->getTrace() );
-    else if ( infoType == TIME_TYPE )
+    if( infoType == OBJECT_TYPE )
+      sstrSemanticLabel << LabelConstructor::objectLabel( value - 1, whichWindow->getLevel(), whichWindow->getTrace() );
+    else if( infoType == APPL_TYPE )
+      sstrSemanticLabel << LabelConstructor::objectLabel( value - 1, TTraceLevel::APPLICATION, whichWindow->getTrace() );
+    else if( infoType == TASK_TYPE )
+      sstrSemanticLabel << LabelConstructor::objectLabel( value - 1, TTraceLevel::TASK, whichWindow->getTrace() );
+    else if( infoType == THREAD_TYPE )
+      sstrSemanticLabel << LabelConstructor::objectLabel( value - 1, TTraceLevel::THREAD, whichWindow->getTrace() );
+    else if( infoType == NODE_TYPE )
+      sstrSemanticLabel << LabelConstructor::objectLabel( value, TTraceLevel::NODE, whichWindow->getTrace() );
+    else if( infoType == CPU_TYPE )
+      sstrSemanticLabel << LabelConstructor::objectLabel( value, TTraceLevel::CPU, whichWindow->getTrace() );
+    else if( infoType == TIME_TYPE )
       sstrSemanticLabel << LabelConstructor::timeLabel( value, whichWindow->getTimeUnit(), precision );
-    else if ( infoType == STATE_TYPE )
+    else if( infoType == STATE_TYPE )
     {
       string tmpstr;
-      if ( !whichWindow->getTrace()->getStateLabels().getStateLabel( value, tmpstr ) )
+      if( !whichWindow->getTrace()->getStateLabels().getStateLabel( value, tmpstr ) )
         sstrSemanticLabel << tmpstr << " state " << value;
       else
         sstrSemanticLabel << tmpstr;
     }
-    else if ( infoType == EVENTTYPE_TYPE )
+    else if( infoType == EVENTTYPE_TYPE )
     {
       string tmpstr;
-      if ( !whichWindow->getTrace()->getEventLabels().getEventTypeLabel( value, tmpstr ) )
+      if( !whichWindow->getTrace()->getEventLabels().getEventTypeLabel( value, tmpstr ) )
         sstrSemanticLabel << "type " << value;
       else
         sstrSemanticLabel << tmpstr;
     }
-    else if ( infoType == EVENTVALUE_TYPE )
+    else if( infoType == EVENTVALUE_TYPE )
     {
       string tmpstr;
-      vector<TEventType> types;
+      vector< TEventType > types;
       bool found = false;
-      whichWindow->getFilter()->getValidEvents( types,
-          whichWindow->getTrace()->getLoadedEvents() );
+      whichWindow->getFilter()->getValidEvents( types, whichWindow->getTrace()->getLoadedEvents() );
 
-      for ( vector<TEventType>::iterator it = types.begin(); it != types.end(); ++it )
+      for( vector< TEventType >::iterator it = types.begin(); it != types.end(); ++it )
       {
-        if ( whichWindow->getTrace()->getEventLabels().getEventValueLabel(
-               ( *it ), value, tmpstr ) )
+        if( whichWindow->getTrace()->getEventLabels().getEventValueLabel( ( *it ), value, tmpstr ) )
         {
           found = true;
           sstrSemanticLabel << tmpstr;
           break;
         }
       }
-      if ( !found )
+      if( !found )
       {
-        if ( types.begin() == types.end() )
+        if( types.begin() == types.end() )
         {
-          if ( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( value, tmpstr ) )
+          if( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( value, tmpstr ) )
             sstrSemanticLabel << "value " << value;
           else
             sstrSemanticLabel << tmpstr;
@@ -552,25 +542,25 @@ string LabelConstructor::semanticLabel( const Timeline * whichWindow,
         }
       }
     }
-    else if ( infoType == COMMSIZE_TYPE )
+    else if( infoType == COMMSIZE_TYPE )
       sstrSemanticLabel << value << " bytes";
-    else if ( infoType == COMMTAG_TYPE )
+    else if( infoType == COMMTAG_TYPE )
       sstrSemanticLabel << value;
-    else if ( infoType == BANDWIDTH_TYPE )
+    else if( infoType == BANDWIDTH_TYPE )
     {
-      if ( whichWindow->getTimeUnit() == NS )
+      if( whichWindow->getTimeUnit() == NS )
         sstrSemanticLabel << value << " GB/sec";
-      else if ( whichWindow->getTimeUnit() == US )
+      else if( whichWindow->getTimeUnit() == US )
         sstrSemanticLabel << value << " MB/sec";
-      else if ( whichWindow->getTimeUnit() == MS )
+      else if( whichWindow->getTimeUnit() == MS )
         sstrSemanticLabel << value << " KB/sec";
-      else if ( whichWindow->getTimeUnit() == SEC )
+      else if( whichWindow->getTimeUnit() == SEC )
         sstrSemanticLabel << value << " bytes/sec";
-      else if ( whichWindow->getTimeUnit() == MIN )
+      else if( whichWindow->getTimeUnit() == MIN )
         sstrSemanticLabel << value << " bytes/min";
-      else if ( whichWindow->getTimeUnit() == HOUR )
+      else if( whichWindow->getTimeUnit() == HOUR )
         sstrSemanticLabel << value << " bytes/hour";
-      else if ( whichWindow->getTimeUnit() == DAY )
+      else if( whichWindow->getTimeUnit() == DAY )
         sstrSemanticLabel << value << " bytes/day";
     }
     else
@@ -581,10 +571,7 @@ string LabelConstructor::semanticLabel( const Timeline * whichWindow,
 }
 
 
-string LabelConstructor::eventLabel( Timeline *whichWindow,
-                                     TEventType whichType,
-                                     TSemanticValue whichValue,
-                                     bool text )
+string LabelConstructor::eventLabel( Timeline *whichWindow, TEventType whichType, TSemanticValue whichValue, bool text )
 {
   label.clear();
   label.str( "" );
@@ -594,11 +581,11 @@ string LabelConstructor::eventLabel( Timeline *whichWindow,
   label.precision( 0 );
   label.imbue( myLocaleWithThousands );
 
-  if ( !text )
+  if( !text )
     label << "Type is " << whichType;
   else
   {
-    if ( !whichWindow->getTrace()->getEventLabels().getEventTypeLabel( whichType, tmpstr ) )
+    if( !whichWindow->getTrace()->getEventLabels().getEventTypeLabel( whichType, tmpstr ) )
     {
       label << tmpstr << " type " << whichType;
     }
@@ -607,12 +594,12 @@ string LabelConstructor::eventLabel( Timeline *whichWindow,
   }
 
   label.precision( ParaverConfig::getInstance()->getTimelinePrecision() );
-  if ( !text )
+  if( !text )
     label << " Value is " << whichValue;
   else
   {
     label << " ";
-    if ( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( whichType, whichValue, tmpstr ) )
+    if( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( whichType, whichValue, tmpstr ) )
       label << "value " << whichValue;
     else
       label << tmpstr;
@@ -622,9 +609,7 @@ string LabelConstructor::eventLabel( Timeline *whichWindow,
 }
 
 
-string LabelConstructor::eventTypeLabel( Timeline *whichWindow,
-                                         TEventType whichType,
-                                         bool text )
+string LabelConstructor::eventTypeLabel( Timeline *whichWindow, TEventType whichType, bool text )
 {
   label.clear();
   label.str( "" );
@@ -634,11 +619,11 @@ string LabelConstructor::eventTypeLabel( Timeline *whichWindow,
   label.precision( 0 );
   label.imbue( myLocaleWithThousands );
 
-  if ( !text )
+  if( !text )
     label << "Type is " << whichType;
   else
   {
-    if ( !whichWindow->getTrace()->getEventLabels().getEventTypeLabel( whichType, tmpstr ) )
+    if( !whichWindow->getTrace()->getEventLabels().getEventTypeLabel( whichType, tmpstr ) )
       label << tmpstr << " type " << whichType;
     else
       label << tmpstr;
@@ -648,10 +633,7 @@ string LabelConstructor::eventTypeLabel( Timeline *whichWindow,
 }
 
 
-string LabelConstructor::eventValueLabel( Timeline *whichWindow,
-                                          TEventType whichType,
-                                          TSemanticValue whichValue,
-                                          bool writeValueAsPrefix )
+string LabelConstructor::eventValueLabel( Timeline *whichWindow, TEventType whichType, TSemanticValue whichValue, bool writeValueAsPrefix )
 {
   label.clear();
   label.str( "" );
@@ -661,9 +643,9 @@ string LabelConstructor::eventValueLabel( Timeline *whichWindow,
   label.precision( 0 );
   label.imbue( myLocaleWithThousands );
 
-  if ( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( whichType, whichValue, tmpstr ) )
+  if( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( whichType, whichValue, tmpstr ) )
     label << "";
-  else if ( writeValueAsPrefix )
+  else if( writeValueAsPrefix )
     label << whichValue << " " << tmpstr;
   else
     label << tmpstr;
@@ -672,13 +654,15 @@ string LabelConstructor::eventValueLabel( Timeline *whichWindow,
 }
 
 
-std::string LabelConstructor::transformToShort( const std::string& onLabel, char beginDelimiter, char endDelimiter )
+std::string LabelConstructor::transformToShort( const std::string &onLabel, char beginDelimiter, char endDelimiter )
 {
   std::string shortLabel{ onLabel };
   string::size_type beginPos = shortLabel.find_first_of( beginDelimiter );
-  string::size_type endPos = shortLabel.find_last_of( endDelimiter );
+  string::size_type endPos   = shortLabel.find_last_of( endDelimiter );
   if( beginPos != string::npos && endPos != string::npos )
+  {
     shortLabel.erase( beginPos, endPos - beginPos + 1 );
+  }
 
   return shortLabel;
 }
@@ -686,7 +670,7 @@ std::string LabelConstructor::transformToShort( const std::string& onLabel, char
 
 void LabelConstructor::getGUIGroupLabels( const TGroupID groupID, vector< string > &labels )
 {
-  switch ( groupID )
+  switch( groupID )
   {
     case TGroupID::COLOR:
       labels.push_back( GUI_COLORS_CODE_COLOR );
@@ -758,33 +742,33 @@ void LabelConstructor::getGUIGroupLabels( const TGroupID groupID, vector< string
 
 string LabelConstructor::getDate( bool reverseOrder )
 {
-  string resultString("");
+  string resultString( "" );
 
   string currentDate( __DATE__ );
   string currentDay = currentDate.substr( 4, 2 );
 
-  if ( currentDay.compare("??") != 0 )
+  if( currentDay.compare( "??" ) != 0 )
   {
     stringstream reverseDate;
     string currentYear  = currentDate.substr( 7, 4 );
     string currentMonth = currentDate.substr( 0, 3 );
-    string months = "JanFebMarAprMayJunJulAugSepOctNovDec";
+    string months       = "JanFebMarAprMayJunJulAugSepOctNovDec";
     stringstream auxDay( currentDay );
     int numericDay;
     auxDay >> numericDay;
 
-    if ( reverseOrder )
+    if( reverseOrder )
     {
       reverseDate << currentYear;
-      reverseDate << setfill('0');
-      reverseDate << setw(2) << ( months.find( currentMonth ) / 3 ) + 1;
-      reverseDate << setw(2) << numericDay;
+      reverseDate << setfill( '0' );
+      reverseDate << setw( 2 ) << ( months.find( currentMonth ) / 3 ) + 1;
+      reverseDate << setw( 2 ) << numericDay;
     }
     else
     {
-      reverseDate << setfill('0');
-      reverseDate << setw(2) << numericDay;
-      reverseDate << setw(2) << ( months.find( currentMonth ) / 3 ) + 1;
+      reverseDate << setfill( '0' );
+      reverseDate << setw( 2 ) << numericDay;
+      reverseDate << setw( 2 ) << ( months.find( currentMonth ) / 3 ) + 1;
       reverseDate << currentYear;
     }
 
@@ -795,21 +779,21 @@ string LabelConstructor::getDate( bool reverseOrder )
 }
 
 
-std::string LabelConstructor::getImageFileSuffix( const TImageFormat& format )
+std::string LabelConstructor::getImageFileSuffix( const TImageFormat &format )
 {
   string resultString;
 
   switch( format )
   {
-    case  TImageFormat::BMP:
+    case TImageFormat::BMP:
       resultString = string( "bmp" );
       break;
 
-    case  TImageFormat::JPG:
+    case TImageFormat::JPG:
       resultString = string( "jpg" );
       break;
 
-    case  TImageFormat::PNG:
+    case TImageFormat::PNG:
       resultString = string( "png" );
       break;
 
@@ -826,7 +810,7 @@ std::string LabelConstructor::getImageFileSuffix( const TImageFormat& format )
 }
 
 
-std::string LabelConstructor::getDataFileSuffix( const TTextFormat& format, bool initWithDot )
+std::string LabelConstructor::getDataFileSuffix( const TTextFormat &format, bool initWithDot )
 {
   string resultString;
 
@@ -850,7 +834,7 @@ std::string LabelConstructor::getDataFileSuffix( const TTextFormat& format, bool
       break;
   }
 
-  if ( initWithDot )
+  if( initWithDot )
     resultString = "." + resultString;
 
   return resultString;
