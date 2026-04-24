@@ -22,47 +22,57 @@
 \*****************************************************************************/
 
 
-#include "kwindow.h"
 #include "intervalthread.h"
 
-KRecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
-                                   KRecordList *displayList )
+#include "kwindow.h"
+#include "semanticthreadfunctions.h"
+
+KRecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create, KRecordList *displayList )
 {
-  createList = NOCREATE;
+  createList   = NOCREATE;
   currentValue = 0.0;
 
-  if ( displayList == nullptr )
+  if( displayList == nullptr )
   {
     displayList = &myDisplayList;
     displayList->clear();
   }
 
   if( !notWindowInits )
-    function = ( SemanticThread * ) window->getSemanticFunction( THREAD );
+    function = (SemanticThread *)window->getSemanticFunction( THREAD );
 
-  if ( begin != nullptr )
+  if( begin != nullptr )
     delete begin;
-  if ( end != nullptr )
+  if( end != nullptr )
     delete end;
 
   if( initialTime >= window->getTrace()->getEndTime() )
   {
     begin = window->getThreadEndRecord( order );
-    end = begin->clone();
+    end   = begin->clone();
     return displayList;
   }
+
+  behaviour = TBehaviour::REGULAR;
 
   begin = window->getThreadRecordByTime( order )->clone();
   if( !function->validRecord( begin ) )
     begin = getPrevRecord( begin, displayList );
   end = begin->clone();
 
-  if ( ( !function->getInitFromBegin() ) && ( initialTime > 0.0 ) )
+  if( typeid( *function ) == typeid( PeriodicBurst ) )
+  {
+    createList = create;
+    behaviour  = TBehaviour::PERIODIC_BURST;
+    return initPeriodicBurst( initialTime, displayList );
+  }
+
+  if( ( !function->getInitFromBegin() ) && ( initialTime > 0.0 ) )
     calcPrev( displayList, true );
 
   createList = create;
   calcNext( displayList, true );
-  while ( ( !end->isNull() ) && ( end->getTime() <= initialTime ) )
+  while( ( !end->isNull() ) && ( end->getTime() <= initialTime ) )
     calcNext( displayList );
 
   return displayList;
@@ -76,20 +86,23 @@ MemoryTrace::iterator *IntervalThread::getTraceEnd() const
 
 KRecordList *IntervalThread::calcNext( KRecordList *displayList, bool initCalc )
 {
+  if( behaviour == TBehaviour::PERIODIC_BURST )
+    return calcNextPeriodicBurst( displayList );
+
   SemanticThreadInfo info;
   info.callingInterval = this;
 
-  if ( displayList == nullptr )
+  if( displayList == nullptr )
     displayList = &myDisplayList;
 
-  if ( !initCalc )
+  if( !initCalc )
   {
     *begin = *end;
   }
 
-  info.it = begin;
+  info.it      = begin;
   currentValue = function->execute( &info );
-  end = getNextRecord( end, displayList );
+  end          = getNextRecord( end, displayList );
 
   return displayList;
 }
@@ -97,22 +110,25 @@ KRecordList *IntervalThread::calcNext( KRecordList *displayList, bool initCalc )
 
 KRecordList *IntervalThread::calcPrev( KRecordList *displayList, bool initCalc )
 {
+  if( behaviour == TBehaviour::PERIODIC_BURST )
+    return calcPrevPeriodicBurst( displayList );
+
   SemanticThreadInfo info;
   info.callingInterval = this;
 
-  if ( displayList == nullptr )
+  if( displayList == nullptr )
     displayList = &myDisplayList;
 
-  if ( !initCalc )
+  if( !initCalc )
   {
     *end = *begin;
   }
 
-  begin = getPrevRecord( begin, displayList );
-  info.it = begin;
+  begin        = getPrevRecord( begin, displayList );
+  info.it      = begin;
   currentValue = function->execute( &info );
 
-  if ( initCalc )
+  if( initCalc )
   {
     *end = *begin;
   }
@@ -121,26 +137,87 @@ KRecordList *IntervalThread::calcPrev( KRecordList *displayList, bool initCalc )
 }
 
 
-MemoryTrace::iterator *IntervalThread::getNextRecord( MemoryTrace::iterator *it,
-    KRecordList *displayList )
+KRecordList *IntervalThread::initPeriodicBurst( TRecordTime initialTime, KRecordList *displayList )
+{
+  currentRecordListIt = window->getThreadRecordByTime( order )->clone();
+  if( !function->validRecord( currentRecordListIt ) )
+    currentRecordListIt = getPrevRecord( currentRecordListIt, displayList );
+
+  virtualBeginRecord.type   = STATE;
+  virtualBeginRecord.time   = 0;
+  virtualBeginRecord.thread = currentRecordListIt->getThread();
+  virtualBeginRecord.CPU    = currentRecordListIt->getCPU();
+
+  virtualEndRecord.type = STATE;
+  if( function->getParam( PeriodicBurst::ONLY_ONE_BURST )[ 0 ] != 0.0 )
+    virtualEndRecord.time = window->getTrace()->getEndTime();
+  else
+    virtualEndRecord.time = virtualBeginRecord.time + function->getParam( PeriodicBurst::DURATION )[ 0 ];
+  virtualEndRecord.thread = currentRecordListIt->getThread();
+  virtualEndRecord.CPU    = currentRecordListIt->getCPU();
+
+  begin->setRecord( &virtualBeginRecord );
+  end->setRecord( &virtualEndRecord );
+
+  currentValue = 1.0;
+
+  while( end->getTime() <= initialTime )
+  {
+    calcNextPeriodicBurst( displayList );
+  }
+
+  return displayList;
+}
+
+
+KRecordList *IntervalThread::calcNextPeriodicBurst( KRecordList *displayList )
+{
+  virtualBeginRecord.time = virtualEndRecord.time;
+  if( currentValue == 0.0 )
+  {
+    virtualEndRecord.time += function->getParam( PeriodicBurst::DURATION )[ 0 ];
+    currentValue = 1.0;
+  }
+  else if( currentValue == 1.0 )
+  {
+    virtualEndRecord.time += function->getParam( PeriodicBurst::PERIOD )[ 0 ];
+    currentValue = 0.0;
+  }
+
+  while( currentRecordListIt->getTime() <= end->getTime() && currentRecordListIt->getTime() < window->getTrace()->getEndTime() )
+  {
+    currentRecordListIt = getNextRecord( currentRecordListIt, displayList );
+  }
+
+  return displayList;
+}
+
+
+KRecordList *IntervalThread::calcPrevPeriodicBurst( KRecordList *displayList )
+{
+  // Will be never executed
+  std::cout << "calc prev" << std::endl;
+  return displayList;
+}
+
+
+MemoryTrace::iterator *IntervalThread::getNextRecord( MemoryTrace::iterator *it, KRecordList *displayList )
 {
   ++( *it );
-  while ( !it->isNull() )
+  while( !it->isNull() )
   {
-    if ( window->passFilter( it ) )
+    if( window->passFilter( it ) )
     {
-      if ( ( ( createList & CREATEEVENTS ) && ( it->getRecordType() & EVENT ) )
-           ||
-           ( ( createList & CREATECOMMS ) && ( it->getRecordType() & COMM ) ) )
+      if( ( ( createList & CREATEEVENTS ) && ( it->getRecordType() & EVENT ) ) || ( ( createList & CREATECOMMS ) && ( it->getRecordType() & COMM ) ) )
         displayList->insert( window, it );
 
-      if ( function->validRecord( it ) )
+      if( function->validRecord( it ) )
         break;
     }
     ++( *it );
   }
 
-  if ( it->isNull() )
+  if( it->isNull() )
   {
     delete it;
     it = window->getThreadEndRecord( order );
@@ -150,26 +227,23 @@ MemoryTrace::iterator *IntervalThread::getNextRecord( MemoryTrace::iterator *it,
 }
 
 
-MemoryTrace::iterator *IntervalThread::getPrevRecord( MemoryTrace::iterator *it,
-    KRecordList *displayList )
+MemoryTrace::iterator *IntervalThread::getPrevRecord( MemoryTrace::iterator *it, KRecordList *displayList )
 {
   --( *it );
-  while ( !it->isNull() )
+  while( !it->isNull() )
   {
-    if ( window->passFilter( it ) )
+    if( window->passFilter( it ) )
     {
-      if ( ( ( createList & CREATEEVENTS ) && ( it->getRecordType() & EVENT ) )
-           ||
-           ( ( createList & CREATECOMMS ) && ( it->getRecordType() & COMM ) ) )
+      if( ( ( createList & CREATEEVENTS ) && ( it->getRecordType() & EVENT ) ) || ( ( createList & CREATECOMMS ) && ( it->getRecordType() & COMM ) ) )
         displayList->insert( window, it );
 
-      if ( function->validRecord( it ) )
+      if( function->validRecord( it ) )
         break;
     }
     --( *it );
   }
 
-  if ( it->isNull() )
+  if( it->isNull() )
   {
     delete it;
     it = window->getThreadBeginRecord( order );

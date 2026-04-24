@@ -38,6 +38,96 @@ void getNextEvent( MemoryTrace::iterator *it, KSingleWindow *window );
 TSemanticValue getTotalCommSize( MemoryTrace::iterator *itBegin, MemoryTrace::iterator *itEnd, KSingleWindow *window );
 
 
+/*******************************
+** Artificial functions (Thread)
+********************************/
+
+class PeriodicBurst : public SemanticThread
+{
+  public:
+    typedef enum
+    {
+      PERIOD = 0,
+      DURATION,
+      ONLY_ONE_BURST,
+      MAXPARAM
+    } TParam;
+
+    PeriodicBurst()
+    {
+      setDefaultParam();
+    }
+
+    virtual TParamIndex getMaxParam() const override
+    {
+      return MAXPARAM;
+    }
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KTimeline *whichWindow ) override;
+
+    virtual std::string getName() override
+    {
+      return PeriodicBurst::name;
+    }
+
+    virtual SemanticFunction *clone() override
+    {
+      return new PeriodicBurst( *this );
+    }
+
+    virtual SemanticInfoType getSemanticInfoType() const override
+    {
+      return NO_TYPE;
+    }
+
+    virtual bool validRecord( MemoryTrace::iterator *record ) override;
+
+  protected:
+    virtual const TRecordType getValidateMask() override
+    {
+      return validateMask;
+    }
+    virtual const bool getMyInitFromBegin() override
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
+    {
+      TParamValue tmp;
+
+      if( whichParam >= getMaxParam() )
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+      else if( whichParam == PERIOD )
+        tmp.push_back( 1000000.0 );
+      else if( whichParam == DURATION )
+        tmp.push_back( 1.0 );
+      else if( whichParam == ONLY_ONE_BURST )
+        tmp.push_back( 0.0 );
+
+      return tmp;
+    }
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
+    {
+      if( whichParam >= getMaxParam() )
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+      else if( whichParam == PERIOD )
+        return "Period (ns)";
+      else if( whichParam == DURATION )
+        return "Duration (ns)";
+      else if( whichParam == ONLY_ONE_BURST )
+        return "Only one burst";
+
+      return "";
+    }
+
+  private:
+    static const TRecordType validateMask = EMPTYREC;
+    static const bool initFromBegin       = false;
+    static std::string name;
+    KSingleWindow *myWindow;
+};
+
+
 /**************************
 ** State functions (Thread)
 ***************************/

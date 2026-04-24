@@ -24,47 +24,44 @@
 
 #pragma once
 
-
 #include "interval.h"
+#include "plaintypes.h"
 #include "semanticthread.h"
 
 class KSingleWindow;
 class SemanticThread;
 
-class IntervalThread: public Interval
+class IntervalThread : public Interval
 {
   public:
     IntervalThread()
     {
-      begin = nullptr;
-      end = nullptr;
+      begin    = nullptr;
+      end      = nullptr;
       function = nullptr;
     }
 
-    IntervalThread( KSingleWindow *whichWindow, TWindowLevel whichLevel,
-                    TObjectOrder whichOrder ):
-        Interval( whichLevel, whichOrder ), window( whichWindow )
+    IntervalThread( KSingleWindow *whichWindow, TWindowLevel whichLevel, TObjectOrder whichOrder )
+      : Interval( whichLevel, whichOrder ), window( whichWindow )
     {
       function = nullptr;
     }
 
     virtual ~IntervalThread()
     {
-      if ( begin != nullptr )
+      if( begin != nullptr )
         delete begin;
-      if ( end != nullptr )
+      if( end != nullptr )
         delete end;
     }
 
-    virtual KRecordList *init( TRecordTime initialTime,
-                               TCreateList create,
-                               KRecordList *displayList = nullptr ) override;
+    virtual KRecordList *init( TRecordTime initialTime, TCreateList create, KRecordList *displayList = nullptr ) override;
     virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false ) override;
     virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false ) override;
 
     virtual KTimeline *getWindow() override
     {
-      return ( KTimeline * ) window;
+      return (KTimeline *)window;
     }
 
     virtual void setSemanticFunction( SemanticThread *whichFunction )
@@ -85,12 +82,23 @@ class IntervalThread: public Interval
     TCreateList createList;
 
   private:
-    virtual MemoryTrace::iterator *getNextRecord( MemoryTrace::iterator *it,
-                                                  KRecordList *displayList );
-    virtual MemoryTrace::iterator *getPrevRecord( MemoryTrace::iterator *it,
-                                                  KRecordList *displayList );
+    enum class TBehaviour
+    {
+      REGULAR = 0,
+      PERIODIC_BURST
+    };
 
+    TBehaviour behaviour;
+
+    Plain::TRecord virtualBeginRecord;
+    Plain::TRecord virtualEndRecord;
+
+    MemoryTrace::iterator *currentRecordListIt;
+
+    KRecordList *initPeriodicBurst( TRecordTime initialTime, KRecordList *displayList );
+    KRecordList *calcNextPeriodicBurst( KRecordList *displayList );
+    KRecordList *calcPrevPeriodicBurst( KRecordList *displayList );
+
+    virtual MemoryTrace::iterator *getNextRecord( MemoryTrace::iterator *it, KRecordList *displayList );
+    virtual MemoryTrace::iterator *getPrevRecord( MemoryTrace::iterator *it, KRecordList *displayList );
 };
-
-
-

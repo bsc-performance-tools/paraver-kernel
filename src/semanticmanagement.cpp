@@ -154,6 +154,12 @@ void createSemantic()
   functions[ 4 ].push_back( new NotInState() );
   functions[ 4 ].push_back( new StateRecordDuration() );
 
+  /*******************************
+  ** Artificial functions (Thread)
+  ********************************/
+  // Still in State functions group, until a new bunch of new functions are created
+  functions[ 4 ].push_back( new PeriodicBurst() );
+
 
   /**************************
   ** Event functions (Thread)

@@ -244,6 +244,26 @@ std::optional< TRecordTime > nextCommPartnerTime( const MemoryTrace::iterator *b
   return retValue;
 }
 
+/*******************************
+** Artificial functions (Thread)
+********************************/
+
+string PeriodicBurst::name = "Periodic Burst";
+TSemanticValue PeriodicBurst::execute( const SemanticInfo *info )
+{
+  return 1.0;
+}
+
+void PeriodicBurst::init( KTimeline *whichWindow )
+{
+  myWindow = (KSingleWindow *)whichWindow;
+}
+
+bool PeriodicBurst::validRecord( MemoryTrace::iterator *record )
+{
+  return true;
+}
+
 
 /**************************
 ** State functions (Thread)
