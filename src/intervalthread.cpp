@@ -148,11 +148,8 @@ KRecordList *IntervalThread::initPeriodicBurst( TRecordTime initialTime, KRecord
   virtualBeginRecord.thread = currentRecordListIt->getThread();
   virtualBeginRecord.CPU    = currentRecordListIt->getCPU();
 
-  virtualEndRecord.type = STATE;
-  if( function->getParam( PeriodicBurst::ONLY_ONE_BURST )[ 0 ] != 0.0 )
-    virtualEndRecord.time = window->getTrace()->getEndTime();
-  else
-    virtualEndRecord.time = virtualBeginRecord.time + function->getParam( PeriodicBurst::DURATION )[ 0 ];
+  virtualEndRecord.type   = STATE;
+  virtualEndRecord.time   = function->getParam( PeriodicBurst::DURATION )[ 0 ];
   virtualEndRecord.thread = currentRecordListIt->getThread();
   virtualEndRecord.CPU    = currentRecordListIt->getCPU();
 
@@ -180,8 +177,13 @@ KRecordList *IntervalThread::calcNextPeriodicBurst( KRecordList *displayList )
   }
   else if( currentValue == 1.0 )
   {
-    virtualEndRecord.time += function->getParam( PeriodicBurst::PERIOD )[ 0 ];
-    currentValue = 0.0;
+    if( function->getParam( PeriodicBurst::PERIOD )[ 0 ] > function->getParam( PeriodicBurst::DURATION )[ 0 ] )
+    {
+      virtualEndRecord.time += ( function->getParam( PeriodicBurst::PERIOD )[ 0 ] - function->getParam( PeriodicBurst::DURATION )[ 0 ] );
+      currentValue = 0.0;
+    }
+    else
+      virtualEndRecord.time = virtualBeginRecord.time + function->getParam( PeriodicBurst::DURATION )[ 0 ];
   }
 
   while( currentRecordListIt->getTime() <= end->getTime() && currentRecordListIt->getTime() < window->getTrace()->getEndTime() )
@@ -196,7 +198,6 @@ KRecordList *IntervalThread::calcNextPeriodicBurst( KRecordList *displayList )
 KRecordList *IntervalThread::calcPrevPeriodicBurst( KRecordList *displayList )
 {
   // Will be never executed
-  std::cout << "calc prev" << std::endl;
   return displayList;
 }
 

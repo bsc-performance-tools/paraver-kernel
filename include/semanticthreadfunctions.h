@@ -49,7 +49,6 @@ class PeriodicBurst : public SemanticThread
     {
       PERIOD = 0,
       DURATION,
-      ONLY_ONE_BURST,
       MAXPARAM
     } TParam;
 
@@ -101,8 +100,6 @@ class PeriodicBurst : public SemanticThread
         tmp.push_back( 1000000.0 );
       else if( whichParam == DURATION )
         tmp.push_back( 1.0 );
-      else if( whichParam == ONLY_ONE_BURST )
-        tmp.push_back( 0.0 );
 
       return tmp;
     }
@@ -114,8 +111,6 @@ class PeriodicBurst : public SemanticThread
         return "Period (ns)";
       else if( whichParam == DURATION )
         return "Duration (ns)";
-      else if( whichParam == ONLY_ONE_BURST )
-        return "Only one burst";
 
       return "";
     }
