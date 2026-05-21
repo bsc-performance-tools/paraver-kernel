@@ -193,7 +193,7 @@ class KTraceCutter : public TraceCutter
     bool is_selected_appl( int appl_id );
     bool is_selected_thread( int appl_id, int task_id, int thread_id );
 
-
+    std::vector< std::vector< unsigned int > > global_thread_offsets; // [appl-1][task-1] -> global_start_index
 
     ThreadInfo& initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu );
 };

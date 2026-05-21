@@ -318,6 +318,23 @@ void KTraceCutter::parseInHeaderAndDumpOut( TraceStream *whichFile, std::fstream
   for ( auto i = 0; i < traceProcessModel.totalApplications(); ++i )
     appsInfo.emplace_back( traceProcessModel.totalThreads( i ) );
 
+  // Populate global thread offsets
+  global_thread_offsets.resize( traceProcessModel.totalApplications() );
+  unsigned int global_thread_count = 0; 
+  int app_idx = 0;
+  for( auto itApp = traceProcessModel.cbegin(); itApp != traceProcessModel.cend(); ++itApp )
+  {
+      global_thread_offsets[app_idx].resize( itApp->size() );
+      int task_idx = 0;
+      for( auto itTask = itApp->cbegin(); itTask != itApp->cend(); ++itTask )
+      {
+           global_thread_offsets[app_idx][task_idx] = global_thread_count;
+           global_thread_count += itTask->size();
+           task_idx++;
+      }
+      app_idx++;
+  }
+
   // Dump header in outfile
   dumpTraceHeader( outfile, tmpDate, traceEndTime, traceTimeUnit, traceResourceModel, traceProcessModel, communicators );
 }
@@ -808,6 +825,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
 }
 
 
+
 KTraceCutter::ThreadInfo& KTraceCutter::initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu )
 {
   ++useful_tasks;
@@ -855,6 +873,7 @@ void KTraceCutter::execute( std::string trace_in,
   useful_tasks = 0;
   first_time_caught = false;
   current_size = 0;
+
 
 
   /* Reading of the program arguments */
