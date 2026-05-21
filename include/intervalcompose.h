@@ -24,33 +24,33 @@
 
 #pragma once
 
-#include "plaintypes.h"
 #include "intervalhigh.h"
+#include "plaintypes.h"
 #include "semanticcompose.h"
+#include "virtualtraceiterator.h"
 
 class KTimeline;
 
-class IntervalCompose: public IntervalHigh
+class IntervalCompose : public IntervalHigh
 {
   public:
     IntervalCompose()
     {
-      behaviour = TBehaviour::REGULAR;
+      behaviour         = TBehaviour::REGULAR;
       accumulatedDeltas = 0.0;
-      function = nullptr;
-      endRecord = nullptr;
-      beginRecord = nullptr;
+      function          = nullptr;
+      endRecord         = nullptr;
+      beginRecord       = nullptr;
     }
 
-    IntervalCompose( KTimeline *whichWindow, TWindowLevel whichLevel,
-                     TObjectOrder whichOrder ):
-        IntervalHigh( whichLevel, whichOrder ), window( whichWindow )
+    IntervalCompose( KTimeline *whichWindow, TWindowLevel whichLevel, TObjectOrder whichOrder )
+      : IntervalHigh( whichLevel, whichOrder ), window( whichWindow )
     {
-      behaviour = TBehaviour::REGULAR;
+      behaviour         = TBehaviour::REGULAR;
       accumulatedDeltas = 0.0;
-      function = nullptr;
-      endRecord = nullptr;
-      beginRecord = nullptr;
+      function          = nullptr;
+      endRecord         = nullptr;
+      beginRecord       = nullptr;
     }
 
     virtual ~IntervalCompose()
@@ -65,8 +65,7 @@ class IntervalCompose: public IntervalHigh
         delete end;
     }
 
-    virtual KRecordList *init( TRecordTime initialTime, TCreateList create,
-                               KRecordList *displayList = nullptr ) override;
+    virtual KRecordList *init( TRecordTime initialTime, TCreateList create, KRecordList *displayList = nullptr ) override;
     virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false ) override;
     virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false ) override;
 
@@ -115,10 +114,12 @@ class IntervalCompose: public IntervalHigh
     };
 
     SemanticHighInfo semanticInfo;
-    
+
     TRecordTime accumulatedDeltas;
     TRecordTime timerBeginTime;
-    Plain::TRecord virtualRecord;
+    VirtualTraceIterator *timerIterator           = nullptr;
+    MemoryTrace::iterator *lastChildBeginIterator = nullptr;
+    MemoryTrace::iterator *lastChildEndIterator   = nullptr;
 
     TBehaviour behaviour;
     MemoryTrace::iterator *endRecord;

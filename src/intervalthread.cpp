@@ -143,6 +143,9 @@ KRecordList *IntervalThread::initPeriodicBurst( TRecordTime initialTime, KRecord
   if( !function->validRecord( currentRecordListIt ) )
     currentRecordListIt = getPrevRecord( currentRecordListIt, displayList );
 
+  Plain::TRecord virtualBeginRecord;
+  Plain::TRecord virtualEndRecord;
+
   virtualBeginRecord.type   = STATE;
   virtualBeginRecord.time   = 0;
   virtualBeginRecord.thread = currentRecordListIt->getThread();
@@ -153,7 +156,16 @@ KRecordList *IntervalThread::initPeriodicBurst( TRecordTime initialTime, KRecord
   virtualEndRecord.thread = currentRecordListIt->getThread();
   virtualEndRecord.CPU    = currentRecordListIt->getCPU();
 
+  if( begin != nullptr )
+    delete begin;
+  beginPeriodicBurstIt = new VirtualTraceIterator();
+  begin                = beginPeriodicBurstIt;
   begin->setRecord( &virtualBeginRecord );
+
+  if( end != nullptr )
+    delete end;
+  endPeriodicBurstIt = new VirtualTraceIterator();
+  end                = endPeriodicBurstIt;
   end->setRecord( &virtualEndRecord );
 
   currentValue = 1.0;
@@ -169,21 +181,27 @@ KRecordList *IntervalThread::initPeriodicBurst( TRecordTime initialTime, KRecord
 
 KRecordList *IntervalThread::calcNextPeriodicBurst( KRecordList *displayList )
 {
-  virtualBeginRecord.time = virtualEndRecord.time;
+  begin->setTime( end->getTime() );
   if( currentValue == 0.0 )
   {
-    virtualEndRecord.time += function->getParam( PeriodicBurst::DURATION )[ 0 ];
+    end->setTime( end->getTime() + function->getParam( PeriodicBurst::DURATION )[ 0 ] );
     currentValue = 1.0;
   }
   else if( currentValue == 1.0 )
   {
     if( function->getParam( PeriodicBurst::PERIOD )[ 0 ] > function->getParam( PeriodicBurst::DURATION )[ 0 ] )
     {
-      virtualEndRecord.time += ( function->getParam( PeriodicBurst::PERIOD )[ 0 ] - function->getParam( PeriodicBurst::DURATION )[ 0 ] );
+      end->setTime( end->getTime() + function->getParam( PeriodicBurst::PERIOD )[ 0 ] - function->getParam( PeriodicBurst::DURATION )[ 0 ] );
       currentValue = 0.0;
     }
     else
-      virtualEndRecord.time = virtualBeginRecord.time + function->getParam( PeriodicBurst::DURATION )[ 0 ];
+      end->setTime( end->getTime() + function->getParam( PeriodicBurst::DURATION )[ 0 ] );
+  }
+
+  if( end->getTime() > window->getTrace()->getEndTime() )
+  {
+    end->setTime( window->getTrace()->getEndTime() );
+    end->setRecordType( EMPTYREC );
   }
 
   while( currentRecordListIt->getTime() <= end->getTime() && currentRecordListIt->getTime() < window->getTrace()->getEndTime() )

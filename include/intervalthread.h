@@ -27,6 +27,7 @@
 #include "interval.h"
 #include "plaintypes.h"
 #include "semanticthread.h"
+#include "virtualtraceiterator.h"
 
 class KSingleWindow;
 class SemanticThread;
@@ -90,8 +91,8 @@ class IntervalThread : public Interval
 
     TBehaviour behaviour;
 
-    Plain::TRecord virtualBeginRecord;
-    Plain::TRecord virtualEndRecord;
+    VirtualTraceIterator *beginPeriodicBurstIt = nullptr;
+    VirtualTraceIterator *endPeriodicBurstIt   = nullptr;
 
     MemoryTrace::iterator *currentRecordListIt;
 

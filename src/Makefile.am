@@ -53,7 +53,8 @@ libparaver_kernel_la_SOURCES = \
     traceheaderexception.cpp\
     tracestream.cpp\
     vectorblocks.cpp\
-    vectortrace.cpp
+    vectortrace.cpp\
+    virtualtraceiterator.cpp
 
 
 mrproper: distclean

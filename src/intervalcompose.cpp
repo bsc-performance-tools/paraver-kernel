@@ -23,48 +23,48 @@
 
 
 #include "intervalcompose.h"
+
 #include "kwindow.h"
 #include "memorytrace.h"
 #include "semanticcomposefunctions.h"
 
-KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
-                                    KRecordList *displayList )
+KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create, KRecordList *displayList )
 {
   TRecordTime myInitTime;
 
   semanticInfo.callingInterval = this;
   semanticInfo.values.clear();
   semanticInfo.values.push_back( 0.0 );
-  createList = create;
+  createList   = create;
   currentValue = 0.0;
 
-  if ( displayList == nullptr )
+  if( displayList == nullptr )
   {
     displayList = &myDisplayList;
     displayList->clear();
   }
 
   if( !notWindowInits )
-    function = ( SemanticCompose * ) window->getSemanticFunction( level );
+    function = (SemanticCompose *)window->getSemanticFunction( level );
 
-  if ( endRecord != nullptr )
+  if( endRecord != nullptr )
   {
     delete endRecord;
     endRecord = nullptr;
   }
-  if ( beginRecord != nullptr )
+  if( beginRecord != nullptr )
   {
     delete beginRecord;
     beginRecord = nullptr;
   }
 
-  if ( typeid( *function ) == typeid( ComposeJoinBursts ) )
+  if( typeid( *function ) == typeid( ComposeJoinBursts ) )
   {
-    behaviour = TBehaviour::JOIN_BURSTS;
-    endRecord = ( ( KSingleWindow * ) window )->getEndRecord();
-    beginRecord = ( ( KSingleWindow * ) window )->getBeginRecord();
+    behaviour   = TBehaviour::JOIN_BURSTS;
+    endRecord   = ( (KSingleWindow *)window )->getEndRecord();
+    beginRecord = ( (KSingleWindow *)window )->getBeginRecord();
   }
-  else if ( typeid( *function ) == typeid( ComposeTimer ) )
+  else if( typeid( *function ) == typeid( ComposeTimer ) )
     behaviour = TBehaviour::TIMER;
   else
     behaviour = TBehaviour::REGULAR;
@@ -72,7 +72,7 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
   if( !notWindowInits )
     setChildren();
 
-  if ( function->getInitFromBegin() )
+  if( function->getInitFromBegin() )
     myInitTime = 0.0;
   else
     myInitTime = initialTime;
@@ -91,7 +91,7 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
   {
     case TBehaviour::REGULAR:
       semanticInfo.values[ 0 ] = childIntervals[ 0 ]->getValue();
-      currentValue = function->execute( &semanticInfo );
+      currentValue             = function->execute( &semanticInfo );
       break;
 
     case TBehaviour::JOIN_BURSTS:
@@ -105,10 +105,10 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
     default:
       break;
   }
-  
-  if ( function->getInitFromBegin() )
+
+  if( function->getInitFromBegin() )
   {
-    while ( end->getTime() <= initialTime )
+    while( end->getTime() <= initialTime )
       calcNext( displayList );
   }
 
@@ -118,7 +118,7 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
 
 KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc )
 {
-  if ( displayList == nullptr )
+  if( displayList == nullptr )
     displayList = &myDisplayList;
 
   switch( behaviour )
@@ -126,16 +126,16 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
     case TBehaviour::REGULAR:
       childIntervals[ 0 ]->calcNext( displayList );
       *begin = *childIntervals[ 0 ]->getBegin();
-      *end = *childIntervals[ 0 ]->getEnd();
+      *end   = *childIntervals[ 0 ]->getEnd();
 
       semanticInfo.values[ 0 ] = childIntervals[ 0 ]->getValue();
-      currentValue = function->execute( &semanticInfo );
+      currentValue             = function->execute( &semanticInfo );
       break;
-      
+
     case TBehaviour::JOIN_BURSTS:
       calcNextJoinBursts( displayList );
       break;
-    
+
     case TBehaviour::TIMER:
       calcNextTimer( displayList );
       break;
@@ -143,14 +143,14 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
     default:
       break;
   }
-  
+
   return displayList;
 }
 
 
 KRecordList *IntervalCompose::calcPrev( KRecordList *displayList, bool initCalc )
 {
-  if ( displayList == nullptr )
+  if( displayList == nullptr )
     displayList = &myDisplayList;
 
   switch( behaviour )
@@ -158,16 +158,16 @@ KRecordList *IntervalCompose::calcPrev( KRecordList *displayList, bool initCalc 
     case TBehaviour::REGULAR:
       childIntervals[ 0 ]->calcPrev( displayList );
       *begin = *childIntervals[ 0 ]->getBegin();
-      *end = *childIntervals[ 0 ]->getEnd();
+      *end   = *childIntervals[ 0 ]->getEnd();
 
       semanticInfo.values[ 0 ] = childIntervals[ 0 ]->getValue();
-      currentValue = function->execute( &semanticInfo );
+      currentValue             = function->execute( &semanticInfo );
       break;
-      
+
     case TBehaviour::JOIN_BURSTS:
       calcPrevJoinBursts( displayList );
       break;
-    
+
     case TBehaviour::TIMER:
       calcPrevTimer( displayList );
       break;
@@ -186,11 +186,11 @@ void IntervalCompose::initJoinBursts( KRecordList *displayList )
 
   currentValue = childIntervals[ 0 ]->getValue();
   childIntervals[ 0 ]->calcNext( displayList );
-  while ( currentValue == childIntervals[ 0 ]->getValue() )
+  while( currentValue == childIntervals[ 0 ]->getValue() )
   {
     *end = *childIntervals[ 0 ]->getEnd();
 
-    if (( *end == *endRecord ) || ( *end == *lastEnd ))
+    if( ( *end == *endRecord ) || ( *end == *lastEnd ) )
       break;
 
     // lastEnd to control loop!
@@ -205,22 +205,22 @@ void IntervalCompose::initJoinBursts( KRecordList *displayList )
 
 void IntervalCompose::calcNextJoinBursts( KRecordList *displayList )
 {
-  *begin = *childIntervals[ 0 ]->getBegin();
-  *end = *childIntervals[ 0 ]->getEnd();
+  *begin       = *childIntervals[ 0 ]->getBegin();
+  *end         = *childIntervals[ 0 ]->getEnd();
   currentValue = childIntervals[ 0 ]->getValue();
 
   childIntervals[ 0 ]->calcNext( displayList );
 
-  if ( *end == *endRecord )
+  if( *end == *endRecord )
     return;
 
   MemoryTrace::iterator *lastEnd = endRecord->clone();
 
-  while ( currentValue == childIntervals[ 0 ]->getValue() )
+  while( currentValue == childIntervals[ 0 ]->getValue() )
   {
     *end = *childIntervals[ 0 ]->getEnd();
 
-    if (( *end == *endRecord ) || ( *end == *lastEnd ))
+    if( ( *end == *endRecord ) || ( *end == *lastEnd ) )
       break;
 
     // lastEnd to control loop!
@@ -237,15 +237,15 @@ void IntervalCompose::calcPrevJoinBursts( KRecordList *displayList )
 {
   MemoryTrace::iterator *firstBegin = beginRecord->clone();
 
-  *begin = *childIntervals[ 0 ]->getBegin();
-  *end = *childIntervals[ 0 ]->getEnd();
+  *begin       = *childIntervals[ 0 ]->getBegin();
+  *end         = *childIntervals[ 0 ]->getEnd();
   currentValue = childIntervals[ 0 ]->getValue();
   childIntervals[ 0 ]->calcPrev( displayList );
-  while ( currentValue == childIntervals[ 0 ]->getValue() )
+  while( currentValue == childIntervals[ 0 ]->getValue() )
   {
     *begin = *childIntervals[ 0 ]->getBegin();
 
-    if (( *begin == *beginRecord ) || ( *begin == *firstBegin ))
+    if( ( *begin == *beginRecord ) || ( *begin == *firstBegin ) )
       break;
 
     // firstBegin to control loop!
@@ -260,6 +260,9 @@ void IntervalCompose::calcPrevJoinBursts( KRecordList *displayList )
 
 void IntervalCompose::initTimer( KRecordList *displayList )
 {
+  Plain::TRecord virtualRecord;
+  timerIterator = new VirtualTraceIterator();
+
   currentValue = childIntervals[ 0 ]->getValue();
 
   accumulatedDeltas = 0.0;
@@ -270,28 +273,33 @@ void IntervalCompose::initTimer( KRecordList *displayList )
     if( accumulatedDeltas > function->getParam( ComposeTimer::DELTA_TIME )[ 0 ] )
     {
       copyRecordContent( end );
-      virtualRecord.time = timerBeginTime + function->getParam( ComposeTimer::DELTA_TIME )[ 0 ];
-      end->setRecord( &virtualRecord );
-      accumulatedDeltas = 0.0;
+      timerIterator->setTime( timerBeginTime + function->getParam( ComposeTimer::DELTA_TIME )[ 0 ] );
+      lastChildEndIterator = end;
+      end                  = timerIterator;
+      accumulatedDeltas    = 0.0;
     }
   }
 }
 
 void IntervalCompose::calcNextTimer( KRecordList *displayList )
 {
-  if( end->getRecord() == &virtualRecord )
+  if( end == timerIterator )
   {
     // Stage 2: reset zone to child interval end
-    currentValue = 0.0;
-    *end = *childIntervals[ 0 ]->getEnd();
-    begin->setRecord( &virtualRecord );
+    currentValue           = 0.0;
+    lastChildBeginIterator = begin;
+    begin                  = end;
+    end                    = lastChildEndIterator;
     return;
   }
 
+  if( begin == timerIterator )
+    begin = lastChildBeginIterator;
+
   childIntervals[ 0 ]->calcNext( displayList );
   currentValue = childIntervals[ 0 ]->getValue();
-  *begin = *childIntervals[ 0 ]->getBegin();
-  *end = *childIntervals[ 0 ]->getEnd();
+  *begin       = *childIntervals[ 0 ]->getBegin();
+  *end         = *childIntervals[ 0 ]->getEnd();
 
   if( currentValue != 0 )
   {
@@ -300,17 +308,16 @@ void IntervalCompose::calcNextTimer( KRecordList *displayList )
     accumulatedDeltas += end->getTime() - begin->getTime();
   }
 
-  if( currentValue != 0 &&
-      accumulatedDeltas > function->getParam( ComposeTimer::DELTA_TIME )[ 0 ] )
+  if( currentValue != 0 && accumulatedDeltas > function->getParam( ComposeTimer::DELTA_TIME )[ 0 ] )
   {
     // Stage 1: current value zone [ beginning, +DELTA_TIME ]
     copyRecordContent( end );
-    virtualRecord.time = timerBeginTime + function->getParam( ComposeTimer::DELTA_TIME )[ 0 ];
-    end->setRecord( &virtualRecord );
-    accumulatedDeltas = 0.0;
+    timerIterator->setTime( timerBeginTime + function->getParam( ComposeTimer::DELTA_TIME )[ 0 ] );
+    lastChildEndIterator = end;
+    end                  = timerIterator;
+    accumulatedDeltas    = 0.0;
   }
-  else if( currentValue == 0 ||
-           accumulatedDeltas == function->getParam( ComposeTimer::DELTA_TIME )[ 0 ] )
+  else if( currentValue == 0 || accumulatedDeltas == function->getParam( ComposeTimer::DELTA_TIME )[ 0 ] )
     accumulatedDeltas = 0.0;
 }
 
@@ -322,96 +329,94 @@ void IntervalCompose::calcPrevTimer( KRecordList *displayList )
 
 void IntervalCompose::setChildren()
 {
-  if ( level == TOPCOMPOSE1 )
+  if( level == TOPCOMPOSE1 )
   {
-    if ( lastLevel != TOPCOMPOSE2 )
+    if( lastLevel != TOPCOMPOSE2 )
     {
       lastLevel = TOPCOMPOSE2;
       childIntervals.push_back( getWindowInterval( TOPCOMPOSE2, order ) );
     }
   }
-  else if ( level == TOPCOMPOSE2 )
+  else if( level == TOPCOMPOSE2 )
   {
-    if ( lastLevel != static_cast<TWindowLevel>( getWindowLevel() ) )
+    if( lastLevel != static_cast< TWindowLevel >( getWindowLevel() ) )
     {
       childIntervals.clear();
-      lastLevel = static_cast<TWindowLevel>( getWindowLevel() );
-      childIntervals.push_back( getWindowInterval(
-                                getComposeLevel( getWindowLevel() ), order ) );
+      lastLevel = static_cast< TWindowLevel >( getWindowLevel() );
+      childIntervals.push_back( getWindowInterval( getComposeLevel( getWindowLevel() ), order ) );
     }
   }
-  else if ( level == COMPOSEWORKLOAD )
+  else if( level == COMPOSEWORKLOAD )
   {
-    if ( lastLevel != WORKLOAD || window->isDerivedWindow() )
+    if( lastLevel != WORKLOAD || window->isDerivedWindow() )
     {
-      if ( window->isDerivedWindow() )
+      if( window->isDerivedWindow() )
         childIntervals.clear();
 
       lastLevel = WORKLOAD;
       childIntervals.push_back( getWindowInterval( WORKLOAD, order ) );
     }
   }
-  else if ( level == COMPOSEAPPLICATION )
+  else if( level == COMPOSEAPPLICATION )
   {
-    if ( lastLevel != APPLICATION || window->isDerivedWindow() )
+    if( lastLevel != APPLICATION || window->isDerivedWindow() )
     {
-      if ( window->isDerivedWindow() )
+      if( window->isDerivedWindow() )
         childIntervals.clear();
 
       lastLevel = APPLICATION;
       childIntervals.push_back( getWindowInterval( APPLICATION, order ) );
     }
   }
-  else if ( level == COMPOSETASK )
+  else if( level == COMPOSETASK )
   {
-    if ( lastLevel != TASK || window->isDerivedWindow() )
+    if( lastLevel != TASK || window->isDerivedWindow() )
     {
-      if ( window->isDerivedWindow() )
+      if( window->isDerivedWindow() )
         childIntervals.clear();
 
       lastLevel = TASK;
       childIntervals.push_back( getWindowInterval( TASK, order ) );
     }
   }
-  else if ( level == COMPOSETHREAD )
+  else if( level == COMPOSETHREAD )
   {
-    if ( lastLevel != THREAD || window->isDerivedWindow() )
+    if( lastLevel != THREAD || window->isDerivedWindow() )
     {
-
       lastLevel = THREAD;
-      if ( window->isDerivedWindow() )
+      if( window->isDerivedWindow() )
         childIntervals.clear();
 
       childIntervals.push_back( getWindowInterval( THREAD, order ) );
     }
   }
-  else if ( level == COMPOSESYSTEM )
+  else if( level == COMPOSESYSTEM )
   {
-    if ( lastLevel != SYSTEM || window->isDerivedWindow() )
+    if( lastLevel != SYSTEM || window->isDerivedWindow() )
     {
-      if ( window->isDerivedWindow() )
+      if( window->isDerivedWindow() )
         childIntervals.clear();
 
       lastLevel = SYSTEM;
       childIntervals.push_back( getWindowInterval( SYSTEM, order ) );
     }
   }
-  else if ( level == COMPOSENODE )
+  else if( level == COMPOSENODE )
   {
-    if ( lastLevel != NODE || window->isDerivedWindow() )
+    if( lastLevel != NODE || window->isDerivedWindow() )
     {
-      if ( window->isDerivedWindow() )
+      if( window->isDerivedWindow() )
         childIntervals.clear();
 
       lastLevel = NODE;
       childIntervals.push_back( getWindowInterval( NODE, order ) );
     }
   }
-  else if ( level == COMPOSECPU )
+  else if( level == COMPOSECPU )
   {
-    if ( lastLevel != CPU || window->isDerivedWindow() )
+    if( lastLevel != CPU || window->isDerivedWindow() )
     {
-      if ( window->isDerivedWindow() )
+      if( window->isDerivedWindow() )
         childIntervals.clear();
 
       lastLevel = CPU;
@@ -421,15 +426,13 @@ void IntervalCompose::setChildren()
 }
 
 
-
 TTraceLevel IntervalCompose::getWindowLevel() const
 {
   return window->getLevel();
 }
 
 
-Interval *IntervalCompose::getWindowInterval( TWindowLevel whichLevel,
-    TObjectOrder whichOrder )
+Interval *IntervalCompose::getWindowInterval( TWindowLevel whichLevel, TObjectOrder whichOrder )
 {
   return window->getLevelInterval( whichLevel, whichOrder );
 }
@@ -449,11 +452,13 @@ TWindowLevel IntervalCompose::getComposeLevel( TTraceLevel whichLevel ) const
 
 KTrace *IntervalCompose::getWindowTrace() const
 {
-  return (KTrace*)window->getTrace();
+  return (KTrace *)window->getTrace();
 }
 
 void IntervalCompose::copyRecordContent( MemoryTrace::iterator *whichRecord )
 {
+  Plain::TRecord virtualRecord;
+
   virtualRecord.type   = whichRecord->getRecordType();
   virtualRecord.time   = whichRecord->getTime();
   virtualRecord.thread = whichRecord->getThread();
@@ -472,4 +477,6 @@ void IntervalCompose::copyRecordContent( MemoryTrace::iterator *whichRecord )
   {
     virtualRecord.URecordInfo.commRecord.index = whichRecord->getCommIndex();
   }
+
+  timerIterator->setRecord( &virtualRecord );
 }

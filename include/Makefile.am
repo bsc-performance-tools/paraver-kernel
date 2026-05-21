@@ -78,4 +78,6 @@ noinst_HEADERS = \
                           tracestream.h\
                           vectorblocks.h\
                           vectortrace.h\
-                          vectortracedefines.h
+                          vectortracedefines.h\
+                          virtualtraceiterator.h
+
