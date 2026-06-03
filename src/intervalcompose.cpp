@@ -190,7 +190,8 @@ void IntervalCompose::initJoinBursts( KRecordList *displayList )
   {
     *end = *childIntervals[ 0 ]->getEnd();
 
-    if( ( *end == *endRecord ) || ( *end == *lastEnd ) )
+    // if( ( *end == *endRecord ) || ( *end == *lastEnd ) )
+    if( *end == *endRecord || end->getTime() > endRecord->getTime() )
       break;
 
     // lastEnd to control loop!
@@ -214,29 +215,19 @@ void IntervalCompose::calcNextJoinBursts( KRecordList *displayList )
   if( *end == *endRecord )
     return;
 
-  MemoryTrace::iterator *lastEnd = endRecord->clone();
-
   while( currentValue == childIntervals[ 0 ]->getValue() )
   {
     *end = *childIntervals[ 0 ]->getEnd();
 
-    if( ( *end == *endRecord ) || ( *end == *lastEnd ) )
+    if( *end == *endRecord )
       break;
-
-    // lastEnd to control loop!
-    *lastEnd = *end;
 
     childIntervals[ 0 ]->calcNext( displayList );
   }
-
-  if( lastEnd != nullptr )
-    delete lastEnd;
 }
 
 void IntervalCompose::calcPrevJoinBursts( KRecordList *displayList )
 {
-  MemoryTrace::iterator *firstBegin = beginRecord->clone();
-
   *begin       = *childIntervals[ 0 ]->getBegin();
   *end         = *childIntervals[ 0 ]->getEnd();
   currentValue = childIntervals[ 0 ]->getValue();
@@ -245,17 +236,11 @@ void IntervalCompose::calcPrevJoinBursts( KRecordList *displayList )
   {
     *begin = *childIntervals[ 0 ]->getBegin();
 
-    if( ( *begin == *beginRecord ) || ( *begin == *firstBegin ) )
+    if( *begin == *beginRecord )
       break;
-
-    // firstBegin to control loop!
-    *firstBegin = *begin;
 
     childIntervals[ 0 ]->calcPrev( displayList );
   }
-
-  if( firstBegin != nullptr )
-    delete firstBegin;
 }
 
 void IntervalCompose::initTimer( KRecordList *displayList )

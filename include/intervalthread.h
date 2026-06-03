@@ -54,6 +54,9 @@ class IntervalThread : public Interval
         delete begin;
       if( end != nullptr )
         delete end;
+
+      if( endRecord != nullptr )
+        delete endRecord;
     }
 
     virtual KRecordList *init( TRecordTime initialTime, TCreateList create, KRecordList *displayList = nullptr ) override;
@@ -94,7 +97,8 @@ class IntervalThread : public Interval
     VirtualTraceIterator *beginPeriodicBurstIt = nullptr;
     VirtualTraceIterator *endPeriodicBurstIt   = nullptr;
 
-    MemoryTrace::iterator *currentRecordListIt;
+    MemoryTrace::iterator *currentRecordListIt = nullptr;
+    MemoryTrace::iterator *endRecord           = nullptr;
 
     KRecordList *initPeriodicBurst( TRecordTime initialTime, KRecordList *displayList );
     KRecordList *calcNextPeriodicBurst( KRecordList *displayList );

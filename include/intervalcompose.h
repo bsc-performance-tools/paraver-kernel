@@ -39,8 +39,6 @@ class IntervalCompose : public IntervalHigh
       behaviour         = TBehaviour::REGULAR;
       accumulatedDeltas = 0.0;
       function          = nullptr;
-      endRecord         = nullptr;
-      beginRecord       = nullptr;
     }
 
     IntervalCompose( KTimeline *whichWindow, TWindowLevel whichLevel, TObjectOrder whichOrder )
@@ -49,8 +47,6 @@ class IntervalCompose : public IntervalHigh
       behaviour         = TBehaviour::REGULAR;
       accumulatedDeltas = 0.0;
       function          = nullptr;
-      endRecord         = nullptr;
-      beginRecord       = nullptr;
     }
 
     virtual ~IntervalCompose()
@@ -122,8 +118,8 @@ class IntervalCompose : public IntervalHigh
     MemoryTrace::iterator *lastChildEndIterator   = nullptr;
 
     TBehaviour behaviour;
-    MemoryTrace::iterator *endRecord;
-    MemoryTrace::iterator *beginRecord;
+    MemoryTrace::iterator *endRecord   = nullptr;
+    MemoryTrace::iterator *beginRecord = nullptr;
 
     void copyRecordContent( MemoryTrace::iterator *whichRecord );
 };

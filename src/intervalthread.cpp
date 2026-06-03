@@ -139,6 +139,9 @@ KRecordList *IntervalThread::calcPrev( KRecordList *displayList, bool initCalc )
 
 KRecordList *IntervalThread::initPeriodicBurst( TRecordTime initialTime, KRecordList *displayList )
 {
+  if( endRecord == nullptr )
+    endRecord = window->getEndRecord();
+
   currentRecordListIt = window->getThreadRecordByTime( order )->clone();
   if( !function->validRecord( currentRecordListIt ) )
     currentRecordListIt = getPrevRecord( currentRecordListIt, displayList );
@@ -181,6 +184,9 @@ KRecordList *IntervalThread::initPeriodicBurst( TRecordTime initialTime, KRecord
 
 KRecordList *IntervalThread::calcNextPeriodicBurst( KRecordList *displayList )
 {
+  if( *end == *endRecord )
+    return displayList;
+
   begin->setTime( end->getTime() );
   if( currentValue == 0.0 )
   {
@@ -200,8 +206,7 @@ KRecordList *IntervalThread::calcNextPeriodicBurst( KRecordList *displayList )
 
   if( end->getTime() > window->getTrace()->getEndTime() )
   {
-    end->setTime( window->getTrace()->getEndTime() );
-    end->setRecordType( EMPTYREC );
+    end = window->getEndRecord();
   }
 
   while( currentRecordListIt->getTime() <= end->getTime() && currentRecordListIt->getTime() < window->getTrace()->getEndTime() )
@@ -239,7 +244,7 @@ MemoryTrace::iterator *IntervalThread::getNextRecord( MemoryTrace::iterator *it,
   if( it->isNull() )
   {
     delete it;
-    it = window->getThreadEndRecord( order );
+    it = window->getEndRecord();
   }
 
   return it;

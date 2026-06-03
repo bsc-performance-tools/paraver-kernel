@@ -23,6 +23,12 @@
 
 #include "virtualtraceiterator.h"
 
+VirtualTraceIterator::~VirtualTraceIterator()
+{
+  if( assignedContent != nullptr )
+    delete assignedContent;
+}
+
 void VirtualTraceIterator::operator++()
 {
 }
@@ -34,17 +40,24 @@ void VirtualTraceIterator::operator--()
 MemoryTrace::iterator &VirtualTraceIterator::operator=( const MemoryTrace::iterator &copy )
 {
   virtualRecord.time = copy.getTime();
-  record             = copy.getRecord();
+  assignedContent    = copy.clone();
+
   return *this;
 }
 
 bool VirtualTraceIterator::operator==( const MemoryTrace::iterator &it ) const
 {
+  if( assignedContent != nullptr && *assignedContent == it )
+    return true;
+
   return false;
 }
 
 bool VirtualTraceIterator::operator!=( const MemoryTrace::iterator &it ) const
 {
+  if( assignedContent != nullptr && *assignedContent != it )
+    return true;
+
   return true;
 }
 
