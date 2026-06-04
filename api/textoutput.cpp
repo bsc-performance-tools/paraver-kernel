@@ -23,11 +23,11 @@
 
 #include "textoutput.h"
 
+#include "ParaverMetadataManager.h"
+#include "cfg.h"
+#include "csvsymbolsparser.h"
 #include "histogram.h"
 #include "labelconstructor.h"
-#include "csvsymbolsparser.h"
-#include "cfg.h"
-#include "ParaverMetadataManager.h"
 #include "window.h"
 
 using namespace std;
@@ -40,13 +40,13 @@ TextOutput::~TextOutput()
 {
 }
 
-void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, std::string whichOrigin, ProgressController *progress )
+void TextOutput::dumpWindow( Timeline *whichWindow, string &strOutputFile, std::string whichOrigin, ProgressController *progress )
 {
   static short int progressSteps = 0;
 
   if( strOutputFile.rfind( LabelConstructor::getDataFileSuffix( TTextFormat::CSV ) ) == string::npos )
     strOutputFile += LabelConstructor::getDataFileSuffix( TTextFormat::CSV );
-  
+
   string semanticLabel;
   CSVSymbolsParser symbols;
 
@@ -109,40 +109,42 @@ void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, std::
     if( i == 0 || whichWindow->getBeginTime( i ) < minTime )
       minTime = whichWindow->getBeginTime( i );
 
-    auto dumpLine = [&]()
+    auto dumpLine = [ & ]()
+    {
+      outputFile << setprecision( config->getTimelinePrecision() );
+      if( !multipleFiles )
       {
-        outputFile << setprecision( config->getTimelinePrecision() );
-        if ( !multipleFiles )
-        {
-          outputFile << LabelConstructor::objectLabel( i, whichWindow->getLevel(), trace, false, false ) << "\t";
-        }
-        if( windowTimeUnits )
-        {
-          outputFile << whichWindow->traceUnitsToWindowUnits(
-            whichWindow->getBeginTime( i ) ) << "\t";
-          outputFile << whichWindow->traceUnitsToWindowUnits(
-            whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
-        }
-        else
-        {
-          outputFile << (PRV_UINT64)whichWindow->getBeginTime( i ) << "\t";
-          outputFile << (PRV_UINT64)( whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
-        }
-        
-        TSemanticValue tmpSemValue = whichWindow->getValue( i );
-        semanticLabel = LabelConstructor::semanticLabel( whichWindow, tmpSemValue, true, config->getTimelinePrecision(), false );
-        symbols.setEventValueLabel( 1, tmpSemValue, semanticLabel );
-        rgb tmpColor( whichWindow->getSemanticColor().calcColor( tmpSemValue, whichWindow->getMinimumY(), whichWindow->getMaximumY() ) );
-        CSVSymbolsParser::rgb tmprgb{ tmpColor.red, tmpColor.green, tmpColor.blue };
-        symbols.setSemanticColor( whichWindow->getValue( i ), tmprgb );
+        TObjectOrder tmpObjectOrder = i;
+        if( whichWindow->getLevel() == TTraceLevel::CPU )
+          ++tmpObjectOrder;
 
-        if( textualSemantic )
-          outputFile << semanticLabel << endl;
-        else
-          outputFile << whichWindow->getValue( i ) << endl;
-      };
+        outputFile << LabelConstructor::objectLabel( tmpObjectOrder, whichWindow->getLevel(), trace, false, false ) << "\t";
+      }
+      if( windowTimeUnits )
+      {
+        outputFile << whichWindow->traceUnitsToWindowUnits( whichWindow->getBeginTime( i ) ) << "\t";
+        outputFile << whichWindow->traceUnitsToWindowUnits( whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
+      }
+      else
+      {
+        outputFile << (PRV_UINT64)whichWindow->getBeginTime( i ) << "\t";
+        outputFile << (PRV_UINT64)( whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
+      }
 
-    while ( whichWindow->getEndTime( i ) < endTime )
+      TSemanticValue tmpSemValue = whichWindow->getValue( i );
+      semanticLabel              = LabelConstructor::semanticLabel( whichWindow, tmpSemValue, true, config->getTimelinePrecision(), false );
+      symbols.setEventValueLabel( 1, tmpSemValue, semanticLabel );
+      rgb tmpColor( whichWindow->getSemanticColor().calcColor( tmpSemValue, whichWindow->getMinimumY(), whichWindow->getMaximumY() ) );
+      CSVSymbolsParser::rgb tmprgb{ tmpColor.red, tmpColor.green, tmpColor.blue };
+      symbols.setSemanticColor( whichWindow->getValue( i ), tmprgb );
+
+      if( textualSemantic )
+        outputFile << semanticLabel << endl;
+      else
+        outputFile << whichWindow->getValue( i ) << endl;
+    };
+
+    while( whichWindow->getEndTime( i ) < endTime )
     {
       if( progress != nullptr )
       {
@@ -212,16 +214,16 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
 
   std::function< void( Histogram * ) > parentsExecute;
   parentsExecute = [ &whichHisto, &recalcHisto, &selectedRows, &progress, &parentsExecute ]( Histogram *currentHisto )
-                   {
-                     for( auto& parent: currentHisto->getParents() )
-                     {
-                       if( recalcHisto )
-                         parentsExecute( parent );
-                     }
-                     
-                     if( recalcHisto )
-                       currentHisto->execute( whichHisto->getBeginTime(), whichHisto->getEndTime(), selectedRows, progress );
-                   };
+  {
+    for( auto &parent : currentHisto->getParents() )
+    {
+      if( recalcHisto )
+        parentsExecute( parent );
+    }
+
+    if( recalcHisto )
+      currentHisto->execute( whichHisto->getBeginTime(), whichHisto->getEndTime(), selectedRows, progress );
+  };
 
   parentsExecute( whichHisto );
 
@@ -564,7 +566,7 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
 }
 
 
-void TextOutput::dumpMetadata( Timeline *whichTimeline, std::ofstream& whichFile, std::string whichOrigin ) const
+void TextOutput::dumpMetadata( Timeline *whichTimeline, std::ofstream &whichFile, std::string whichOrigin ) const
 {
   CSVMetadataAction tmpMetadata( MetadataManager::getCurrentDate(),
                                  whichOrigin,
