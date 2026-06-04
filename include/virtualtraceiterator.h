@@ -31,8 +31,8 @@ class VirtualTraceIterator : public MemoryTrace::iterator
 {
   public:
     VirtualTraceIterator() = default;
-    // iterator( const Trace *whichTrace );
-    virtual ~VirtualTraceIterator() = default;
+
+    virtual ~VirtualTraceIterator();
 
     virtual void operator++() override;
     virtual void operator--() override;
@@ -76,4 +76,6 @@ class VirtualTraceIterator : public MemoryTrace::iterator
 
   private:
     Plain::TRecord virtualRecord;
+
+    MemoryTrace::iterator *assignedContent = nullptr;
 };
