@@ -24,21 +24,23 @@
 
 #pragma once
 
-#include <list>
-#include <set>
-#include <unordered_set>
-
 #include "cubecontainer.h"
 #include "ktraceoptions.h"
 #include "tracecutter.h"
 #include "tracestream.h"
+#include "utils/traceparser/processmodel.h"
+#include "utils/traceparser/resourcemodel.h"
+
+#include <list>
+#include <map>
+#include <set>
+#include <tuple>
+#include <unordered_set>
 
 class KTraceCutter : public TraceCutter
 {
   public:
-    KTraceCutter( TraceOptions *options,
-                  const std::vector< TEventType > &whichHWCTypes,
-                  const std::vector< TEventType > &whichNotHWCTypes );
+    KTraceCutter( TraceOptions *options, const std::vector< TEventType > &whichHWCTypes, const std::vector< TEventType > &whichNotHWCTypes );
     virtual ~KTraceCutter();
 
     virtual void set_by_time( bool byTime ) override;
@@ -55,17 +57,19 @@ class KTraceCutter : public TraceCutter
     virtual void set_keep_boundary_events( bool keepEvents ) override;
     virtual void setCutterOriginCaller( std::string caller ) override;
 
-    virtual void execute( std::string trace_in,
-                          std::string trace_out,
-                          ProgressController *progress ) override;
+    virtual void execute( std::string trace_in, std::string trace_out, ProgressController *progress ) override;
 
   private:
+    ProcessModel<> traceProcessModel   = ProcessModel<>();
+    ResourceModel<> traceResourceModel = ResourceModel<>();
+
     unsigned int min_perc;
     unsigned int max_perc;
     bool by_time;
     bool originalTime;
     unsigned int max_size;
     bool is_zip;
+    bool modify_header = false;
     unsigned int cut_tasks;
     unsigned int cut_apps;
     unsigned int cut_threads;
@@ -103,9 +107,11 @@ class KTraceCutter : public TraceCutter
     {
       public:
         ThreadInfo() : last_time( 0 ), lastCPU( 0 ), finished( false ), without_states( false ), lastStateEndTime( 0 )
-        {}
+        {
+        }
 
-        ThreadInfo( std::set< TEventType > HWCTypesInPCF ) : last_time( 0 ), lastCPU( 0 ), finished( false ), without_states( false ), lastStateEndTime( 0 )
+        ThreadInfo( std::set< TEventType > HWCTypesInPCF )
+          : last_time( 0 ), lastCPU( 0 ), finished( false ), without_states( false ), lastStateEndTime( 0 )
         {
           std::copy( HWCTypesInPCF.begin(), HWCTypesInPCF.end(), std::inserter( HWCTypesToReset, HWCTypesToReset.begin() ) );
         }
@@ -121,20 +127,21 @@ class KTraceCutter : public TraceCutter
     };
 
     /* struct for cutting only selected tasks */
-    typedef CubeContainer<TApplOrder, TTaskOrder, TThreadOrder, ThreadInfo> CutterThreadInfo;
+    typedef CubeContainer< TApplOrder, TTaskOrder, TThreadOrder, ThreadInfo > CutterThreadInfo;
     CutterThreadInfo threadsInfo;
 
     // MESS
     class ApplicationInfo
     {
       public:
-        ApplicationInfo( TThreadOrder whichNumberOfThreads ) : numberOfThreads( whichNumberOfThreads ),
-                                                               finishedThreads( 0 ) {}
+        ApplicationInfo( TThreadOrder whichNumberOfThreads ) : numberOfThreads( whichNumberOfThreads ), finishedThreads( 0 )
+        {
+        }
         bool addFinishedThread()
         {
           return ++finishedThreads == numberOfThreads;
         }
-      
+
       private:
         const TThreadOrder numberOfThreads;
         TThreadOrder finishedThreads;
@@ -146,23 +153,33 @@ class KTraceCutter : public TraceCutter
 
     struct SelectedObject
     {
-      int appl;
-      int task;
-      int thread;
+        int appl;
+        int task;
+        int thread;
     };
 
-    std::vector<SelectedObject> wanted_tasks;
-    std::vector<SelectedObject> wanted_apps;
-    std::vector<SelectedObject> wanted_threads;
+    std::vector< SelectedObject > wanted_tasks;
+    std::vector< SelectedObject > wanted_apps;
+    std::vector< SelectedObject > wanted_threads;
     KTraceOptions *exec_options;
     std::string cutterOriginCaller;
 
+    // Tracking of actually-written objects for header rebuild
+    std::set< std::tuple< int, int, int > > writtenThreads;     // (appl, task, thread) - 1-based
+    std::set< int > writtenCPUs;                                // 1-based CPU IDs
+    std::map< std::tuple< int, int, int >, int > threadNodeMap; // (appl, task, thread) -> node (0-based)
+
+    // Original header metadata to preserve
+    std::string originalDate;
+    TTimeUnit originalTimeUnit;
+    std::vector< std::string > originalCommunicators;
+
     void read_cutter_params();
     void proces_cutter_header( const std::string &header, TraceStream *whichFile, FILE *outfile );
-    void parseInHeaderAndDumpOut( TraceStream *whichFile, std::fstream& outfile );
+    void parseInHeaderAndDumpOut( TraceStream *whichFile, std::fstream &outfile );
 
     template< typename T >
-    void writeOffsetLine( T& outfile,
+    void writeOffsetLine( T &outfile,
                           const char *trace_in_name,
                           unsigned long long timeOffset,
                           unsigned long long timeCutBegin,
@@ -170,8 +187,8 @@ class KTraceCutter : public TraceCutter
 
     template< typename IteratorType >
     void dumpEventsSet( std::fstream &outFile,
-                        const IteratorType& begin,
-                        const IteratorType& end,
+                        const IteratorType &begin,
+                        const IteratorType &end,
                         unsigned int cpu,
                         unsigned int appl,
                         unsigned int task,
@@ -182,11 +199,9 @@ class KTraceCutter : public TraceCutter
                         bool &writtenComment );
 
     void appendLastZerosToUnclosedEvents( const unsigned long long final_time, std::fstream &outFile );
-    void ini_cutter_progress_bar( const std::string& file_name, ProgressController *progress );
+    void ini_cutter_progress_bar( const std::string &file_name, ProgressController *progress );
     void show_cutter_progress_bar( ProgressController *progress, TraceStream *whichFile );
-    void update_queue( unsigned int appl, unsigned int task, unsigned int thread,
-                       unsigned long long type,
-                       unsigned long long value );
+    void update_queue( unsigned int appl, unsigned int task, unsigned int thread, unsigned long long type, unsigned long long value );
     void load_counters_of_pcf( char *trace_name );
     void shiftLeft_TraceTimes_ToStartFromZero( const char *originalTraceName, const char *nameIn, const char *nameOut, ProgressController *progress );
     bool is_selected_task( int appl_id, int task_id );
@@ -195,7 +210,5 @@ class KTraceCutter : public TraceCutter
 
     std::vector< std::vector< unsigned int > > global_thread_offsets; // [appl-1][task-1] -> global_start_index
 
-    ThreadInfo& initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu );
+    ThreadInfo &initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu );
 };
-
-
