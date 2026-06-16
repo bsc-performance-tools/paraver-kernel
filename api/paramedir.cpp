@@ -31,44 +31,42 @@
 #include <stdexcept>
 #include <string>
 
-//#include <boost/filesystem.hpp>
-//#include <boost/error_code.hpp>
-//using namespace boost::filesystem;
-#include "config.h"
-#include "localkernel.h"
-#include "paramedir.h"
-#include "cfg.h"
-#include "trace.h"
-#include "window.h"
-#include "histogram.h"
-#include "histogramtotals.h"
-#include "paraverkernelexception.h"
-#include "paraverconfig.h"
+// #include <boost/filesystem.hpp>
+// #include <boost/error_code.hpp>
+// using namespace boost::filesystem;
 #include "ParaverMetadataManager.h"
-#include "textoutput.h"
-#include "traceoptions.h"
-#include "labelconstructor.h" // for getDate
-
-#include "tracecutter.h"
-#include "tracefilter.h"
-#include "tracesoftwarecounters.h"
-#include "traceshifter.h"
+#include "cfg.h"
+#include "config.h"
 #include "eventdrivencutter.h"
 #include "eventtranslator.h"
+#include "histogram.h"
+#include "histogramtotals.h"
+#include "labelconstructor.h" // for getDate
+#include "localkernel.h"
+#include "paramedir.h"
+#include "paraverconfig.h"
+#include "paraverkernelexception.h"
+#include "textoutput.h"
+#include "trace.h"
+#include "tracecutter.h"
+#include "tracefilter.h"
+#include "traceoptions.h"
+#include "traceshifter.h"
+#include "tracesoftwarecounters.h"
+#include "window.h"
 
 
 // PARAMEDIR OPTIONS
 typedef struct TOptionParamedir
 {
-  string shortForm;
-  string longForm;
-  bool active;       // Detected parameter in current execution?
-  int numParameters; // 0,1 => no parameterSeparator is needed
-  string parameterSeparators; // p.e. : ",-"
-  string parameterUsage; // Only for message; p.e. : "p1-p3" or "alfa,beta,delta"
-  string helpMessage;
-}
-TOptionParamedir;
+    string shortForm;
+    string longForm;
+    bool active;                // Detected parameter in current execution?
+    int numParameters;          // 0,1 => no parameterSeparator is needed
+    string parameterSeparators; // p.e. : ",-"
+    string parameterUsage;      // Only for message; p.e. : "p1-p3" or "alfa,beta,delta"
+    string helpMessage;
+} TOptionParamedir;
 
 // Keep this enum synchronized with
 enum TOptionID
@@ -113,8 +111,7 @@ enum TOptionID
 };
 
 
-TOptionParamedir definedOption[] =
-{
+TOptionParamedir definedOption[] = {
   // GENERAL
   { "-h", "--help", false, 0, "", "", "Show help" },
   { "-v", "--version", false, 0, "", "", "Show version" },
@@ -122,10 +119,10 @@ TOptionParamedir definedOption[] =
   // FILES
   { "-a", "--all-windows", false, 0, "", "", "Print all windows in cfg. Output file names have a suffix with window number" },
   { "-m", "--many-files", false, 0, "", "", "Allows to separate cfg output (default in a unique file)" },
-  { "-o", "--output-name", false, 1, "", "<tracename>",  "Output trace name (only for processing trace)" },
+  { "-o", "--output-name", false, 1, "", "<tracename>", "Output trace name (only for processing trace)" },
 
   // TIMELINES
-  { "-tu", "--trace-units", false, 0, "", "",  "Use trace time units in timelines instead of time window units selected in the cfg file" },
+  { "-tu", "--trace-units", false, 0, "", "", "Use trace time units in timelines instead of time window units selected in the cfg file" },
 
   // HISTOGRAMS
   { "-e", "--empty-columns", false, 0, "", "", "Hide empty columns" },
@@ -134,12 +131,17 @@ TOptionParamedir definedOption[] =
 
   // PRV TOOLSET
   { "-c", "--cutter", false, 0, "", "", "Apply Cutter tool" },
-  { "-et", "--event-translator", false, 1, "", "<reference_trace>",
-          "Merge events using this reference trace for translations when conflicts found" },
+  { "-et", "--event-translator", false, 1, "", "<reference_trace>", "Merge events using this reference trace for translations when conflicts found" },
   { "-f", "--filter", false, 0, "", "", "Apply Filter tool" },
   { "-g", "--event-cutter", false, 1, "", "<event-type>", "Apply Event Driven Cutter using 'event-type' as mark" },
   { "-s", "--software-counters", false, 0, "", "", "Apply Software counters tool" },
-  { "-t", "--thread-shifter", false, 1, "", "<shift-times-file>", "Apply Trace Shifter per thread (file contains at least as shift times as threads)" },
+  { "-t",
+    "--thread-shifter",
+    false,
+    1,
+    "",
+    "<shift-times-file>",
+    "Apply Trace Shifter per thread (file contains at least as shift times as threads)" },
   { "-tt", "--task-shifter", false, 1, "", "<shift-times-file>", "Idem per task" },
   { "-ta", "--app-shifter", false, 1, "", "<shift-times-file>", "Idem per applications" },
   { "-tw", "--workload-shifter", false, 1, "", "<shift-times-file>", "Whole trace shift (file contains at least one shift time)" },
@@ -166,26 +168,26 @@ std::map< string, string > cfgs;
 std::map< string, string >::iterator currentCFG;
 // PRV Toolset
 string strXMLOptions( "" );
-bool needXMLOptionsFile = false;
+bool needXMLOptionsFile    = false;
 TraceOptions *traceOptions = nullptr;
 
-TraceCutter *traceCutter = nullptr;
-TraceFilter *traceFilter = nullptr;
+TraceCutter *traceCutter                     = nullptr;
+TraceFilter *traceFilter                     = nullptr;
 TraceSoftwareCounters *traceSoftwareCounters = nullptr;
 
 TraceShifter *traceShifter = nullptr;
 string strShiftTimesFile( "" );
 
 EventDrivenCutter *eventDrivenCutter = nullptr;
-TEventType eventType = 0;
+TEventType eventType                 = 0;
 
 EventTranslator *eventTranslator = nullptr;
-string eventTranslatorReferenceName("");
+string eventTranslatorReferenceName( "" );
 
 // Message from CFGLoader. Must be changed to IDs and UI write its own message
 static bool userMessageOutput( UserMessageID messageID )
 {
-  std::cout << currentCFG->first << ": " << userMessages[ static_cast<size_t>( messageID ) ];
+  std::cout << currentCFG->first << ": " << userMessages[ static_cast< size_t >( messageID ) ];
   if( messageID >= UserMessageID::MessageCFGMultipleValues )
   {
     std::cout << std::endl;
@@ -198,7 +200,7 @@ static bool userMessageOutput( UserMessageID messageID )
 // Loads option map
 void initOptions()
 {
-  for ( int i = SHOW_HELP; i <= NO_LOAD; ++i )
+  for( int i = SHOW_HELP; i <= NO_LOAD; ++i )
   {
     TOptionID id = TOptionID( i );
     option[ id ] = definedOption[ id ];
@@ -212,17 +214,16 @@ TOptionID findOption( string argument )
 {
   TOptionID whichOption = INVALID_OPTION;
 
-  if ( argument[0] != '-' )
+  if( argument[ 0 ] != '-' )
   {
     whichOption = PARAMETER;
   }
   else
   {
-    for ( int i = SHOW_HELP; i <= NO_LOAD; ++i )
+    for( int i = SHOW_HELP; i <= NO_LOAD; ++i )
     {
       TOptionID id = TOptionID( i );
-      if (( argument == option[ id ].shortForm ) ||
-          ( argument == option[ id ].longForm ))
+      if( ( argument == option[ id ].shortForm ) || ( argument == option[ id ].longForm ) )
       {
         whichOption = id;
         break;
@@ -237,7 +238,7 @@ TOptionID findOption( string argument )
 // Prints help for concrete option
 void printOptionHelp( TOptionID id )
 {
-  std::string INDENT4("    ");
+  std::string INDENT4( "    " );
   std::stringstream helpFormat, helpFormat2;
 
   if( option[ id ].helpMessage == "" )
@@ -245,7 +246,7 @@ void printOptionHelp( TOptionID id )
 
   helpFormat << option[ id ].shortForm;
 
-  if ( option[ id ].numParameters == 0 )
+  if( option[ id ].numParameters == 0 )
   {
     helpFormat << ", " << option[ id ].longForm;
   }
@@ -255,13 +256,13 @@ void printOptionHelp( TOptionID id )
     helpFormat2 << option[ id ].longForm << " " << option[ id ].parameterUsage;
   }
 
-  std::cout << INDENT4 << std::setw(35) << std::left << helpFormat.str();
-  if ( option[ id ].numParameters > 0 )
+  std::cout << INDENT4 << std::setw( 35 ) << std::left << helpFormat.str();
+  if( option[ id ].numParameters > 0 )
   {
-    std::cout << std::setw(0) << std::endl;
-    std::cout << INDENT4 << std::setw(35) << std::left << helpFormat2.str();
+    std::cout << std::setw( 0 ) << std::endl;
+    std::cout << INDENT4 << std::setw( 35 ) << std::left << helpFormat2.str();
   }
-  std::cout << " " << std::setw(45) << option[ id ].helpMessage << std::endl;
+  std::cout << " " << std::setw( 45 ) << option[ id ].helpMessage << std::endl;
   std::cout << std::endl;
 }
 
@@ -288,31 +289,31 @@ void printHelp()
 
   std::cout << std::endl;
   std::cout << "  General options:" << std::endl;
-  for ( int i = SHOW_HELP; i < ALL_WINDOWS; ++i )
+  for( int i = SHOW_HELP; i < ALL_WINDOWS; ++i )
     printOptionHelp( TOptionID( i ) );
 
   std::cout << std::endl;
   std::cout << "  Output file options:" << std::endl;
 
-  for ( int i = ALL_WINDOWS; i < TIMELINE_TRACE_UNITS; ++i )
+  for( int i = ALL_WINDOWS; i < TIMELINE_TRACE_UNITS; ++i )
     printOptionHelp( TOptionID( i ) );
 
   std::cout << std::endl;
   std::cout << "  Timeline options:" << std::endl;
 
-  for ( int i = TIMELINE_TRACE_UNITS; i < EMPTY_COLUMNS; ++i )
+  for( int i = TIMELINE_TRACE_UNITS; i < EMPTY_COLUMNS; ++i )
     printOptionHelp( TOptionID( i ) );
 
   std::cout << std::endl;
   std::cout << "  Histogram options:" << std::endl;
 
-  for ( int i = EMPTY_COLUMNS; i < CUTTER; ++i )
+  for( int i = EMPTY_COLUMNS; i < CUTTER; ++i )
     printOptionHelp( TOptionID( i ) );
 
   std::cout << std::endl;
   std::cout << "  Paraver trace toolset options:" << std::endl;
 
-  for ( int i = CUTTER; i < INVALID_OPTION; ++i )
+  for( int i = CUTTER; i < INVALID_OPTION; ++i )
     printOptionHelp( TOptionID( i ) );
 
   std::cout << std::endl;
@@ -320,14 +321,16 @@ void printHelp()
   std::cout << "    prv: Paraver trace filename; can be gzipped (extensions allowed: only '.prv' or '.prv.gz' )." << std::endl;
   std::cout << "    xml: Options for cutter/filter/software counters ( with extension '.xml' )." << std::endl;
   std::cout << "    cfg: Paraver configuration filename ( with extension '.cfg' ). If present, trace's loaded." << std::endl;
-  std::cout << "    ouput-data-file: Filename for cfg output data ( if missing, cfg name's used, changing '.cfg' extension with '.mcr' )." << std::endl;
+  std::cout << "    ouput-data-file: Filename for cfg output data ( if missing, cfg name's used, changing '.cfg' extension with '.mcr' )."
+            << std::endl;
   std::cout << std::endl;
   std::cout << "  Examples:" << std::endl;
   std::cout << "    paramedir linpack.prv.gz mpi_stats.cfg" << std::endl;
   std::cout << "      Computes the mpi_stats.cfg analysis of compressed trace linpack.prv." << std::endl;
   std::cout << std::endl;
   std::cout << "    paramedir linpack.prv mpi_stats.cfg my_data.txt total_MPI_activity.cfg" << std::endl;
-  std::cout << "      Computes the mpi_stats.cfg and total_MPI_activity.cfg analysis of linpack.prv, saving first one in 'my_data.txt' file." << std::endl;
+  std::cout << "      Computes the mpi_stats.cfg and total_MPI_activity.cfg analysis of linpack.prv, saving first one in 'my_data.txt' file."
+            << std::endl;
   std::cout << std::endl;
   std::cout << "    paramedir -c linpack.prv cutter.xml" << std::endl;
   std::cout << "      Reads parameters of the cutter from the xml and applies them to linpack.prv trace." << std::endl;
@@ -343,8 +346,8 @@ void printHelp()
   std::cout << std::endl;
   std::cout << "    paramedir --task-shifter times.txt linpack.prv -o mylinpack.shifted.prv" << std::endl;
   std::cout << std::endl;
-//  std::cout << "    paramedir -et linpack.reference.prv linpack.source.prv" << std::endl;
-//  std::cout << std::endl;
+  //  std::cout << "    paramedir -et linpack.reference.prv linpack.source.prv" << std::endl;
+  //  std::cout << std::endl;
 }
 
 
@@ -353,9 +356,9 @@ void printVersion()
   std::cout << PACKAGE_STRING;
 
   bool reverseOrder = true;
-  string auxDate = LabelConstructor::getDate( reverseOrder );
+  string auxDate    = LabelConstructor::getDate( reverseOrder );
 
-  if ( auxDate.compare("") != 0 )
+  if( auxDate.compare( "" ) != 0 )
     std::cout << " Build ";
 
   std::cout << auxDate << std::endl;
@@ -363,26 +366,24 @@ void printVersion()
 
 
 // Register any specified tool; remembers order
-void registerTool( TOptionID whichOption,
-                   vector< string > &registeredTool,
-                   bool &needXMLOptionsFile )
+void registerTool( TOptionID whichOption, vector< string > &registeredTool, bool &needXMLOptionsFile )
 {
-  string toolID("");
+  string toolID( "" );
 
-  switch ( whichOption )
+  switch( whichOption )
   {
     case CUTTER:
-      toolID = TraceCutter::getID();
+      toolID             = TraceCutter::getID();
       needXMLOptionsFile = true;
       break;
 
     case FILTER:
-      toolID =  TraceFilter::getID();
+      toolID             = TraceFilter::getID();
       needXMLOptionsFile = true;
       break;
 
     case SOFTWARE_COUNTERS:
-      toolID =  TraceSoftwareCounters::getID();
+      toolID             = TraceSoftwareCounters::getID();
       needXMLOptionsFile = true;
       break;
 
@@ -405,15 +406,12 @@ void registerTool( TOptionID whichOption,
       break;
   }
 
-  if ( !toolID.empty() )
+  if( !toolID.empty() )
     registeredTool.push_back( toolID );
 }
 
 
-bool parseArguments( KernelConnection *myKernel,
-                     int argc,
-                     char *arguments[],
-                     vector< string > &registeredTool )
+bool parseArguments( KernelConnection *myKernel, int argc, char *arguments[], vector< string > &registeredTool )
 {
   bool parseOK = true;
 
@@ -422,48 +420,48 @@ bool parseArguments( KernelConnection *myKernel,
   TOptionID currentOption = INVALID_OPTION;
 
   PRV_INT32 previousCFGPosition = 0;
-  PRV_INT32 readParameter = 0;
+  PRV_INT32 readParameter       = 0;
 
   numArg = 1;
-  while ( numArg < argc )
+  while( numArg < argc )
   {
     currentArgument = string( arguments[ numArg ] );
-    currentOption = findOption( currentArgument );
+    currentOption   = findOption( currentArgument );
 
 
-    if ( currentOption == INVALID_OPTION )
+    if( currentOption == INVALID_OPTION )
     {
       std::cerr << "  [ERROR] Invalid option '" << currentArgument << "'" << std::endl;
       return false;
     }
-    else if ( currentOption != PARAMETER )
+    else if( currentOption != PARAMETER )
     {
-      if ( readParameter > 0 )
+      if( readParameter > 0 )
       {
         // Wrong! I.e: If -o option needs a parameter, we got:
         //    "paramedir -o -x ..." instead of "paramedir -o PARAM -x ..."
-        std::cerr << "  [ERROR] Parameter expected but option '" << currentArgument << "' was found instead."<< std::endl;
+        std::cerr << "  [ERROR] Parameter expected but option '" << currentArgument << "' was found instead." << std::endl;
         parseOK = false;
         break;
       }
 
       option[ currentOption ].active = true;
 
-      if ( currentOption == SHOW_HELP || currentOption == SHOW_VERSION )
+      if( currentOption == SHOW_HELP || currentOption == SHOW_VERSION )
         return true;
 
       readParameter = option[ currentOption ].numParameters;
       registerTool( currentOption, registeredTool, needXMLOptionsFile );
     }
-    else if ( readParameter > 0 )
+    else if( readParameter > 0 )
     {
       // Previous loop detected an option needing parameters
       // TODO: numParameters > 1
-      if ( option[ OUTPUT_NAME ].active && outputTraceName.empty() )
+      if( option[ OUTPUT_NAME ].active && outputTraceName.empty() )
       {
         outputTraceName = currentArgument;
       }
-      else if ( option[ EVENT_CUTTER ].active && eventType == 0 )
+      else if( option[ EVENT_CUTTER ].active && eventType == 0 )
       {
         std::stringstream sstr( currentArgument );
         if( !( sstr >> eventType ) )
@@ -473,49 +471,49 @@ bool parseArguments( KernelConnection *myKernel,
           break;
         }
       }
-      else if ( ( option[ TRACE_SHIFTER_WORKLOAD ].active ||
-                  option[ TRACE_SHIFTER_APP ].active ||
-                  option[ TRACE_SHIFTER_TASK ].active ||
-                  option[ TRACE_SHIFTER_THREAD ].active ) && strShiftTimesFile.empty() )
+      else if( ( option[ TRACE_SHIFTER_WORKLOAD ].active || option[ TRACE_SHIFTER_APP ].active || option[ TRACE_SHIFTER_TASK ].active ||
+                 option[ TRACE_SHIFTER_THREAD ].active ) &&
+               strShiftTimesFile.empty() )
       {
         strShiftTimesFile = currentArgument;
       }
-      else if ( option[ EVENT_TRANSLATOR ].active && eventTranslatorReferenceName.empty() )
+      else if( option[ EVENT_TRANSLATOR ].active && eventTranslatorReferenceName.empty() )
       {
         eventTranslatorReferenceName = currentArgument;
       }
 
       --readParameter;
     }
-    else if ( myKernel->isTraceFile( currentArgument ) )
+    else if( myKernel->isTraceFile( currentArgument ) )
     {
       sourceTraceName = currentArgument;
     }
-    else if ( TraceOptions::isTraceToolsOptionsFile( currentArgument ) )
+    else if( TraceOptions::isTraceToolsOptionsFile( currentArgument ) )
     {
       // TODO: Detect which kind of xml do we have. See implementation.
       strXMLOptions = currentArgument;
     }
-    else if ( CFGLoader::hasCFGExtension( currentArgument ) )
+    else if( CFGLoader::hasCFGExtension( currentArgument ) )
     {
-      cfgs[ currentArgument ] = currentArgument.substr( currentArgument.rfind( myKernel->getPathSeparator() ) + 1,
-                                                        currentArgument.length() - ( currentArgument.rfind( myKernel->getPathSeparator() ) + 1 ) - CFG_SUFFIX.length() );
+      cfgs[ currentArgument ] =
+        currentArgument.substr( currentArgument.rfind( myKernel->getPathSeparator() ) + 1,
+                                currentArgument.length() - ( currentArgument.rfind( myKernel->getPathSeparator() ) + 1 ) - CFG_SUFFIX.length() );
       previousCFGPosition = numArg;
     }
     else
     {
       // Unknown parameter! Maybe is it an output file for cfgs?
-      if ( ( previousCFGPosition > 0 ) && ( previousCFGPosition == numArg - 1 ) )
+      if( ( previousCFGPosition > 0 ) && ( previousCFGPosition == numArg - 1 ) )
       {
         cfgs[ string( arguments[ numArg - 1 ] ) ] = currentArgument;
-        previousCFGPosition = 0; // We allow only one output name per cfg
+        previousCFGPosition                       = 0; // We allow only one output name per cfg
       }
     }
 
     ++numArg;
   }
 
-  if ( needXMLOptionsFile && strXMLOptions.empty() )
+  if( needXMLOptionsFile && strXMLOptions.empty() )
   {
     std::cerr << "  [ERROR] Unable to find XML options file." << std::endl;
     parseOK = false;
@@ -531,7 +529,7 @@ bool parseArguments( KernelConnection *myKernel,
     std::cerr << "  [ERROR] Missing arguments." << std::endl;
     parseOK = false;
   }
-  else if ( sourceTraceName == outputTraceName )
+  else if( sourceTraceName == outputTraceName )
   {
     std::cerr << "  [ERROR] Source trace and output trace are the same." << std::endl;
     parseOK = false;
@@ -542,18 +540,17 @@ bool parseArguments( KernelConnection *myKernel,
 
 
 // Returns $PWD/whichPath
-std::string appendPathWorkingDirectory( KernelConnection *myKernel,
-                                        std::string whichPath )
+std::string appendPathWorkingDirectory( KernelConnection *myKernel, std::string whichPath )
 {
   string PATHSEP = myKernel->getPathSeparator();
 
-  if ( whichPath.substr( 0, 1 ) != PATHSEP )
+  if( whichPath.substr( 0, 1 ) != PATHSEP )
   {
     char *currentWorkingDir = getenv( "PWD" );
-    if ( currentWorkingDir != nullptr )
+    if( currentWorkingDir != nullptr )
     {
       string auxPWD( currentWorkingDir );
-      if ( auxPWD.substr( auxPWD.length() - 1, 1 ) == PATHSEP )
+      if( auxPWD.substr( auxPWD.length() - 1, 1 ) == PATHSEP )
         whichPath = currentWorkingDir + whichPath;
       else
         whichPath = currentWorkingDir + PATHSEP + whichPath;
@@ -564,9 +561,7 @@ std::string appendPathWorkingDirectory( KernelConnection *myKernel,
 }
 
 
-string applyFilters( KernelConnection *myKernel,
-                     vector< string > &registeredTool,
-                     vector< string > &tmpFiles )
+string applyFilters( KernelConnection *myKernel, vector< string > &registeredTool, vector< string > &tmpFiles )
 {
   string intermediateNameIn, intermediateNameOut;
   string destinyTraceName;
@@ -579,7 +574,7 @@ string applyFilters( KernelConnection *myKernel,
   std::map< TEventValue, string > currentEventValues;
 
   // Name initializations
-  if ( outputTraceName.empty() )
+  if( outputTraceName.empty() )
   {
     destinyTraceName = appendPathWorkingDirectory( myKernel, sourceTraceName );
   }
@@ -590,17 +585,17 @@ string applyFilters( KernelConnection *myKernel,
 
   intermediateNameOut = appendPathWorkingDirectory( myKernel, sourceTraceName );
 
-  if ( needXMLOptionsFile )
+  if( needXMLOptionsFile )
   {
-    traceOptions = myKernel->newTraceOptions( );
+    traceOptions = myKernel->newTraceOptions();
 
     // The order is given by the command line, not the xml file.
     vector< string > dummyToolOrder = traceOptions->parseDoc( (char *)strXMLOptions.c_str() );
 
-    if ( dummyToolOrder.size() == 0 )
+    if( dummyToolOrder.size() == 0 )
     {
       std::cerr << "  [ERROR] Parsing xml file '" << strXMLOptions << "' failed." << std::endl;
-      exit(1);
+      exit( 1 );
     }
   }
 
@@ -610,21 +605,21 @@ string applyFilters( KernelConnection *myKernel,
     intermediateNameIn = intermediateNameOut;
 
     bool commitName;
-    if ( i < registeredTool.size() - 1 )
+    if( i < registeredTool.size() - 1 )
     {
       // Intermediate trace:
       //   Get partial name (suffix for one tool)
       //   Don't modify global list of recent treated traces
-      commitName = false;
+      commitName          = false;
       intermediateNameOut = myKernel->getNewTraceName( intermediateNameIn, registeredTool[ i ], commitName );
     }
     else
     {
       // Final trace:
-      if ( outputTraceName.empty() )
+      if( outputTraceName.empty() )
       {
         //   Get full name (including all tools)
-        commitName = true;
+        commitName          = true;
         intermediateNameOut = myKernel->getNewTraceName( destinyTraceName, registeredTool, commitName );
       }
       else
@@ -639,27 +634,25 @@ string applyFilters( KernelConnection *myKernel,
 
     bool copyRow = true;
 
-    if ( registeredTool[ i ] == TraceCutter::getID() )
+    if( registeredTool[ i ] == TraceCutter::getID() )
     {
+      // copyRow     = false;
       traceCutter = TraceCutter::create( myKernel, intermediateNameIn, intermediateNameOut, traceOptions, nullptr );
       traceCutter->execute( (char *)intermediateNameIn.c_str(), (char *)intermediateNameOut.c_str() );
       myKernel->copyPCF( intermediateNameIn, intermediateNameOut );
     }
-    else if ( registeredTool[ i ] == TraceFilter::getID() )
+    else if( registeredTool[ i ] == TraceFilter::getID() )
     {
       std::map< TTypeValuePair, TTypeValuePair > translation;
 #if 1
-      traceFilter = myKernel->newTraceFilter( (char *)intermediateNameIn.c_str(),
-                                              (char *)intermediateNameOut.c_str(),
-                                              traceOptions,
-                                              translation );
+      traceFilter = myKernel->newTraceFilter( (char *)intermediateNameIn.c_str(), (char *)intermediateNameOut.c_str(), traceOptions, translation );
 #else
-      //translation[ make_pair( 30000000, 2 ) ] = make_pair( 666, 999 );
-      translation[ make_pair( 50000001, 1 ) ] = make_pair( 666666, 999999 );
-      translation[ make_pair( 50000002, 9 ) ] = make_pair( 666666666, 999999999 );
+      // translation[ make_pair( 30000000, 2 ) ] = make_pair( 666, 999 );
+      translation[ make_pair( 50000001, 1 ) ]  = make_pair( 666666, 999999 );
+      translation[ make_pair( 50000002, 9 ) ]  = make_pair( 666666666, 999999999 );
       translation[ make_pair( 50000003, 31 ) ] = make_pair( 666666666666, 999999999999 );
 
-      TraceOptions *opts = myKernel->newTraceOptions( );
+      TraceOptions *opts = myKernel->newTraceOptions();
 
       opts->set_filter_by_call_time( false );
 
@@ -669,7 +662,7 @@ string applyFilters( KernelConnection *myKernel,
       opts->set_filter_events( true );
       opts->set_discard_given_types( true );
       TraceOptions::TFilterTypes dummyTypes;
-      dummyTypes[0].type = 1234567890;
+      dummyTypes[ 0 ].type = 1234567890;
       opts->set_filter_last_type( 1 );
 
       opts->set_filter_comms( true );
@@ -679,33 +672,32 @@ string applyFilters( KernelConnection *myKernel,
 #endif
       myKernel->copyPCF( intermediateNameIn, intermediateNameOut );
     }
-    else if ( registeredTool[ i ] == TraceSoftwareCounters::getID() )
+    else if( registeredTool[ i ] == TraceSoftwareCounters::getID() )
     {
-      traceSoftwareCounters = myKernel->newTraceSoftwareCounters( (char *)intermediateNameIn.c_str(),
-                                                                  (char *)intermediateNameOut.c_str(),
-                                                                  traceOptions );
+      traceSoftwareCounters =
+        myKernel->newTraceSoftwareCounters( (char *)intermediateNameIn.c_str(), (char *)intermediateNameOut.c_str(), traceOptions );
     }
-    else if ( registeredTool[ i ] == TraceShifter::getID() )
+    else if( registeredTool[ i ] == TraceShifter::getID() )
     {
       TWindowLevel level = THREAD;
-      if ( option[ TRACE_SHIFTER_WORKLOAD ].active )
+      if( option[ TRACE_SHIFTER_WORKLOAD ].active )
         level = WORKLOAD;
-      if ( option[ TRACE_SHIFTER_APP ].active )
+      if( option[ TRACE_SHIFTER_APP ].active )
         level = APPLICATION;
-      if ( option[ TRACE_SHIFTER_TASK ].active )
+      if( option[ TRACE_SHIFTER_TASK ].active )
         level = TASK;
 
       traceShifter = myKernel->newTraceShifter( intermediateNameIn, intermediateNameOut, strShiftTimesFile, level );
       traceShifter->execute( intermediateNameIn, intermediateNameOut );
       delete traceShifter;
     }
-    else if ( registeredTool[ i ] == EventDrivenCutter::getID() )
+    else if( registeredTool[ i ] == EventDrivenCutter::getID() )
     {
       eventDrivenCutter = myKernel->newEventDrivenCutter( intermediateNameIn, intermediateNameOut, eventType );
       eventDrivenCutter->execute( intermediateNameIn, intermediateNameOut );
       delete eventDrivenCutter;
     }
-    else if ( registeredTool[ i ] == EventTranslator::getID() )
+    else if( registeredTool[ i ] == EventTranslator::getID() )
     {
       eventTranslator = myKernel->newEventTranslator( intermediateNameIn, intermediateNameOut, eventTranslatorReferenceName );
       eventTranslator->execute( intermediateNameIn, intermediateNameOut ); // TODO why passed again?
@@ -713,7 +705,7 @@ string applyFilters( KernelConnection *myKernel,
       delete eventTranslator;
     }
 
-    if ( copyRow )
+    if( copyRow )
       myKernel->copyROW( intermediateNameIn, intermediateNameOut );
 
     tmpFiles.push_back( intermediateNameOut );
@@ -746,10 +738,10 @@ bool loadTrace( KernelConnection *myKernel )
 
   try
   {
-    trace = Trace::create( myKernel, sourceTraceName, option[ NO_LOAD ].active, nullptr );
+    trace  = Trace::create( myKernel, sourceTraceName, option[ NO_LOAD ].active, nullptr );
     loaded = true;
   }
-  catch ( ParaverKernelException& ex )
+  catch( ParaverKernelException &ex )
   {
     ex.printMessage();
   }
@@ -762,15 +754,15 @@ void loadCFGs( KernelConnection *myKernel )
 {
   for( std::map< string, string >::iterator it = cfgs.begin(); it != cfgs.end(); ++it )
   {
-    std::ifstream cfgFile( (it->first).c_str() );
-    if ( cfgFile.good() )
+    std::ifstream cfgFile( ( it->first ).c_str() );
+    if( cfgFile.good() )
     {
-      vector<Timeline *> windows;
-      vector<Histogram *> histograms;
+      vector< Timeline * > windows;
+      vector< Histogram * > histograms;
       SaveOptions options; // P4D: Should options.enabledP4DMode be taken in this context?
 
       currentCFG = it;
-      if ( CFGLoader::loadCFG( myKernel, trace, cfgFile, windows, histograms, options ) )
+      if( CFGLoader::loadCFG( myKernel, trace, cfgFile, windows, histograms, options ) )
       {
         TextOutput output;
         output.setMultipleFiles( option[ MANY_FILES ].active );
@@ -801,33 +793,31 @@ void loadCFGs( KernelConnection *myKernel )
         }
         else
         {
-          if ( histograms.begin() != histograms.end() &&
-              histograms[ histograms.size() - 1 ] != nullptr )
+          if( histograms.begin() != histograms.end() && histograms[ histograms.size() - 1 ] != nullptr )
             output.dumpHistogram( histograms[ histograms.size() - 1 ],
                                   it->second,
                                   option[ PRINT_PLANE ].active,
                                   option[ EMPTY_COLUMNS ].active,
                                   true,
                                   !option[ PREFERENCES_PRECISION ].active );
-          else if( windows.begin() != windows.end() &&
-                  windows[ windows.size() - 1 ] != nullptr )
+          else if( windows.begin() != windows.end() && windows[ windows.size() - 1 ] != nullptr )
             output.dumpWindow( windows[ windows.size() - 1 ], it->second, CSVMetadataAction::MANUAL_ORIGIN_ID );
         }
       }
       else
         std::cerr << "  [Warning] Cannot load '" << it->first << "' file." << std::endl;
 
-      for ( PRV_UINT32 i = 0; i < histograms.size(); ++i )
+      for( PRV_UINT32 i = 0; i < histograms.size(); ++i )
       {
-        if ( histograms[ i ] != nullptr )
+        if( histograms[ i ] != nullptr )
           delete histograms[ i ];
       }
 
       histograms.clear();
 
-      for ( PRV_UINT32 i = 0; i < windows.size(); ++i )
+      for( PRV_UINT32 i = 0; i < windows.size(); ++i )
       {
-        if ( windows[ i ] != nullptr )
+        if( windows[ i ] != nullptr )
           delete windows[ i ];
       }
 
@@ -840,9 +830,9 @@ void loadCFGs( KernelConnection *myKernel )
 
 
 #if 0
-#include "traceeditsequence.h"
-#include "traceeditactions.h"
-#include "traceeditstates.h"
+#  include "traceeditactions.h"
+#  include "traceeditsequence.h"
+#  include "traceeditstates.h"
 void testSequence( KernelConnection *myKernel )
 {
   vector<std::string> tmpV;
@@ -859,8 +849,8 @@ void testSequence( KernelConnection *myKernel )
 #endif
 
 #if 0
-#include "ktrace.h"
-#include "tracebodyio_v1.h"
+#  include "ktrace.h"
+#  include "tracebodyio_v1.h"
 void testReadWritePerformance( KernelConnection *myKernel )
 {
   string traceFileName = "/home/eloy/traces/wxparaver_traza_no_carga/siesta.1.1500mcycles.prv";
@@ -896,8 +886,8 @@ void testReadWritePerformance( KernelConnection *myKernel )
 #endif
 
 #if 0
-#include "ktrace.h"
-#include "tracebodyio_v1.h"
+#  include "ktrace.h"
+#  include "tracebodyio_v1.h"
 void testNewIteratorCloneMethod( KernelConnection *myKernel )
 {
   string traceFileName = "/home/eloy/traces/wxparaver_traza_no_carga/siesta.1.1500mcycles.prv";
@@ -938,7 +928,7 @@ void testNewIteratorCloneMethod( KernelConnection *myKernel )
 #endif // 1
 
 #if 0
-#include "cubecontainer.h"
+#  include "cubecontainer.h"
 void testCubeContainer()
 {
   typedef CubeContainer<TApplOrder, TTaskOrder, TThreadOrder, int> CutterThreadInfo;
@@ -965,7 +955,7 @@ int main( int argc, char *argv[] )
 {
   initOptions();
 
-  if ( argc == 1 )
+  if( argc == 1 )
 #if 0
   {
     KernelConnection *myKernel = new LocalKernel( nullptr );
@@ -1011,65 +1001,65 @@ int main( int argc, char *argv[] )
 
     try
     {
-      if ( parseArguments( myKernel, argc, argv, registeredTool ) )
+      if( parseArguments( myKernel, argc, argv, registeredTool ) )
       {
-      if ( option[ SHOW_HELP ].active )
-        printHelp();
-      else if ( option[ SHOW_VERSION ].active )
-        printVersion();
-      else if ( !sourceTraceName.empty() )
-      {
-        if ( registeredTool.size() > 0 )
+        if( option[ SHOW_HELP ].active )
+          printHelp();
+        else if( option[ SHOW_VERSION ].active )
+          printVersion();
+        else if( !sourceTraceName.empty() )
         {
-          if( needXMLOptionsFile && !TraceOptions::validTraceToolsOptionsFile( strXMLOptions ) )
+          if( registeredTool.size() > 0 )
           {
-            std::cerr << "  [ERROR] Cannot load '" << strXMLOptions << "' file." << std::endl;
-            exit( 1 );
-          }
-          else
-          {
-            // We can pass a filtered trace to compute some further cfgs
-            sourceTraceName = applyFilters( myKernel, registeredTool, tmpFiles );
-          }
-        }
-
-        if ( cfgs.size() > 0 || option[ DUMP_TRACE ].active )
-        {
-          std::map<string,string> validCfgs;
-          for( std::map<string, string>::iterator itCfg = cfgs.begin(); itCfg != cfgs.end(); ++itCfg )
-          {
-            if( !CFGLoader::isCFGFile( itCfg->first ) )
-              std::cerr << "  [Warning] Cannot load '" << itCfg->first << "' file." << std::endl;
+            if( needXMLOptionsFile && !TraceOptions::validTraceToolsOptionsFile( strXMLOptions ) )
+            {
+              std::cerr << "  [ERROR] Cannot load '" << strXMLOptions << "' file." << std::endl;
+              exit( 1 );
+            }
             else
             {
-              validCfgs[ itCfg->first ] = itCfg->second;
+              // We can pass a filtered trace to compute some further cfgs
+              sourceTraceName = applyFilters( myKernel, registeredTool, tmpFiles );
             }
           }
 
-          if( validCfgs.size() == 0 && !option[ DUMP_TRACE ].active )
+          if( cfgs.size() > 0 || option[ DUMP_TRACE ].active )
           {
-            std::cerr << "  [ERROR] No valid cfgs found." << std::endl;
-            exit( 1 );
+            std::map< string, string > validCfgs;
+            for( std::map< string, string >::iterator itCfg = cfgs.begin(); itCfg != cfgs.end(); ++itCfg )
+            {
+              if( !CFGLoader::isCFGFile( itCfg->first ) )
+                std::cerr << "  [Warning] Cannot load '" << itCfg->first << "' file." << std::endl;
+              else
+              {
+                validCfgs[ itCfg->first ] = itCfg->second;
+              }
+            }
+
+            if( validCfgs.size() == 0 && !option[ DUMP_TRACE ].active )
+            {
+              std::cerr << "  [ERROR] No valid cfgs found." << std::endl;
+              exit( 1 );
+            }
+
+            cfgs = validCfgs;
+            if( !loadTrace( myKernel ) )
+            {
+              std::cerr << "  [ERROR] Cannot load " << sourceTraceName << std::endl;
+              exit( 1 );
+            }
+
+            if( option[ DUMP_TRACE ].active )
+              trace->dumpFile( sourceTraceName + ".new.global" );
+
+            loadCFGs( myKernel );
+
+            delete trace;
           }
-
-          cfgs = validCfgs;
-          if ( !loadTrace( myKernel ) )
-          {
-            std::cerr << "  [ERROR] Cannot load " << sourceTraceName << std::endl;
-            exit( 1 );
-          }
-
-          if ( option[ DUMP_TRACE ].active )
-            trace->dumpFile( sourceTraceName + ".new.global" );
-
-          loadCFGs( myKernel );
-
-          delete trace;
         }
       }
-      }
     }
-    catch( const std::exception& e )
+    catch( const std::exception &e )
     {
       std::cerr << "  [ERROR] " << e.what() << std::endl;
       exit( 1 );

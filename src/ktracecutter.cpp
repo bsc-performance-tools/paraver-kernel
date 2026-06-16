@@ -44,6 +44,7 @@
 #include "kprogresscontroller.h"
 #include "ktracecutter.h"
 #include "paraverconfig.h"
+#include "utils/traceparser/rowfileparser.h"
 #include "utils/traceparser/tracebodyio_v1.h"
 #include "utils/traceparser/traceheader.h"
 
@@ -759,7 +760,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
     // The header ends after communicator lines
   }
 
-  using ObjectLocation = std::tuple< int, int, int >;
+  using ObjectLocation = std::tuple< TApplOrder, TTaskOrder, TThreadOrder >;
   std::map< ObjectLocation, ObjectLocation > originalToNewObjectLocation;
 
   TApplOrder newAppl     = 0;
@@ -771,15 +772,26 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
     ProcessModel<> choppedProcessModel;
     choppedProcessModel.setReady( true );
 
-    ResourceModel<> choppedResourceModel;
+    std::string rowFileName = LocalKernel::composeName( originalTraceName, "row" );
+    RowFileParser<> originalRowFile( rowFileName );
+    RowFileParser<> newRowFile;
 
     // Sort threads to ensure consistent ordering
-    std::vector< std::tuple< int, int, int > > sortedThreads( writtenThreads.begin(), writtenThreads.end() );
+    std::vector< ObjectLocation > sortedThreads( writtenThreads.begin(), writtenThreads.end() );
     std::sort( sortedThreads.begin(), sortedThreads.end() );
 
     TApplOrder lastAppl     = 0;
     TTaskOrder lastTask     = 0;
     TThreadOrder lastThread = 0;
+
+    std::string tmpRowLabel;
+
+    auto copyRowLabelToNewRowFile = [ &tmpRowLabel, &originalRowFile, &newRowFile ]( TTraceLevel whichLevel, auto whichObject )
+    {
+      tmpRowLabel = originalRowFile.getRowLabel( whichLevel, whichObject );
+      if( tmpRowLabel != "" )
+        newRowFile.pushBack( whichLevel, tmpRowLabel );
+    };
 
     for( const auto &t : sortedThreads )
     {
@@ -793,6 +805,11 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
         choppedProcessModel.addApplication();
         ++newAppl;
         newTask = 0;
+        copyRowLabelToNewRowFile( TTraceLevel::APPLICATION, appl );
+
+        lastAppl   = appl;
+        lastTask   = 0;
+        lastThread = 0;
       }
 
       // Ensure task exists
@@ -800,6 +817,10 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
       {
         choppedProcessModel.addTask( newAppl - 1 );
         ++newTask;
+        copyRowLabelToNewRowFile( TTraceLevel::TASK, task );
+
+        lastTask   = task;
+        lastThread = 0;
       }
 
       // Add thread with node from original model
@@ -813,33 +834,24 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
         newThread = choppedProcessModel.addThread( newAppl - 1, newTask - 1, node );
 
         originalToNewObjectLocation[ { appl, task, thread } ] = { newAppl, newTask, newThread + 1 };
-      }
 
-      lastAppl   = appl;
-      lastTask   = task;
-      lastThread = thread;
+        TThreadOrder tmpGlobalThread = traceProcessModel.getGlobalThread( appl - 1, task - 1, thread - 1 );
+        copyRowLabelToNewRowFile( TTraceLevel::THREAD, tmpGlobalThread );
+
+        lastThread = thread;
+      }
     }
 
-    // If we have written CPUs, build the model
-    if( !writtenCPUs.empty() )
-    {
-      // Find max CPU to determine how many nodes/CPUs to create
-      // For simplicity, assume all CPUs are on node 0 (single node)
-      // A more sophisticated implementation would track CPU-to-node mapping
-      choppedResourceModel.addNode();
-      for( int cpu : writtenCPUs )
-      {
-        if( cpu > 0 ) // Valid CPU (0 is sometimes used as "no CPU")
-        {
-          // Add enough CPUs to reach this CPU ID
-          while( choppedResourceModel.totalCPUs() < (TCPUOrder)cpu )
-            choppedResourceModel.addCPU( 0 );
-        }
-      }
-      choppedResourceModel.setReady( true );
-    }
+    dumpTraceHeader( outfile, originalDate, total_time, originalTimeUnit, traceResourceModel, choppedProcessModel, originalCommunicators );
 
-    dumpTraceHeader( outfile, originalDate, total_time, originalTimeUnit, choppedResourceModel, choppedProcessModel, originalCommunicators );
+    for( TNodeOrder iNode = 0; iNode < traceResourceModel.totalNodes(); ++iNode )
+      copyRowLabelToNewRowFile( TTraceLevel::NODE, iNode );
+
+    for( TNodeOrder iCPU = 0; iCPU < traceResourceModel.totalCPUs(); ++iCPU )
+      copyRowLabelToNewRowFile( TTraceLevel::CPU, iCPU );
+
+    std::string newRowFileName = LocalKernel::composeName( nameOut, "row" );
+    newRowFile.dumpToFile( newRowFileName );
   }
   else
     dumpTraceHeader( outfile, originalDate, total_time, originalTimeUnit, traceResourceModel, traceProcessModel, originalCommunicators );
