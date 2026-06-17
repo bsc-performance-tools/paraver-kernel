@@ -25,51 +25,50 @@
 #pragma once
 
 
-#include <sstream>
-#include <type_traits>
-#include <string.h>
-
-#include <libxml/xmlmemory.h>
-#include <libxml/parser.h>
-#include <libxml/xmlwriter.h>
-
 #include "traceoptions.h"
+
+#include <libxml/parser.h>
+#include <libxml/xmlmemory.h>
+#include <libxml/xmlwriter.h>
+#include <sstream>
+#include <string.h>
+#include <type_traits>
 
 constexpr size_t MAX_FILENAME_SIZE = 2048;
 
 #ifdef EXTENDED_OBJECTS_ENABLED
-  constexpr size_t MAX_TRACE_HEADER = 1572864;
-  constexpr size_t MAX_HEADER_SIZE =  1572864;
+constexpr size_t MAX_TRACE_HEADER = 1572864;
+constexpr size_t MAX_HEADER_SIZE  = 1572864;
 #else
-  constexpr size_t MAX_TRACE_HEADER = 1048576;
-  constexpr size_t MAX_HEADER_SIZE =  1048576;
+constexpr size_t MAX_TRACE_HEADER = 1048576;
+constexpr size_t MAX_HEADER_SIZE  = 1048576;
 #endif
 
-constexpr size_t MAX_APPL =     32;
+constexpr size_t MAX_APPL = 32;
 #ifdef EXTENDED_OBJECTS_ENABLED
-  constexpr size_t MAX_TASK = 147456;
+constexpr size_t MAX_TASK = 147456;
 #else
-  constexpr size_t MAX_TASK =  65536;
+constexpr size_t MAX_TASK = 65536;
 #endif
 
-constexpr size_t MAX_THREAD = 16;
+constexpr size_t MAX_THREAD         = 16;
 constexpr size_t MAX_SELECTED_TASKS = 512;
-constexpr size_t MAX_LINE_SIZE = MAX_HEADER_SIZE;
+constexpr size_t MAX_LINE_SIZE      = MAX_HEADER_SIZE;
 
 /* sofware counters */
 constexpr size_t MAX_VALUES = 100;
 
 #ifdef EXTENDED_OBJECTS_ENABLED
-  constexpr size_t MAX_THREADS = 147456;
+constexpr size_t MAX_THREADS = 147456;
 #else
-  constexpr size_t MAX_THREADS =  65536;
+constexpr size_t MAX_THREADS = 65536;
 #endif
 
-constexpr size_t MAXSTATES = 20;
+constexpr size_t MAXSTATES           = 20;
 constexpr size_t MAX_STATE_NAME_SIZE = 256;
 
 
-class KTraceOptions: public TraceOptions
+class KTraceOptions : public TraceOptions
 {
   public:
     /* Global parameters */
@@ -81,7 +80,7 @@ class KTraceOptions: public TraceOptions
     bool filter_comms;
     bool discard_given_types;
     bool filter_by_call_time;
-    char *state_names[MAXSTATES];
+    char *state_names[ MAXSTATES ];
     bool all_states;
     unsigned long long min_state_time;
     int min_comm_size; // ---->    should be TCommSize
@@ -102,7 +101,8 @@ class KTraceOptions: public TraceOptions
     bool keep_all_events;
     bool max_cut_time_to_finish_of_first_appl; // MESS
     CutterMode cutter_mode;
-    char tasks_list[4096];
+    bool modify_trace_header;
+    char tasks_list[ 4096 ];
 
     /* Parameters for software counters */
     bool sc_onInterval;
@@ -117,9 +117,9 @@ class KTraceOptions: public TraceOptions
 
     char *accum_types = nullptr;
     char *count_types = nullptr;
-    char *types_kept = nullptr;
+    char *types_kept  = nullptr;
 
-  //  KTraceOptions( const KernelConnection *whichKernel, char *xmldocname );
+    //  KTraceOptions( const KernelConnection *whichKernel, char *xmldocname );
     KTraceOptions();
     KTraceOptions( const TraceOptions &whichTraceOptions );
     KTraceOptions( const KTraceOptions *whichTraceOptions );
@@ -165,19 +165,24 @@ class KTraceOptions: public TraceOptions
 
     inline void init_tasks_list()
     {
-      for ( unsigned int i = 0; i < 4096; ++i )
+      for( unsigned int i = 0; i < 4096; ++i )
       {
         tasks_list[ i ] = '\0';
       }
     }
 
-    inline void set_tasks_list( char whichTasksList[4096] ) override
+    void set_modify_trace_header( bool modifyHeader ) override
+    {
+      modify_trace_header = modifyHeader;
+    }
+
+    inline void set_tasks_list( char whichTasksList[ 4096 ] ) override
     {
       init_tasks_list();
 
-      for ( unsigned int i = 0; i < 4096; ++i )
+      for( unsigned int i = 0; i < 4096; ++i )
       {
-        if ( whichTasksList[ i ] == '\0' )
+        if( whichTasksList[ i ] == '\0' )
           break;
         tasks_list[ i ] = whichTasksList[ i ];
       }
@@ -254,16 +259,21 @@ class KTraceOptions: public TraceOptions
       return max_percentage;
     }
 
+    bool get_modify_trace_header() const override
+    {
+      return modify_trace_header;
+    }
+
     inline void get_tasks_list( TTasksList &whichTasksList ) const override
     {
-      for ( unsigned int i = 0; i < 4096; ++i )
+      for( unsigned int i = 0; i < 4096; ++i )
       {
         whichTasksList[ i ] = '\0';
       }
 
-      for ( unsigned int i = 0; i < 4096; ++i )
+      for( unsigned int i = 0; i < 4096; ++i )
       {
-        if ( tasks_list[ i ] == '\0' )
+        if( tasks_list[ i ] == '\0' )
           break;
         whichTasksList[ i ] = tasks_list[ i ];
       }
@@ -333,7 +343,7 @@ class KTraceOptions: public TraceOptions
 
     inline void init_state_names()
     {
-      for ( unsigned int i = 0; i < MAXSTATES; ++i )
+      for( unsigned int i = 0; i < MAXSTATES; ++i )
       {
         state_names[ i ] = nullptr;
       }
@@ -341,9 +351,9 @@ class KTraceOptions: public TraceOptions
 
     inline void set_state_names( TStateNames whichStateNames ) override
     {
-      for ( unsigned int i = 0; i < MAXSTATES; ++i )
+      for( unsigned int i = 0; i < MAXSTATES; ++i )
       {
-        if ( whichStateNames[ i ] != nullptr )
+        if( whichStateNames[ i ] != nullptr )
           state_names[ i ] = strdup( whichStateNames[ i ] );
         else
           state_names[ i ] = nullptr;
@@ -367,7 +377,7 @@ class KTraceOptions: public TraceOptions
 
     inline void set_filter_types( TFilterTypes whichFilterTypes ) override
     {
-      for ( unsigned int i = 0; i < 20; ++i )
+      for( unsigned int i = 0; i < 20; ++i )
       {
         filter_types[ i ] = whichFilterTypes[ i ];
       }
@@ -407,7 +417,7 @@ class KTraceOptions: public TraceOptions
     {
       for( unsigned int i = 0; i < MAXSTATES; ++i )
       {
-        if ( state_names[ i ] != nullptr )
+        if( state_names[ i ] != nullptr )
           whichStateNames[ i ] = strdup( state_names[ i ] );
         else
           whichStateNames[ i ] = nullptr;
@@ -418,14 +428,14 @@ class KTraceOptions: public TraceOptions
     {
       for( unsigned int i = 0; i < MAXSTATES; ++i )
       {
-        if ( state_names[ i ] != nullptr )
+        if( state_names[ i ] != nullptr )
         {
-          if ( i > 0 )
+          if( i > 0 )
           {
             stateList = stateList + std::string( "," );
           }
 
-          stateList =  stateList + std::string( state_names[ i ] );
+          stateList = stateList + std::string( state_names[ i ] );
         }
         else
           break;
@@ -449,7 +459,7 @@ class KTraceOptions: public TraceOptions
 
     inline void get_filter_types( TFilterTypes &whichFilterTypes ) const override
     {
-      for ( unsigned int i = 0; i < 20; ++i )
+      for( unsigned int i = 0; i < 20; ++i )
       {
         whichFilterTypes[ i ] = filter_types[ i ];
       }
@@ -548,15 +558,15 @@ class KTraceOptions: public TraceOptions
 
     inline char *get_sc_accum_types() const override
     {
-      if ( accum_types != nullptr )
+      if( accum_types != nullptr )
         return strdup( accum_types );
-      
+
       return nullptr;
     }
 
     inline char *get_sc_count_types() const override
     {
-      if ( count_types != nullptr )
+      if( count_types != nullptr )
         return strdup( count_types );
 
       return nullptr;
@@ -564,9 +574,9 @@ class KTraceOptions: public TraceOptions
 
     inline char *get_sc_types_kept() const override
     {
-      if ( types_kept != nullptr )
+      if( types_kept != nullptr )
         return strdup( types_kept );
-      
+
       return nullptr;
     }
 
@@ -578,15 +588,12 @@ class KTraceOptions: public TraceOptions
 
     void init();
     void init_filter_types();
-    void parse_type( xmlDocPtr doc,
-                     xmlNodePtr cur,
-                     struct TraceOptions::allowed_types *types,
-                     int &last_type );
+    void parse_type( xmlDocPtr doc, xmlNodePtr cur, struct TraceOptions::allowed_types *types, int &last_type );
 
-    template<typename T, typename std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr >
-    bool parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, T& whichReturnValue );
-    template<typename T, typename std::enable_if_t<std::is_same<T, char *>::value>* = nullptr >
-    bool parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, T& whichReturnValue );
+    template< typename T, typename std::enable_if_t< std::is_arithmetic< T >::value > * = nullptr >
+    bool parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string &whichTag, T &whichReturnValue );
+    template< typename T, typename std::enable_if_t< std::is_same< T, char * >::value > * = nullptr >
+    bool parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string &whichTag, T &whichReturnValue );
 
     void parse_filter_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur );
@@ -600,22 +607,21 @@ class KTraceOptions: public TraceOptions
 };
 
 
-template<typename T,
-         typename std::enable_if_t<std::is_arithmetic<T>::value>* >
-bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, T& whichReturnValue )
+template< typename T, typename std::enable_if_t< std::is_arithmetic< T >::value > * >
+bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string &whichTag, T &whichReturnValue )
 {
   bool done = false;
 
-  if ( !xmlStrcmp( whichNode->name, ( const xmlChar * )whichTag.c_str() ) )
+  if( !xmlStrcmp( whichNode->name, (const xmlChar *)whichTag.c_str() ) )
   {
     xmlChar *word = xmlNodeListGetString( whichDoc, whichNode->xmlChildrenNode, 1 );
-    done = ( word != nullptr );
-    if ( done )
+    done          = ( word != nullptr );
+    if( done )
     {
       bufferElement.clear();
       bufferElement.str( (char *)word );
 
-      if ( !( bufferElement >> whichReturnValue ) )
+      if( !( bufferElement >> whichReturnValue ) )
         done = false;
     }
     xmlFree( word );
@@ -624,18 +630,17 @@ bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, cons
   return done;
 }
 
-template<typename T,
-         typename std::enable_if_t<std::is_same<T, char *>::value>* >
-bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string& whichTag, T& whichReturnValue )
+template< typename T, typename std::enable_if_t< std::is_same< T, char * >::value > * >
+bool KTraceOptions::parseContent( xmlDocPtr whichDoc, xmlNodePtr whichNode, const std::string &whichTag, T &whichReturnValue )
 {
   bool done = false;
 
-  if ( !xmlStrcmp( whichNode->name, ( const xmlChar * )whichTag.c_str() ) )
+  if( !xmlStrcmp( whichNode->name, (const xmlChar *)whichTag.c_str() ) )
   {
     xmlChar *word = xmlNodeListGetString( whichDoc, whichNode->xmlChildrenNode, 1 );
-    done = ( word != nullptr );
-    if ( done )
-      whichReturnValue = strdup( ( char *)word );
+    done          = ( word != nullptr );
+    if( done )
+      whichReturnValue = strdup( (char *)word );
 
     xmlFree( word );
   }

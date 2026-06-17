@@ -21,24 +21,23 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#include <iostream>
-
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <libxml/encoding.h>
-
 #include "ktraceoptions.h"
+
 #include "paraverconfig.h"
 #include "tracecutter.h"
 #include "tracefilter.h"
 #include "tracesoftwarecounters.h"
 
+#include <ctype.h>
+#include <iostream>
+#include <libxml/encoding.h>
+#include <stdlib.h>
+#include <string.h>
+
 using namespace std;
 
 #ifdef _WIN32
-#define atoll _atoi64
+#  define atoll _atoi64
 #endif
 
 constexpr char FILTER_XML_ENCODING[] = "UTF-8";
@@ -50,7 +49,7 @@ KTraceOptions::KTraceOptions()
   init();
 }
 
-KTraceOptions::KTraceOptions( const TraceOptions &auxwhichTraceOptions ): TraceOptions( auxwhichTraceOptions )
+KTraceOptions::KTraceOptions( const TraceOptions &auxwhichTraceOptions ) : TraceOptions( auxwhichTraceOptions )
 {
   init();
 }
@@ -68,6 +67,7 @@ KTraceOptions::KTraceOptions( const KTraceOptions *whichTraceOptions )
   set_max_cutting_time( whichTraceOptions->get_max_cutting_time() );
   set_minimum_time_percentage( whichTraceOptions->get_minimum_time_percentage() );
   set_maximum_time_percentage( whichTraceOptions->get_maximum_time_percentage() );
+  set_modify_trace_header( whichTraceOptions->get_modify_trace_header() );
   TTasksList list;
   whichTraceOptions->get_tasks_list( list );
   set_tasks_list( list );
@@ -85,7 +85,7 @@ KTraceOptions::KTraceOptions( const KTraceOptions *whichTraceOptions )
   // Filter Default Options: states
   set_filter_states( whichTraceOptions->get_filter_states() );
   set_all_states( whichTraceOptions->get_all_states() );
-  if ( !whichTraceOptions->get_all_states() )
+  if( !whichTraceOptions->get_all_states() )
   {
     TStateNames namesList;
     whichTraceOptions->get_state_names( namesList );
@@ -112,7 +112,7 @@ KTraceOptions::KTraceOptions( const KTraceOptions *whichTraceOptions )
   // Software Counters Default Options
   set_sc_onInterval( whichTraceOptions->get_sc_onInterval() );
 
-  if ( whichTraceOptions->get_sc_onInterval() )
+  if( whichTraceOptions->get_sc_onInterval() )
     set_sc_sampling_interval( whichTraceOptions->get_sc_sampling_interval() );
   else
     set_sc_minimum_burst_time( whichTraceOptions->get_sc_minimum_burst_time() );
@@ -128,25 +128,26 @@ KTraceOptions::KTraceOptions( const KTraceOptions *whichTraceOptions )
 }
 
 
-KTraceOptions::KTraceOptions( const KernelConnection *whichKernel ): TraceOptions( whichKernel )
+KTraceOptions::KTraceOptions( const KernelConnection *whichKernel ) : TraceOptions( whichKernel )
 {
   init();
 }
 
 
 KTraceOptions::~KTraceOptions()
-{}
+{
+}
 
 
 void KTraceOptions::init_filter_types()
 {
-  for ( unsigned int i = 0; i < 20; ++i )
+  for( unsigned int i = 0; i < 20; ++i )
   {
-    filter_types[ i ].type = 0;
-    filter_types[ i ].max_type = 0;
+    filter_types[ i ].type          = 0;
+    filter_types[ i ].max_type      = 0;
     filter_types[ i ].min_call_time = 0;
-    for ( unsigned int j = 0; j < 20; ++j )
-      filter_types[ i ].value[j] = 0;
+    for( unsigned int j = 0; j < 20; ++j )
+      filter_types[ i ].value[ j ] = 0;
     filter_types[ i ].last_value = 0;
   }
 }
@@ -172,9 +173,10 @@ void KTraceOptions::init()
   set_keep_all_events( true );
   set_max_cut_time_to_finish_of_first_appl( false );
   set_cutter_mode( CUT_MODE_TASK );
+  set_modify_trace_header( false );
 
   // Filter Default Options
-// problem --> derived fields?; minimum default info?
+  // problem --> derived fields?; minimum default info?
   set_filter_states( !ParaverConfig::getInstance()->getFilterDiscardStates() );
   set_all_states( false );
   // TODO: IMPLEMENT FILTER_BY_CALL_TIME
@@ -204,62 +206,59 @@ void KTraceOptions::init()
 }
 
 
-void KTraceOptions::parse_type( xmlDocPtr doc,
-                                xmlNodePtr cur,
-                                struct TraceOptions::allowed_types *types,
-                                int &last_type )
+void KTraceOptions::parse_type( xmlDocPtr doc, xmlNodePtr cur, struct TraceOptions::allowed_types *types, int &last_type )
 {
   xmlChar *word;
   int index;
   char *c;
 
   /* Get properties */
-  word = xmlGetProp( cur, ( const xmlChar * )"min_time" );
-  if ( word != nullptr )
+  word = xmlGetProp( cur, (const xmlChar *)"min_time" );
+  if( word != nullptr )
   {
-    filter_by_call_time = true;
-    types[last_type].min_call_time = atoll( ( char * )word );
+    filter_by_call_time              = true;
+    types[ last_type ].min_call_time = atoll( (char *)word );
 
     xmlFree( word );
   }
   else
-    types[last_type].min_call_time = 0;
+    types[ last_type ].min_call_time = 0;
 
   /* Get values */
   word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
 
 
   // range 'type1-type2' containing dash?
-  if ( ( c = strchr( ( char * )word, '-' ) ) != nullptr )
+  if( ( c = strchr( (char *)word, '-' ) ) != nullptr )
   {
-    *c = '\0';
-    types[last_type].type = atoll( ( char * )word );
-    types[last_type].max_type = atoll( ++c );
+    *c                          = '\0';
+    types[ last_type ].type     = atoll( (char *)word );
+    types[ last_type ].max_type = atoll( ++c );
     last_type++;
 
     return;
   }
   else // single type
   {
-    types[last_type].type = atoll( ( char * )word );
-    types[last_type].max_type = 0;
+    types[ last_type ].type     = atoll( (char *)word );
+    types[ last_type ].max_type = 0;
   }
   index = 0;
 
   cur = cur->xmlChildrenNode;
-  while ( cur != nullptr )
+  while( cur != nullptr )
   {
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"value" ) )
+    if( !xmlStrcmp( cur->name, (const xmlChar *)"value" ) )
     {
-      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      types[last_type].value[index] = atoll( ( char * )word );
+      word                              = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+      types[ last_type ].value[ index ] = atoll( (char *)word );
       index++;
     }
 
     cur = cur->next;
   }
 
-  types[last_type].last_value = index;
+  types[ last_type ].last_value = index;
   last_type++;
 }
 
@@ -302,28 +301,27 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
   char *word_aux;
   unsigned int i;
 
-// this should be read from ParaverConfig.
-  bool discardStates = ParaverConfig::getInstance()->getFilterDiscardStates();
-  bool discardEvents = ParaverConfig::getInstance()->getFilterDiscardEvents();
+  // this should be read from ParaverConfig.
+  bool discardStates         = ParaverConfig::getInstance()->getFilterDiscardStates();
+  bool discardEvents         = ParaverConfig::getInstance()->getFilterDiscardEvents();
   bool discardCommunications = ParaverConfig::getInstance()->getFilterDiscardCommunications();
 
-  bool foundDiscardStatesTag = false;
-  bool foundDiscardEventsTag = false;
+  bool foundDiscardStatesTag         = false;
+  bool foundDiscardEventsTag         = false;
   bool foundDiscardCommunicationsTag = false;
 
-  while ( cur != nullptr )
+  while( cur != nullptr )
   {
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"types" ) )
+    if( !xmlStrcmp( cur->name, (const xmlChar *)"types" ) )
     {
-
-      filter_events = true;
+      filter_events       = true;
       discard_given_types = false;
 
       /* Get properties */
-      word = xmlGetProp( cur, ( const xmlChar * )"use" );
-      if ( word != nullptr )
+      word = xmlGetProp( cur, (const xmlChar *)"use" );
+      if( word != nullptr )
       {
-        if ( !xmlStrcmp( word, ( const xmlChar * )"discard" ) )
+        if( !xmlStrcmp( word, (const xmlChar *)"discard" ) )
           discard_given_types = 1;
 
         xmlFree( word );
@@ -333,74 +331,75 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
       child = cur->xmlChildrenNode;
       child = child->next;
 
-      while ( child != nullptr )
+      while( child != nullptr )
       {
-        if ( !xmlStrcmp( child->name, ( const xmlChar * )"type" ) )
+        if( !xmlStrcmp( child->name, (const xmlChar *)"type" ) )
           parse_type( doc, child, filter_types, filter_last_type );
 
-        if( child != nullptr )    // BAD FORMED XMLs
+        if( child != nullptr ) // BAD FORMED XMLs
           child = child->next;
       }
     }
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"comms" ) )
+    if( !xmlStrcmp( cur->name, (const xmlChar *)"comms" ) )
     {
       filter_comms = true;
-      child = cur->xmlChildrenNode;
-      //child = child->next;  ??
-      if ( child != nullptr )
+      child        = cur->xmlChildrenNode;
+      // child = child->next;  ??
+      if( child != nullptr )
       {
-        //word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 ); ??
-        word = xmlNodeListGetString( doc, child, 1 );
-        min_comm_size = atoi( ( char * )word );
+        // word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 ); ??
+        word          = xmlNodeListGetString( doc, child, 1 );
+        min_comm_size = atoi( (char *)word );
         xmlFree( word );
       }
     }
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"states" ) )
+    if( !xmlStrcmp( cur->name, (const xmlChar *)"states" ) )
     {
       filter_states = true;
-      all_states = false;
-      child = cur->xmlChildrenNode;
+      all_states    = false;
+      child         = cur->xmlChildrenNode;
 
       /* searching which states wants to keep */
-      for ( i = 0; i < MAXSTATES; i++ )
-        state_names[i] = nullptr;
+      for( i = 0; i < MAXSTATES; i++ )
+        state_names[ i ] = nullptr;
 
       word = xmlNodeListGetString( doc, child, 1 );
 
       bool onlyOneState = ( strstr( (char *)word, "," ) == nullptr );
 
       char *tmpWord_r = nullptr;
-      word_aux = strtok_r( ( char * )word, ",", &tmpWord_r );
+      word_aux        = strtok_r( (char *)word, ",", &tmpWord_r );
 
-      if ( strstr( word_aux, "All" ) != nullptr )
+      if( strstr( word_aux, "All" ) != nullptr )
         all_states = true;
       else
       {
         /* Patch in order to allow tag without name */
-        for ( i = 0; i < strlen( word_aux ); i++ )
-          if ( isalnum( word_aux[i] ) ) break;
+        for( i = 0; i < strlen( word_aux ); i++ )
+          if( isalnum( word_aux[ i ] ) )
+            break;
 
-        if ( i == strlen( word_aux ) )
+        if( i == strlen( word_aux ) )
         {
           /* No label */
-          state_names[0] = strdup( "Running" );
+          state_names[ 0 ] = strdup( "Running" );
         }
         else
         {
-          state_names[0] = strdup( word_aux );
-          if ( !onlyOneState )
+          state_names[ 0 ] = strdup( word_aux );
+          if( !onlyOneState )
           {
-            for ( i = 1; i < MAXSTATES; i++ )
+            for( i = 1; i < MAXSTATES; i++ )
             {
-              if ( ( word_aux = strtok_r( nullptr, ",", &tmpWord_r ) ) == nullptr )
+              if( ( word_aux = strtok_r( nullptr, ",", &tmpWord_r ) ) == nullptr )
                 break;
 
-              if ( !strcmp( word_aux, "All" ) )
+              if( !strcmp( word_aux, "All" ) )
                 all_states = 1;
               else
-                state_names[i] = strdup( word_aux );
+                state_names[ i ] = strdup( word_aux );
             }
           }
         }
@@ -411,19 +410,19 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
       /* searching if a min time is required */
       child = child->next;
 
-      if ( child != nullptr )
+      if( child != nullptr )
       {
-        parseContent( doc, child, "min_state_time", min_state_time ); 
+        parseContent( doc, child, "min_state_time", min_state_time );
       }
     }
 
-    if ( parseContent( doc, cur, "discard_states", discardStates ) )
+    if( parseContent( doc, cur, "discard_states", discardStates ) )
       foundDiscardStatesTag = true;
 
-    if ( parseContent( doc, cur, "discard_events", discardEvents ) )
+    if( parseContent( doc, cur, "discard_events", discardEvents ) )
       foundDiscardEventsTag = true;
 
-    if ( parseContent( doc, cur, "discard_communications", discardCommunications ) )
+    if( parseContent( doc, cur, "discard_communications", discardCommunications ) )
       foundDiscardCommunicationsTag = true;
 
     cur = cur->next;
@@ -434,11 +433,11 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
   // foundDiscard{States, Events, Communications}Tag is true only if we found "discard" xml tag
   // filter_{states, events, comms} is true if section found
 
-  if ( foundDiscardCommunicationsTag )
+  if( foundDiscardCommunicationsTag )
     filter_comms = !discardCommunications;
-  if ( foundDiscardEventsTag )
+  if( foundDiscardEventsTag )
     filter_events = !discardEvents;
-  if ( foundDiscardStatesTag )
+  if( foundDiscardStatesTag )
     filter_states = !discardStates;
 }
 
@@ -447,30 +446,30 @@ void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
 {
   xmlChar *word;
 
-  while ( cur != nullptr )
+  while( cur != nullptr )
   {
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"tasks" ) )
+    if( !xmlStrcmp( cur->name, (const xmlChar *)"tasks" ) )
     {
       word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      strcpy( tasks_list, ( const char * )word );
+      strcpy( tasks_list, (const char *)word );
 
       xmlFree( word );
     }
 
-    parseContent( doc, cur, "original_time", original_time ); 
+    parseContent( doc, cur, "original_time", original_time );
     parseContent( doc, cur, "max_trace_size", max_trace_size );
-    parseContent( doc, cur, "by_time", by_time ); 
-    parseContent( doc, cur, "minimum_time", min_cutting_time ); 
-    parseContent( doc, cur, "maximum_time", max_cutting_time ); 
-    parseContent( doc, cur, "minimum_time_percentage", min_percentage ); 
-    parseContent( doc, cur, "maximum_time_percentage", max_percentage ); 
-    parseContent( doc, cur, "break_states", break_states ); 
-    parseContent( doc, cur, "remove_first_states", remFirstStates ); 
-    parseContent( doc, cur, "remove_last_states", remLastStates ); 
-    parseContent( doc, cur, "keep_events", keep_boundary_events ); 
+    parseContent( doc, cur, "by_time", by_time );
+    parseContent( doc, cur, "minimum_time", min_cutting_time );
+    parseContent( doc, cur, "maximum_time", max_cutting_time );
+    parseContent( doc, cur, "minimum_time_percentage", min_percentage );
+    parseContent( doc, cur, "maximum_time_percentage", max_percentage );
+    parseContent( doc, cur, "break_states", break_states );
+    parseContent( doc, cur, "remove_first_states", remFirstStates );
+    parseContent( doc, cur, "remove_last_states", remLastStates );
+    parseContent( doc, cur, "keep_events", keep_boundary_events );
 
     int cutterModeInt = 0;
-    if ( parseContent( doc, cur, "cutter_mode", cutterModeInt ) )
+    if( parseContent( doc, cur, "cutter_mode", cutterModeInt ) )
     {
       cutter_mode = (CutterMode)cutterModeInt;
     }
@@ -485,46 +484,46 @@ void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cu
   xmlNodePtr child;
 
   // Compatibility variables with previous versions of XML
-  char *tmp_compat_types = nullptr;
+  char *tmp_compat_types         = nullptr;
   bool tmp_compat_accum_counters = true;
 
-  while ( cur != nullptr )
+  while( cur != nullptr )
   {
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"range" ) )
+    if( !xmlStrcmp( cur->name, (const xmlChar *)"range" ) )
     {
       /* Navigate throug nodes */
       child = cur->xmlChildrenNode;
       child = child->next;
 
-      while ( child != nullptr )
+      while( child != nullptr )
       {
         parseContent( doc, child, "by_intervals_vs_by_states", sc_onInterval );
         parseContent( doc, child, "sampling_interval", sc_sampling_interval );
         parseContent( doc, child, "minimum_burst_time", sc_minimum_burst_time );
-        parseContent( doc, child, "events", tmp_compat_types ); 
-        parseContent( doc, child, "accum_events", accum_types ); 
-        parseContent( doc, child, "count_events", count_types ); 
+        parseContent( doc, child, "events", tmp_compat_types );
+        parseContent( doc, child, "accum_events", accum_types );
+        parseContent( doc, child, "count_events", count_types );
 
         child = child->next;
       }
     }
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"algorithm" ) )
+    if( !xmlStrcmp( cur->name, (const xmlChar *)"algorithm" ) )
     {
       /* Navigate throug nodes */
       child = cur->xmlChildrenNode;
       child = child->next;
 
-      while ( child != nullptr )
+      while( child != nullptr )
       {
         // Deprecated element - kept for retrocompatibility
         parseContent( doc, child, "count_events_vs_acummulate_values", tmp_compat_accum_counters );
 
-        parseContent( doc, child, "remove_states", sc_remove_states ); 
-        parseContent( doc, child, "summarize_useful_states", sc_summarize_states ); 
-        parseContent( doc, child, "global_counters", sc_global_counters ); 
-        parseContent( doc, child, "only_in_burst_counting", sc_only_in_bursts ); 
-        parseContent( doc, child, "keep_events", types_kept ); 
+        parseContent( doc, child, "remove_states", sc_remove_states );
+        parseContent( doc, child, "summarize_useful_states", sc_summarize_states );
+        parseContent( doc, child, "global_counters", sc_global_counters );
+        parseContent( doc, child, "only_in_burst_counting", sc_only_in_bursts );
+        parseContent( doc, child, "keep_events", types_kept );
 
         child = child->next;
       }
@@ -546,7 +545,7 @@ void KTraceOptions::pushBackUniqueFilterIdentifier( string filterID, vector< str
 {
   // if same kind of filter is repeated, last is loaded, pushed in proper order
   vector< string >::iterator it = find( order.begin(), order.end(), filterID );
-  if ( it != order.end() )
+  if( it != order.end() )
     order.erase( it );
   order.push_back( filterID );
 }
@@ -561,31 +560,33 @@ vector< string > KTraceOptions::parseDoc( char *docname )
   xmlNodePtr cur;
 
   /* Ini Data */
-  min_state_time = 0;
-  min_comm_size = 0;
+  min_state_time   = 0;
+  min_comm_size    = 0;
   filter_last_type = 0;
 
-  original_time = true;
-  tasks_list[0] = '\0';
+  original_time   = true;
+  tasks_list[ 0 ] = '\0';
 
   filter_by_call_time = false;
 
-  if ( docname == nullptr || strcmp( docname, "") == 0 ) return order;
+  if( docname == nullptr || strcmp( docname, "" ) == 0 )
+    return order;
 
   doc = xmlParseFile( docname );
 
-  if ( doc == nullptr ) return order;
+  if( doc == nullptr )
+    return order;
 
   cur = xmlDocGetRootElement( doc );
 
-  if ( cur == nullptr )
+  if( cur == nullptr )
   {
     fprintf( stderr, "empty document\n" );
     xmlFreeDoc( doc );
     return order;
   }
 
-  if ( xmlStrcmp( cur->name, ( const xmlChar * ) "config" ) )
+  if( xmlStrcmp( cur->name, (const xmlChar *)"config" ) )
   {
     fprintf( stderr, "document of the wrong type, root node != config" );
     xmlFreeDoc( doc );
@@ -593,21 +594,21 @@ vector< string > KTraceOptions::parseDoc( char *docname )
   }
 
   cur = cur->xmlChildrenNode;
-  while ( cur != nullptr )
+  while( cur != nullptr )
   {
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )TraceCutter::getID().c_str() ) )
+    if( !xmlStrcmp( cur->name, (const xmlChar *)TraceCutter::getID().c_str() ) )
     {
       parse_cutter_params( doc, cur->xmlChildrenNode );
       pushBackUniqueFilterIdentifier( TraceCutter::getID(), order );
     }
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )TraceFilter::getID().c_str() ) )
+    if( !xmlStrcmp( cur->name, (const xmlChar *)TraceFilter::getID().c_str() ) )
     {
       parse_filter_params( doc, cur->xmlChildrenNode );
       pushBackUniqueFilterIdentifier( TraceFilter::getID(), order );
     }
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )TraceSoftwareCounters::getID().c_str() ) )
+    if( !xmlStrcmp( cur->name, (const xmlChar *)TraceSoftwareCounters::getID().c_str() ) )
     {
       parse_software_counters_params( doc, cur->xmlChildrenNode );
       pushBackUniqueFilterIdentifier( TraceSoftwareCounters::getID(), order );
@@ -635,19 +636,19 @@ bool KTraceOptions::saveXML( vector< string > &filterOrder, string fileName )
 
   rc = xmlTextWriterStartDocument( writer, nullptr, FILTER_XML_ENCODING, nullptr );
 
-  rc = xmlTextWriterStartElement( writer, BAD_CAST "config");
+  rc = xmlTextWriterStartElement( writer, BAD_CAST "config" );
 
   for( unsigned int i = 0; i < filterOrder.size(); ++i )
   {
-    if ( filterOrder[i] == TraceCutter::getID() )
+    if( filterOrder[ i ] == TraceCutter::getID() )
     {
       saveXMLCutter( writer );
     }
-    else if  ( filterOrder[i] == TraceFilter::getID() )
+    else if( filterOrder[ i ] == TraceFilter::getID() )
     {
       saveXMLFilter( writer );
     }
-    else if  ( filterOrder[i] == TraceSoftwareCounters::getID() )
+    else if( filterOrder[ i ] == TraceSoftwareCounters::getID() )
     {
       saveXMLSoftwareCounters( writer );
     }
@@ -660,7 +661,7 @@ bool KTraceOptions::saveXML( vector< string > &filterOrder, string fileName )
 
   xmlFreeTextWriter( writer );
   xmlSaveFileEnc( fileName.c_str(), doc, FILTER_XML_ENCODING );
-  xmlFreeDoc(doc);
+  xmlFreeDoc( doc );
 
   return true;
 }
@@ -670,12 +671,12 @@ void KTraceOptions::saveXMLCutter( xmlTextWriterPtr &writer )
   int rc;
 
   rc = xmlTextWriterWriteComment( writer, BAD_CAST " CUTTER OPTIONS " );
-  rc = xmlTextWriterStartElement( writer, BAD_CAST "cutter");
+  rc = xmlTextWriterStartElement( writer, BAD_CAST "cutter" );
 
   TTasksList auxTask;
   get_tasks_list( auxTask );
 
-  if ( auxTask[0] !=  '\0')
+  if( auxTask[ 0 ] != '\0' )
     rc = xmlTextWriterWriteElement( writer, BAD_CAST "tasks", BAD_CAST auxTask );
   else
   {
@@ -683,7 +684,7 @@ void KTraceOptions::saveXMLCutter( xmlTextWriterPtr &writer )
     rc = xmlTextWriterWriteComment( writer, BAD_CAST "<tasks></tasks>" );
   }
 
-  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "max_trace_size", "%d", get_max_trace_size());
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "max_trace_size", "%d", get_max_trace_size() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "by_time", "%d", (int)get_by_time() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "minimum_time", "%lld", get_min_cutting_time() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "maximum_time", "%lld", get_max_cutting_time() );
@@ -705,39 +706,39 @@ void KTraceOptions::saveXMLFilter( xmlTextWriterPtr &writer )
   int rc;
 
   rc = xmlTextWriterWriteComment( writer, BAD_CAST " FILTER OPTIONS " );
-  rc = xmlTextWriterStartElement( writer, BAD_CAST "filter");
+  rc = xmlTextWriterStartElement( writer, BAD_CAST "filter" );
 
-  rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "discard_states", "%d", (int)!get_filter_states() );
-  rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "discard_events", "%d", (int)!get_filter_events() );
-  rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "discard_communications", "%d", (int)!get_filter_comms() );
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "discard_states", "%d", (int)!get_filter_states() );
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "discard_events", "%d", (int)!get_filter_events() );
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "discard_communications", "%d", (int)!get_filter_comms() );
 
   // STATES SECTION
-  rc = xmlTextWriterStartElement( writer, BAD_CAST "states");
+  rc = xmlTextWriterStartElement( writer, BAD_CAST "states" );
 
-  if ( get_all_states() )
-    //rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "states", "%s", BAD_CAST "All");
-    rc = xmlTextWriterWriteFormatRaw( writer, "%s",BAD_CAST "All" );
+  if( get_all_states() )
+    // rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "states", "%s", BAD_CAST "All");
+    rc = xmlTextWriterWriteFormatRaw( writer, "%s", BAD_CAST "All" );
   else
   {
     string auxStates;
     get_state_names( auxStates );
-    //rc = xmlTextWriterWriteElement( writer, BAD_CAST "states", BAD_CAST auxStates.c_str() );
-    rc = xmlTextWriterWriteFormatRaw( writer, "%s\n",BAD_CAST auxStates.c_str() );
+    // rc = xmlTextWriterWriteElement( writer, BAD_CAST "states", BAD_CAST auxStates.c_str() );
+    rc = xmlTextWriterWriteFormatRaw( writer, "%s\n", BAD_CAST auxStates.c_str() );
   }
 
-  //rc = xmlTextWriterSetIndent( writer, 0 );
+  // rc = xmlTextWriterSetIndent( writer, 0 );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "min_state_time", "%d", (int)get_min_state_time() );
-  //rc = xmlTextWriterSetIndent( writer, 1 );
+  // rc = xmlTextWriterSetIndent( writer, 1 );
 
   rc = xmlTextWriterEndElement( writer ); // states
 
   // EVENT TYPES SECTION
   // tag isn't written if no type in the list
-  if ( get_filter_last_type() > 0 )
+  if( get_filter_last_type() > 0 )
   {
-    rc = xmlTextWriterStartElement( writer, BAD_CAST "types");
-    if ( get_discard_given_types() )
-      rc = xmlTextWriterWriteAttribute( writer, BAD_CAST "use", BAD_CAST "discard");
+    rc = xmlTextWriterStartElement( writer, BAD_CAST "types" );
+    if( get_discard_given_types() )
+      rc = xmlTextWriterWriteAttribute( writer, BAD_CAST "use", BAD_CAST "discard" );
 
     TFilterTypes auxTypes;
     get_filter_types( auxTypes );
@@ -745,7 +746,7 @@ void KTraceOptions::saveXMLFilter( xmlTextWriterPtr &writer )
     {
       stringstream typeStr;
       typeStr << auxTypes[ itype ].type;
-      if ( auxTypes[ itype ].max_type != 0 )
+      if( auxTypes[ itype ].max_type != 0 )
       {
         typeStr << string( "-" );
         typeStr << auxTypes[ itype ].max_type;
@@ -753,13 +754,13 @@ void KTraceOptions::saveXMLFilter( xmlTextWriterPtr &writer )
 
       string auxStrTypes( typeStr.str() );
 
-      if ( auxTypes[ itype ].last_value == 0 )
+      if( auxTypes[ itype ].last_value == 0 )
         rc = xmlTextWriterWriteElement( writer, BAD_CAST "type", BAD_CAST auxStrTypes.c_str() );
       else
       {
         // write all values
-        rc = xmlTextWriterStartElement( writer, BAD_CAST "type");
-        rc = xmlTextWriterWriteFormatRaw( writer, "%s",BAD_CAST auxStrTypes.c_str() );
+        rc = xmlTextWriterStartElement( writer, BAD_CAST "type" );
+        rc = xmlTextWriterWriteFormatRaw( writer, "%s", BAD_CAST auxStrTypes.c_str() );
         for( int ivalue = 0; ivalue < auxTypes[ itype ].last_value; ++ivalue )
         {
           rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "value", "%lld", auxTypes[ itype ].value[ ivalue ] );
@@ -788,30 +789,30 @@ void KTraceOptions::saveXMLSoftwareCounters( xmlTextWriterPtr &writer )
 {
   int rc;
 
-  auto writeEvents = [this, &writer, &rc]( auto getEvents, const std::string& tag )
-                     {
-                       char *tmpStr = (this->*getEvents)();
-                       if ( tmpStr != nullptr && !string( tmpStr ).empty() )
-                       {
-                         rc = xmlTextWriterWriteElement( writer, BAD_CAST tag.c_str(), BAD_CAST tmpStr );
-                         free( tmpStr );
-                       }
-                       else
-                       {
-                         rc = xmlTextWriterWriteComment( writer, BAD_CAST string( "empty " + tag + " list" ).c_str() );
-                         rc = xmlTextWriterWriteComment( writer, BAD_CAST string( "<" + tag + "></" + tag + ">" ).c_str() );
-                       }
-                     };
+  auto writeEvents = [ this, &writer, &rc ]( auto getEvents, const std::string &tag )
+  {
+    char *tmpStr = ( this->*getEvents )();
+    if( tmpStr != nullptr && !string( tmpStr ).empty() )
+    {
+      rc = xmlTextWriterWriteElement( writer, BAD_CAST tag.c_str(), BAD_CAST tmpStr );
+      free( tmpStr );
+    }
+    else
+    {
+      rc = xmlTextWriterWriteComment( writer, BAD_CAST string( "empty " + tag + " list" ).c_str() );
+      rc = xmlTextWriterWriteComment( writer, BAD_CAST string( "<" + tag + "></" + tag + ">" ).c_str() );
+    }
+  };
 
   rc = xmlTextWriterWriteComment( writer, BAD_CAST " SOFTWARE COUNTERS OPTIONS " );
-  rc = xmlTextWriterStartElement( writer, BAD_CAST "software_counters");
+  rc = xmlTextWriterStartElement( writer, BAD_CAST "software_counters" );
 
-  rc = xmlTextWriterStartElement( writer, BAD_CAST "range");
+  rc = xmlTextWriterStartElement( writer, BAD_CAST "range" );
 
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "by_intervals_vs_by_states", "%d", (int)get_sc_onInterval() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "sampling_interval", "%lld", get_sc_sampling_interval() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "minimum_burst_time", "%lld", get_sc_minimum_burst_time() );
-  
+
 
   writeEvents( &KTraceOptions::get_sc_accum_types, string( "accum_events" ) );
   writeEvents( &KTraceOptions::get_sc_count_types, string( "count_events" ) );

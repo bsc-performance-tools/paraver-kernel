@@ -33,113 +33,126 @@ class TraceOptions
   public:
     struct allowed_types
     {
-      TEventType type;
-      TEventType max_type;  /* For range of types */
-      unsigned long long min_call_time; /* For filtering calls by time */
-      TEventValue value[20];
-      int last_value;
+        TEventType type;
+        TEventType max_type;              /* For range of types */
+        unsigned long long min_call_time; /* For filtering calls by time */
+        TEventValue value[ 20 ];
+        int last_value;
     };
 
-    typedef char TTasksList[4096];
-    typedef char *TStateNames[20];
-    typedef struct allowed_types TFilterTypes[20];
+    typedef char TTasksList[ 4096 ];
+    typedef char *TStateNames[ 20 ];
+    typedef struct allowed_types TFilterTypes[ 20 ];
 
     static TraceOptions *create( const KernelConnection *whichKernel );
 
-    static bool isTraceToolsOptionsFile( const std::string& xmlFileName );
-    static bool validTraceToolsOptionsFile( const std::string& xmlFileName );
+    static bool isTraceToolsOptionsFile( const std::string &xmlFileName );
+    static bool validTraceToolsOptionsFile( const std::string &xmlFileName );
 
-    TraceOptions() {}
-    TraceOptions( const KernelConnection *whichKernel ) {}
-    virtual ~TraceOptions() {}
+    TraceOptions()
+    {
+    }
+    TraceOptions( const KernelConnection *whichKernel )
+    {
+    }
+    virtual ~TraceOptions()
+    {
+    }
 
     /* Global Settings */
     virtual void set_max_trace_size( int traceSize ) = 0;
-    virtual int get_max_trace_size( ) const = 0;
+    virtual int get_max_trace_size() const           = 0;
 
     /* Sets for Cutter */
-    virtual void set_by_time( bool whichByTime ) = 0;
-    virtual void set_min_cutting_time( unsigned long long minCutTime ) = 0;
-    virtual void set_max_cutting_time( unsigned long long maxCutTime ) = 0;
+    virtual void set_by_time( bool whichByTime )                                              = 0;
+    virtual void set_min_cutting_time( unsigned long long minCutTime )                        = 0;
+    virtual void set_max_cutting_time( unsigned long long maxCutTime )                        = 0;
     virtual void set_minimum_time_percentage( unsigned long long whichMinimumTimePercentage ) = 0;
     virtual void set_maximum_time_percentage( unsigned long long whichMaximumTimePercentage ) = 0;
-    virtual void set_tasks_list( char *tasksList ) = 0;
-    virtual void set_original_time( bool originalTime ) = 0;
-    virtual void set_break_states( bool breakStates ) = 0;
-    virtual void set_remFirstStates( bool remStates ) = 0;
-    virtual void set_remLastStates( bool remStates ) = 0;
-    virtual void set_keep_boundary_events( bool keepEvents ) = 0;
-    virtual void set_keep_all_events( bool keepAllEvents ) = 0;
-    virtual void set_max_cut_time_to_finish_of_first_appl( bool setOption ) = 0;
+    virtual void set_modify_trace_header( bool modifyHeader )                                 = 0;
+    virtual void set_tasks_list( char *tasksList )                                            = 0;
+    virtual void set_original_time( bool originalTime )                                       = 0;
+    virtual void set_break_states( bool breakStates )                                         = 0;
+    virtual void set_remFirstStates( bool remStates )                                         = 0;
+    virtual void set_remLastStates( bool remStates )                                          = 0;
+    virtual void set_keep_boundary_events( bool keepEvents )                                  = 0;
+    virtual void set_keep_all_events( bool keepAllEvents )                                    = 0;
+    virtual void set_max_cut_time_to_finish_of_first_appl( bool setOption )                   = 0;
 
-    virtual bool get_by_time() const = 0;
-    virtual unsigned long long get_min_cutting_time() const = 0;
-    virtual unsigned long long get_max_cutting_time() const = 0;
-    virtual unsigned long long get_minimum_time_percentage() const = 0;
-    virtual unsigned long long get_maximum_time_percentage() const = 0;
+    virtual bool get_by_time() const                                = 0;
+    virtual unsigned long long get_min_cutting_time() const         = 0;
+    virtual unsigned long long get_max_cutting_time() const         = 0;
+    virtual unsigned long long get_minimum_time_percentage() const  = 0;
+    virtual unsigned long long get_maximum_time_percentage() const  = 0;
+    virtual bool get_modify_trace_header() const                    = 0;
     virtual void get_tasks_list( TTasksList &whichTasksList ) const = 0;
-    virtual bool get_original_time() const = 0;
-    virtual bool get_break_states() const = 0;
-    virtual bool get_remFirstStates() const = 0;
-    virtual bool get_remLastStates() const = 0;
-    virtual bool get_keep_boundary_events() const = 0;
-    virtual bool get_keep_all_events() const = 0;
+    virtual bool get_original_time() const                          = 0;
+    virtual bool get_break_states() const                           = 0;
+    virtual bool get_remFirstStates() const                         = 0;
+    virtual bool get_remLastStates() const                          = 0;
+    virtual bool get_keep_boundary_events() const                   = 0;
+    virtual bool get_keep_all_events() const                        = 0;
 
     // MESS
     virtual bool get_max_cut_time_to_finish_of_first_appl() const = 0;
-    
-    enum CutterMode { CUT_MODE_TASK = 0, CUT_MODE_APPLICATION, CUT_MODE_THREAD }; // ORDER IS IMPORTANT
+
+    enum CutterMode
+    {
+      CUT_MODE_TASK = 0,
+      CUT_MODE_APPLICATION,
+      CUT_MODE_THREAD
+    }; // ORDER IS IMPORTANT
     virtual void set_cutter_mode( CutterMode mode ) = 0;
-    virtual CutterMode get_cutter_mode() const = 0;
+    virtual CutterMode get_cutter_mode() const      = 0;
 
     /* Sets for filtering */
-    virtual void set_filter_events( bool filterEvents ) = 0;
-    virtual void set_filter_states( bool filterStates ) = 0;
-    virtual void set_filter_comms( bool filterComms ) = 0;
-    virtual void set_discard_given_types( bool discardGivenTypes ) = 0;
-    virtual void set_filter_by_call_time( bool filterByCallTime ) = 0;
-    virtual void set_state_names( TStateNames stateNames ) = 0;
-    virtual void set_all_states( bool allStates ) = 0;
+    virtual void set_filter_events( bool filterEvents )                = 0;
+    virtual void set_filter_states( bool filterStates )                = 0;
+    virtual void set_filter_comms( bool filterComms )                  = 0;
+    virtual void set_discard_given_types( bool discardGivenTypes )     = 0;
+    virtual void set_filter_by_call_time( bool filterByCallTime )      = 0;
+    virtual void set_state_names( TStateNames stateNames )             = 0;
+    virtual void set_all_states( bool allStates )                      = 0;
     virtual void set_min_state_time( unsigned long long minStateTime ) = 0;
-    virtual void set_min_comm_size( int minCommSize ) = 0;
-    virtual void set_filter_types( TFilterTypes filterTypes ) = 0;
-    virtual void set_filter_last_type( int filterLastType ) = 0;
+    virtual void set_min_comm_size( int minCommSize )                  = 0;
+    virtual void set_filter_types( TFilterTypes filterTypes )          = 0;
+    virtual void set_filter_last_type( int filterLastType )            = 0;
 
-    virtual bool get_filter_events() const = 0;
-    virtual bool get_filter_states() const = 0;
-    virtual bool get_filter_comms() const = 0;
-    virtual bool get_discard_given_types() const = 0;
-    virtual bool get_filter_by_call_time() const = 0;
-    virtual void get_state_names( TStateNames &stateNames ) const = 0;
-    virtual void get_state_names( std::string &stateList ) const = 0;
-    virtual bool get_all_states() const = 0;
-    virtual unsigned long long get_min_state_time() const = 0;
-    virtual int get_min_comm_size() const = 0;
+    virtual bool get_filter_events() const                           = 0;
+    virtual bool get_filter_states() const                           = 0;
+    virtual bool get_filter_comms() const                            = 0;
+    virtual bool get_discard_given_types() const                     = 0;
+    virtual bool get_filter_by_call_time() const                     = 0;
+    virtual void get_state_names( TStateNames &stateNames ) const    = 0;
+    virtual void get_state_names( std::string &stateList ) const     = 0;
+    virtual bool get_all_states() const                              = 0;
+    virtual unsigned long long get_min_state_time() const            = 0;
+    virtual int get_min_comm_size() const                            = 0;
     virtual void get_filter_types( TFilterTypes &filterTypes ) const = 0;
-    virtual int get_filter_last_type() const = 0;
+    virtual int get_filter_last_type() const                         = 0;
 
     /* Sets for Software Counters */
-    virtual void set_sc_onInterval( bool scOnInterval ) = 0;
-    virtual void set_sc_sampling_interval( unsigned long long scInterval ) = 0;
+    virtual void set_sc_onInterval( bool scOnInterval )                     = 0;
+    virtual void set_sc_sampling_interval( unsigned long long scInterval )  = 0;
     virtual void set_sc_minimum_burst_time( unsigned long long scInterval ) = 0;
-    virtual void set_sc_global_counters( bool scGlobalCounters ) = 0;
-    virtual void set_sc_summarize_states( bool scSummarizeStates ) = 0;
-    virtual void set_sc_only_in_bursts( bool scOnlyInBursts ) = 0;
-    virtual void set_sc_remove_states( bool scRemoveStates ) = 0;
-    virtual void set_sc_accum_types( char *whichTypes ) = 0;
-    virtual void set_sc_count_types( char *whichTypes ) = 0;
-    virtual void set_sc_types_kept( char *typesKept ) = 0;
+    virtual void set_sc_global_counters( bool scGlobalCounters )            = 0;
+    virtual void set_sc_summarize_states( bool scSummarizeStates )          = 0;
+    virtual void set_sc_only_in_bursts( bool scOnlyInBursts )               = 0;
+    virtual void set_sc_remove_states( bool scRemoveStates )                = 0;
+    virtual void set_sc_accum_types( char *whichTypes )                     = 0;
+    virtual void set_sc_count_types( char *whichTypes )                     = 0;
+    virtual void set_sc_types_kept( char *typesKept )                       = 0;
 
-    virtual bool get_sc_onInterval() const = 0;
-    virtual unsigned long long get_sc_sampling_interval() const = 0;
+    virtual bool get_sc_onInterval() const                       = 0;
+    virtual unsigned long long get_sc_sampling_interval() const  = 0;
     virtual unsigned long long get_sc_minimum_burst_time() const = 0;
-    virtual bool get_sc_global_counters() const = 0;
-    virtual bool get_sc_summarize_states() const = 0;
-    virtual bool get_sc_only_in_bursts() const = 0;
-    virtual bool get_sc_remove_states() const = 0;
-    virtual char *get_sc_accum_types() const = 0;
-    virtual char *get_sc_count_types() const = 0;
-    virtual char *get_sc_types_kept() const = 0;
+    virtual bool get_sc_global_counters() const                  = 0;
+    virtual bool get_sc_summarize_states() const                 = 0;
+    virtual bool get_sc_only_in_bursts() const                   = 0;
+    virtual bool get_sc_remove_states() const                    = 0;
+    virtual char *get_sc_accum_types() const                     = 0;
+    virtual char *get_sc_count_types() const                     = 0;
+    virtual char *get_sc_types_kept() const                      = 0;
 
     virtual std::vector< std::string > parseDoc( char *docname ) = 0;
 
@@ -152,11 +165,11 @@ class TraceOptions
     }
 
   protected:
-  //  KernelConnection *myKernel;
+    //  KernelConnection *myKernel;
 };
 
 
-class TraceOptionsProxy :public TraceOptions
+class TraceOptionsProxy : public TraceOptions
 {
   public:
     virtual ~TraceOptionsProxy();
@@ -171,6 +184,7 @@ class TraceOptionsProxy :public TraceOptions
     virtual void set_max_cutting_time( unsigned long long maxCutTime ) override;
     virtual void set_minimum_time_percentage( unsigned long long whichMinimumTimePercentage ) override;
     virtual void set_maximum_time_percentage( unsigned long long whichMaximumTimePercentage ) override;
+    virtual void set_modify_trace_header( bool modifyHeader ) override;
     virtual void set_tasks_list( char *tasksList ) override;
     virtual void set_original_time( bool originalTime ) override;
     virtual void set_break_states( bool breakStates ) override;
@@ -188,6 +202,7 @@ class TraceOptionsProxy :public TraceOptions
     virtual unsigned long long get_max_cutting_time() const override;
     virtual unsigned long long get_minimum_time_percentage() const override;
     virtual unsigned long long get_maximum_time_percentage() const override;
+    virtual bool get_modify_trace_header() const override;
     virtual void get_tasks_list( TTasksList &whichTasksList ) const override;
     virtual bool get_original_time() const override;
     virtual bool get_break_states() const override;
@@ -254,11 +269,10 @@ class TraceOptionsProxy :public TraceOptions
     virtual TraceOptions *getConcrete() override;
 
     static std::vector< std::string > getIDsAvailableTraceTools();
-    static std::string getTraceToolName( const std::string& toolID );
-    static std::string getTraceToolExtension( const std::string& toolID );
+    static std::string getTraceToolName( const std::string &toolID );
+    static std::string getTraceToolExtension( const std::string &toolID );
 
   protected:
-
   private:
     TraceOptions *myTraceOptions;
 
@@ -275,9 +289,6 @@ class TraceOptionsProxy :public TraceOptions
     friend TraceFilter *LocalKernel::newTraceFilter( char *trace_in,
                                                      char *trace_out,
                                                      TraceOptions *options,
-                                                     const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable,
+                                                     const std::map< TTypeValuePair, TTypeValuePair > &whichTranslationTable,
                                                      ProgressController *progress ) const;
 };
-
-
-

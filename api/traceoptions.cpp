@@ -22,45 +22,46 @@
 \*****************************************************************************/
 
 
-#include <fstream>
+#include "traceoptions.h"
 
 #include "kernelconnection.h"
 #include "paraverkernelexception.h"
-#include "traceoptions.h"
+
+#include <fstream>
 
 // Only for getIDsAvailableTraceTools
-#include "tracefilter.h"
-#include "tracecutter.h"
-#include "tracesoftwarecounters.h"
-#include "traceshifter.h"
 #include "eventdrivencutter.h"
 #include "eventtranslator.h"
+#include "tracecutter.h"
+#include "tracefilter.h"
+#include "traceshifter.h"
+#include "tracesoftwarecounters.h"
 
 using namespace std;
 
 
 vector< string > TraceOptionsProxy::IDsAvailableTraceTools;
 
-//TraceOptions *TraceOptions::create( KernelConnection *whichKernel, char *xmldocname )
+// TraceOptions *TraceOptions::create( KernelConnection *whichKernel, char *xmldocname )
 TraceOptions *TraceOptions::create( const KernelConnection *whichKernel )
 {
-//  return new TraceOptionsProxy( whichKernel, xmldocname );
+  //  return new TraceOptionsProxy( whichKernel, xmldocname );
   return new TraceOptionsProxy( whichKernel );
 }
 
 // TODO: Smarter detections welcome!
-bool TraceOptions::isTraceToolsOptionsFile( const string& xmlFileName )
+bool TraceOptions::isTraceToolsOptionsFile( const string &xmlFileName )
 {
   string auxName( xmlFileName );
   string suffix( "" );
 
-  if ( auxName.length() > TRACE_TOOL_OPTIONS_SUFFIX.length() )
+  if( auxName.length() > TRACE_TOOL_OPTIONS_SUFFIX.length() )
     suffix = auxName.substr( auxName.length() - TRACE_TOOL_OPTIONS_SUFFIX.length() );
 
   return ( suffix.compare( TRACE_TOOL_OPTIONS_SUFFIX ) == 0 );
 }
 
-bool TraceOptions::validTraceToolsOptionsFile( const string& xmlFileName )
+bool TraceOptions::validTraceToolsOptionsFile( const string &xmlFileName )
 {
   ifstream xmlFile( xmlFileName.c_str() );
   bool result = xmlFile.good();
@@ -72,7 +73,7 @@ bool TraceOptions::validTraceToolsOptionsFile( const string& xmlFileName )
 // TraceOptionsProxy::TraceOptionsProxy( const KernelConnection *whichKernel, char *xmldocname )
 TraceOptionsProxy::TraceOptionsProxy( const KernelConnection *whichKernel )
 {
-//  myTraceOptions = whichKernel->newTraceOptions( xmldocname );
+  //  myTraceOptions = whichKernel->newTraceOptions( xmldocname );
   myTraceOptions = whichKernel->newTraceOptions();
 
   IDsAvailableTraceTools.push_back( TraceCutter::getID() );
@@ -80,8 +81,8 @@ TraceOptionsProxy::TraceOptionsProxy( const KernelConnection *whichKernel )
   IDsAvailableTraceTools.push_back( TraceSoftwareCounters::getID() );
   IDsAvailableTraceTools.push_back( TraceShifter::getID() );
 
-  //if ( xmldocname != nullptr )
-  //  myTraceOptions->parseDoc( xmldocname );
+  // if ( xmldocname != nullptr )
+  //   myTraceOptions->parseDoc( xmldocname );
 }
 
 
@@ -127,6 +128,11 @@ void TraceOptionsProxy::set_maximum_time_percentage( unsigned long long whichMax
   myTraceOptions->set_maximum_time_percentage( whichMaximumTimePercentage );
 }
 
+void TraceOptionsProxy::set_modify_trace_header( bool modifyHeader )
+{
+  myTraceOptions->set_modify_trace_header( modifyHeader );
+}
+
 void TraceOptionsProxy::set_tasks_list( char *tasksList )
 {
   myTraceOptions->set_tasks_list( tasksList );
@@ -134,7 +140,7 @@ void TraceOptionsProxy::set_tasks_list( char *tasksList )
 
 void TraceOptionsProxy::set_original_time( bool originalTime )
 {
-  myTraceOptions->set_original_time ( originalTime );
+  myTraceOptions->set_original_time( originalTime );
 }
 
 void TraceOptionsProxy::set_break_states( bool breakStates )
@@ -144,7 +150,7 @@ void TraceOptionsProxy::set_break_states( bool breakStates )
 
 void TraceOptionsProxy::set_remFirstStates( bool remStates )
 {
-  myTraceOptions->set_remFirstStates ( remStates );
+  myTraceOptions->set_remFirstStates( remStates );
 }
 
 void TraceOptionsProxy::set_remLastStates( bool remStates )
@@ -154,12 +160,12 @@ void TraceOptionsProxy::set_remLastStates( bool remStates )
 
 void TraceOptionsProxy::set_keep_boundary_events( bool keepEvents )
 {
-   myTraceOptions->set_keep_boundary_events( keepEvents );
+  myTraceOptions->set_keep_boundary_events( keepEvents );
 }
 
 void TraceOptionsProxy::set_keep_all_events( bool keepAllEvents )
 {
-   myTraceOptions->set_keep_all_events( keepAllEvents );
+  myTraceOptions->set_keep_all_events( keepAllEvents );
 }
 
 void TraceOptionsProxy::set_max_cut_time_to_finish_of_first_appl( bool setOption )
@@ -195,6 +201,11 @@ unsigned long long TraceOptionsProxy::get_minimum_time_percentage() const
 unsigned long long TraceOptionsProxy::get_maximum_time_percentage() const
 {
   return myTraceOptions->get_maximum_time_percentage();
+}
+
+bool TraceOptionsProxy::get_modify_trace_header() const
+{
+  return myTraceOptions->get_modify_trace_header();
 }
 
 void TraceOptionsProxy::get_tasks_list( TTasksList &whichTaskList ) const
@@ -270,7 +281,7 @@ void TraceOptionsProxy::set_filter_by_call_time( bool filterByCallTime )
   myTraceOptions->set_filter_by_call_time( filterByCallTime );
 }
 
-void TraceOptionsProxy::set_state_names( char *stateNames[20] )
+void TraceOptionsProxy::set_state_names( char *stateNames[ 20 ] )
 {
   myTraceOptions->set_state_names( stateNames );
 }
@@ -290,7 +301,7 @@ void TraceOptionsProxy::set_min_comm_size( int minCommSize )
   myTraceOptions->set_min_comm_size( minCommSize );
 }
 
-//void TraceOptionsProxy::set_filter_types( struct allowed_types filterTypes[20] )
+// void TraceOptionsProxy::set_filter_types( struct allowed_types filterTypes[20] )
 void TraceOptionsProxy::set_filter_types( TFilterTypes filterTypes )
 {
   myTraceOptions->set_filter_types( filterTypes );
@@ -485,31 +496,31 @@ vector< string > TraceOptionsProxy::getIDsAvailableTraceTools()
   return IDsAvailableTraceTools;
 }
 
-string TraceOptionsProxy::getTraceToolName( const string& toolID )
+string TraceOptionsProxy::getTraceToolName( const string &toolID )
 {
   string toolStr;
 
-  if ( toolID == TraceCutter::getID() )
+  if( toolID == TraceCutter::getID() )
   {
     toolStr = TraceCutter::getName();
   }
-  else if ( toolID == TraceFilter::getID() )
+  else if( toolID == TraceFilter::getID() )
   {
     toolStr = TraceFilter::getName();
   }
-  else if ( toolID == TraceSoftwareCounters::getID() )
+  else if( toolID == TraceSoftwareCounters::getID() )
   {
     toolStr = TraceSoftwareCounters::getName();
   }
-  else if ( toolID == TraceShifter::getID() )
+  else if( toolID == TraceShifter::getID() )
   {
     toolStr = TraceShifter::getName();
   }
-  else if ( toolID == EventDrivenCutter::getID() )
+  else if( toolID == EventDrivenCutter::getID() )
   {
     toolStr = EventDrivenCutter::getName();
   }
-  else if ( toolID == EventTranslator::getID() )
+  else if( toolID == EventTranslator::getID() )
   {
     toolStr = EventTranslator::getName();
   }
@@ -522,31 +533,31 @@ string TraceOptionsProxy::getTraceToolName( const string& toolID )
 }
 
 
-string TraceOptionsProxy::getTraceToolExtension( const string& toolID )
+string TraceOptionsProxy::getTraceToolExtension( const string &toolID )
 {
   string toolStr;
 
-  if ( toolID == TraceCutter::getID() )
+  if( toolID == TraceCutter::getID() )
   {
     toolStr = TraceCutter::getExtension();
   }
-  else if ( toolID == TraceFilter::getID() )
+  else if( toolID == TraceFilter::getID() )
   {
     toolStr = TraceFilter::getExtension();
   }
-  else if ( toolID == TraceSoftwareCounters::getID() )
+  else if( toolID == TraceSoftwareCounters::getID() )
   {
     toolStr = TraceSoftwareCounters::getExtension();
   }
-  else if ( toolID == TraceShifter::getID() )
+  else if( toolID == TraceShifter::getID() )
   {
     toolStr = TraceShifter::getExtension();
   }
-  else if ( toolID == EventDrivenCutter::getID() )
+  else if( toolID == EventDrivenCutter::getID() )
   {
     toolStr = EventDrivenCutter::getExtension();
   }
-  else if ( toolID == EventTranslator::getID() )
+  else if( toolID == EventTranslator::getID() )
   {
     toolStr = EventTranslator::getExtension();
   }

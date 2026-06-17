@@ -24,20 +24,22 @@
 
 #pragma once
 
+#include "tracetypes.h"
+
 #include <cstddef>
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
-#include "tracetypes.h"
 
 template< typename dummy = std::nullptr_t >
 class RowFileParser
 {
   public:
-    static bool openRowFileParser( const std::string& filename, RowFileParser<dummy>& outRowFile );
+    static bool openRowFileParser( const std::string& filename, RowFileParser< dummy >& outRowFile );
 
     RowFileParser() = default;
     RowFileParser( const std::string& filename );
+    RowFileParser( const RowFileParser< dummy >& copy );
     ~RowFileParser() = default;
 
     void dumpToFile( const std::string& filename ) const;
@@ -49,18 +51,17 @@ class RowFileParser
     size_t getMaxLength( TTraceLevel whichLevel = TTraceLevel::NONE ) const;
 
   protected:
-
   private:
-    static const size_t LEVEL_NAME = 0;
+    static const size_t LEVEL_NAME      = 0;
     static const size_t LEVEL_MAXLENGTH = 1;
-    static const size_t LEVEL_LABELS = 2;
+    static const size_t LEVEL_LABELS    = 2;
 
     // tuple elements are: level name, level max length, level objects labels
-    std::map<TTraceLevel, std::tuple< std::string, size_t, std::vector<std::string> > > levelLabels;
+    std::map< TTraceLevel, std::tuple< std::string, size_t, std::vector< std::string > > > levelLabels;
 
     size_t globalMaxLength;
 
-    void dumpLevel( const std::tuple< std::string, size_t, std::vector<std::string> >& whichLevel, std::ofstream& whichFile ) const;
+    void dumpLevel( const std::tuple< std::string, size_t, std::vector< std::string > >& whichLevel, std::ofstream& whichFile ) const;
 };
 
 #include "rowfileparser.cpp"

@@ -22,6 +22,8 @@
 \*****************************************************************************/
 
 
+#include "tracelabels.h"
+
 #include <algorithm>
 #include <fstream>
 #include <ios>
@@ -31,11 +33,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "tracelabels.h"
 
-
-template<typename dummy>
-bool RowFileParser<dummy>::openRowFileParser( const std::string& filename, RowFileParser<dummy>& outRowFile )
+template< typename dummy >
+bool RowFileParser< dummy >::openRowFileParser( const std::string& filename, RowFileParser< dummy >& outRowFile )
 {
   static const std::regex prvFilenameRegex( R"((.+)\.(prv|prv\.gz)$)" );
 
@@ -43,20 +43,20 @@ bool RowFileParser<dummy>::openRowFileParser( const std::string& filename, RowFi
 
   try
   {
-    outRowFile = RowFileParser<dummy>( rowFilename );
+    outRowFile = RowFileParser< dummy >( rowFilename );
   }
   catch( const std::ios_base::failure& e )
   {
     std::cerr << e.what() << '\n';
     return false;
   }
-  
+
   return true;
 }
 
 
-template<typename dummy>
-RowFileParser<dummy>::RowFileParser( const std::string& filename )
+template< typename dummy >
+RowFileParser< dummy >::RowFileParser( const std::string& filename )
 {
 #ifndef _WIN32
   struct stat fileInfo;
@@ -81,15 +81,15 @@ RowFileParser<dummy>::RowFileParser( const std::string& filename )
   globalMaxLength = 0;
 
   std::ifstream rowFile( filename.c_str() );
-  if ( !rowFile )
+  if( !rowFile )
     throw std::ios_base::failure( "Error opening row file." );
 
-  while ( !rowFile.eof() )
+  while( !rowFile.eof() )
   {
     getline( rowFile, strLine );
-    if ( strLine.length() == 0 )
+    if( strLine.length() == 0 )
       continue;
-    else if ( strLine[ 0 ] == '#' )
+    else if( strLine[ 0 ] == '#' )
       continue;
 
     auxStream.clear();
@@ -98,25 +98,25 @@ RowFileParser<dummy>::RowFileParser( const std::string& filename )
     getline( auxStream, strLevel, ' ' );
 
     TTraceLevel level;
-    if ( strLevel == LEVEL_WORKLOAD )
+    if( strLevel == LEVEL_WORKLOAD )
       level = TTraceLevel::WORKLOAD;
-    else if ( strLevel == LEVEL_APPLICATION )
+    else if( strLevel == LEVEL_APPLICATION )
       level = TTraceLevel::APPLICATION;
-    else if ( strLevel == LEVEL_TASK )
+    else if( strLevel == LEVEL_TASK )
       level = TTraceLevel::TASK;
-    else if ( strLevel == LEVEL_THREAD )
+    else if( strLevel == LEVEL_THREAD )
       level = TTraceLevel::THREAD;
-    else if ( strLevel == LEVEL_SYSTEM )
+    else if( strLevel == LEVEL_SYSTEM )
       level = TTraceLevel::SYSTEM;
-    else if ( strLevel == LEVEL_NODE )
+    else if( strLevel == LEVEL_NODE )
       level = TTraceLevel::NODE;
-    else if ( strLevel == LEVEL_CPU )
+    else if( strLevel == LEVEL_CPU )
       level = TTraceLevel::CPU;
     else
       continue;
 
-    std::map<TTraceLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::iterator currentLevelLabels;
-    std::tuple< std::string, size_t, std::vector<std::string> > tmpEmptyLevel( strLevel, 0, std::vector<std::string>() );
+    std::map< TTraceLevel, std::tuple< std::string, size_t, std::vector< std::string > > >::iterator currentLevelLabels;
+    std::tuple< std::string, size_t, std::vector< std::string > > tmpEmptyLevel( strLevel, 0, std::vector< std::string >() );
     std::tie( currentLevelLabels, std::ignore ) = levelLabels.insert( std::make_pair( level, tmpEmptyLevel ) );
 
     getline( auxStream, strSize, 'S' ); // 'SIZE'
@@ -127,12 +127,12 @@ RowFileParser<dummy>::RowFileParser( const std::string& filename )
     sizeStream.str( strSize );
     int size;
 
-    if ( !( sizeStream >> size ) )
+    if( !( sizeStream >> size ) )
       continue;
 
     size_t currentLength;
     int i = 0;
-    while ( !rowFile.eof() && i < size )
+    while( !rowFile.eof() && i < size )
     {
       getline( rowFile, strLine );
 
@@ -144,11 +144,11 @@ RowFileParser<dummy>::RowFileParser( const std::string& filename )
       currentLength = strLine.length();
 
       // By level
-      if ( std::get< LEVEL_MAXLENGTH >( currentLevelLabels->second ) < currentLength )
+      if( std::get< LEVEL_MAXLENGTH >( currentLevelLabels->second ) < currentLength )
         std::get< LEVEL_MAXLENGTH >( currentLevelLabels->second ) = currentLength;
 
       // Global
-      if ( globalMaxLength < currentLength )
+      if( globalMaxLength < currentLength )
         globalMaxLength = currentLength;
 
       ++i;
@@ -159,55 +159,66 @@ RowFileParser<dummy>::RowFileParser( const std::string& filename )
 }
 
 
-template<typename dummy>
-void RowFileParser<dummy>::dumpToFile( const std::string& filename ) const
+template< typename dummy >
+RowFileParser< dummy >::RowFileParser( const RowFileParser< dummy >& copy )
+{
+  levelLabels     = copy.levelLabels;
+  globalMaxLength = copy.globalMaxLength;
+}
+
+
+template< typename dummy >
+void RowFileParser< dummy >::dumpToFile( const std::string& filename ) const
 {
   std::ofstream rowFile( filename.c_str() );
-  if ( !rowFile )
+  if( !rowFile )
     throw std::ios_base::failure( "Error creating output row file." );
 
-  auto f = [&]( int first, int last )
+  auto f = [ & ]( int first, int last )
   {
     for( int i = first; i >= last; --i )
     {
-      std::map<TTraceLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::const_iterator currentLevelLabels;
-      if( ( currentLevelLabels = levelLabels.find( static_cast<TTraceLevel>( i ) ) ) != levelLabels.end() )
+      std::map< TTraceLevel, std::tuple< std::string, size_t, std::vector< std::string > > >::const_iterator currentLevelLabels;
+      if( ( currentLevelLabels = levelLabels.find( static_cast< TTraceLevel >( i ) ) ) != levelLabels.end() )
         dumpLevel( currentLevelLabels->second, rowFile );
     }
   };
 
   // Resources
-  f( static_cast<int>( TTraceLevel::CPU ), static_cast<int>( TTraceLevel::SYSTEM ) );
+  f( static_cast< int >( TTraceLevel::CPU ), static_cast< int >( TTraceLevel::SYSTEM ) );
 
   // Processes
-  f( static_cast<int>( TTraceLevel::THREAD ), static_cast<int>( TTraceLevel::WORKLOAD ) );
+  f( static_cast< int >( TTraceLevel::THREAD ), static_cast< int >( TTraceLevel::WORKLOAD ) );
 
   rowFile.close();
 }
 
 
-template<typename dummy>
-void RowFileParser<dummy>::dumpLevel( const std::tuple< std::string, size_t, std::vector<std::string> >& whichLevel, std::ofstream& whichFile ) const
+template< typename dummy >
+void RowFileParser< dummy >::dumpLevel( const std::tuple< std::string, size_t, std::vector< std::string > >& whichLevel,
+                                        std::ofstream& whichFile ) const
 {
-  if( !std::get<2>( whichLevel ).empty() )
+  if( !std::get< 2 >( whichLevel ).empty() )
   {
     whichFile << "LEVEL " << std::get< LEVEL_NAME >( whichLevel ) << " SIZE " << std::get< LEVEL_LABELS >( whichLevel ).size() << std::endl;
 
-    std::copy( std::get< LEVEL_LABELS >( whichLevel ).begin(), std::get< LEVEL_LABELS >( whichLevel ).end(), std::ostream_iterator<std::string>( whichFile, "\n" ) );
+    std::copy( std::get< LEVEL_LABELS >( whichLevel ).begin(),
+               std::get< LEVEL_LABELS >( whichLevel ).end(),
+               std::ostream_iterator< std::string >( whichFile, "\n" ) );
 
     whichFile << std::endl;
   }
 }
 
 
-template<typename dummy>
-std::string RowFileParser<dummy>::getRowLabel( TTraceLevel whichLevel, TObjectOrder whichRow ) const
+template< typename dummy >
+std::string RowFileParser< dummy >::getRowLabel( TTraceLevel whichLevel, TObjectOrder whichRow ) const
 {
-  std::map<TTraceLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::const_iterator currentLevelLabels;
+  std::map< TTraceLevel, std::tuple< std::string, size_t, std::vector< std::string > > >::const_iterator currentLevelLabels;
   if( ( currentLevelLabels = levelLabels.find( whichLevel ) ) == levelLabels.end() )
     return "";
 
-  const std::vector<std::string>& vectorLabels = std::get< LEVEL_LABELS >( currentLevelLabels->second );
+  const std::vector< std::string >& vectorLabels = std::get< LEVEL_LABELS >( currentLevelLabels->second );
   if( vectorLabels.empty() || vectorLabels.size() <= whichRow )
     return "";
 
@@ -215,13 +226,15 @@ std::string RowFileParser<dummy>::getRowLabel( TTraceLevel whichLevel, TObjectOr
 }
 
 
-template<typename dummy>
-void RowFileParser<dummy>::pushBack( TTraceLevel whichLevel, const std::string& rowLabel )
+template< typename dummy >
+void RowFileParser< dummy >::pushBack( TTraceLevel whichLevel, const std::string& rowLabel )
 {
-  std::map<TTraceLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::iterator currentLevelLabels;
+  std::map< TTraceLevel, std::tuple< std::string, size_t, std::vector< std::string > > >::iterator currentLevelLabels;
   if( ( currentLevelLabels = levelLabels.find( whichLevel ) ) == levelLabels.end() )
   {
-    std::tuple< std::string, size_t, std::vector<std::string> > tmpCurrentLevel( LABEL_LEVELS[ static_cast<int>( whichLevel ) ], 0, std::vector<std::string>() );
+    std::tuple< std::string, size_t, std::vector< std::string > > tmpCurrentLevel( LABEL_LEVELS[ static_cast< int >( whichLevel ) ],
+                                                                                   0,
+                                                                                   std::vector< std::string >() );
     std::tie( currentLevelLabels, std::ignore ) = levelLabels.insert( std::make_pair( whichLevel, tmpCurrentLevel ) );
   }
 
@@ -236,13 +249,13 @@ void RowFileParser<dummy>::pushBack( TTraceLevel whichLevel, const std::string& 
 
 
 // whichLevel == NONE (by default) ==> all levels MaxLength
-template<typename dummy>
-size_t RowFileParser<dummy>::getMaxLength( TTraceLevel whichLevel ) const
+template< typename dummy >
+size_t RowFileParser< dummy >::getMaxLength( TTraceLevel whichLevel ) const
 {
   if( whichLevel == TTraceLevel::NONE )
     return globalMaxLength;
 
-  std::map<TTraceLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::const_iterator currentLevelLabels;
+  std::map< TTraceLevel, std::tuple< std::string, size_t, std::vector< std::string > > >::const_iterator currentLevelLabels;
   if( ( currentLevelLabels = levelLabels.find( whichLevel ) ) == levelLabels.end() )
     return 0;
 

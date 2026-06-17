@@ -158,13 +158,14 @@ void KTraceCutter::read_cutter_params()
 {
   char *word, *buffer;
 
-  by_time      = exec_options->by_time;
-  time_min     = exec_options->min_cutting_time;
-  time_max     = exec_options->max_cutting_time;
-  total_time   = time_max - time_min;
-  min_perc     = exec_options->min_percentage;
-  max_perc     = exec_options->max_percentage;
-  originalTime = exec_options->original_time;
+  by_time       = exec_options->by_time;
+  time_min      = exec_options->min_cutting_time;
+  time_max      = exec_options->max_cutting_time;
+  total_time    = time_max - time_min;
+  min_perc      = exec_options->min_percentage;
+  max_perc      = exec_options->max_percentage;
+  originalTime  = exec_options->original_time;
+  modify_header = exec_options->modify_trace_header;
 
   cut_tasks     = 0;
   cut_apps      = 0;
@@ -767,13 +768,15 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
   TTaskOrder newTask     = 0;
   TThreadOrder newThread = 0;
 
+  std::string rowFileName = LocalKernel::composeName( originalTraceName, "row" );
+  RowFileParser<> originalRowFile( rowFileName );
+  std::string newRowFileName = LocalKernel::composeName( nameOut, "row" );
+
   if( modify_header )
   {
     ProcessModel<> choppedProcessModel;
     choppedProcessModel.setReady( true );
 
-    std::string rowFileName = LocalKernel::composeName( originalTraceName, "row" );
-    RowFileParser<> originalRowFile( rowFileName );
     RowFileParser<> newRowFile;
 
     // Sort threads to ensure consistent ordering
@@ -850,11 +853,15 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
     for( TNodeOrder iCPU = 0; iCPU < traceResourceModel.totalCPUs(); ++iCPU )
       copyRowLabelToNewRowFile( TTraceLevel::CPU, iCPU );
 
-    std::string newRowFileName = LocalKernel::composeName( nameOut, "row" );
     newRowFile.dumpToFile( newRowFileName );
   }
   else
+  {
     dumpTraceHeader( outfile, originalDate, total_time, originalTimeUnit, traceResourceModel, traceProcessModel, originalCommunicators );
+
+    RowFileParser<> newRowFile( originalRowFile );
+    newRowFile.dumpToFile( newRowFileName );
+  }
 
   bool end_read = false;
 
