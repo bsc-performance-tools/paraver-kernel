@@ -474,6 +474,8 @@ void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
       cutter_mode = (CutterMode)cutterModeInt;
     }
 
+    parseContent( doc, cur, "modify_trace_header", modify_trace_header );
+
     cur = cur->next;
   }
 }
@@ -696,6 +698,7 @@ void KTraceOptions::saveXMLCutter( xmlTextWriterPtr &writer )
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "remove_last_states", "%d", (int)get_remLastStates() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "keep_events", "%d", (int)get_keep_boundary_events() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "cutter_mode", "%d", (int)get_cutter_mode() );
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "modify_trace_header", "%d", (int)get_modify_trace_header() );
 
   rc = xmlTextWriterEndElement( writer ); // cutter
 }
