@@ -80,7 +80,7 @@ KTraceOptions::KTraceOptions( const KTraceOptions *whichTraceOptions )
 
   // MESS
   set_max_cut_time_to_finish_of_first_appl( whichTraceOptions->get_max_cut_time_to_finish_of_first_appl() );
-  set_cutter_mode( whichTraceOptions->get_cutter_mode() );
+  set_cutter_object_level( whichTraceOptions->get_cutter_object_level() );
 
   // Filter Default Options: states
   set_filter_states( whichTraceOptions->get_filter_states() );
@@ -172,7 +172,7 @@ void KTraceOptions::init()
   set_keep_all_events( true );
   set_keep_all_events( true );
   set_max_cut_time_to_finish_of_first_appl( false );
-  set_cutter_mode( CUT_MODE_TASK );
+  set_cutter_object_level( CutterObjectLevel::CUT_OBJECT_TASK );
   set_modify_trace_header( false );
 
   // Filter Default Options
@@ -469,9 +469,9 @@ void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
     parseContent( doc, cur, "keep_events", keep_boundary_events );
 
     int cutterModeInt = 0;
-    if( parseContent( doc, cur, "cutter_mode", cutterModeInt ) )
+    if( parseContent( doc, cur, "cutter_object_level", cutterModeInt ) )
     {
-      cutter_mode = (CutterMode)cutterModeInt;
+      cutter_object_level = (CutterObjectLevel)cutterModeInt;
     }
 
     parseContent( doc, cur, "modify_trace_header", modify_trace_header );
@@ -697,7 +697,7 @@ void KTraceOptions::saveXMLCutter( xmlTextWriterPtr &writer )
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "remove_first_states", "%d", (int)get_remFirstStates() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "remove_last_states", "%d", (int)get_remLastStates() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "keep_events", "%d", (int)get_keep_boundary_events() );
-  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "cutter_mode", "%d", (int)get_cutter_mode() );
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "cutter_object_level", "%d", (int)get_cutter_object_level() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "modify_trace_header", "%d", (int)get_modify_trace_header() );
 
   rc = xmlTextWriterEndElement( writer ); // cutter

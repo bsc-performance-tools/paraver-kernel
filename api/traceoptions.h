@@ -28,6 +28,13 @@
 class KernelConnection;
 #include "localkernel.h"
 
+enum class CutterObjectLevel
+{
+  CUT_OBJECT_TASK = 0,
+  CUT_OBJECT_APPLICATION,
+  CUT_OBJECT_THREAD
+};
+
 class TraceOptions
 {
   public:
@@ -96,14 +103,8 @@ class TraceOptions
     // MESS
     virtual bool get_max_cut_time_to_finish_of_first_appl() const = 0;
 
-    enum CutterMode
-    {
-      CUT_MODE_TASK = 0,
-      CUT_MODE_APPLICATION,
-      CUT_MODE_THREAD
-    }; // ORDER IS IMPORTANT
-    virtual void set_cutter_mode( CutterMode mode ) = 0;
-    virtual CutterMode get_cutter_mode() const      = 0;
+    virtual void set_cutter_object_level( CutterObjectLevel mode ) = 0;
+    virtual CutterObjectLevel get_cutter_object_level() const      = 0;
 
     /* Sets for filtering */
     virtual void set_filter_events( bool filterEvents )                = 0;
@@ -193,9 +194,9 @@ class TraceOptionsProxy : public TraceOptions
     virtual void set_keep_boundary_events( bool keepEvents ) override;
     virtual void set_keep_all_events( bool keepAllEvents ) override;
     virtual void set_max_cut_time_to_finish_of_first_appl( bool setOption ) override;
-    virtual void set_cutter_mode( CutterMode mode ) override;
+    virtual void set_cutter_object_level( CutterObjectLevel mode ) override;
 
-    virtual CutterMode get_cutter_mode() const override;
+    virtual CutterObjectLevel get_cutter_object_level() const override;
 
     virtual bool get_by_time() const override;
     virtual unsigned long long get_min_cutting_time() const override;

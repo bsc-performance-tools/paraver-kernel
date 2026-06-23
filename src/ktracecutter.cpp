@@ -181,12 +181,12 @@ void KTraceCutter::read_cutter_params()
     wanted_tasks.clear();
     wanted_threads.clear();
 
-    TraceOptions::CutterMode mode = exec_options->get_cutter_mode();
+    CutterObjectLevel mode = exec_options->get_cutter_object_level();
 
     // Setup mode flags
-    if( mode == TraceOptions::CUT_MODE_APPLICATION )
+    if( mode == CutterObjectLevel::CUT_OBJECT_APPLICATION )
       cut_apps = 1;
-    else if( mode == TraceOptions::CUT_MODE_THREAD )
+    else if( mode == CutterObjectLevel::CUT_OBJECT_THREAD )
       cut_threads = 1;
     else
       cut_tasks = 1;
@@ -207,7 +207,7 @@ void KTraceCutter::read_cutter_params()
 
       int a = 0, t = 0, th = 0;
 
-      if( mode == TraceOptions::CUT_MODE_APPLICATION )
+      if( mode == CutterObjectLevel::CUT_OBJECT_APPLICATION )
       {
         if( sscanf( token.c_str(), "%d", &a ) == 1 )
         {
@@ -215,7 +215,7 @@ void KTraceCutter::read_cutter_params()
           wanted_apps.push_back( obj );
         }
       }
-      else if( mode == TraceOptions::CUT_MODE_TASK )
+      else if( mode == CutterObjectLevel::CUT_OBJECT_TASK )
       {
         if( sscanf( token.c_str(), "%d.%d", &a, &t ) == 2 )
         {
@@ -223,7 +223,7 @@ void KTraceCutter::read_cutter_params()
           wanted_tasks.push_back( obj );
         }
       }
-      else if( mode == TraceOptions::CUT_MODE_THREAD )
+      else if( mode == CutterObjectLevel::CUT_OBJECT_THREAD )
       {
         // Try 1.1.1 format
         if( sscanf( token.c_str(), "%d.%d.%d", &a, &t, &th ) == 3 )

@@ -100,7 +100,7 @@ class KTraceOptions : public TraceOptions
     bool keep_boundary_events;
     bool keep_all_events;
     bool max_cut_time_to_finish_of_first_appl; // MESS
-    CutterMode cutter_mode;
+    CutterObjectLevel cutter_object_level;
     bool modify_trace_header;
     char tasks_list[ 4096 ];
 
@@ -224,14 +224,14 @@ class KTraceOptions : public TraceOptions
       max_cut_time_to_finish_of_first_appl = setOptions;
     }
 
-    inline void set_cutter_mode( CutterMode mode ) override
+    inline void set_cutter_object_level( CutterObjectLevel mode ) override
     {
-      cutter_mode = mode;
+      cutter_object_level = mode;
     }
 
-    inline CutterMode get_cutter_mode() const override
+    inline CutterObjectLevel get_cutter_object_level() const override
     {
-      return cutter_mode;
+      return cutter_object_level;
     }
 
     inline bool get_by_time() const override
