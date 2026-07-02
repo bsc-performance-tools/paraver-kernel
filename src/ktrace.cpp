@@ -580,7 +580,7 @@ KTrace::KTrace( const string& whichFile, ProgressController* progress, bool noLo
   }
 
   // Reading the body
-  body = TraceBodyIOFactory::createTraceBody( file, this, traceProcessModel );
+  body = TraceBodyIOFactory::createTraceBody( file, this, traceProcessModel, false );
 
   if( noLoad && body->ordered() )
   {
@@ -705,7 +705,7 @@ void KTrace::appendCSV( const std::string& whichFile, ProgressController* progre
     file->seekbegin();
   }
 
-  body = TraceBodyIOFactory::createTraceBody( file, this, traceProcessModel );
+  body = TraceBodyIOFactory::createTraceBody( file, this, traceProcessModel, true );
 
   unordered_set< TEventType > hashevents;
   unordered_set< TState > hashstates;

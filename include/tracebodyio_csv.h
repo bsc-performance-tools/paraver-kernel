@@ -43,7 +43,7 @@ class TraceBodyIO_csv
     TraceBodyIO_csv()
     {
     }
-    TraceBodyIO_csv( Trace* trace, ProcessModel<>& whichProcessModel );
+    TraceBodyIO_csv( Trace* trace, ProcessModel<>& whichProcessModel, bool appendCSV );
 
     static const PRV_UINT8 CommentRecord    = '#';
     static const PRV_UINT8 StateRecord      = '1';
@@ -76,6 +76,8 @@ class TraceBodyIO_csv
     ProcessModel<>* myProcessModel;
 
     Trace* myTrace;
+
+    bool doAppendCSV = false;
 
     void readTraceInfo( const std::string& line, MetadataManager& traceInfo ) const;
 

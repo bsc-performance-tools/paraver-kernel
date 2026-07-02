@@ -22,23 +22,27 @@
 \*****************************************************************************/
 
 #include "tracebodyiofactory.h"
-#include "utils/traceparser/tracebodyio_v1.h"
-#include "tracebodyio_v2.h"
+
 #include "tracebodyio_csv.h"
+#include "tracebodyio_v2.h"
+#include "utils/traceparser/tracebodyio_v1.h"
 
 using namespace std;
 
-TraceBodyIO< PARAM_TRACEBODY_CLASS > *TraceBodyIOFactory::createTraceBody( TraceStream *file, Trace *trace, ProcessModel<>& whichProcessModel )
+TraceBodyIO< PARAM_TRACEBODY_CLASS > *TraceBodyIOFactory::createTraceBody( TraceStream *file,
+                                                                           Trace *trace,
+                                                                           ProcessModel<> &whichProcessModel,
+                                                                           bool appendCSV )
 {
   TraceBodyIO< PARAM_TRACEBODY_CLASS > *ret;
   string firstLine;
 
-  std::size_t lastDot = file->getFilename().find_last_of( '.' );
+  std::size_t lastDot  = file->getFilename().find_last_of( '.' );
   std::string fileType = file->getFilename().substr( lastDot + 1 );
 
-  if ( fileType == "csv" )
+  if( fileType == "csv" )
   {
-    ret = new TraceBodyIO_csv( trace, whichProcessModel );
+    ret = new TraceBodyIO_csv( trace, whichProcessModel, appendCSV );
   }
   else
   {
@@ -46,7 +50,7 @@ TraceBodyIO< PARAM_TRACEBODY_CLASS > *TraceBodyIOFactory::createTraceBody( Trace
     std::streampos currentPos = file->tellg();
     file->seekbegin();
     file->getline( firstLine );
-    if ( firstLine.compare( "new format" ) == 0 )
+    if( firstLine.compare( "new format" ) == 0 )
     {
       ret = new TraceBodyIO_v2();
     }
@@ -61,7 +65,7 @@ TraceBodyIO< PARAM_TRACEBODY_CLASS > *TraceBodyIOFactory::createTraceBody( Trace
   }
   return ret;
 }
- 
+
 TraceBodyIO< PARAM_TRACEBODY_CLASS > *TraceBodyIOFactory::createTraceBody()
 {
   return new TraceBodyIO_v2();

@@ -162,7 +162,8 @@ bool prv_atoll_precision( std::string::const_iterator& it, const std::string::co
   return true;
 }
 
-TraceBodyIO_csv::TraceBodyIO_csv( Trace* trace, ProcessModel<>& whichProcessModel ) : myTrace( trace ), myProcessModel( &whichProcessModel )
+TraceBodyIO_csv::TraceBodyIO_csv( Trace* trace, ProcessModel<>& whichProcessModel, bool appendCSV )
+  : myTrace( trace ), myProcessModel( &whichProcessModel ), doAppendCSV( appendCSV )
 {
 }
 
@@ -251,7 +252,7 @@ inline void TraceBodyIO_csv::readEvents( const ProcessModel<>& whichProcessModel
     endTime = begintime + time;
   TEventType eventtype = 1;
 
-  if( /*TODO: is it append to loaded trace?*/ true )
+  if( doAppendCSV )
   {
     thread = whichProcessModel.getGlobalThread( appl - 1, task - 1, thread - 1 );
     records.newRecord( thread );
@@ -314,7 +315,7 @@ inline bool TraceBodyIO_csv::readCommon( const ResourceModel<>& whichResourceMod
     --currATT.appl;
     --currATT.task;
     --currATT.thread;
-    if( /*TODO: is it append to loaded trace?*/ false )
+    if( !doAppendCSV )
       myProcessModel->addApplTaskThread( currATT );
   }
 
