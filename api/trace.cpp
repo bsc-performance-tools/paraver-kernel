@@ -21,20 +21,20 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#include <sstream>
+#include "trace.h"
 
+#include "ParaverMetadataManager.h"
 #include "csvsymbolsparser.h"
 #include "kernelconnection.h"
-#include "ParaverMetadataManager.h"
 #include "paraverconfig.h"
 #include "progresscontroller.h"
-#include "trace.h"
 #include "utils/traceparser/pcffileparser.h"
+
+#include <sstream>
 
 using namespace std;
 
-Trace *Trace::create( KernelConnection *whichKernel, const string& whichFile,
-                      bool noLoad, ProgressController *progress )
+Trace* Trace::create( KernelConnection* whichKernel, const string& whichFile, bool noLoad, ProgressController* progress )
 {
   return new TraceProxy( whichKernel, whichFile, noLoad, progress );
 }
@@ -45,20 +45,20 @@ bool Trace::isOTF2TraceFile( const string& filename )
   string auxName( filename );
   string suffix( "" );
 
-  if ( auxName.length() > OTF2_SUFFIX.length() )
+  if( auxName.length() > OTF2_SUFFIX.length() )
     suffix = auxName.substr( auxName.length() - OTF2_SUFFIX.length() );
 
-  return ( ( suffix.compare( OTF2_SUFFIX ) == 0 ));
+  return ( ( suffix.compare( OTF2_SUFFIX ) == 0 ) );
 }
 
 
-Trace::Trace( KernelConnection *whichKernel ):
-    myKernel( whichKernel )
-{}
+Trace::Trace( KernelConnection* whichKernel ) : myKernel( whichKernel )
+{
+}
 
 TObjectOrder Trace::getLevelObjects( TTraceLevel onLevel ) const
 {
-  switch ( onLevel )
+  switch( onLevel )
   {
     case TTraceLevel::WORKLOAD:
     case TTraceLevel::SYSTEM:
@@ -85,16 +85,14 @@ TObjectOrder Trace::getLevelObjects( TTraceLevel onLevel ) const
   return 0;
 }
 
-TraceProxy::TraceProxy( KernelConnection *whichKernel, const string& whichFile,
-                        bool noLoad, ProgressController *progress ):
-    Trace( whichKernel )
+TraceProxy::TraceProxy( KernelConnection* whichKernel, const string& whichFile, bool noLoad, ProgressController* progress ) : Trace( whichKernel )
 {
-  unload = false;
-  instanceNumber = 0;
+  unload               = false;
+  instanceNumber       = 0;
   TTraceSize traceSize = myKernel->getTraceSize( whichFile );
-  showProgressBar = traceSize / 1E6 > 10.0;
+  showProgressBar      = traceSize / 1E6 > 10.0;
 
-  myTrace = myKernel->newTrace( whichFile, noLoad, progress, traceSize );
+  myTrace                = myKernel->newTrace( whichFile, noLoad, progress, traceSize );
   string symbolsFilename = myKernel->getSymbolsFileLocation( whichFile );
   parseSymbolsFile( symbolsFilename );
   string rowFile = myKernel->getROWFileLocation( whichFile );
@@ -108,7 +106,7 @@ TraceProxy::TraceProxy( KernelConnection *whichKernel, const string& whichFile,
 }
 
 #ifdef FIXED_LABELS
-TObjectOrder getNumLevelObjects( TWindowLevel whichLevel, Trace *myTrace )
+TObjectOrder getNumLevelObjects( TWindowLevel whichLevel, Trace* myTrace )
 {
   TObjectOrder objectSize = 0;
 
@@ -128,7 +126,7 @@ TObjectOrder getNumLevelObjects( TWindowLevel whichLevel, Trace *myTrace )
   return objectSize;
 }
 
-#include "labelconstructor.h"
+#  include "labelconstructor.h"
 
 void TraceProxy::setFixedLabels()
 {
@@ -152,7 +150,7 @@ void TraceProxy::setFixedLabels()
     for( TObjectOrder order = 0; order < getNumLevelObjects( (TWindowLevel)lvl, this ); ++order )
     {
       tmpObjectLabel = LabelConstructor::objectLabel( order, (TWindowLevel)lvl, this );
-      int numSpaces = maxLabelLength - tmpObjectLabel.length();
+      int numSpaces  = maxLabelLength - tmpObjectLabel.length();
       newObjectLabel.clear();
       newObjectLabel.append( numSpaces, ' ' );
       newObjectLabel.append( tmpObjectLabel );
@@ -167,6 +165,11 @@ void TraceProxy::setFixedLabels()
 TraceProxy::~TraceProxy()
 {
   delete myTrace;
+}
+
+void TraceProxy::appendCSV( const std::string& whichFile, ProgressController* progress )
+{
+  myTrace->appendCSV( whichFile, progress );
 }
 
 string TraceProxy::getFileName() const
@@ -188,7 +191,7 @@ string TraceProxy::getFileNameNumbered() const
 {
   string name = myTrace->getFileName();
 
-  if ( instanceNumber > 0 )
+  if( instanceNumber > 0 )
   {
     stringstream suffix;
     suffix << instanceNumber;
@@ -202,7 +205,7 @@ string TraceProxy::getTraceNameNumbered() const
 {
   string name = myTrace->getTraceName();
 
-  if ( instanceNumber > 0 )
+  if( instanceNumber > 0 )
   {
     stringstream suffix;
     suffix << instanceNumber;
@@ -237,15 +240,12 @@ TTaskOrder TraceProxy::totalTasks() const
   return myTrace->totalTasks();
 }
 
-TTaskOrder TraceProxy::getGlobalTask( const TApplOrder& inAppl,
-                                      const TTaskOrder& inTask ) const
+TTaskOrder TraceProxy::getGlobalTask( const TApplOrder& inAppl, const TTaskOrder& inTask ) const
 {
   return myTrace->getGlobalTask( inAppl, inTask );
 }
 
-void TraceProxy::getTaskLocation( TTaskOrder globalTask,
-                                  TApplOrder& inAppl,
-                                  TTaskOrder& inTask ) const
+void TraceProxy::getTaskLocation( TTaskOrder globalTask, TApplOrder& inAppl, TTaskOrder& inTask ) const
 {
   myTrace->getTaskLocation( globalTask, inAppl, inTask );
 }
@@ -265,17 +265,12 @@ TThreadOrder TraceProxy::totalThreads() const
   return myTrace->totalThreads();
 }
 
-TThreadOrder TraceProxy::getGlobalThread( const TApplOrder& inAppl,
-    const TTaskOrder& inTask,
-    const TThreadOrder& inThread ) const
+TThreadOrder TraceProxy::getGlobalThread( const TApplOrder& inAppl, const TTaskOrder& inTask, const TThreadOrder& inThread ) const
 {
   return myTrace->getGlobalThread( inAppl, inTask, inThread );
 }
 
-void TraceProxy::getThreadLocation( TThreadOrder globalThread,
-                                    TApplOrder& inAppl,
-                                    TTaskOrder& inTask,
-                                    TThreadOrder& inThread ) const
+void TraceProxy::getThreadLocation( TThreadOrder globalThread, TApplOrder& inAppl, TTaskOrder& inTask, TThreadOrder& inThread ) const
 {
   myTrace->getThreadLocation( globalThread, inAppl, inTask, inThread );
 }
@@ -290,12 +285,12 @@ TThreadOrder TraceProxy::getLastThread( TApplOrder inAppl, TTaskOrder inTask ) c
   return myTrace->getLastThread( inAppl, inTask );
 }
 
-void TraceProxy::getThreadsPerNode( TNodeOrder inNode, std::vector<TThreadOrder>& onVector ) const
+void TraceProxy::getThreadsPerNode( TNodeOrder inNode, std::vector< TThreadOrder >& onVector ) const
 {
   myTrace->getThreadsPerNode( inNode, onVector );
 }
 
-TNodeOrder TraceProxy::getNodeFromThread( TThreadOrder &whichThread ) const
+TNodeOrder TraceProxy::getNodeFromThread( TThreadOrder& whichThread ) const
 {
   return myTrace->getNodeFromThread( whichThread );
 }
@@ -315,15 +310,12 @@ TCPUOrder TraceProxy::totalCPUs() const
   return myTrace->totalCPUs();
 }
 
-TCPUOrder TraceProxy::getGlobalCPU( const TNodeOrder& inNode,
-                                    const TCPUOrder& inCPU ) const
+TCPUOrder TraceProxy::getGlobalCPU( const TNodeOrder& inNode, const TCPUOrder& inCPU ) const
 {
   return myTrace->getGlobalCPU( inNode, inCPU );
 }
 
-void TraceProxy::getCPULocation( TCPUOrder globalCPU,
-                                 TNodeOrder& inNode,
-                                 TCPUOrder& inCPU ) const
+void TraceProxy::getCPULocation( TCPUOrder globalCPU, TNodeOrder& inNode, TCPUOrder& inCPU ) const
 {
   myTrace->getCPULocation( globalCPU, inNode, inCPU );
 }
@@ -338,26 +330,22 @@ TCPUOrder TraceProxy::getLastCPU( TNodeOrder inNode ) const
   return myTrace->getLastCPU( inNode );
 }
 
-TObjectOrder TraceProxy::getFirst( TObjectOrder globalOrder,
-                                   TTraceLevel fromLevel,
-                                   TTraceLevel toLevel ) const
+TObjectOrder TraceProxy::getFirst( TObjectOrder globalOrder, TTraceLevel fromLevel, TTraceLevel toLevel ) const
 {
   return myTrace->getFirst( globalOrder, fromLevel, toLevel );
 }
 
-TObjectOrder TraceProxy::getLast( TObjectOrder globalOrder,
-                                  TTraceLevel fromLevel,
-                                  TTraceLevel toLevel ) const
+TObjectOrder TraceProxy::getLast( TObjectOrder globalOrder, TTraceLevel fromLevel, TTraceLevel toLevel ) const
 {
   return myTrace->getLast( globalOrder, fromLevel, toLevel );
 }
 
-bool TraceProxy::isSameObjectStruct( Trace *compareTo, bool compareProcessModel ) const
+bool TraceProxy::isSameObjectStruct( Trace* compareTo, bool compareProcessModel ) const
 {
   return myTrace->isSameObjectStruct( compareTo->getConcrete(), compareProcessModel );
 }
 
-bool TraceProxy::isSubsetObjectStruct( Trace *compareTo, bool compareProcessModel ) const
+bool TraceProxy::isSubsetObjectStruct( Trace* compareTo, bool compareProcessModel ) const
 {
   return myTrace->isSubsetObjectStruct( compareTo->getConcrete(), compareProcessModel );
 }
@@ -452,7 +440,7 @@ void TraceProxy::setUnload( bool newValue )
   unload = newValue;
 }
 
-Trace *TraceProxy::getConcrete() const
+Trace* TraceProxy::getConcrete() const
 {
   return myTrace;
 }
@@ -462,7 +450,7 @@ void TraceProxy::fillSymbols( Parser& whichParser )
 {
   rgb tmpColor;
   const auto& semanticColors = whichParser.getSemanticColors();
-  for ( auto it : semanticColors )
+  for( auto it : semanticColors )
   {
     std::tie( tmpColor.red, tmpColor.green, tmpColor.blue ) = it.second;
     mySemanticColor.setColor( it.first, tmpColor );
@@ -470,7 +458,7 @@ void TraceProxy::fillSymbols( Parser& whichParser )
 
   myEventLabels = EventLabels( whichParser );
   myStateLabels = StateLabels( whichParser );
-  
+
   vector< TEventType > types;
   whichParser.getEventTypes( types );
   for( auto it : types )
@@ -481,16 +469,16 @@ void TraceProxy::fillSymbols( Parser& whichParser )
 
 void TraceProxy::parseSymbolsFile( const string& whichFile )
 {
-  if ( whichFile.substr( whichFile.length() - 3 ) == "pcf" )
+  if( whichFile.substr( whichFile.length() - 3 ) == "pcf" )
   {
     PCFFileParser<> pcfParser( whichFile );
     fillSymbols( pcfParser );
   }
-  else if ( whichFile.substr( whichFile.length() - 3 ) == "csv" )
+  else if( whichFile.substr( whichFile.length() - 3 ) == "csv" )
   {
-    CSVMetadata *tmpMetadata = nullptr;
-    bool isGradientColor = getMetadata().getMetadata< MetadataManager::TAppID::CSV >( tmpMetadata ) &&
-                           tmpMetadata->getColorMode() != TColorFunction::CODE_COLOR;
+    CSVMetadata* tmpMetadata = nullptr;
+    bool isGradientColor =
+      getMetadata().getMetadata< MetadataManager::TAppID::CSV >( tmpMetadata ) && tmpMetadata->getColorMode() != TColorFunction::CODE_COLOR;
     CSVSymbolsParser csvParser( whichFile, isGradientColor );
     fillSymbols( csvParser );
   }
@@ -548,29 +536,26 @@ bool TraceProxy::anyEventLoaded( TEventType firstType, TEventType lastType ) con
   return myTrace->anyEventLoaded( firstType, lastType );
 }
 
-const set<TState>& TraceProxy::getLoadedStates() const
+const set< TState >& TraceProxy::getLoadedStates() const
 {
   return myTrace->getLoadedStates();
 }
 
-const set<TEventType>& TraceProxy::getLoadedEvents() const
+const set< TEventType >& TraceProxy::getLoadedEvents() const
 {
   return myTrace->getLoadedEvents();
 }
 
 bool TraceProxy::findLastEventValue( TThreadOrder whichThread,
                                      TRecordTime whichTime,
-                                     const vector<TEventType>& whichEvent,
+                                     const vector< TEventType >& whichEvent,
                                      TEventType& returnType,
                                      TEventValue& returnValue ) const
 {
   return myTrace->findLastEventValue( whichThread, whichTime, whichEvent, returnType, returnValue );
 }
 
-bool TraceProxy::findNextEvent( TThreadOrder whichThread,
-                                TRecordTime whichTime,
-                                TEventType whichEvent,
-                                TRecordTime& foundTime ) const
+bool TraceProxy::findNextEvent( TThreadOrder whichThread, TRecordTime whichTime, TEventType whichEvent, TRecordTime& foundTime ) const
 {
   return myTrace->findNextEvent( whichThread, whichTime, whichEvent, foundTime );
 }

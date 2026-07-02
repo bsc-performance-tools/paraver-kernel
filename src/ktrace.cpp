@@ -25,24 +25,24 @@
 #include <fstream>
 #include <sstream>
 #ifdef _MSC_VER
-#include <hash_set>
+#  include <hash_set>
 #else
-#include  <unordered_set>
+#  include <unordered_set>
 #endif
 
-#include "ktrace.h"
-#include "traceheaderexception.h"
-#include "tracebodyiofactory.h"
-#include "tracebodyio_v2.h"
-#include "tracestream.h"
-#include "kprogresscontroller.h"
-#include "labelconstructor.h"
-#include "plaintrace.h"
-#include "plainblocks.h"
-#include "noloadtrace.h"
-#include "noloadblocks.h"
-#include "traceeditblocks.h"
 #include "customalgorithms.h"
+#include "kprogresscontroller.h"
+#include "ktrace.h"
+#include "labelconstructor.h"
+#include "noloadblocks.h"
+#include "noloadtrace.h"
+#include "plainblocks.h"
+#include "plaintrace.h"
+#include "tracebodyio_v2.h"
+#include "tracebodyiofactory.h"
+#include "traceeditblocks.h"
+#include "traceheaderexception.h"
+#include "tracestream.h"
 #include "utils/traceparser/traceheader.h"
 #include "vectorblocks.h"
 #include "vectortrace.h"
@@ -70,7 +70,7 @@ string KTrace::getTraceName() const
 #else
   string::size_type pos = traceName.find_last_of( '/' );
 #endif
-  if ( pos != string::npos )
+  if( pos != string::npos )
     traceName = traceName.substr( pos + 1, traceName.size() );
 
   return traceName;
@@ -93,16 +93,13 @@ TTaskOrder KTrace::totalTasks() const
 }
 
 
-TTaskOrder KTrace::getGlobalTask( const TApplOrder& inAppl,
-                                  const TTaskOrder& inTask ) const
+TTaskOrder KTrace::getGlobalTask( const TApplOrder& inAppl, const TTaskOrder& inTask ) const
 {
   return traceProcessModel.getGlobalTask( inAppl, inTask );
 }
 
 
-void KTrace::getTaskLocation( TTaskOrder globalTask,
-                              TApplOrder& inAppl,
-                              TTaskOrder& inTask ) const
+void KTrace::getTaskLocation( TTaskOrder globalTask, TApplOrder& inAppl, TTaskOrder& inTask ) const
 {
   traceProcessModel.getTaskLocation( globalTask, inAppl, inTask );
 }
@@ -126,18 +123,13 @@ TThreadOrder KTrace::totalThreads() const
 }
 
 
-TThreadOrder KTrace::getGlobalThread( const TApplOrder& inAppl,
-                                      const TTaskOrder& inTask,
-                                      const TThreadOrder& inThread ) const
+TThreadOrder KTrace::getGlobalThread( const TApplOrder& inAppl, const TTaskOrder& inTask, const TThreadOrder& inThread ) const
 {
   return traceProcessModel.getGlobalThread( inAppl, inTask, inThread );
 }
 
 
-void KTrace::getThreadLocation( TThreadOrder globalThread,
-                                TApplOrder& inAppl,
-                                TTaskOrder& inTask,
-                                TThreadOrder& inThread ) const
+void KTrace::getThreadLocation( TThreadOrder globalThread, TApplOrder& inAppl, TTaskOrder& inTask, TThreadOrder& inThread ) const
 {
   traceProcessModel.getThreadLocation( globalThread, inAppl, inTask, inThread );
 }
@@ -154,14 +146,14 @@ TThreadOrder KTrace::getLastThread( TApplOrder inAppl, TTaskOrder inTask ) const
   return traceProcessModel.getLastThread( inAppl, inTask );
 }
 
-void KTrace::getThreadsPerNode( TNodeOrder inNode, std::vector<TThreadOrder>& onVector ) const
+void KTrace::getThreadsPerNode( TNodeOrder inNode, std::vector< TThreadOrder >& onVector ) const
 {
   traceProcessModel.getThreadsPerNode( inNode, onVector );
 }
 
-TNodeOrder KTrace::getNodeFromThread( TThreadOrder &whichThread ) const
+TNodeOrder KTrace::getNodeFromThread( TThreadOrder& whichThread ) const
 {
-  return traceProcessModel.getNode(whichThread);
+  return traceProcessModel.getNode( whichThread );
 }
 
 bool KTrace::existResourceInfo() const
@@ -182,16 +174,13 @@ TCPUOrder KTrace::totalCPUs() const
 }
 
 
-TCPUOrder KTrace::getGlobalCPU( const TNodeOrder& inNode,
-                                const TCPUOrder& inCPU ) const
+TCPUOrder KTrace::getGlobalCPU( const TNodeOrder& inNode, const TCPUOrder& inCPU ) const
 {
   return traceResourceModel.getGlobalCPU( inNode, inCPU );
 }
 
 
-void KTrace::getCPULocation( TCPUOrder globalCPU,
-                             TNodeOrder& inNode,
-                             TCPUOrder& inCPU ) const
+void KTrace::getCPULocation( TCPUOrder globalCPU, TNodeOrder& inNode, TCPUOrder& inCPU ) const
 {
   traceResourceModel.getCPULocation( globalCPU, inNode, inCPU );
 }
@@ -210,29 +199,27 @@ TCPUOrder KTrace::getLastCPU( TNodeOrder inNode ) const
 
 
 // PRECOND: fromLevel > toLevel
-TObjectOrder KTrace::getFirst( TObjectOrder globalOrder,
-                               TTraceLevel fromLevel,
-                               TTraceLevel toLevel  ) const
+TObjectOrder KTrace::getFirst( TObjectOrder globalOrder, TTraceLevel fromLevel, TTraceLevel toLevel ) const
 {
-  if ( fromLevel == TTraceLevel::WORKLOAD || fromLevel == TTraceLevel::SYSTEM )
+  if( fromLevel == TTraceLevel::WORKLOAD || fromLevel == TTraceLevel::SYSTEM )
   {
     return 0;
   }
-  else if ( fromLevel == TTraceLevel::APPLICATION )
+  else if( fromLevel == TTraceLevel::APPLICATION )
   {
-    if ( toLevel == TTraceLevel::TASK )
+    if( toLevel == TTraceLevel::TASK )
       return getFirstTask( globalOrder );
     else
       return getFirstThread( globalOrder, 0 );
   }
-  else if ( fromLevel == TTraceLevel::TASK )
+  else if( fromLevel == TTraceLevel::TASK )
   {
     TApplOrder application;
     TTaskOrder task;
     getTaskLocation( globalOrder, application, task );
     return getFirstThread( application, task );
   }
-  else if ( fromLevel == TTraceLevel::NODE )
+  else if( fromLevel == TTraceLevel::NODE )
   {
     return getFirstCPU( globalOrder );
   }
@@ -241,41 +228,39 @@ TObjectOrder KTrace::getFirst( TObjectOrder globalOrder,
 }
 
 
-TObjectOrder KTrace::getLast( TObjectOrder globalOrder,
-                              TTraceLevel fromLevel,
-                              TTraceLevel toLevel ) const
+TObjectOrder KTrace::getLast( TObjectOrder globalOrder, TTraceLevel fromLevel, TTraceLevel toLevel ) const
 {
-  if ( fromLevel == TTraceLevel::WORKLOAD )
+  if( fromLevel == TTraceLevel::WORKLOAD )
   {
-    if ( toLevel == TTraceLevel::APPLICATION )
+    if( toLevel == TTraceLevel::APPLICATION )
       return totalApplications() - 1;
-    else if ( toLevel == TTraceLevel::TASK )
+    else if( toLevel == TTraceLevel::TASK )
       return totalTasks() - 1;
     else
       return totalThreads() - 1;
   }
-  else if ( fromLevel == TTraceLevel::APPLICATION )
+  else if( fromLevel == TTraceLevel::APPLICATION )
   {
-    if ( toLevel == TTraceLevel::TASK )
+    if( toLevel == TTraceLevel::TASK )
       return getLastTask( globalOrder );
     else
       return getLastThread( globalOrder, getLastTask( globalOrder ) );
   }
-  else if ( fromLevel == TTraceLevel::TASK )
+  else if( fromLevel == TTraceLevel::TASK )
   {
     TApplOrder application;
     TTaskOrder task;
     getTaskLocation( globalOrder, application, task );
     return getLastThread( application, task );
   }
-  else if ( fromLevel == TTraceLevel::SYSTEM )
+  else if( fromLevel == TTraceLevel::SYSTEM )
   {
-    if ( toLevel == TTraceLevel::NODE )
+    if( toLevel == TTraceLevel::NODE )
       return totalNodes() - 1;
     else
       return totalCPUs() - 1;
   }
-  else if ( fromLevel == TTraceLevel::NODE )
+  else if( fromLevel == TTraceLevel::NODE )
   {
     return getLastCPU( globalOrder );
   }
@@ -283,18 +268,18 @@ TObjectOrder KTrace::getLast( TObjectOrder globalOrder,
   return 0;
 }
 
-bool KTrace::isSameObjectStruct( Trace *compareTo, bool compareProcessModel ) const
+bool KTrace::isSameObjectStruct( Trace* compareTo, bool compareProcessModel ) const
 {
-  KTrace *tmpTrace = (KTrace *)compareTo;
-  if ( compareProcessModel )
+  KTrace* tmpTrace = (KTrace*)compareTo;
+  if( compareProcessModel )
     return traceProcessModel == tmpTrace->traceProcessModel;
-  
+
   return traceResourceModel == tmpTrace->traceResourceModel;
 }
 
-bool KTrace::isSubsetObjectStruct( Trace *compareTo, bool compareProcessModel ) const
+bool KTrace::isSubsetObjectStruct( Trace* compareTo, bool compareProcessModel ) const
 {
-  KTrace *tmpTrace = (KTrace *)compareTo;
+  KTrace* tmpTrace = (KTrace*)compareTo;
   if( compareProcessModel )
     return traceProcessModel < tmpTrace->traceProcessModel;
 
@@ -366,7 +351,6 @@ TRecordTime KTrace::customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit wh
     tmpTime = whichTime;
   else
   {
-
     tmpTime = whichTime * LabelConstructor::timeFactorsConversionTable[ whichUnits ][ getTimeUnit() ];
   }
 
@@ -382,7 +366,6 @@ TRecordTime KTrace::traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit wh
     tmpTime = whichTime;
   else
   {
-
     tmpTime = whichTime * LabelConstructor::timeFactorsConversionTable[ getTimeUnit() ][ whichUnits ];
   }
 
@@ -393,7 +376,7 @@ TRecordTime KTrace::traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit wh
 void KTrace::dumpFileHeader( std::fstream& file, bool newFormat ) const
 {
   string tmpTraceTime;
-  if ( !myTraceTime.is_not_a_date_time() )
+  if( !myTraceTime.is_not_a_date_time() )
   {
     ostringstream tmpostr;
     tmpostr << myTraceTime;
@@ -417,16 +400,15 @@ void KTrace::dumpFile( const string& whichFile ) const
   std::fstream file( whichFile.c_str(), fstream::out | fstream::trunc );
   dumpFileHeader( file, true );
 
-  MemoryTrace::iterator *it = memTrace->begin();
-  TraceBodyIO< PARAM_TRACEBODY_CLASS > *body = TraceBodyIOFactory::createTraceBody();
-  if( TraceBodyIO_v2 *tmpBody = dynamic_cast<TraceBodyIO_v2 *>( body ) )
+  MemoryTrace::iterator* it                  = memTrace->begin();
+  TraceBodyIO< PARAM_TRACEBODY_CLASS >* body = TraceBodyIOFactory::createTraceBody();
+  if( TraceBodyIO_v2* tmpBody = dynamic_cast< TraceBodyIO_v2* >( body ) )
     tmpBody->writeCommInfo( file, *this );
 
-  while ( !it->isNull() )
+  while( !it->isNull() )
   {
     body->write( file, traceProcessModel, traceResourceModel, it );
     ++( *it );
-
   }
 
   delete it;
@@ -471,60 +453,44 @@ MemoryTrace::iterator* KTrace::CPUEnd( TCPUOrder whichCPU ) const
   return memTrace->CPUEnd( whichCPU );
 }
 
-void KTrace::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter,
-                                    TRecordTime whichTime ) const
+void KTrace::getRecordByTimeThread( vector< MemoryTrace::iterator* >& listIter, TRecordTime whichTime ) const
 {
   memTrace->getRecordByTimeThread( listIter, whichTime );
 }
 
 
-void KTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
-                                 TRecordTime whichTime ) const
+void KTrace::getRecordByTimeCPU( vector< MemoryTrace::iterator* >& listIter, TRecordTime whichTime ) const
 {
   memTrace->getRecordByTimeCPU( listIter, whichTime );
 }
 
 
-void KTrace::parseDateTime( string &whichDateTime )
+void KTrace::parseDateTime( string& whichDateTime )
 {
   rawTraceTime = whichDateTime;
 
   // Create locales for every time format that whichDateTime may take
-  static array<string, 6> strYearFormat
-  {
-    "%d/%m/%Y",
-    "%d/%b/%Y",
-    "%Y/%m/%d",
-    "%Y/%b/%d",
-    "%m/%d/%Y",
-    "%b/%d/%Y"
-  };
-  static array<string, 2> strMidFormat
-  {
-    " ",
-    ""
-  };
-  static array<string, 4> strHourFormat
-  {
-    "%H:%M:%S%F",
-    "%H:%M:%S",
-    "%H:%M",
-    ""
-  };
+  static array< string, 6 > strYearFormat{ "%d/%m/%Y", "%d/%b/%Y", "%Y/%m/%d", "%Y/%b/%d", "%m/%d/%Y", "%b/%d/%Y" };
+  static array< string, 2 > strMidFormat{ " ", "" };
+  static array< string, 4 > strHourFormat{ "%H:%M:%S%F", "%H:%M:%S", "%H:%M", "" };
 
-  static vector<array<string, 3>> strFormatDate;
-  static vector<std::locale> formatDate;
+  static vector< array< string, 3 > > strFormatDate;
+  static vector< std::locale > formatDate;
 
   if( strFormatDate.size() == 0 )
   {
-    cartesian_product( std::back_inserter( strFormatDate ), strYearFormat.begin(), strYearFormat.end(),
-                                                            strMidFormat.begin(),  strMidFormat.end(),
-                                                            strHourFormat.begin(), strHourFormat.end() );
+    cartesian_product( std::back_inserter( strFormatDate ),
+                       strYearFormat.begin(),
+                       strYearFormat.end(),
+                       strMidFormat.begin(),
+                       strMidFormat.end(),
+                       strHourFormat.begin(),
+                       strHourFormat.end() );
 
-    for( auto el: strFormatDate )
+    for( auto el : strFormatDate )
     {
-      string tmp =  el[ 0 ] + el[ 1 ] + el[ 2 ];
-      formatDate.push_back(std::locale( std::locale::classic(), new time_input_facet( tmp ) ) );
+      string tmp = el[ 0 ] + el[ 1 ] + el[ 2 ];
+      formatDate.push_back( std::locale( std::locale::classic(), new time_input_facet( tmp ) ) );
     }
   }
 
@@ -532,12 +498,12 @@ void KTrace::parseDateTime( string &whichDateTime )
   {
     whichDateTime.erase( whichDateTime.find( "at" ), 3 );
   }
-  catch(const std::out_of_range& e)
+  catch( const std::out_of_range& e )
   {
   }
 
   // Now, try to match one ptime from {date * format}
-  for( vector<std::locale>::const_iterator it = formatDate.begin(); it != formatDate.end(); ++it )
+  for( vector< std::locale >::const_iterator it = formatDate.begin(); it != formatDate.end(); ++it )
   {
     std::stringstream tmpSSDate( whichDateTime );
     tmpSSDate.imbue( *it );
@@ -554,40 +520,40 @@ void KTrace::parseDateTime( string &whichDateTime )
 }
 
 
-KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLoad, TTraceSize whichTraceSize )
-    : fileName( whichFile ), traceSize( whichTraceSize )
+KTrace::KTrace( const string& whichFile, ProgressController* progress, bool noLoad, TTraceSize whichTraceSize )
+  : fileName( whichFile ), traceSize( whichTraceSize )
 {
   string tmpstr;
 
-  ready = false;
-  TraceStream *file = TraceStream::openFile( fileName );
+  ready             = false;
+  TraceStream* file = TraceStream::openFile( fileName );
 
-  if ( !file->good() )
+  if( !file->good() )
   {
     delete file;
     throw ParaverKernelException( TErrorCode::cannotOpenTrace, fileName.c_str() );
   }
 
-  if ( file->canseekend() )
+  if( file->canseekend() )
   {
     file->seekend();
-    if ( progress != nullptr )
+    if( progress != nullptr )
       progress->setEndLimit( file->tellg() );
     file->seekbegin();
   }
 
-// Reading the header
+  // Reading the header
   string fileType = whichFile.substr( whichFile.find_last_of( '.' ) + 1 );
-  if ( fileType == "csv" )
+  if( fileType == "csv" )
   {
-    traceTimeUnit = NS;
-    traceEndTime = 0;
-    traceProcessModel = ProcessModel<>( );
-    traceResourceModel = ResourceModel<>( );
+    traceTimeUnit      = NS;
+    traceEndTime       = 0;
+    traceProcessModel  = ProcessModel<>();
+    traceResourceModel = ResourceModel<>();
 
     traceProcessModel.setReady( true );
 
-    if ( !file->canseekend() && progress != nullptr )
+    if( !file->canseekend() && progress != nullptr )
     {
       progress->setEndLimit( traceEndTime );
     }
@@ -607,92 +573,89 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
 
     parseDateTime( tmpDate );
 
-    if ( !file->canseekend() && progress != nullptr )
+    if( !file->canseekend() && progress != nullptr )
     {
       progress->setEndLimit( traceEndTime );
     }
   }
 
-// Reading the body
+  // Reading the body
   body = TraceBodyIOFactory::createTraceBody( file, this, traceProcessModel );
 
-  if ( noLoad && body->ordered() )
+  if( noLoad && body->ordered() )
   {
-    blocks = new NoLoadBlocks( traceResourceModel, traceProcessModel, body, file, traceEndTime );
+    blocks   = new NoLoadBlocks( traceResourceModel, traceProcessModel, body, file, traceEndTime );
     memTrace = new NoLoadTrace( this, blocks, traceProcessModel, traceResourceModel );
-    ( ( NoLoadBlocks * )blocks )->setFirstOffset( file->tellg() );
+    ( (NoLoadBlocks*)blocks )->setFirstOffset( file->tellg() );
   }
   else if( noLoad && !body->ordered() )
   {
-    blocks = new TraceEditBlocks( traceResourceModel, traceProcessModel, body, file, traceEndTime );
+    blocks   = new TraceEditBlocks( traceResourceModel, traceProcessModel, body, file, traceEndTime );
     memTrace = new NoLoadTrace( this, blocks, traceProcessModel, traceResourceModel );
-    ( ( TraceEditBlocks * )blocks )->setFirstOffset( file->tellg() );
+    ( (TraceEditBlocks*)blocks )->setFirstOffset( file->tellg() );
   }
-  else if ( body->ordered() )
+  else if( body->ordered() )
   {
-    blocks = new PlainBlocks( traceResourceModel, traceProcessModel, traceEndTime );
-    memTrace  = new PlainTrace( this,
-                                traceProcessModel,
-                                traceResourceModel );
+    blocks   = new PlainBlocks( traceResourceModel, traceProcessModel, traceEndTime );
+    memTrace = new PlainTrace( this, traceProcessModel, traceResourceModel );
   }
   else
   {
-    blocks = new VectorBlocks( traceResourceModel, traceProcessModel, traceEndTime, progress );
+    blocks   = new VectorBlocks( traceResourceModel, traceProcessModel, traceEndTime, progress );
     memTrace = new VectorTrace();
   }
 
-  unordered_set<TEventType> hashevents;
-  unordered_set<TState> hashstates;
+  unordered_set< TEventType > hashevents;
+  unordered_set< TState > hashstates;
 
   unsigned long long count = 0;
   if( !( noLoad && !body->ordered() ) )
   {
-    while ( !file->eof() )
+    while( !file->eof() )
     {
       body->read( *file, *blocks, traceProcessModel, traceResourceModel, hashstates, hashevents, myTraceInfo, traceEndTime );
       if( blocks->getCountInserted() > 0 )
         ++count;
 
-      if ( blocks->getCountInserted() >= 10000 )
+      if( blocks->getCountInserted() >= 10000 )
       {
         memTrace->insert( blocks );
-        if ( progress != nullptr )
+        if( progress != nullptr )
         {
-          if ( file->canseekend() )
+          if( file->canseekend() )
             progress->setCurrentProgress( file->tellg() );
           else
             progress->setCurrentProgress( blocks->getLastRecordTime() );
         }
 
-        if ( progress != nullptr && progress->getStop() )
+        if( progress != nullptr && progress->getStop() )
           break;
       }
     }
 
-    if ( blocks->getCountInserted() > 0 )
+    if( blocks->getCountInserted() > 0 )
     {
       memTrace->insert( blocks );
       ++count;
     }
 
-    if (count == 0)
+    if( count == 0 )
     {
       delete file;
-      throw TraceHeaderException( TTraceHeaderErrorCode::emptyBody,
-                                  whichFile.c_str() );
+      throw TraceHeaderException( TTraceHeaderErrorCode::emptyBody, whichFile.c_str() );
     }
 
-    for ( unordered_set<TEventType>::iterator it = hashevents.begin(); it != hashevents.end(); ++it )
+    for( unordered_set< TEventType >::iterator it = hashevents.begin(); it != hashevents.end(); ++it )
       events.insert( *it );
 
-    for ( unordered_set<TState>::iterator it = hashstates.begin(); it != hashstates.end(); ++it )
+    for( unordered_set< TState >::iterator it = hashstates.begin(); it != hashstates.end(); ++it )
       states.insert( *it );
   }
 
-// End reading the body
+  // End reading the body
   traceEndTime = memTrace->finish( traceEndTime, this );
 
-  if ( !noLoad )
+  if( !noLoad )
   {
     file->close();
     delete body;
@@ -704,7 +667,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     file->clear();
   }
 
-  CSVMetadata *tmpCSVMetadata = nullptr;
+  CSVMetadata* tmpCSVMetadata = nullptr;
   myTraceInfo.getMetadata< MetadataManager::TAppID::CSV >( tmpCSVMetadata );
   if( tmpCSVMetadata != nullptr )
   {
@@ -720,16 +683,20 @@ KTrace::~KTrace()
 {
   delete blocks;
   delete memTrace;
-  if ( body != nullptr )
+  if( body != nullptr )
     delete body;
 }
 
-const set<TState>& KTrace::getLoadedStates() const
+void KTrace::appendCSV( const std::string& whichFile, ProgressController* progress )
+{
+}
+
+const set< TState >& KTrace::getLoadedStates() const
 {
   return states;
 }
 
-const set<TEventType>& KTrace::getLoadedEvents() const
+const set< TEventType >& KTrace::getLoadedEvents() const
 {
   return events;
 }
@@ -741,7 +708,7 @@ bool KTrace::eventLoaded( TEventType whichType ) const
 
 bool KTrace::anyEventLoaded( TEventType firstType, TEventType lastType ) const
 {
-  set<TEventType>::const_iterator it;
+  set< TEventType >::const_iterator it;
   it = events.lower_bound( firstType );
   if( it != events.end() && *it <= lastType )
     return true;
@@ -751,18 +718,17 @@ bool KTrace::anyEventLoaded( TEventType firstType, TEventType lastType ) const
 
 bool KTrace::findLastEventValue( TThreadOrder whichThread,
                                  TRecordTime whichTime,
-                                 const vector<TEventType>& whichEvent,
+                                 const vector< TEventType >& whichEvent,
                                  TEventType& returnType,
                                  TEventValue& returnValue ) const
 {
   bool result = false;
-  vector<MemoryTrace::iterator *> listIter;
-  MemoryTrace::iterator *it;
+  vector< MemoryTrace::iterator* > listIter;
+  MemoryTrace::iterator* it;
 
-  for ( vector<TEventType>::const_iterator itEvt = whichEvent.begin();
-        itEvt != whichEvent.end(); ++itEvt )
+  for( vector< TEventType >::const_iterator itEvt = whichEvent.begin(); itEvt != whichEvent.end(); ++itEvt )
   {
-    if ( !eventLoaded( *itEvt ) )
+    if( !eventLoaded( *itEvt ) )
       return false;
   }
 
@@ -770,41 +736,35 @@ bool KTrace::findLastEventValue( TThreadOrder whichThread,
   getRecordByTimeThread( listIter, whichTime );
   it = listIter[ whichThread ];
 
-  while ( it->getTime() > whichTime )
+  while( it->getTime() > whichTime )
     --( *it );
 
-  while ( !it->isNull() && !result )
+  while( !it->isNull() && !result )
   {
-    for ( vector<TEventType>::const_iterator itEvt = whichEvent.begin();
-          itEvt != whichEvent.end(); ++itEvt )
+    for( vector< TEventType >::const_iterator itEvt = whichEvent.begin(); itEvt != whichEvent.end(); ++itEvt )
     {
-      if ( ( it->getRecordType() & EVENT ) && ( it->getEventType() == *itEvt )
-           && ( it->getEventValue() != 0 ) )
+      if( ( it->getRecordType() & EVENT ) && ( it->getEventType() == *itEvt ) && ( it->getEventValue() != 0 ) )
       {
-        returnType = it->getEventType();
+        returnType  = it->getEventType();
         returnValue = it->getEventValue();
-        result = true;
+        result      = true;
         break;
       }
     }
     --( *it );
   }
 
-  for ( vector<MemoryTrace::iterator *>::iterator itErase = listIter.begin();
-        itErase != listIter.end(); ++itErase )
+  for( vector< MemoryTrace::iterator* >::iterator itErase = listIter.begin(); itErase != listIter.end(); ++itErase )
     delete *itErase;
 
   return result;
 }
 
-bool KTrace::findNextEvent( TThreadOrder whichThread,
-                            TRecordTime whichTime,
-                            TEventType whichEvent,
-                            TRecordTime& foundTime ) const
+bool KTrace::findNextEvent( TThreadOrder whichThread, TRecordTime whichTime, TEventType whichEvent, TRecordTime& foundTime ) const
 {
   bool found = false;
-  vector<MemoryTrace::iterator *> listIter;
-  MemoryTrace::iterator *it;
+  vector< MemoryTrace::iterator* > listIter;
+  MemoryTrace::iterator* it;
 
   listIter.insert( listIter.begin(), totalThreads(), nullptr );
   getRecordByTimeThread( listIter, whichTime );
@@ -812,19 +772,18 @@ bool KTrace::findNextEvent( TThreadOrder whichThread,
   while( it->getTime() < whichTime )
     ++( *it );
 
-  while ( !it->isNull() && !found )
+  while( !it->isNull() && !found )
   {
-    if ( ( it->getRecordType() & EVENT ) && ( it->getEventType() == whichEvent ) && ( it->getTime() != whichTime ) )
+    if( ( it->getRecordType() & EVENT ) && ( it->getEventType() == whichEvent ) && ( it->getTime() != whichTime ) )
     {
       foundTime = it->getTime();
-      found = true;
+      found     = true;
       break;
     }
     ++( *it );
   }
 
-  for ( vector<MemoryTrace::iterator *>::iterator itErase = listIter.begin();
-        itErase != listIter.end(); ++itErase )
+  for( vector< MemoryTrace::iterator* >::iterator itErase = listIter.begin(); itErase != listIter.end(); ++itErase )
     delete *itErase;
 
   return found;
@@ -844,7 +803,7 @@ void KTrace::setFillStateGaps( bool fill )
 
 PRV_UINT64 KTrace::getCutterLastOffset()
 {
-  CutterMetadata *tmpCutterMetadata = nullptr;
+  CutterMetadata* tmpCutterMetadata = nullptr;
   if( !myTraceInfo.getMetadata< MetadataManager::TAppID::CUTTER >( tmpCutterMetadata ) )
     return 0;
   return tmpCutterMetadata->getCutterLastOffset();
@@ -853,7 +812,7 @@ PRV_UINT64 KTrace::getCutterLastOffset()
 
 PRV_UINT64 KTrace::getCutterLastBeginTime()
 {
-  CutterMetadata *tmpCutterMetadata = nullptr;
+  CutterMetadata* tmpCutterMetadata = nullptr;
   if( !myTraceInfo.getMetadata< MetadataManager::TAppID::CUTTER >( tmpCutterMetadata ) )
     return 0;
   return tmpCutterMetadata->getCutterLastBeginTime();
@@ -862,7 +821,7 @@ PRV_UINT64 KTrace::getCutterLastBeginTime()
 
 PRV_UINT64 KTrace::getCutterLastEndTime()
 {
-  CutterMetadata *tmpCutterMetadata = nullptr;
+  CutterMetadata* tmpCutterMetadata = nullptr;
   if( !myTraceInfo.getMetadata< MetadataManager::TAppID::CUTTER >( tmpCutterMetadata ) )
     return 0;
   return tmpCutterMetadata->getCutterLastEndTime();
@@ -900,7 +859,7 @@ void KTrace::setPhysicalReceive( TCommID whichComm, TRecordTime whichTime )
 
 void KTrace::setEventTypePrecision( TEventType whichType, double whichPrecision )
 {
-  eventsPrecision.insert( std::pair<TEventType, double>( whichType, whichPrecision ) ) ;
+  eventsPrecision.insert( std::pair< TEventType, double >( whichType, whichPrecision ) );
 }
 
 double KTrace::getEventTypePrecision( TEventType whichType ) const

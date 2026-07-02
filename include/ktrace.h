@@ -24,11 +24,7 @@
 #pragma once
 
 
-#include <set>
-#include <string>
-#include <unordered_map>
-#include <vector>
-
+#include "ParaverMetadataManager.h"
 #include "memorytrace.h"
 #include "paraverkerneltypes.h"
 #include "trace.h"
@@ -36,9 +32,12 @@
 #include "utils/traceparser/processmodel.h"
 #include "utils/traceparser/resourcemodel.h"
 
-#include "ParaverMetadataManager.h"
+#include <set>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
-class KTrace: public Trace
+class KTrace : public Trace
 {
   public:
     KTrace()
@@ -46,9 +45,11 @@ class KTrace: public Trace
       ready = false;
     }
 
-    KTrace( const std::string& whichFile, ProgressController *progress, bool noLoad, TTraceSize whichTraceSize = 0 );
+    KTrace( const std::string& whichFile, ProgressController* progress, bool noLoad, TTraceSize whichTraceSize = 0 );
 
     ~KTrace();
+
+    void appendCSV( const std::string& whichFile, ProgressController* progress ) override;
 
     std::string getFileName() const override;
     std::string getTraceName() const override;
@@ -59,48 +60,33 @@ class KTrace: public Trace
 
     TApplOrder totalApplications() const override;
     TTaskOrder totalTasks() const override;
-    TTaskOrder getGlobalTask( const TApplOrder& inAppl,
-                              const TTaskOrder& inTask ) const override;
-    void getTaskLocation( TTaskOrder globalTask,
-                          TApplOrder& inAppl,
-                          TTaskOrder& inTask ) const override;
+    TTaskOrder getGlobalTask( const TApplOrder& inAppl, const TTaskOrder& inTask ) const override;
+    void getTaskLocation( TTaskOrder globalTask, TApplOrder& inAppl, TTaskOrder& inTask ) const override;
     TTaskOrder getFirstTask( TApplOrder inAppl ) const override;
     TTaskOrder getLastTask( TApplOrder inAppl ) const override;
 
     TThreadOrder totalThreads() const override;
-    TThreadOrder getGlobalThread( const TApplOrder& inAppl,
-                                  const TTaskOrder& inTask,
-                                  const TThreadOrder& inThread ) const override;
-    void getThreadLocation( TThreadOrder globalThread,
-                            TApplOrder& inAppl,
-                            TTaskOrder& inTask,
-                            TThreadOrder& inThread ) const override;
+    TThreadOrder getGlobalThread( const TApplOrder& inAppl, const TTaskOrder& inTask, const TThreadOrder& inThread ) const override;
+    void getThreadLocation( TThreadOrder globalThread, TApplOrder& inAppl, TTaskOrder& inTask, TThreadOrder& inThread ) const override;
     TThreadOrder getFirstThread( TApplOrder inAppl, TTaskOrder inTask ) const override;
     TThreadOrder getLastThread( TApplOrder inAppl, TTaskOrder inTask ) const override;
-    void getThreadsPerNode( TNodeOrder inNode, std::vector<TThreadOrder>& onVector ) const override;
+    void getThreadsPerNode( TNodeOrder inNode, std::vector< TThreadOrder >& onVector ) const override;
 
-    TNodeOrder getNodeFromThread( TThreadOrder &whichThread ) const override;
+    TNodeOrder getNodeFromThread( TThreadOrder& whichThread ) const override;
 
     bool existResourceInfo() const override;
     TNodeOrder totalNodes() const override;
     TCPUOrder totalCPUs() const override;
-    TCPUOrder getGlobalCPU( const TNodeOrder& inNode,
-                            const TCPUOrder& inCPU ) const override;
-    void getCPULocation( TCPUOrder globalCPU,
-                         TNodeOrder& inNode,
-                         TCPUOrder& inCPU ) const override;
+    TCPUOrder getGlobalCPU( const TNodeOrder& inNode, const TCPUOrder& inCPU ) const override;
+    void getCPULocation( TCPUOrder globalCPU, TNodeOrder& inNode, TCPUOrder& inCPU ) const override;
     TCPUOrder getFirstCPU( TNodeOrder inNode ) const override;
     TCPUOrder getLastCPU( TNodeOrder inNode ) const override;
 
-    TObjectOrder getFirst( TObjectOrder globalOrder,
-                           TTraceLevel fromLevel,
-                           TTraceLevel toLevel ) const override;
-    TObjectOrder getLast( TObjectOrder globalOrder,
-                          TTraceLevel fromLevel,
-                          TTraceLevel toLevel ) const override;
+    TObjectOrder getFirst( TObjectOrder globalOrder, TTraceLevel fromLevel, TTraceLevel toLevel ) const override;
+    TObjectOrder getLast( TObjectOrder globalOrder, TTraceLevel fromLevel, TTraceLevel toLevel ) const override;
 
-    bool isSameObjectStruct( Trace *compareTo, bool compareProcessModel ) const override;
-    bool isSubsetObjectStruct( Trace *compareTo, bool compareProcessModel ) const override;
+    bool isSameObjectStruct( Trace* compareTo, bool compareProcessModel ) const override;
+    bool isSubsetObjectStruct( Trace* compareTo, bool compareProcessModel ) const override;
 
     // Communication info getters
     TCommID getTotalComms() const;
@@ -143,11 +129,10 @@ class KTrace: public Trace
     inline ptime getTraceTime() const override
     {
       PRV_UINT64 cutterOffset{ 0 };
-      CutterMetadata *tmpCutterMetadata = nullptr;
+      CutterMetadata* tmpCutterMetadata = nullptr;
       if( myTraceInfo.getMetadata< MetadataManager::TAppID::CUTTER >( tmpCutterMetadata ) )
         cutterOffset = tmpCutterMetadata->getCutterTotalOffset();
-      return myTraceTime +
-             boost::posix_time::nanoseconds( (long)traceUnitsToCustomUnits( cutterOffset, NS ) );
+      return myTraceTime + boost::posix_time::nanoseconds( (long)traceUnitsToCustomUnits( cutterOffset, NS ) );
     }
 
     inline string getRawTraceTime() const
@@ -171,24 +156,19 @@ class KTrace: public Trace
     MemoryTrace::iterator* CPUBegin( TCPUOrder whichCPU ) const;
     MemoryTrace::iterator* CPUEnd( TCPUOrder whichCPU ) const;
 
-    void getRecordByTimeThread( std::vector<MemoryTrace::iterator *>& listIter,
-                                TRecordTime whichTime ) const;
-    void getRecordByTimeCPU( std::vector<MemoryTrace::iterator *>& listIter,
-                             TRecordTime whichTime ) const;
+    void getRecordByTimeThread( std::vector< MemoryTrace::iterator* >& listIter, TRecordTime whichTime ) const;
+    void getRecordByTimeCPU( std::vector< MemoryTrace::iterator* >& listIter, TRecordTime whichTime ) const;
 
-    const std::set<TState>& getLoadedStates() const override;
-    const std::set<TEventType>& getLoadedEvents() const override;
+    const std::set< TState >& getLoadedStates() const override;
+    const std::set< TEventType >& getLoadedEvents() const override;
 
     bool findLastEventValue( TThreadOrder whichThread,
                              TRecordTime whichTime,
-                             const std::vector<TEventType>& whichEvent,
+                             const std::vector< TEventType >& whichEvent,
                              TEventType& returnType,
                              TEventValue& returnValue ) const override;
 
-    bool findNextEvent( TThreadOrder whichThread,
-                        TRecordTime whichTime,
-                        TEventType whichEvent,
-                        TRecordTime& foundTime ) const override;
+    bool findNextEvent( TThreadOrder whichThread, TRecordTime whichTime, TEventType whichEvent, TRecordTime& foundTime ) const override;
 
     virtual bool getFillStateGaps() const override;
     virtual void setFillStateGaps( bool fill ) override;
@@ -204,7 +184,7 @@ class KTrace: public Trace
     virtual void setPhysicalSend( TCommID whichComm, TRecordTime whichTime ) override;
     virtual void setPhysicalReceive( TCommID whichComm, TRecordTime whichTime ) override;
 
-    virtual void   setEventTypePrecision( TEventType whichType, double whichPrecision ) override;
+    virtual void setEventTypePrecision( TEventType whichType, double whichPrecision ) override;
     virtual double getEventTypePrecision( TEventType whichType ) const override;
 
   protected:
@@ -213,9 +193,9 @@ class KTrace: public Trace
     ResourceModel<> traceResourceModel;
     TTime traceEndTime;
     TTimeUnit traceTimeUnit;
-    MemoryBlocks *blocks;
-    MemoryTrace *memTrace;
-    TraceBodyIO< PARAM_TRACEBODY_CLASS > *body;
+    MemoryBlocks* blocks;
+    MemoryTrace* memTrace;
+    TraceBodyIO< PARAM_TRACEBODY_CLASS >* body;
     ptime myTraceTime;
     string rawTraceTime = "";
 
@@ -223,15 +203,12 @@ class KTrace: public Trace
   private:
     std::string fileName;
     TTraceSize traceSize;
-    std::vector<std::string> communicators;
-    std::set<TEventType> events;
-    std::set<TState> states;
-    std::unordered_map<TEventType, double> eventsPrecision;
+    std::vector< std::string > communicators;
+    std::set< TEventType > events;
+    std::set< TState > states;
+    std::unordered_map< TEventType, double > eventsPrecision;
     bool fillStateGaps;
     MetadataManager myTraceInfo;
 
-    void parseDateTime( string &whichDateTime );
-
+    void parseDateTime( string& whichDateTime );
 };
-
-
