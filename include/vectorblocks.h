@@ -23,27 +23,23 @@
 
 #pragma once
 
-#include <array>
-
 #include "memoryblocks.h"
-#include "vectortrace.h"
-#include "vectortracedefines.h"
-
 #include "utils/traceparser/processmodel.h"
 #include "utils/traceparser/resourcemodel.h"
 #include "utils/traceparser/tracetypes.h"
+#include "vectortrace.h"
+#include "vectortracedefines.h"
+
+#include <array>
 
 
 constexpr size_t BEGIN_EMPTY_RECORD = 0;
-constexpr size_t END_EMPTY_RECORD = 1;
+constexpr size_t END_EMPTY_RECORD   = 1;
 
 class VectorBlocks : public MemoryBlocks
 {
   public:
-    VectorBlocks( const ResourceModel<>& resource,
-                  const ProcessModel<>& process,
-                  TRecordTime endTime,
-                  ProgressController *whichProgress );
+    VectorBlocks( const ResourceModel<> &resource, const ProcessModel<> &process, TRecordTime endTime );
 
     virtual TData *getLastRecord( PRV_UINT16 position ) const override;
     virtual void newRecord() override;
@@ -51,9 +47,7 @@ class VectorBlocks : public MemoryBlocks
     virtual void setRecordType( TRecordType whichType ) override;
     virtual void setTime( TRecordTime whichTime ) override;
     virtual void setThread( TThreadOrder whichThread ) override;
-    virtual void setThread( TApplOrder whichAppl,
-                            TTaskOrder whichTask,
-                            TThreadOrder whichThread ) override;
+    virtual void setThread( TApplOrder whichAppl, TTaskOrder whichTask, TThreadOrder whichThread ) override;
     virtual void setCPU( TCPUOrder whichCPU ) override;
     virtual void setEventType( TEventType whichType ) override;
     virtual void setEventValue( TEventValue whichValue ) override;
@@ -68,14 +62,10 @@ class VectorBlocks : public MemoryBlocks
     virtual void newComm( bool createRecords = true ) override;
     virtual void newComm( TThreadOrder whichSenderThread, TThreadOrder whichReceiverThread, bool createRecords = true ) override;
     virtual void setSenderThread( TThreadOrder whichThread ) override;
-    virtual void setSenderThread( TApplOrder whichAppl,
-                                  TTaskOrder whichTask,
-                                  TThreadOrder whichThread ) override;
+    virtual void setSenderThread( TApplOrder whichAppl, TTaskOrder whichTask, TThreadOrder whichThread ) override;
     virtual void setSenderCPU( TCPUOrder whichCPU ) override;
     virtual void setReceiverThread( TThreadOrder whichThread ) override;
-    virtual void setReceiverThread( TApplOrder whichAppl,
-                                  TTaskOrder whichTask,
-                                  TThreadOrder whichThread ) override;
+    virtual void setReceiverThread( TApplOrder whichAppl, TTaskOrder whichTask, TThreadOrder whichThread ) override;
     virtual void setReceiverCPU( TCPUOrder whichCPU ) override;
     virtual void setCommTag( TCommTag whichTag ) override;
     virtual void setCommSize( TCommSize whichSize ) override;
@@ -99,8 +89,8 @@ class VectorBlocks : public MemoryBlocks
 
     virtual TRecordTime getLastRecordTime() const override;
 
-    virtual void setFileLoaded( TRecordTime traceEndTime ) override;
-    
+    virtual void setFileLoaded( TRecordTime traceEndTime, ProgressController *whichProgress ) override;
+
   private:
     std::vector< TThreadRecordContainer > threadRecords;
     std::vector< TCPURecordContainer > cpuRecords;
@@ -121,20 +111,17 @@ class VectorBlocks : public MemoryBlocks
       commTypeSize
     } TCommType;
     static const TRecordType commTypes[ commTypeSize ];
-    std::vector<Plain::TCommInfo> communications;
-    std::array<Plain::TRecord*, commTypeSize> commRecords;
+    std::vector< Plain::TCommInfo > communications;
+    std::array< Plain::TRecord *, commTypeSize > commRecords;
 
-    const ResourceModel<>& resourceModel;
-    const ProcessModel<>& processModel;
+    const ResourceModel<> &resourceModel;
+    const ProcessModel<> &processModel;
 
     TThreadOrder insertedOnThread;
     TRecordTime lastRecordTime = 0;
 
-    ProgressController *progress;
-
     friend class VectorTrace;
     friend class VectorTrace::iterator;
 
-    void updateProgress( size_t &progressCounter );
-
+    void updateProgress( size_t &progressCounter, ProgressController *whichProgress );
 };

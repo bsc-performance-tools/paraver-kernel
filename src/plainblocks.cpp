@@ -391,7 +391,7 @@ TRecordTime PlainBlocks::getLastRecordTime() const
   return time;
 }
 
-void PlainBlocks::setFileLoaded( TRecordTime traceEndTime )
+void PlainBlocks::setFileLoaded( TRecordTime traceEndTime, ProgressController *whichProgress )
 {
   TRecord tmpEndRec;
   tmpEndRec.time = traceEndTime;

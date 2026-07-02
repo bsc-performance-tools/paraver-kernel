@@ -40,18 +40,15 @@ constexpr bool prv_atoll_v( std::string::const_iterator& it, const std::string::
   return true;
 }
 
-template<typename T,
-         typename std::enable_if<std::is_integral<T>::value, T>::type* = nullptr>
-constexpr bool prv_atoll_impl( std::string::const_iterator& it,
-                               const std::string::const_iterator& end,
-                               T& result )
+template< typename T, typename std::enable_if< std::is_integral< T >::value, T >::type* = nullptr >
+constexpr bool prv_atoll_impl( std::string::const_iterator& it, const std::string::const_iterator& end, T& result )
 {
-  result = 0;
+  result       = 0;
   int negative = 1;
 
   if( *it == '-' )
   {
-    if( std::is_unsigned<T>::value )
+    if( std::is_unsigned< T >::value )
       return false;
     negative = -1;
     ++it;
@@ -73,15 +70,12 @@ constexpr bool prv_atoll_impl( std::string::const_iterator& it,
 }
 
 
-template<typename T,
-         typename std::enable_if<std::is_floating_point<T>::value, T>::type* = nullptr>
-constexpr bool prv_atoll_impl( std::string::const_iterator& it,
-                               const std::string::const_iterator& end,
-                               T& result )
+template< typename T, typename std::enable_if< std::is_floating_point< T >::value, T >::type* = nullptr >
+constexpr bool prv_atoll_impl( std::string::const_iterator& it, const std::string::const_iterator& end, T& result )
 {
-  result = 0.0;
-  int negative = 1;
-  double numDecimals = 1.0;
+  result                 = 0.0;
+  int negative           = 1;
+  double numDecimals     = 1.0;
   bool decimalPointFound = false;
 
   if( *it == '-' )
@@ -99,7 +93,7 @@ constexpr bool prv_atoll_impl( std::string::const_iterator& it,
         decimalPointFound = true;
       else if( decimalPointFound )
         numDecimals *= 0.1;
-      
+
       if( *it != '.' )
         result = ( result * 10 ) + ( *it - '0' );
       ++it;
@@ -112,11 +106,8 @@ constexpr bool prv_atoll_impl( std::string::const_iterator& it,
   return true;
 }
 
-template <typename T, typename... Targs>
-constexpr bool prv_atoll_v( std::string::const_iterator& it,
-                            const std::string::const_iterator& end,
-                            T& result,
-                            Targs&... Fargs )
+template< typename T, typename... Targs >
+constexpr bool prv_atoll_v( std::string::const_iterator& it, const std::string::const_iterator& end, T& result, Targs&... Fargs )
 {
   if( it == end )
     return false;
@@ -133,11 +124,8 @@ constexpr bool prv_atoll_v( std::string::const_iterator& it,
   return prv_atoll_v( ++it, end, Fargs... );
 }
 
-template <typename T>
-bool prv_atoll_precision( std::string::const_iterator& it,
-                          const std::string::const_iterator& end,
-                          T& result,
-                          double& decimals )
+template< typename T >
+bool prv_atoll_precision( std::string::const_iterator& it, const std::string::const_iterator& end, T& result, double& decimals )
 {
   long long int tmp  = 0;
   double decs        = 1.0;
@@ -151,7 +139,7 @@ bool prv_atoll_precision( std::string::const_iterator& it,
 
   while( ( '0' <= *it && *it <= '9' ) || *it == '.' )
   {
-    if ( *it == '.' )
+    if( *it == '.' )
     {
       ++it;
       break;
@@ -164,12 +152,12 @@ bool prv_atoll_precision( std::string::const_iterator& it,
   }
   while( '0' <= *it && *it <= '9' )
   {
-    tmp = ( tmp * 10 ) + ( *it - '0' );
+    tmp  = ( tmp * 10 ) + ( *it - '0' );
     decs = decs / 10.0f;
     ++it;
   }
 
-  result = tmp * sign;
+  result   = tmp * sign;
   decimals = decs;
   return true;
 }
@@ -197,13 +185,13 @@ void TraceBodyIO_csv::read( TraceStream& file,
   if( line.size() == 0 )
     return;
 
-  if ( line[ 0 ] == '#' )
+  if( line[ 0 ] == '#' )
   {
     readTraceInfo( line, traceInfo );
     return;
   }
 
-  readEvents( whichResourceModel, line, records, events, endTime );
+  readEvents( whichProcessModel, whichResourceModel, line, records, events, endTime );
 }
 
 void TraceBodyIO_csv::bufferWrite( fstream& whichStream, bool writeReady, bool lineClear ) const
@@ -234,7 +222,8 @@ inline void TraceBodyIO_csv::readTraceInfo( const std::string& line, MetadataMan
 }
 
 
-inline void TraceBodyIO_csv::readEvents( const ResourceModel<>& whichResourceModel,
+inline void TraceBodyIO_csv::readEvents( const ProcessModel<>& whichProcessModel,
+                                         const ResourceModel<>& whichResourceModel,
                                          const string& line,
                                          MemoryBlocks& records,
                                          unordered_set< TEventType >& events,
@@ -262,12 +251,20 @@ inline void TraceBodyIO_csv::readEvents( const ResourceModel<>& whichResourceMod
     endTime = begintime + time;
   TEventType eventtype = 1;
 
-  // Event
-  records.newRecord();
+  if( /*TODO: is it append to loaded trace?*/ true )
+  {
+    thread = whichProcessModel.getGlobalThread( appl - 1, task - 1, thread - 1 );
+    records.newRecord( thread );
+    records.setThread( thread );
+  }
+  else
+  {
+    records.newRecord();
+    records.setThread( appl - 1, task - 1, thread - 1 );
+  }
   records.setRecordType( EVENT );
   records.setTime( begintime );
   records.setCPU( CPU );
-  records.setThread( appl - 1, task - 1, thread - 1 );
   records.setEventType( eventtype );
   records.setEventValue( eventvalue );
   events.insert( eventtype );
@@ -290,19 +287,22 @@ inline bool TraceBodyIO_csv::readCommon( const ResourceModel<>& whichResourceMod
   static ProcessModel<>::ThreadLocation lastATT = { 0, 0, 0 };
 
   std::getline( line, tmpstring, '.' );
-  if( line.eof() ) return false;
+  if( line.eof() )
+    return false;
   auto it = tmpstring.cbegin();
   if( !prv_atoll_v( it, tmpstring.cend(), appl ) || appl == 0 )
     throw ParaverKernelException( TErrorCode::csvWrongFormat );
-    
+
   std::getline( line, tmpstring, '.' );
-  if( line.eof() ) return false;
+  if( line.eof() )
+    return false;
   it = tmpstring.cbegin();
   if( !prv_atoll_v( it, tmpstring.end(), task ) || task == 0 )
     throw ParaverKernelException( TErrorCode::csvWrongFormat );
 
   std::getline( line, tmpstring, '\t' );
-  if( line.eof() ) return false;
+  if( line.eof() )
+    return false;
   it = tmpstring.cbegin();
   if( !prv_atoll_v( it, tmpstring.end(), thread ) || thread == 0 )
     throw ParaverKernelException( TErrorCode::csvWrongFormat );
@@ -314,17 +314,20 @@ inline bool TraceBodyIO_csv::readCommon( const ResourceModel<>& whichResourceMod
     --currATT.appl;
     --currATT.task;
     --currATT.thread;
-    myProcessModel->addApplTaskThread( currATT );
+    if( /*TODO: is it append to loaded trace?*/ false )
+      myProcessModel->addApplTaskThread( currATT );
   }
 
-  std::getline( line, tmpstring, '\t' ); 
-  if( line.eof() ) return false;
+  std::getline( line, tmpstring, '\t' );
+  if( line.eof() )
+    return false;
   it = tmpstring.cbegin();
   if( !prv_atoll_v( it, tmpstring.end(), begintime ) )
     throw ParaverKernelException( TErrorCode::csvWrongFormat );
 
   std::getline( line, tmpstring, '\t' );
-  if( line.eof() ) return false;
+  if( line.eof() )
+    return false;
   it = tmpstring.cbegin();
   if( !prv_atoll_v( it, tmpstring.end(), time ) )
     throw ParaverKernelException( TErrorCode::csvWrongFormat );

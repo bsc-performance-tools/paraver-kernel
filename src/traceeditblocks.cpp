@@ -22,6 +22,7 @@
 \*****************************************************************************/
 
 #include "traceeditblocks.h"
+
 #include "paraverkernelexception.h"
 #include "tracebodyiofactory.h"
 
@@ -29,18 +30,19 @@ using namespace NoLoad;
 
 class TraceStream;
 
-TraceEditBlocks::TraceEditBlocks( const ResourceModel<>& resource, const ProcessModel<>& process,
-                                  TraceBodyIO<PARAM_TRACEBODY_CLASS> *whichBody, TraceStream *whichFile, TRecordTime endTime )
-    : NoLoadBlocks( resource, process ),
-      resourceModel( resource ), processModel( process ),
-      body( whichBody ), file( whichFile )
+TraceEditBlocks::TraceEditBlocks( const ResourceModel<>& resource,
+                                  const ProcessModel<>& process,
+                                  TraceBodyIO< PARAM_TRACEBODY_CLASS >* whichBody,
+                                  TraceStream* whichFile,
+                                  TRecordTime endTime )
+  : NoLoadBlocks( resource, process ), resourceModel( resource ), processModel( process ), body( whichBody ), file( whichFile )
 {
   fileLoaded = false;
 
   globalBeginRec.time = 0;
   globalBeginRec.type = EMPTYREC;
-  globalEndRec.time = endTime;
-  globalEndRec.type = EMPTYREC;
+  globalEndRec.time   = endTime;
+  globalEndRec.type   = EMPTYREC;
 
   PRV_INT64 currentOffset = file->tellg();
   file->seekend();
@@ -56,7 +58,7 @@ TraceEditBlocks::~TraceEditBlocks()
   delete file;
 }
 
-TData *TraceEditBlocks::getLastRecord( PRV_UINT16 position ) const
+TData* TraceEditBlocks::getLastRecord( PRV_UINT16 position ) const
 {
   return nullptr;
 }
@@ -85,18 +87,14 @@ void TraceEditBlocks::setTime( TRecordTime whichTime )
 
 void TraceEditBlocks::setThread( TThreadOrder whichThread )
 {
-  lastData.thread = whichThread;
+  lastData.thread                       = whichThread;
   lastData.records[ lastRecord ].thread = whichThread;
 }
 
-void TraceEditBlocks::setThread( TApplOrder whichAppl,
-                              TTaskOrder whichTask,
-                              TThreadOrder whichThread )
+void TraceEditBlocks::setThread( TApplOrder whichAppl, TTaskOrder whichTask, TThreadOrder whichThread )
 {
-  whichThread = processModel.getGlobalThread( whichAppl,
-                                              whichTask,
-                                              whichThread );
-  lastData.thread = whichThread;
+  whichThread                           = processModel.getGlobalThread( whichAppl, whichTask, whichThread );
+  lastData.thread                       = whichThread;
   lastData.records[ lastRecord ].thread = whichThread;
 }
 
@@ -133,7 +131,7 @@ void TraceEditBlocks::setCommIndex( TCommID whichID )
 
 void TraceEditBlocks::newComm( bool createRecords )
 {
-  if ( createRecords )
+  if( createRecords )
   {
     newRecord();
     setRecordType( COMM + LOG + SEND );
@@ -156,7 +154,7 @@ void TraceEditBlocks::newComm( bool createRecords )
   lastPos = file->tellg();
 
   communications.push_back( TCommInfo() );
-  currentComm = communications.size() - 1;
+  currentComm                           = communications.size() - 1;
   logSend->URecordInfo.commRecord.index = currentComm;
   logRecv->URecordInfo.commRecord.index = currentComm;
   phySend->URecordInfo.commRecord.index = currentComm;
@@ -170,108 +168,100 @@ void TraceEditBlocks::newComm( TThreadOrder whichSenderThread, TThreadOrder whic
 
 void TraceEditBlocks::setSenderThread( TThreadOrder whichThread )
 {
-  communications[currentComm].senderThread = whichThread;
-  logSend->thread = whichThread;
-  phySend->thread = whichThread;
+  communications[ currentComm ].senderThread = whichThread;
+  logSend->thread                            = whichThread;
+  phySend->thread                            = whichThread;
 }
 
-void TraceEditBlocks::setSenderThread( TApplOrder whichAppl,
-                                       TTaskOrder whichTask,
-                                       TThreadOrder whichThread )
+void TraceEditBlocks::setSenderThread( TApplOrder whichAppl, TTaskOrder whichTask, TThreadOrder whichThread )
 {
-  TThreadOrder globalThread = processModel.getGlobalThread( whichAppl,
-                                                            whichTask,
-                                                            whichThread );
-  communications[currentComm].senderThread = globalThread;
-  logSend->thread = globalThread;
-  phySend->thread = globalThread;
+  TThreadOrder globalThread                  = processModel.getGlobalThread( whichAppl, whichTask, whichThread );
+  communications[ currentComm ].senderThread = globalThread;
+  logSend->thread                            = globalThread;
+  phySend->thread                            = globalThread;
 }
 
 void TraceEditBlocks::setSenderCPU( TCPUOrder whichCPU )
 {
-  communications[currentComm].senderCPU = whichCPU;
-  logSend->CPU = whichCPU;
-  phySend->CPU = whichCPU;
+  communications[ currentComm ].senderCPU = whichCPU;
+  logSend->CPU                            = whichCPU;
+  phySend->CPU                            = whichCPU;
 }
 
 void TraceEditBlocks::setReceiverThread( TThreadOrder whichThread )
 {
-  communications[currentComm].receiverThread = whichThread;
-  logRecv->thread = whichThread;
-  phyRecv->thread = whichThread;
+  communications[ currentComm ].receiverThread = whichThread;
+  logRecv->thread                              = whichThread;
+  phyRecv->thread                              = whichThread;
 }
 
-void TraceEditBlocks::setReceiverThread( TApplOrder whichAppl,
-                                      TTaskOrder whichTask,
-                                      TThreadOrder whichThread )
+void TraceEditBlocks::setReceiverThread( TApplOrder whichAppl, TTaskOrder whichTask, TThreadOrder whichThread )
 {
-  TThreadOrder globalThread = processModel.getGlobalThread( whichAppl,
-                              whichTask,
-                              whichThread );
-  communications[currentComm].receiverThread = globalThread;
-  logRecv->thread = globalThread;
-  phyRecv->thread = globalThread;
+  TThreadOrder globalThread                    = processModel.getGlobalThread( whichAppl, whichTask, whichThread );
+  communications[ currentComm ].receiverThread = globalThread;
+  logRecv->thread                              = globalThread;
+  phyRecv->thread                              = globalThread;
 }
 
 void TraceEditBlocks::setReceiverCPU( TCPUOrder whichCPU )
 {
-  communications[currentComm].receiverCPU = whichCPU;
-  logRecv->CPU = whichCPU;
-  phyRecv->CPU = whichCPU;
+  communications[ currentComm ].receiverCPU = whichCPU;
+  logRecv->CPU                              = whichCPU;
+  phyRecv->CPU                              = whichCPU;
 }
 
 void TraceEditBlocks::setCommTag( TCommTag whichTag )
 {
-  communications[currentComm].tag = whichTag;
+  communications[ currentComm ].tag = whichTag;
 }
 
 void TraceEditBlocks::setCommSize( TCommSize whichSize )
 {
-  communications[currentComm].size = whichSize;
+  communications[ currentComm ].size = whichSize;
 }
 
 void TraceEditBlocks::setLogicalSend( TRecordTime whichTime )
 {
-  communications[currentComm].logicalSendTime = whichTime;
-  logSend->time = whichTime;
+  communications[ currentComm ].logicalSendTime = whichTime;
+  logSend->time                                 = whichTime;
 }
 
 void TraceEditBlocks::setLogicalReceive( TRecordTime whichTime )
 {
-  communications[currentComm].logicalReceiveTime = whichTime;
-  logRecv->time = whichTime;
+  communications[ currentComm ].logicalReceiveTime = whichTime;
+  logRecv->time                                    = whichTime;
 }
 
 void TraceEditBlocks::setPhysicalSend( TRecordTime whichTime )
 {
-  communications[currentComm].physicalSendTime = whichTime;
-  phySend->time = whichTime;
+  communications[ currentComm ].physicalSendTime = whichTime;
+  phySend->time                                  = whichTime;
 }
 
 void TraceEditBlocks::setPhysicalReceive( TRecordTime whichTime )
 {
-  communications[currentComm].physicalReceiveTime = whichTime;
-  phyRecv->time = whichTime;
+  communications[ currentComm ].physicalReceiveTime = whichTime;
+  phyRecv->time                                     = whichTime;
 }
 
 void TraceEditBlocks::setLogicalSend( TCommID whichComm, TRecordTime whichTime )
 {
-  communications[whichComm].logicalSendTime = whichTime;
+  communications[ whichComm ].logicalSendTime = whichTime;
 }
 
 void TraceEditBlocks::setLogicalReceive( TCommID whichComm, TRecordTime whichTime )
 {
-  communications[whichComm].logicalReceiveTime = whichTime;
+  communications[ whichComm ].logicalReceiveTime = whichTime;
 }
 
 void TraceEditBlocks::setPhysicalSend( TCommID whichComm, TRecordTime whichTime )
 {
-  communications[whichComm].physicalSendTime = whichTime;
+  communications[ whichComm ].physicalSendTime = whichTime;
 }
 
 void TraceEditBlocks::setPhysicalReceive( TCommID whichComm, TRecordTime whichTime )
 {
-  communications[whichComm].physicalReceiveTime = whichTime;
+  communications[ whichComm ].physicalReceiveTime = whichTime;
 }
 
 TCommID TraceEditBlocks::getTotalComms() const
@@ -281,52 +271,52 @@ TCommID TraceEditBlocks::getTotalComms() const
 
 TThreadOrder TraceEditBlocks::getSenderThread( TCommID whichComm ) const
 {
-  return communications[whichComm].senderThread;
+  return communications[ whichComm ].senderThread;
 }
 
 TCPUOrder TraceEditBlocks::getSenderCPU( TCommID whichComm ) const
 {
-  return communications[whichComm].senderCPU;
+  return communications[ whichComm ].senderCPU;
 }
 
 TThreadOrder TraceEditBlocks::getReceiverThread( TCommID whichComm ) const
 {
-  return communications[whichComm].receiverThread;
+  return communications[ whichComm ].receiverThread;
 }
 
 TCPUOrder TraceEditBlocks::getReceiverCPU( TCommID whichComm ) const
 {
-  return communications[whichComm].receiverCPU;
+  return communications[ whichComm ].receiverCPU;
 }
 
 TCommTag TraceEditBlocks::getCommTag( TCommID whichComm ) const
 {
-  return communications[whichComm].tag;
+  return communications[ whichComm ].tag;
 }
 
 TCommSize TraceEditBlocks::getCommSize( TCommID whichComm ) const
 {
-  return communications[whichComm].size;
+  return communications[ whichComm ].size;
 }
 
 TRecordTime TraceEditBlocks::getLogicalSend( TCommID whichComm ) const
 {
-  return communications[whichComm].logicalSendTime;
+  return communications[ whichComm ].logicalSendTime;
 }
 
 TRecordTime TraceEditBlocks::getLogicalReceive( TCommID whichComm ) const
 {
-  return communications[whichComm].logicalReceiveTime;
+  return communications[ whichComm ].logicalReceiveTime;
 }
 
 TRecordTime TraceEditBlocks::getPhysicalSend( TCommID whichComm ) const
 {
-  return communications[whichComm].physicalSendTime;
+  return communications[ whichComm ].physicalSendTime;
 }
 
 TRecordTime TraceEditBlocks::getPhysicalReceive( TCommID whichComm ) const
 {
-  return communications[whichComm].physicalReceiveTime;
+  return communications[ whichComm ].physicalReceiveTime;
 }
 
 TRecordTime TraceEditBlocks::getLastRecordTime() const
@@ -334,51 +324,51 @@ TRecordTime TraceEditBlocks::getLastRecordTime() const
   return 0;
 }
 
-void TraceEditBlocks::getBeginRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
+void TraceEditBlocks::getBeginRecord( TRecord** record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
   *record = &globalBeginRec;
-  offset = -1;
-  recPos = 0;
+  offset  = -1;
+  recPos  = 0;
 }
 
 
-void TraceEditBlocks::getEndRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
+void TraceEditBlocks::getEndRecord( TRecord** record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
   *record = &globalEndRec;
-  offset = endFileOffset;
-  recPos = 0;
+  offset  = endFileOffset;
+  recPos  = 0;
 }
 
-void TraceEditBlocks::getBeginThreadRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
+void TraceEditBlocks::getBeginThreadRecord( TThreadOrder whichThread, TRecord** record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
 }
 
-void TraceEditBlocks::getEndThreadRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
+void TraceEditBlocks::getEndThreadRecord( TThreadOrder whichThread, TRecord** record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
 }
 
 
 // Must be used with TraceBodyIO_v1
-void TraceEditBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
+void TraceEditBlocks::getNextRecord( TRecord** record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
   if( *record == &globalEndRec )
   {
     *record = nullptr;
     return;
   }
-  else if ( offset != -1 )
+  else if( offset != -1 )
   {
-    if ( recPos < lastData.records.size() - 1 )
+    if( recPos < lastData.records.size() - 1 )
     {
       ++recPos;
       *record = &lastData.records[ recPos ];
       return;
     }
-    else if ( lastData.endOffset == endFileOffset )
+    else if( lastData.endOffset == endFileOffset )
     {
-      offset = endFileOffset;
+      offset  = endFileOffset;
       *record = nullptr;
-      recPos = 0;
+      recPos  = 0;
       return;
     }
 
@@ -389,9 +379,9 @@ void TraceEditBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UI
 
   if( file->tellg() == (std::streampos)endFileOffset )
   {
-    offset = endFileOffset;
+    offset  = endFileOffset;
     *record = nullptr;
-    recPos = 0;
+    recPos  = 0;
     return;
   }
 
@@ -399,24 +389,24 @@ void TraceEditBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UI
   lastRecord = -1;
   communications.clear();
   PRV_UINT16 numLines = 0;
-//  while( lastData.records.size() == 0 )
+  //  while( lastData.records.size() == 0 )
   while( numLines < 128 )
   {
     PRV_UINT16 previousSize = lastData.records.size();
 
     body->read( *file, *this, processModel, resourceModel, notUsedStates, notUsedEvents, dummyTraceInfo, dummyEndTime );
 
-    if ( previousSize < lastData.records.size() )
+    if( previousSize < lastData.records.size() )
       ++numLines;
 
     if( lastData.records.size() == 0 && file->tellg() == (std::streampos)endFileOffset )
     {
-      offset = endFileOffset;
+      offset  = endFileOffset;
       *record = nullptr;
-      recPos = 0;
+      recPos  = 0;
       return;
     }
-    else if ( lastData.records.size() > 0 && file->tellg() == (std::streampos)endFileOffset )
+    else if( lastData.records.size() > 0 && file->tellg() == (std::streampos)endFileOffset )
     {
       offset = endFileOffset;
       break;
@@ -424,29 +414,32 @@ void TraceEditBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UI
   }
 
   *record = &lastData.records[ 0 ];
-  recPos = 0;
+  recPos  = 0;
 }
 
 
 // Must be used with TraceBodyIO_v1
-void TraceEditBlocks::getPrevRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
+void TraceEditBlocks::getPrevRecord( TRecord** record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
 }
 
 
 // Must be used with TraceBodyIO_v2
-void TraceEditBlocks::getNextRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
+void TraceEditBlocks::getNextRecord( TThreadOrder whichThread, TRecord** record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
 }
 
 // Must be used with TraceBodyIO_v2
-void TraceEditBlocks::getPrevRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
+void TraceEditBlocks::getPrevRecord( TThreadOrder whichThread, TRecord** record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
 }
 
 
-void TraceEditBlocks::getThreadRecordByTime( TThreadOrder whichThread, TRecordTime whichTime,
-    TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
+void TraceEditBlocks::getThreadRecordByTime( TThreadOrder whichThread,
+                                             TRecordTime whichTime,
+                                             TRecord** record,
+                                             PRV_INT64& offset,
+                                             PRV_UINT16& recPos )
 {
 }
 
@@ -465,7 +458,7 @@ void TraceEditBlocks::goToPrevLine()
   curOffset -= 2;
 
   file->seekg( curOffset );
-  while ( (char)file->peek() != '\n' )
+  while( (char)file->peek() != '\n' )
   {
     --curOffset;
     file->seekg( curOffset );
@@ -475,7 +468,7 @@ void TraceEditBlocks::goToPrevLine()
   file->seekg( curOffset );
 }
 
-void TraceEditBlocks::setFileLoaded( TRecordTime traceEndTime )
+void TraceEditBlocks::setFileLoaded( TRecordTime traceEndTime, ProgressController* whichProgress )
 {
   fileLoaded = true;
 }

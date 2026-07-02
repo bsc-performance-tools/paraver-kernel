@@ -21,36 +21,25 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#include <algorithm>
+#include "vectorblocks.h"
 
 #include "kprogresscontroller.h"
 #include "plaintrace.h"
-#include "vectorblocks.h"
+
+#include <algorithm>
 
 using namespace Plain;
 
-const TRecordType VectorBlocks::commTypes[] =
-{
-  COMM + LOG + SEND,
-  COMM + LOG + RECV,
-  COMM + PHY + SEND,
-  COMM + PHY + RECV,
-  RSEND + LOG,
-  RRECV + LOG,
-  RSEND + PHY,
-  RRECV + PHY
-};
+const TRecordType VectorBlocks::commTypes[] = { COMM + LOG + SEND, COMM + LOG + RECV, COMM + PHY + SEND, COMM + PHY + RECV,
+                                                RSEND + LOG,       RRECV + LOG,       RSEND + PHY,       RRECV + PHY };
 
-VectorBlocks::VectorBlocks( const ResourceModel<>& resource,
-                            const ProcessModel<>& process,
-                            TRecordTime endTime,
-                            ProgressController *whichProgress )
-    : resourceModel( resource ), processModel( process ), progress( whichProgress )
+VectorBlocks::VectorBlocks( const ResourceModel<>& resource, const ProcessModel<>& process, TRecordTime endTime )
+  : resourceModel( resource ), processModel( process )
 {
   TRecord empty;
   empty.time = 0;
   empty.type = EMPTYREC;
-  empty.CPU = 0;
+  empty.CPU  = 0;
 
   TThreadRecordContainer tmpThreadVector;
   tmpThreadVector.emplace_back( empty );
@@ -70,7 +59,7 @@ VectorBlocks::VectorBlocks( const ResourceModel<>& resource,
     c = nullptr;
 }
 
-TData *VectorBlocks::getLastRecord( PRV_UINT16 position ) const
+TData* VectorBlocks::getLastRecord( PRV_UINT16 position ) const
 {
   return nullptr;
 }
@@ -104,20 +93,16 @@ void VectorBlocks::setThread( TThreadOrder whichThread )
   threadRecords[ insertedOnThread ].back().thread = whichThread;
 }
 
-void VectorBlocks::setThread( TApplOrder whichAppl,
-                              TTaskOrder whichTask,
-                              TThreadOrder whichThread )
+void VectorBlocks::setThread( TApplOrder whichAppl, TTaskOrder whichTask, TThreadOrder whichThread )
 {
-  whichThread = processModel.getGlobalThread( whichAppl,
-                whichTask,
-                whichThread );
+  whichThread = processModel.getGlobalThread( whichAppl, whichTask, whichThread );
   setThread( whichThread );
 }
 
 void VectorBlocks::setCPU( TCPUOrder whichCPU )
 {
- threadRecords[ insertedOnThread ].back().CPU = whichCPU;
- }
+  threadRecords[ insertedOnThread ].back().CPU = whichCPU;
+}
 
 void VectorBlocks::setEventType( TEventType whichType )
 {
@@ -163,23 +148,23 @@ void VectorBlocks::newComm( TThreadOrder whichSenderThread, TThreadOrder whichRe
     }
     else
     {
-      itSender = threadRecords[ whichSenderThread ].insert( threadRecords[ whichSenderThread ].end(), 8, Plain::TRecord() );
+      itSender   = threadRecords[ whichSenderThread ].insert( threadRecords[ whichSenderThread ].end(), 8, Plain::TRecord() );
       itReceiver = itSender + 4;
     }
 
-    commRecords[ logicalSend ] = &( *itSender );
-    commRecords[ logicalReceive ] = &( *itReceiver );
-    commRecords[ physicalSend ] = &( *++itSender );
+    commRecords[ logicalSend ]     = &( *itSender );
+    commRecords[ logicalReceive ]  = &( *itReceiver );
+    commRecords[ physicalSend ]    = &( *++itSender );
     commRecords[ physicalReceive ] = &( *++itReceiver );
 
-    commRecords[ remoteLogicalSend ] = &( *++itReceiver );
-    commRecords[ remoteLogicalReceive ] = &( *++itSender );
-    commRecords[ remotePhysicalSend ] = &( *++itReceiver );
+    commRecords[ remoteLogicalSend ]     = &( *++itReceiver );
+    commRecords[ remoteLogicalReceive ]  = &( *++itSender );
+    commRecords[ remotePhysicalSend ]    = &( *++itReceiver );
     commRecords[ remotePhysicalReceive ] = &( *++itSender );
 
     for( size_t i = 0; i < commTypeSize; ++i )
     {
-      commRecords[ i ]->type = commTypes[ i ];
+      commRecords[ i ]->type                         = commTypes[ i ];
       commRecords[ i ]->URecordInfo.commRecord.index = communications.size() - 1;
     }
 
@@ -192,16 +177,14 @@ void VectorBlocks::setSenderThread( TThreadOrder whichThread )
   communications.back().senderThread = whichThread;
   if( commRecords[ logicalSend ] != nullptr )
   {
-    commRecords[ logicalSend ]->thread = whichThread;
-    commRecords[ physicalSend ]->thread = whichThread;
-    commRecords[ remoteLogicalReceive ]->thread = whichThread;
+    commRecords[ logicalSend ]->thread           = whichThread;
+    commRecords[ physicalSend ]->thread          = whichThread;
+    commRecords[ remoteLogicalReceive ]->thread  = whichThread;
     commRecords[ remotePhysicalReceive ]->thread = whichThread;
   }
 }
 
-void VectorBlocks::setSenderThread( TApplOrder whichAppl,
-                                    TTaskOrder whichTask,
-                                    TThreadOrder whichThread )
+void VectorBlocks::setSenderThread( TApplOrder whichAppl, TTaskOrder whichTask, TThreadOrder whichThread )
 {
   TThreadOrder globalThread = processModel.getGlobalThread( whichAppl, whichTask, whichThread );
   setSenderThread( globalThread );
@@ -212,9 +195,9 @@ void VectorBlocks::setSenderCPU( TCPUOrder whichCPU )
   communications.back().senderCPU = whichCPU;
   if( commRecords[ logicalSend ] != nullptr )
   {
-    commRecords[ logicalSend ]->CPU = whichCPU;
-    commRecords[ physicalSend ]->CPU = whichCPU;
-    commRecords[ remoteLogicalReceive ]->CPU = whichCPU;
+    commRecords[ logicalSend ]->CPU           = whichCPU;
+    commRecords[ physicalSend ]->CPU          = whichCPU;
+    commRecords[ remoteLogicalReceive ]->CPU  = whichCPU;
     commRecords[ remotePhysicalReceive ]->CPU = whichCPU;
   }
 }
@@ -224,16 +207,14 @@ void VectorBlocks::setReceiverThread( TThreadOrder whichThread )
   communications.back().receiverThread = whichThread;
   if( commRecords[ logicalSend ] != nullptr )
   {
-    commRecords[ logicalReceive ]->thread = whichThread;
-    commRecords[ physicalReceive ]->thread = whichThread;
-    commRecords[ remoteLogicalSend ]->thread = whichThread;
+    commRecords[ logicalReceive ]->thread     = whichThread;
+    commRecords[ physicalReceive ]->thread    = whichThread;
+    commRecords[ remoteLogicalSend ]->thread  = whichThread;
     commRecords[ remotePhysicalSend ]->thread = whichThread;
   }
 }
 
-void VectorBlocks::setReceiverThread( TApplOrder whichAppl,
-                                      TTaskOrder whichTask,
-                                      TThreadOrder whichThread )
+void VectorBlocks::setReceiverThread( TApplOrder whichAppl, TTaskOrder whichTask, TThreadOrder whichThread )
 {
   TThreadOrder globalThread = processModel.getGlobalThread( whichAppl, whichTask, whichThread );
   setReceiverThread( globalThread );
@@ -244,9 +225,9 @@ void VectorBlocks::setReceiverCPU( TCPUOrder whichCPU )
   communications.back().receiverCPU = whichCPU;
   if( commRecords[ logicalSend ] != nullptr )
   {
-    commRecords[ logicalReceive ]->CPU = whichCPU;
-    commRecords[ physicalReceive ]->CPU = whichCPU;
-    commRecords[ remoteLogicalSend ]->CPU = whichCPU;
+    commRecords[ logicalReceive ]->CPU     = whichCPU;
+    commRecords[ physicalReceive ]->CPU    = whichCPU;
+    commRecords[ remoteLogicalSend ]->CPU  = whichCPU;
     commRecords[ remotePhysicalSend ]->CPU = whichCPU;
   }
 }
@@ -263,8 +244,8 @@ void VectorBlocks::setCommSize( TCommSize whichSize )
 
 void VectorBlocks::setLogicalSend( TRecordTime whichTime )
 {
-  communications.back().logicalSendTime = whichTime;
-  commRecords[ logicalSend ]->time = whichTime;
+  communications.back().logicalSendTime  = whichTime;
+  commRecords[ logicalSend ]->time       = whichTime;
   commRecords[ remoteLogicalSend ]->time = whichTime;
 }
 
@@ -273,7 +254,7 @@ void VectorBlocks::setLogicalReceive( TRecordTime whichTime )
   communications.back().logicalReceiveTime = whichTime;
   if( commRecords[ logicalSend ] != nullptr )
   {
-    commRecords[ logicalReceive ]->time = whichTime;
+    commRecords[ logicalReceive ]->time       = whichTime;
     commRecords[ remoteLogicalReceive ]->time = whichTime;
   }
 }
@@ -283,7 +264,7 @@ void VectorBlocks::setPhysicalSend( TRecordTime whichTime )
   communications.back().physicalSendTime = whichTime;
   if( commRecords[ logicalSend ] != nullptr )
   {
-    commRecords[ physicalSend ]->time = whichTime;
+    commRecords[ physicalSend ]->time       = whichTime;
     commRecords[ remotePhysicalSend ]->time = whichTime;
   }
 }
@@ -293,7 +274,7 @@ void VectorBlocks::setPhysicalReceive( TRecordTime whichTime )
   communications.back().physicalReceiveTime = whichTime;
   if( commRecords[ logicalSend ] != nullptr )
   {
-    commRecords[ physicalReceive ]->time = whichTime;
+    commRecords[ physicalReceive ]->time       = whichTime;
     commRecords[ remotePhysicalReceive ]->time = whichTime;
   }
 }
@@ -305,52 +286,52 @@ TCommID VectorBlocks::getTotalComms() const
 
 TThreadOrder VectorBlocks::getSenderThread( TCommID whichComm ) const
 {
-  return communications[whichComm].senderThread;
+  return communications[ whichComm ].senderThread;
 }
 
 TCPUOrder VectorBlocks::getSenderCPU( TCommID whichComm ) const
 {
-  return communications[whichComm].senderCPU;
+  return communications[ whichComm ].senderCPU;
 }
 
 TThreadOrder VectorBlocks::getReceiverThread( TCommID whichComm ) const
 {
-  return communications[whichComm].receiverThread;
+  return communications[ whichComm ].receiverThread;
 }
 
 TCPUOrder VectorBlocks::getReceiverCPU( TCommID whichComm ) const
 {
-  return communications[whichComm].receiverCPU;
+  return communications[ whichComm ].receiverCPU;
 }
 
 TCommTag VectorBlocks::getCommTag( TCommID whichComm ) const
 {
-  return communications[whichComm].tag;
+  return communications[ whichComm ].tag;
 }
 
 TCommSize VectorBlocks::getCommSize( TCommID whichComm ) const
 {
-  return communications[whichComm].size;
+  return communications[ whichComm ].size;
 }
 
 TRecordTime VectorBlocks::getLogicalSend( TCommID whichComm ) const
 {
-  return communications[whichComm].logicalSendTime;
+  return communications[ whichComm ].logicalSendTime;
 }
 
 TRecordTime VectorBlocks::getLogicalReceive( TCommID whichComm ) const
 {
-  return communications[whichComm].logicalReceiveTime;
+  return communications[ whichComm ].logicalReceiveTime;
 }
 
 TRecordTime VectorBlocks::getPhysicalSend( TCommID whichComm ) const
 {
-  return communications[whichComm].physicalSendTime;
+  return communications[ whichComm ].physicalSendTime;
 }
 
 TRecordTime VectorBlocks::getPhysicalReceive( TCommID whichComm ) const
 {
-  return communications[whichComm].physicalReceiveTime;
+  return communications[ whichComm ].physicalReceiveTime;
 }
 
 TRecordTime VectorBlocks::getLastRecordTime() const
@@ -358,7 +339,7 @@ TRecordTime VectorBlocks::getLastRecordTime() const
   return lastRecordTime;
 }
 
-void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
+void VectorBlocks::setFileLoaded( TRecordTime traceEndTime, ProgressController* whichProgress )
 {
   TRecord beginEmptyRecord;
   beginEmptyRecord.type = EMPTYREC;
@@ -369,73 +350,69 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
   endEmptyRecord.time = traceEndTime;
 
   auto compareRecords = []( const TRecord& r1, const TRecord& r2 )
-      {
-        if ( r1.time < r2.time )
-          return true;
-        else if ( r1.time > r2.time )
-          return false;
+  {
+    if( r1.time < r2.time )
+      return true;
+    else if( r1.time > r2.time )
+      return false;
 
-        return getTypeOrdered( &r1, &r2 );
-      };
+    return getTypeOrdered( &r1, &r2 );
+  };
 
-  auto sortThread = [this, compareRecords]( size_t iThread, TRecord endEmptyRecord )
-      {
-        auto &vectorThread = threadRecords[ iThread ];
-        std::stable_sort( ++vectorThread.begin(), vectorThread.end(), compareRecords );
+  auto sortThread = [ this, compareRecords ]( size_t iThread, TRecord endEmptyRecord )
+  {
+    auto& vectorThread = threadRecords[ iThread ];
+    std::stable_sort( ++vectorThread.begin(), vectorThread.end(), compareRecords );
 
-        endEmptyRecord.thread = iThread;
-        endEmptyRecord.CPU = vectorThread.back().CPU;
-        vectorThread.emplace_back( endEmptyRecord );
-        vectorThread.shrink_to_fit();
-      };
+    endEmptyRecord.thread = iThread;
+    endEmptyRecord.CPU    = vectorThread.back().CPU;
+    vectorThread.emplace_back( endEmptyRecord );
+    vectorThread.shrink_to_fit();
+  };
 
   size_t progressCounter = 0;
 #ifndef _WIN32
-  if ( progress != nullptr )
+  if( whichProgress != nullptr )
   {
-    progress->setMessage( "Sorting trace..." );
-    progress->setCurrentProgress( progressCounter );
+    whichProgress->setMessage( "Sorting trace..." );
+    whichProgress->setCurrentProgress( progressCounter );
   }
 #endif
   if( !resourceModel.isReady() )
   {
 #ifndef _WIN32
-    if ( progress != nullptr )
-      progress->setEndLimit( processModel.totalThreads() );
+    if( whichProgress != nullptr )
+      whichProgress->setEndLimit( processModel.totalThreads() );
 #endif
 
     size_t iThread;
-    #pragma omp parallel for firstprivate( endEmptyRecord ) \
-                             private( iThread ) \
-                             default( shared )
+#pragma omp parallel for firstprivate( endEmptyRecord ) private( iThread ) default( shared )
     for( iThread = 0; iThread < processModel.totalThreads(); ++iThread )
     {
       sortThread( iThread, endEmptyRecord );
 
-      updateProgress( progressCounter );
+      updateProgress( progressCounter, whichProgress );
     }
   }
   else
   {
 #ifndef _WIN32
-    if ( progress != nullptr )
-      progress->setEndLimit( processModel.totalThreads() + resourceModel.totalCPUs() );
+    if( whichProgress != nullptr )
+      whichProgress->setEndLimit( processModel.totalThreads() + resourceModel.totalCPUs() );
 #endif
 
     size_t iNode;
-    #pragma omp parallel for firstprivate( beginEmptyRecord, endEmptyRecord ) \
-                             private( iNode ) \
-                             default( shared )
+#pragma omp parallel for firstprivate( beginEmptyRecord, endEmptyRecord ) private( iNode ) default( shared )
     for( iNode = 0; iNode < resourceModel.size(); ++iNode )
     {
-      std::vector<TThreadOrder> threadsInNode;
+      std::vector< TThreadOrder > threadsInNode;
       processModel.getThreadsPerNode( iNode + 1, threadsInNode );
 
       for( TCPUOrder iCPU = resourceModel.getFirstCPU( iNode ); iCPU <= resourceModel.getLastCPU( iNode ); ++iCPU )
       {
-        cpuBeginEmptyRecords[ iCPU - 1 ] = beginEmptyRecord;
+        cpuBeginEmptyRecords[ iCPU - 1 ]     = beginEmptyRecord;
         cpuBeginEmptyRecords[ iCPU - 1 ].CPU = iCPU;
-        if ( !threadsInNode.empty() )
+        if( !threadsInNode.empty() )
           cpuBeginEmptyRecords[ iCPU - 1 ].thread = threadsInNode[ 0 ];
         else
           cpuBeginEmptyRecords[ iCPU - 1 ].thread = 0;
@@ -446,8 +423,8 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
       {
         sortThread( iThread, endEmptyRecord );
 
-        auto &vectorThread = threadRecords[ iThread ];
-        auto itRecord = vectorThread.begin();
+        auto& vectorThread = threadRecords[ iThread ];
+        auto itRecord      = vectorThread.begin();
 
         auto itEmptyRecord = --vectorThread.end();
 
@@ -461,16 +438,20 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
             cpuRecords[ itRecord->CPU - 1 ].emplace_back( &( *itRecord ) );
         }
 
-        updateProgress( progressCounter );
+        updateProgress( progressCounter, whichProgress );
       }
 
       for( TCPUOrder iCPU = resourceModel.getFirstCPU( iNode ); iCPU <= resourceModel.getLastCPU( iNode ); ++iCPU )
       {
-        std::stable_sort( ++cpuRecords[ iCPU - 1 ].begin(), cpuRecords[ iCPU - 1 ].end(),
-                          []( const auto& lhs, const auto& rhs ){ return lhs->time < rhs->time; } );
+        std::stable_sort( ++cpuRecords[ iCPU - 1 ].begin(),
+                          cpuRecords[ iCPU - 1 ].end(),
+                          []( const auto& lhs, const auto& rhs )
+                          {
+                            return lhs->time < rhs->time;
+                          } );
 
-        cpuEndEmptyRecords[ iCPU - 1 ] = endEmptyRecord;
-        cpuEndEmptyRecords[ iCPU - 1 ].CPU = iCPU;
+        cpuEndEmptyRecords[ iCPU - 1 ]        = endEmptyRecord;
+        cpuEndEmptyRecords[ iCPU - 1 ].CPU    = iCPU;
         cpuEndEmptyRecords[ iCPU - 1 ].thread = cpuRecords[ iCPU - 1 ].back()->thread;
         cpuRecords[ iCPU - 1 ].emplace_back( &cpuEndEmptyRecords[ iCPU - 1 ] );
 
@@ -478,27 +459,27 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime )
 
         cpuRecords[ iCPU - 1 ].shrink_to_fit();
 
-        updateProgress( progressCounter );
+        updateProgress( progressCounter, whichProgress );
       }
     }
   }
 }
 
-void VectorBlocks::updateProgress( size_t &progressCounter )
+void VectorBlocks::updateProgress( size_t& progressCounter, ProgressController* whichProgress )
 {
 #ifndef _WIN32
-  if ( progress != nullptr )
+  if( whichProgress != nullptr )
   {
-    #pragma omp atomic
+#  pragma omp atomic
     ++progressCounter;
 
-    #pragma omp critical
+#  pragma omp critical
     {
-      if( progress->getEndLimit() < 100 ||
-          ( progress->getEndLimit() >= 100 && progress->getEndLimit() < 1600 && progressCounter % 16 == 0 ) ||
+      if( whichProgress->getEndLimit() < 100 ||
+          ( whichProgress->getEndLimit() >= 100 && whichProgress->getEndLimit() < 1600 && progressCounter % 16 == 0 ) ||
           ( progressCounter % 640 == 0 ) )
-        progress->setCurrentProgress( progressCounter );
+        whichProgress->setCurrentProgress( progressCounter );
     }
   }
-#endif 
+#endif
 }

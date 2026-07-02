@@ -601,7 +601,7 @@ KTrace::KTrace( const string& whichFile, ProgressController* progress, bool noLo
   }
   else
   {
-    blocks   = new VectorBlocks( traceResourceModel, traceProcessModel, traceEndTime, progress );
+    blocks   = new VectorBlocks( traceResourceModel, traceProcessModel, traceEndTime );
     memTrace = new VectorTrace();
   }
 
@@ -674,7 +674,7 @@ KTrace::KTrace( const string& whichFile, ProgressController* progress, bool noLo
     traceTimeUnit = tmpCSVMetadata->getTimeUnits();
   }
 
-  blocks->setFileLoaded( traceEndTime );
+  blocks->setFileLoaded( traceEndTime, progress );
 
   ready = true;
 }
@@ -689,6 +689,76 @@ KTrace::~KTrace()
 
 void KTrace::appendCSV( const std::string& whichFile, ProgressController* progress )
 {
+  TraceStream* file = TraceStream::openFile( whichFile );
+
+  if( !file->good() )
+  {
+    delete file;
+    throw ParaverKernelException( TErrorCode::cannotOpenTrace, whichFile.c_str() );
+  }
+
+  if( file->canseekend() )
+  {
+    file->seekend();
+    if( progress != nullptr )
+      progress->setEndLimit( file->tellg() );
+    file->seekbegin();
+  }
+
+  body = TraceBodyIOFactory::createTraceBody( file, this, traceProcessModel );
+
+  unordered_set< TEventType > hashevents;
+  unordered_set< TState > hashstates;
+
+  unsigned long long count = 0;
+
+  while( !file->eof() )
+  {
+    body->read( *file, *blocks, traceProcessModel, traceResourceModel, hashstates, hashevents, myTraceInfo, traceEndTime );
+    if( blocks->getCountInserted() > 0 )
+      ++count;
+
+    if( blocks->getCountInserted() >= 10000 )
+    {
+      memTrace->insert( blocks );
+      if( progress != nullptr )
+      {
+        if( file->canseekend() )
+          progress->setCurrentProgress( file->tellg() );
+        else
+          progress->setCurrentProgress( blocks->getLastRecordTime() );
+      }
+
+      if( progress != nullptr && progress->getStop() )
+        break;
+    }
+  }
+
+  if( blocks->getCountInserted() > 0 )
+  {
+    memTrace->insert( blocks );
+    ++count;
+  }
+
+  if( count == 0 )
+  {
+    delete file;
+    throw TraceHeaderException( TTraceHeaderErrorCode::emptyBody, whichFile.c_str() );
+  }
+
+  for( unordered_set< TEventType >::iterator it = hashevents.begin(); it != hashevents.end(); ++it )
+    events.insert( *it );
+
+  for( unordered_set< TState >::iterator it = hashstates.begin(); it != hashstates.end(); ++it )
+    states.insert( *it );
+
+
+  file->close();
+  delete body;
+  body = nullptr;
+  delete file;
+
+  blocks->setFileLoaded( traceEndTime, progress );
 }
 
 const set< TState >& KTrace::getLoadedStates() const

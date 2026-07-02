@@ -22,29 +22,32 @@
 \*****************************************************************************/
 
 #include "noloadblocks.h"
+
 #include "noloadexception.h"
 #include "paraverkernelexception.h"
 
 using namespace NoLoad;
 
 
-NoLoadBlocks::NoLoadBlocks( const ResourceModel<>& resource, const ProcessModel<>& process,
-                            TraceBodyIO< PARAM_TRACEBODY_CLASS > *whichBody, TraceStream *whichFile, TRecordTime endTime )
-    : resourceModel( resource ), processModel( process ),
-    body( whichBody ), file( whichFile )
+NoLoadBlocks::NoLoadBlocks( const ResourceModel<> &resource,
+                            const ProcessModel<> &process,
+                            TraceBodyIO< PARAM_TRACEBODY_CLASS > *whichBody,
+                            TraceStream *whichFile,
+                            TRecordTime endTime )
+  : resourceModel( resource ), processModel( process ), body( whichBody ), file( whichFile )
 {
   fileLoaded = false;
 
   globalBeginRec.time = 0;
   globalBeginRec.type = EMPTYREC;
-  globalEndRec.time = endTime;
-  globalEndRec.type = EMPTYREC;
+  globalEndRec.time   = endTime;
+  globalEndRec.type   = EMPTYREC;
 
-  if ( body->ordered() )
+  if( body->ordered() )
   {
-    for ( TThreadOrder i = 0; i < processModel.totalThreads(); ++i )
+    for( TThreadOrder i = 0; i < processModel.totalThreads(); ++i )
     {
-      traceIndex.push_back( Index<PRV_INT64>( 1000 ) );
+      traceIndex.push_back( Index< PRV_INT64 >( 1000 ) );
       emptyBeginRecords.push_back( globalBeginRec );
       emptyEndRecords.push_back( globalEndRec );
     }
@@ -60,8 +63,8 @@ NoLoadBlocks::NoLoadBlocks( const ResourceModel<>& resource, const ProcessModel<
 
 NoLoadBlocks::~NoLoadBlocks()
 {
-  for ( PRV_UINT32 i = 0; i < communications.size(); ++i )
-    delete communications[i];
+  for( PRV_UINT32 i = 0; i < communications.size(); ++i )
+    delete communications[ i ];
 
   communications.clear();
 
@@ -76,15 +79,15 @@ TData *NoLoadBlocks::getLastRecord( PRV_UINT16 position ) const
 
 void NoLoadBlocks::newRecord()
 {
-  if ( fileLoaded )
+  if( fileLoaded )
   {
-    if ( lastData == nullptr )
+    if( lastData == nullptr )
     {
-      lastData = new fileLineData();
-      lastData->numUseds = 0;
+      lastData            = new fileLineData();
+      lastData->numUseds  = 0;
       lastData->endOffset = file->tellg();
       lastData->records.push_back( TRecord() );
-      lastRecord = 0;
+      lastRecord        = 0;
       blocks[ lastPos ] = lastData;
     }
     else
@@ -97,13 +100,13 @@ void NoLoadBlocks::newRecord()
 
 void NoLoadBlocks::setRecordType( TRecordType whichType )
 {
-  if ( fileLoaded )
+  if( fileLoaded )
     lastData->records[ lastRecord ].type = whichType;
 }
 
 void NoLoadBlocks::setTime( TRecordTime whichTime )
 {
-  if ( fileLoaded )
+  if( fileLoaded )
     lastData->records[ lastRecord ].time = whichTime;
   else
     loadingRec.time = whichTime;
@@ -111,13 +114,13 @@ void NoLoadBlocks::setTime( TRecordTime whichTime )
 
 void NoLoadBlocks::setThread( TThreadOrder whichThread )
 {
-  if ( !fileLoaded )
+  if( !fileLoaded )
   {
-    if ( body->ordered() )
+    if( body->ordered() )
     {
       loadingThread = whichThread;
       traceIndex[ loadingThread ].indexRecord( loadingRec.time, lastPos );
-      if ( loadingThread == beginThread.size() )
+      if( loadingThread == beginThread.size() )
         beginThread.push_back( lastPos );
     }
 
@@ -125,84 +128,78 @@ void NoLoadBlocks::setThread( TThreadOrder whichThread )
   }
   else
   {
-    lastData->thread = whichThread;
+    lastData->thread                       = whichThread;
     lastData->records[ lastRecord ].thread = whichThread;
   }
 }
 
-void NoLoadBlocks::setThread( TApplOrder whichAppl,
-                              TTaskOrder whichTask,
-                              TThreadOrder whichThread )
+void NoLoadBlocks::setThread( TApplOrder whichAppl, TTaskOrder whichTask, TThreadOrder whichThread )
 {
-  if ( !fileLoaded )
+  if( !fileLoaded )
   {
-    if ( body->ordered() )
+    if( body->ordered() )
     {
-      whichThread = processModel.getGlobalThread( whichAppl,
-                                                  whichTask,
-                                                  whichThread );
+      whichThread   = processModel.getGlobalThread( whichAppl, whichTask, whichThread );
       loadingThread = whichThread;
       traceIndex[ loadingThread ].indexRecord( loadingRec.time, lastPos );
     }
 
     lastPos = file->tellg();
 
-    if ( body->ordered() )
+    if( body->ordered() )
     {
-      if ( loadingThread == beginThread.size() )
+      if( loadingThread == beginThread.size() )
         beginThread.push_back( lastPos );
     }
   }
   else
   {
-    whichThread = processModel.getGlobalThread( whichAppl,
-                                                whichTask,
-                                                whichThread );
-    lastData->thread = whichThread;
+    whichThread                            = processModel.getGlobalThread( whichAppl, whichTask, whichThread );
+    lastData->thread                       = whichThread;
     lastData->records[ lastRecord ].thread = whichThread;
   }
 }
 
 void NoLoadBlocks::setCPU( TCPUOrder whichCPU )
 {
-  if ( fileLoaded )
+  if( fileLoaded )
     lastData->records[ lastRecord ].CPU = whichCPU;
 }
 
 void NoLoadBlocks::setEventType( TEventType whichType )
 {
-  if ( fileLoaded )
+  if( fileLoaded )
     lastData->records[ lastRecord ].URecordInfo.eventRecord.type = whichType;
 }
 
 void NoLoadBlocks::setEventValue( TEventValue whichValue )
 {
-  if ( fileLoaded )
+  if( fileLoaded )
     lastData->records[ lastRecord ].URecordInfo.eventRecord.value = whichValue;
 }
 
 void NoLoadBlocks::setState( TState whichState )
 {
-  if ( fileLoaded )
+  if( fileLoaded )
     lastData->records[ lastRecord ].URecordInfo.stateRecord.state = whichState;
 }
 
 void NoLoadBlocks::setStateEndTime( TRecordTime whichTime )
 {
-  if ( fileLoaded )
+  if( fileLoaded )
     lastData->records[ lastRecord ].URecordInfo.stateRecord.endTime = whichTime;
 }
 
 void NoLoadBlocks::setCommIndex( TCommID whichID )
 {
-  if ( fileLoaded )
+  if( fileLoaded )
     lastData->records[ lastRecord ].URecordInfo.commRecord.index = whichID;
 }
 
 
 void NoLoadBlocks::newComm( bool createRecords )
 {
-  if ( createRecords )
+  if( createRecords )
   {
     newRecord();
     setRecordType( COMM + LOG + SEND );
@@ -225,7 +222,7 @@ void NoLoadBlocks::newComm( bool createRecords )
   lastPos = file->tellg();
 
   communications.push_back( new TCommInfo() );
-  currentComm = communications.size() - 1;
+  currentComm                           = communications.size() - 1;
   logSend->URecordInfo.commRecord.index = currentComm;
   logRecv->URecordInfo.commRecord.index = currentComm;
   phySend->URecordInfo.commRecord.index = currentComm;
@@ -234,108 +231,100 @@ void NoLoadBlocks::newComm( bool createRecords )
 
 void NoLoadBlocks::setSenderThread( TThreadOrder whichThread )
 {
-  communications[currentComm]->senderThread = whichThread;
-  logSend->thread = whichThread;
-  phySend->thread = whichThread;
+  communications[ currentComm ]->senderThread = whichThread;
+  logSend->thread                             = whichThread;
+  phySend->thread                             = whichThread;
 }
 
-void NoLoadBlocks::setSenderThread( TApplOrder whichAppl,
-                                    TTaskOrder whichTask,
-                                    TThreadOrder whichThread )
+void NoLoadBlocks::setSenderThread( TApplOrder whichAppl, TTaskOrder whichTask, TThreadOrder whichThread )
 {
-  TThreadOrder globalThread = processModel.getGlobalThread( whichAppl,
-                              whichTask,
-                              whichThread );
-  communications[currentComm]->senderThread = globalThread;
-  logSend->thread = globalThread;
-  phySend->thread = globalThread;
+  TThreadOrder globalThread                   = processModel.getGlobalThread( whichAppl, whichTask, whichThread );
+  communications[ currentComm ]->senderThread = globalThread;
+  logSend->thread                             = globalThread;
+  phySend->thread                             = globalThread;
 }
 
 void NoLoadBlocks::setSenderCPU( TCPUOrder whichCPU )
 {
-  communications[currentComm]->senderCPU = whichCPU;
-  logSend->CPU = whichCPU;
-  phySend->CPU = whichCPU;
+  communications[ currentComm ]->senderCPU = whichCPU;
+  logSend->CPU                             = whichCPU;
+  phySend->CPU                             = whichCPU;
 }
 
 void NoLoadBlocks::setReceiverThread( TThreadOrder whichThread )
 {
-  communications[currentComm]->receiverThread = whichThread;
-  logRecv->thread = whichThread;
-  phyRecv->thread = whichThread;
+  communications[ currentComm ]->receiverThread = whichThread;
+  logRecv->thread                               = whichThread;
+  phyRecv->thread                               = whichThread;
 }
 
-void NoLoadBlocks::setReceiverThread( TApplOrder whichAppl,
-                                      TTaskOrder whichTask,
-                                      TThreadOrder whichThread )
+void NoLoadBlocks::setReceiverThread( TApplOrder whichAppl, TTaskOrder whichTask, TThreadOrder whichThread )
 {
-  TThreadOrder globalThread = processModel.getGlobalThread( whichAppl,
-                              whichTask,
-                              whichThread );
-  communications[currentComm]->receiverThread = globalThread;
-  logRecv->thread = globalThread;
-  phyRecv->thread = globalThread;
+  TThreadOrder globalThread                     = processModel.getGlobalThread( whichAppl, whichTask, whichThread );
+  communications[ currentComm ]->receiverThread = globalThread;
+  logRecv->thread                               = globalThread;
+  phyRecv->thread                               = globalThread;
 }
 
 void NoLoadBlocks::setReceiverCPU( TCPUOrder whichCPU )
 {
-  communications[currentComm]->receiverCPU = whichCPU;
-  logRecv->CPU = whichCPU;
-  phyRecv->CPU = whichCPU;
+  communications[ currentComm ]->receiverCPU = whichCPU;
+  logRecv->CPU                               = whichCPU;
+  phyRecv->CPU                               = whichCPU;
 }
 
 void NoLoadBlocks::setCommTag( TCommTag whichTag )
 {
-  communications[currentComm]->tag = whichTag;
+  communications[ currentComm ]->tag = whichTag;
 }
 
 void NoLoadBlocks::setCommSize( TCommSize whichSize )
 {
-  communications[currentComm]->size = whichSize;
+  communications[ currentComm ]->size = whichSize;
 }
 
 void NoLoadBlocks::setLogicalSend( TRecordTime whichTime )
 {
-  communications[currentComm]->logicalSendTime = whichTime;
-  logSend->time = whichTime;
+  communications[ currentComm ]->logicalSendTime = whichTime;
+  logSend->time                                  = whichTime;
 }
 
 void NoLoadBlocks::setLogicalReceive( TRecordTime whichTime )
 {
-  communications[currentComm]->logicalReceiveTime = whichTime;
-  logRecv->time = whichTime;
+  communications[ currentComm ]->logicalReceiveTime = whichTime;
+  logRecv->time                                     = whichTime;
 }
 
 void NoLoadBlocks::setPhysicalSend( TRecordTime whichTime )
 {
-  communications[currentComm]->physicalSendTime = whichTime;
-  phySend->time = whichTime;
+  communications[ currentComm ]->physicalSendTime = whichTime;
+  phySend->time                                   = whichTime;
 }
 
 void NoLoadBlocks::setPhysicalReceive( TRecordTime whichTime )
 {
-  communications[currentComm]->physicalReceiveTime = whichTime;
-  phyRecv->time = whichTime;
+  communications[ currentComm ]->physicalReceiveTime = whichTime;
+  phyRecv->time                                      = whichTime;
 }
 
 void NoLoadBlocks::setLogicalSend( TCommID whichComm, TRecordTime whichTime )
 {
-  communications[whichComm]->logicalSendTime = whichTime;
+  communications[ whichComm ]->logicalSendTime = whichTime;
 }
 
 void NoLoadBlocks::setLogicalReceive( TCommID whichComm, TRecordTime whichTime )
 {
-  communications[whichComm]->logicalReceiveTime = whichTime;
+  communications[ whichComm ]->logicalReceiveTime = whichTime;
 }
 
 void NoLoadBlocks::setPhysicalSend( TCommID whichComm, TRecordTime whichTime )
 {
-  communications[whichComm]->physicalSendTime = whichTime;
+  communications[ whichComm ]->physicalSendTime = whichTime;
 }
 
 void NoLoadBlocks::setPhysicalReceive( TCommID whichComm, TRecordTime whichTime )
 {
-  communications[whichComm]->physicalReceiveTime = whichTime;
+  communications[ whichComm ]->physicalReceiveTime = whichTime;
 }
 
 TCommID NoLoadBlocks::getTotalComms() const
@@ -345,52 +334,52 @@ TCommID NoLoadBlocks::getTotalComms() const
 
 TThreadOrder NoLoadBlocks::getSenderThread( TCommID whichComm ) const
 {
-  return communications[whichComm]->senderThread;
+  return communications[ whichComm ]->senderThread;
 }
 
 TCPUOrder NoLoadBlocks::getSenderCPU( TCommID whichComm ) const
 {
-  return communications[whichComm]->senderCPU;
+  return communications[ whichComm ]->senderCPU;
 }
 
 TThreadOrder NoLoadBlocks::getReceiverThread( TCommID whichComm ) const
 {
-  return communications[whichComm]->receiverThread;
+  return communications[ whichComm ]->receiverThread;
 }
 
 TCPUOrder NoLoadBlocks::getReceiverCPU( TCommID whichComm ) const
 {
-  return communications[whichComm]->receiverCPU;
+  return communications[ whichComm ]->receiverCPU;
 }
 
 TCommTag NoLoadBlocks::getCommTag( TCommID whichComm ) const
 {
-  return communications[whichComm]->tag;
+  return communications[ whichComm ]->tag;
 }
 
 TCommSize NoLoadBlocks::getCommSize( TCommID whichComm ) const
 {
-  return communications[whichComm]->size;
+  return communications[ whichComm ]->size;
 }
 
 TRecordTime NoLoadBlocks::getLogicalSend( TCommID whichComm ) const
 {
-  return communications[whichComm]->logicalSendTime;
+  return communications[ whichComm ]->logicalSendTime;
 }
 
 TRecordTime NoLoadBlocks::getLogicalReceive( TCommID whichComm ) const
 {
-  return communications[whichComm]->logicalReceiveTime;
+  return communications[ whichComm ]->logicalReceiveTime;
 }
 
 TRecordTime NoLoadBlocks::getPhysicalSend( TCommID whichComm ) const
 {
-  return communications[whichComm]->physicalSendTime;
+  return communications[ whichComm ]->physicalSendTime;
 }
 
 TRecordTime NoLoadBlocks::getPhysicalReceive( TCommID whichComm ) const
 {
-  return communications[whichComm]->physicalReceiveTime;
+  return communications[ whichComm ]->physicalReceiveTime;
 }
 
 TRecordTime NoLoadBlocks::getLastRecordTime() const
@@ -398,38 +387,38 @@ TRecordTime NoLoadBlocks::getLastRecordTime() const
   return 0;
 }
 
-void NoLoadBlocks::getBeginRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
+void NoLoadBlocks::getBeginRecord( TRecord **record, PRV_INT64 &offset, PRV_UINT16 &recPos )
 {
   *record = &globalBeginRec;
-  offset = -1;
-  recPos = 0;
+  offset  = -1;
+  recPos  = 0;
 }
 
 
-void NoLoadBlocks::getEndRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
+void NoLoadBlocks::getEndRecord( TRecord **record, PRV_INT64 &offset, PRV_UINT16 &recPos )
 {
   *record = &globalEndRec;
-  offset = endFileOffset;
-  recPos = 0;
+  offset  = endFileOffset;
+  recPos  = 0;
 }
 
-void NoLoadBlocks::getBeginThreadRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
+void NoLoadBlocks::getBeginThreadRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64 &offset, PRV_UINT16 &recPos )
 {
-  if ( !body->ordered() )
-    throw NoLoad::NoLoadException( NoLoad::TNoLoadErrorCode::wrongTraceBodyVersion, "" , __FILE__, __LINE__ );
+  if( !body->ordered() )
+    throw NoLoad::NoLoadException( NoLoad::TNoLoadErrorCode::wrongTraceBodyVersion, "", __FILE__, __LINE__ );
 
   *record = &emptyBeginRecords[ whichThread ];
-  offset = -1;
-  recPos = 0;
+  offset  = -1;
+  recPos  = 0;
 }
 
-void NoLoadBlocks::getEndThreadRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
+void NoLoadBlocks::getEndThreadRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64 &offset, PRV_UINT16 &recPos )
 {
-  if ( !body->ordered() )
-    throw NoLoad::NoLoadException( NoLoad::TNoLoadErrorCode::wrongTraceBodyVersion, "" , __FILE__, __LINE__ );
+  if( !body->ordered() )
+    throw NoLoad::NoLoadException( NoLoad::TNoLoadErrorCode::wrongTraceBodyVersion, "", __FILE__, __LINE__ );
 
   *record = &emptyEndRecords[ whichThread ];
-  if ( whichThread == processModel.totalThreads() - 1 )
+  if( whichThread == processModel.totalThreads() - 1 )
     offset = endFileOffset;
   else
     offset = beginThread[ whichThread + 1 ];
@@ -438,29 +427,29 @@ void NoLoadBlocks::getEndThreadRecord( TThreadOrder whichThread, TRecord **recor
 
 
 // Must be used with TraceBodyIO_v1
-void NoLoadBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
+void NoLoadBlocks::getNextRecord( TRecord **record, PRV_INT64 &offset, PRV_UINT16 &recPos )
 {
   if( *record == &globalEndRec )
   {
     *record = nullptr;
     return;
   }
-  else if ( offset != -1 )
+  else if( offset != -1 )
   {
     fileLineData *tmpData = blocks[ offset ];
 
-    if ( recPos < tmpData->records.size() - 1 )
+    if( recPos < tmpData->records.size() - 1 )
     {
       ++recPos;
       *record = &tmpData->records[ recPos ];
       return;
     }
-    else if ( tmpData->endOffset == endFileOffset )
+    else if( tmpData->endOffset == endFileOffset )
     {
       decNumUseds( offset );
-      offset = endFileOffset;
+      offset  = endFileOffset;
       *record = nullptr;
-      recPos = 0;
+      recPos  = 0;
       return;
     }
 
@@ -470,7 +459,7 @@ void NoLoadBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UINT1
   else
     offset = initialOffset;
 
-  if ( blocks.count( offset ) == 0 )
+  if( blocks.count( offset ) == 0 )
   {
     if( body->ordered() )
     {
@@ -478,17 +467,17 @@ void NoLoadBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UINT1
       file->seekg( offset );
     }
     lastData = nullptr;
-    lastPos = offset;
+    lastPos  = offset;
   }
 
-  while ( blocks.count( offset ) == 0 )
+  while( blocks.count( offset ) == 0 )
   {
     if( file->tellg() == (std::streampos)endFileOffset )
     {
       decNumUseds( offset );
-      offset = endFileOffset;
+      offset  = endFileOffset;
       *record = nullptr;
-      recPos = 0;
+      recPos  = 0;
       return;
     }
 
@@ -496,33 +485,33 @@ void NoLoadBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UINT1
   }
 
   fileLineData *currentData = blocks[ offset ];
-  *record = &currentData->records[ 0 ];
-  recPos = 0;
+  *record                   = &currentData->records[ 0 ];
+  recPos                    = 0;
   ++currentData->numUseds;
 }
 
 
 // Must be used with TraceBodyIO_v1
-void NoLoadBlocks::getPrevRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
+void NoLoadBlocks::getPrevRecord( TRecord **record, PRV_INT64 &offset, PRV_UINT16 &recPos )
 {
-  if ( offset == -1 )
+  if( offset == -1 )
   {
     *record = nullptr;
     return;
   }
   else if( *record != &globalBeginRec )
   {
-    if ( recPos > 0 )
+    if( recPos > 0 )
     {
       fileLineData *tmpData = blocks[ offset ];
       --recPos;
       *record = &tmpData->records[ recPos ];
       return;
     }
-    else if ( offset == initialOffset )
+    else if( offset == initialOffset )
     {
       decNumUseds( offset );
-      offset = -1;
+      offset  = -1;
       *record = nullptr;
       return;
     }
@@ -535,45 +524,44 @@ void NoLoadBlocks::getPrevRecord( TRecord **record, PRV_INT64& offset, PRV_UINT1
     decNumUseds( offset );
 
   offset = file->tellg();
-  if ( blocks.count( offset ) == 0 )
+  if( blocks.count( offset ) == 0 )
   {
     lastData = nullptr;
-    lastPos = offset;
+    lastPos  = offset;
     body->read( *file, *this, processModel, resourceModel, notUsedStates, notUsedEvents, dummyTraceInfo, dummyEndTime );
   }
 
   fileLineData *currentData = blocks[ offset ];
-  *record = &currentData->records[ 0 ];
-  recPos = 0;
+  *record                   = &currentData->records[ 0 ];
+  recPos                    = 0;
   ++currentData->numUseds;
 }
 
 
 // Must be used with TraceBodyIO_v2
-void NoLoadBlocks::getNextRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
+void NoLoadBlocks::getNextRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64 &offset, PRV_UINT16 &recPos )
 {
   if( *record == &emptyEndRecords[ whichThread ] )
   {
     *record = nullptr;
     return;
   }
-  else if ( offset != -1 )
+  else if( offset != -1 )
   {
     fileLineData *tmpData = blocks[ offset ];
-    if ( recPos < tmpData->records.size() - 1 )
+    if( recPos < tmpData->records.size() - 1 )
     {
       ++recPos;
       *record = &tmpData->records[ recPos ];
       return;
     }
-    else if ( ( whichThread < processModel.totalThreads() - 1 && tmpData->endOffset == beginThread[ whichThread + 1 ] )
-              ||
-              ( whichThread == processModel.totalThreads() - 1 && tmpData->endOffset == endFileOffset ) )
+    else if( ( whichThread < processModel.totalThreads() - 1 && tmpData->endOffset == beginThread[ whichThread + 1 ] ) ||
+             ( whichThread == processModel.totalThreads() - 1 && tmpData->endOffset == endFileOffset ) )
     {
       decNumUseds( offset );
-      offset = endFileOffset;
+      offset  = endFileOffset;
       *record = nullptr;
-      recPos = 0;
+      recPos  = 0;
       return;
     }
 
@@ -583,42 +571,42 @@ void NoLoadBlocks::getNextRecord( TThreadOrder whichThread, TRecord **record, PR
   else
     offset = beginThread[ whichThread ];
 
-  if ( blocks.count( offset ) == 0 )
+  if( blocks.count( offset ) == 0 )
   {
     file->clear();
     file->seekg( offset );
     lastData = nullptr;
-    lastPos = offset;
+    lastPos  = offset;
     body->read( *file, *this, processModel, resourceModel, notUsedStates, notUsedEvents, dummyTraceInfo, dummyEndTime );
   }
 
   fileLineData *currentData = blocks[ offset ];
-  *record = &currentData->records[ 0 ];
-  recPos = 0;
+  *record                   = &currentData->records[ 0 ];
+  recPos                    = 0;
   ++currentData->numUseds;
 }
 
 // Must be used with TraceBodyIO_v2
-void NoLoadBlocks::getPrevRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
+void NoLoadBlocks::getPrevRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64 &offset, PRV_UINT16 &recPos )
 {
-  if ( offset == -1 )
+  if( offset == -1 )
   {
     *record = nullptr;
     return;
   }
   else if( *record != &emptyEndRecords[ whichThread ] ) // TODO  maybe begin?
   {
-    if ( recPos > 0 )
+    if( recPos > 0 )
     {
       fileLineData *tmpData = blocks[ offset ];
       --recPos;
       *record = &tmpData->records[ recPos ];
       return;
     }
-    else if ( offset == beginThread[ whichThread ] )
+    else if( offset == beginThread[ whichThread ] )
     {
       decNumUseds( offset );
-      offset = -1;
+      offset  = -1;
       *record = nullptr;
       return;
     }
@@ -627,49 +615,48 @@ void NoLoadBlocks::getPrevRecord( TThreadOrder whichThread, TRecord **record, PR
   file->seekg( offset );
   goToPrevLine();
 
-  if( *record != &emptyEndRecords[ whichThread ] )  // TODO  maybe begin?
+  if( *record != &emptyEndRecords[ whichThread ] ) // TODO  maybe begin?
     decNumUseds( offset );
 
   offset = file->tellg();
-  if ( blocks.count( offset ) == 0 )
+  if( blocks.count( offset ) == 0 )
   {
     lastData = nullptr;
-    lastPos = offset;
+    lastPos  = offset;
     body->read( *file, *this, processModel, resourceModel, notUsedStates, notUsedEvents, dummyTraceInfo, dummyEndTime );
   }
 
   fileLineData *currentData = blocks[ offset ];
-  *record = &currentData->records[ 0 ];
-  recPos = 0;
+  *record                   = &currentData->records[ 0 ];
+  recPos                    = 0;
   ++currentData->numUseds;
 }
 
 
-void NoLoadBlocks::getThreadRecordByTime( TThreadOrder whichThread, TRecordTime whichTime,
-    TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
+void NoLoadBlocks::getThreadRecordByTime( TThreadOrder whichThread, TRecordTime whichTime, TRecord **record, PRV_INT64 &offset, PRV_UINT16 &recPos )
 {
-  if ( !body->ordered() )
-    throw NoLoad::NoLoadException( NoLoad::TNoLoadErrorCode::wrongTraceBodyVersion, "" , __FILE__, __LINE__ );
+  if( !body->ordered() )
+    throw NoLoad::NoLoadException( NoLoad::TNoLoadErrorCode::wrongTraceBodyVersion, "", __FILE__, __LINE__ );
 
-  if ( !traceIndex[ whichThread ].findRecord( whichTime, offset ) )
+  if( !traceIndex[ whichThread ].findRecord( whichTime, offset ) )
   {
     offset = -1;
     record = nullptr;
     return;
   }
 
-  if ( blocks.count( offset ) == 0 )
+  if( blocks.count( offset ) == 0 )
   {
     file->clear();
     file->seekg( offset );
     lastData = nullptr;
-    lastPos = offset;
+    lastPos  = offset;
     body->read( *file, *this, processModel, resourceModel, notUsedStates, notUsedEvents, dummyTraceInfo, dummyEndTime );
   }
 
   fileLineData *currentData = blocks[ offset ];
-  *record = &currentData->records[ 0 ];
-  recPos = 0;
+  *record                   = &currentData->records[ 0 ];
+  recPos                    = 0;
   ++currentData->numUseds;
 }
 
@@ -688,7 +675,7 @@ void NoLoadBlocks::decNumUseds( PRV_INT64 offset )
     return;
   fileLineData *tmpData = blocks[ offset ];
   --tmpData->numUseds;
-  if ( tmpData->numUseds <= 0 )
+  if( tmpData->numUseds <= 0 )
   {
     delete tmpData;
     blocks.erase( offset );
@@ -702,7 +689,7 @@ void NoLoadBlocks::goToPrevLine()
   curOffset -= 2;
 
   file->seekg( curOffset );
-  while ( (char)file->peek() != '\n' )
+  while( (char)file->peek() != '\n' )
   {
     --curOffset;
     file->seekg( curOffset );
@@ -712,7 +699,7 @@ void NoLoadBlocks::goToPrevLine()
   file->seekg( curOffset );
 }
 
-void NoLoadBlocks::setFileLoaded( TRecordTime traceEndTime )
+void NoLoadBlocks::setFileLoaded( TRecordTime traceEndTime, ProgressController *whichProgress )
 {
   fileLoaded = true;
 }
