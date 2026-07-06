@@ -230,7 +230,8 @@ inline void TraceBodyIO_csv::readEvents( const ProcessModel<>& whichProcessModel
                                          unordered_set< TEventType >& events,
                                          TRecordTime& endTime ) const
 {
-  TCPUOrder CPU = 0;
+  bool ignoreRecord = false;
+  TCPUOrder CPU     = 0;
   TApplOrder appl;
   TTaskOrder task;
   TThreadOrder thread;
@@ -254,9 +255,21 @@ inline void TraceBodyIO_csv::readEvents( const ProcessModel<>& whichProcessModel
 
   if( doAppendCSV )
   {
-    thread = whichProcessModel.getGlobalThread( appl - 1, task - 1, thread - 1 );
-    records.newRecord( thread );
-    records.setThread( thread );
+    try
+    {
+      thread = whichProcessModel.getGlobalThread( appl - 1, task - 1, thread - 1 );
+    }
+    catch( TraceHeaderException& e )
+    {
+      ignoreRecord = true;
+      cerr << "Error reading record (CSV file):\n" << line << endl;
+    }
+
+    if( !ignoreRecord )
+    {
+      records.newRecord( thread );
+      records.setThread( thread );
+    }
   }
   else
   {
@@ -308,15 +321,17 @@ inline bool TraceBodyIO_csv::readCommon( const ResourceModel<>& whichResourceMod
   if( !prv_atoll_v( it, tmpstring.end(), thread ) || thread == 0 )
     throw ParaverKernelException( TErrorCode::csvWrongFormat );
 
-  ProcessModel<>::ThreadLocation currATT = { appl, task, thread };
-  if( !( currATT == lastATT ) )
+  if( !doAppendCSV )
   {
-    lastATT = currATT;
-    --currATT.appl;
-    --currATT.task;
-    --currATT.thread;
-    if( !doAppendCSV )
+    ProcessModel<>::ThreadLocation currATT = { appl, task, thread };
+    if( !( currATT == lastATT ) )
+    {
+      lastATT = currATT;
+      --currATT.appl;
+      --currATT.task;
+      --currATT.thread;
       myProcessModel->addApplTaskThread( currATT );
+    }
   }
 
   std::getline( line, tmpstring, '\t' );

@@ -22,39 +22,37 @@
 \*****************************************************************************/
 
 
-#include <sstream>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <limits>
 #include <numeric>
+#include <sstream>
 
 #ifdef USE_PARAVER_EXCEPTIONS
-#include "traceheaderexception.h"
+#  include "traceheaderexception.h"
 #endif
 
 using namespace std;
 
 #ifdef _WIN32
-#undef max
-#undef min
+#  undef max
+#  undef min
 #endif
 
 // subset
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
-bool ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::operator<( const ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >& other ) const
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
+bool ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::operator<(
+  const ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >& other ) const
 {
   bool isSubset = true;
 
   ApplOrderT iAppl;
   TaskOrderT iTask;
   ThreadOrderT iThread;
-  for ( ThreadOrderT iGlobalThread = 0; iGlobalThread < totalThreads(); ++iGlobalThread )
+  for( ThreadOrderT iGlobalThread = 0; iGlobalThread < totalThreads(); ++iGlobalThread )
   {
     getThreadLocation( iGlobalThread, iAppl, iTask, iThread );
-    if ( !other.isValidThread( iAppl, iTask, iThread ) )
+    if( !other.isValidThread( iAppl, iTask, iThread ) )
     {
       isSubset = false;
       break;
@@ -65,16 +63,14 @@ bool ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::operator<
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
-bool ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::operator==( const ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >& other ) const
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
+bool ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::operator==(
+  const ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >& other ) const
 {
   // ORIGINAL: QUICK BAD
-/*  return applications == other.applications &&
-         tasks        == other.tasks        &&
-         threads      == other.threads;*/
+  /*  return applications == other.applications &&
+           tasks        == other.tasks        &&
+           threads      == other.threads;*/
 
 
   // ELEGANT SLOW
@@ -84,30 +80,21 @@ bool ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::operator=
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
 ApplOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::totalApplications() const
 {
   return applications.size();
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
 TaskOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::totalTasks() const
 {
   return tasks.size();
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
 void ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::getTaskLocation( TaskOrderT globalTask,
                                                                                         ApplOrderT& inAppl,
                                                                                         TaskOrderT& inTask ) const
@@ -117,89 +104,81 @@ void ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::getTaskLo
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
-TaskOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::getGlobalTask( const ApplOrderT& inAppl,
-                                                                                            const TaskOrderT& inTask ) const
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
+TaskOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::getGlobalTask( const ApplOrderT& inAppl, const TaskOrderT& inTask ) const
 {
   return applications[ inAppl ].tasks[ inTask ].traceGlobalOrder;
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
 ThreadOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::totalThreads() const
 {
   return threads.size();
 }
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
 ThreadOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::totalThreads( ApplOrderT whichAppl ) const
 {
   return std::accumulate( applications[ whichAppl ].tasks.begin(),
                           applications[ whichAppl ].tasks.end(),
                           0,
-                          []( int a, const ProcessModelTask< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT > &b ){ return a + b.threads.size(); } );
+                          []( int a, const ProcessModelTask< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >& b )
+                          {
+                            return a + b.threads.size();
+                          } );
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
 ThreadOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::getGlobalThread( const ApplOrderT& inAppl,
                                                                                                 const TaskOrderT& inTask,
                                                                                                 const ThreadOrderT& inThread ) const
 {
+#ifdef USE_PARAVER_EXCEPTIONS
+  if( inAppl >= applications.size() )
+    throw TraceHeaderException( TTraceHeaderErrorCode::invalidApplNumber );
+
+  if( inTask >= applications[ inAppl ].size() )
+    throw TraceHeaderException( TTraceHeaderErrorCode::invalidTaskNumber );
+
+  if( inThread >= applications[ inAppl ].tasks.size() )
+    throw TraceHeaderException( TTraceHeaderErrorCode::invalidThreadNumber );
+
+#endif
   return applications[ inAppl ].tasks[ inTask ].threads[ inThread ].traceGlobalOrder;
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
 void ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::getThreadLocation( ThreadOrderT globalThread,
                                                                                           ApplOrderT& inAppl,
                                                                                           TaskOrderT& inTask,
                                                                                           ThreadOrderT& inThread ) const
 {
   //////////////////////////////////////
-  inAppl = threads[ globalThread ].appl;
-  inTask = threads[ globalThread ].task;
+  inAppl   = threads[ globalThread ].appl;
+  inTask   = threads[ globalThread ].task;
   inThread = threads[ globalThread ].thread;
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
-ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::ProcessModel( istringstream& headerInfo,
-                                                                                bool existResourceInfo )
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
+ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::ProcessModel( istringstream& headerInfo, bool existResourceInfo )
 {
   ApplOrderT numberApplications;
-  TaskOrderT globalTasks = 0;
+  TaskOrderT globalTasks     = 0;
   ThreadOrderT globalThreads = 0;
-  ready = false;
+  ready                      = false;
 
   string stringNumberApplications;
   std::getline( (istream&)headerInfo, stringNumberApplications, ':' );
   istringstream sstreamNumberAppl( stringNumberApplications );
 
-  if ( !( sstreamNumberAppl >> numberApplications ) ||
-       numberApplications == 0 )
+  if( !( sstreamNumberAppl >> numberApplications ) || numberApplications == 0 )
   {
 #ifdef USE_PARAVER_EXCEPTIONS
-    throw TraceHeaderException( TTraceHeaderErrorCode::invalidApplNumber,
-                                stringNumberApplications.c_str() );
+    throw TraceHeaderException( TTraceHeaderErrorCode::invalidApplNumber, stringNumberApplications.c_str() );
 #else
     std::cerr << "[Error] Invalid applications number: " << stringNumberApplications << std::endl;
     exit( 1 );
@@ -207,7 +186,7 @@ ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::ProcessModel( 
   }
 
   // Insert applications
-  for ( ApplOrderT countAppl = 0; countAppl < numberApplications; ++countAppl )
+  for( ApplOrderT countAppl = 0; countAppl < numberApplications; ++countAppl )
   {
     TaskOrderT numberTasks;
 
@@ -217,12 +196,10 @@ ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::ProcessModel( 
     std::getline( headerInfo, stringNumberTasks, '(' );
     istringstream sstreamNumberTasks( stringNumberTasks );
 
-    if ( !( sstreamNumberTasks >> numberTasks ) ||
-         numberTasks == 0 )
+    if( !( sstreamNumberTasks >> numberTasks ) || numberTasks == 0 )
     {
 #ifdef USE_PARAVER_EXCEPTIONS
-      throw TraceHeaderException( TTraceHeaderErrorCode::invalidTaskNumber,
-                                  stringNumberTasks.c_str() );
+      throw TraceHeaderException( TTraceHeaderErrorCode::invalidTaskNumber, stringNumberTasks.c_str() );
 #else
       std::cerr << "[Error] Invalid task number: " << stringNumberTasks << std::endl;
       exit( 1 );
@@ -230,12 +207,12 @@ ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::ProcessModel( 
     }
 
     // Insert tasks
-    for ( TaskOrderT countTask = 0; countTask < numberTasks; ++countTask )
+    for( TaskOrderT countTask = 0; countTask < numberTasks; ++countTask )
     {
       ThreadOrderT numberThreads;
       NodeOrderT numberNode;
 
-      if( globalTasks < std::numeric_limits<TaskOrderT>::max() )
+      if( globalTasks < std::numeric_limits< TaskOrderT >::max() )
       {
         applications[ countAppl ].tasks.push_back( ProcessModelTask< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >( globalTasks ) );
         tasks.push_back( TaskLocation() );
@@ -247,33 +224,29 @@ ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::ProcessModel( 
       std::getline( headerInfo, stringNumberThreads, ':' );
       istringstream sstreamNumberThreads( stringNumberThreads );
 
-      if ( !( sstreamNumberThreads >> numberThreads ) ||
-           numberThreads == 0 )
+      if( !( sstreamNumberThreads >> numberThreads ) || numberThreads == 0 )
       {
 #ifdef USE_PARAVER_EXCEPTIONS
-        throw TraceHeaderException( TTraceHeaderErrorCode::invalidThreadNumber,
-                                    stringNumberThreads.c_str() );
+        throw TraceHeaderException( TTraceHeaderErrorCode::invalidThreadNumber, stringNumberThreads.c_str() );
 #else
-      std::cerr << "[Error] Invalid thread number: " << stringNumberThreads << std::endl;
-      exit( 1 );
+        std::cerr << "[Error] Invalid thread number: " << stringNumberThreads << std::endl;
+        exit( 1 );
 #endif
       }
 
       string stringNumberNode;
 
-      if ( countTask < numberTasks - 1 )
+      if( countTask < numberTasks - 1 )
         std::getline( headerInfo, stringNumberNode, ',' );
       else
         std::getline( headerInfo, stringNumberNode, ')' );
 
       istringstream sstreamNumberNode( stringNumberNode );
 
-      if ( !( sstreamNumberNode >> numberNode ) ||
-           ( numberNode == 0 && existResourceInfo ) )
+      if( !( sstreamNumberNode >> numberNode ) || ( numberNode == 0 && existResourceInfo ) )
       {
 #ifdef USE_PARAVER_EXCEPTIONS
-        throw TraceHeaderException( TTraceHeaderErrorCode::invalidNodeNumber,
-                                    stringNumberNode.c_str() );
+        throw TraceHeaderException( TTraceHeaderErrorCode::invalidNodeNumber, stringNumberNode.c_str() );
 #else
         std::cerr << "[Error] Invalid node number: " << stringNumberNode << std::endl;
         exit( 1 );
@@ -281,20 +254,20 @@ ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::ProcessModel( 
       }
 
       // Insert threads
-      for ( ThreadOrderT countThread = 0; countThread < numberThreads; ++countThread )
+      for( ThreadOrderT countThread = 0; countThread < numberThreads; ++countThread )
       {
-        if( globalThreads < std::numeric_limits<ThreadOrderT>::max() )
+        if( globalThreads < std::numeric_limits< ThreadOrderT >::max() )
         {
           applications[ countAppl ].tasks[ countTask ].threads.push_back(
-              ProcessModelThread< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >( globalThreads, numberNode - 1 ) );
+            ProcessModelThread< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >( globalThreads, numberNode - 1 ) );
           threads.push_back( ThreadLocation() );
-          threads[ globalThreads ].appl = countAppl;
-          threads[ globalThreads ].task = countTask;
+          threads[ globalThreads ].appl   = countAppl;
+          threads[ globalThreads ].task   = countTask;
           threads[ globalThreads ].thread = countThread;
 
           typename map< NodeOrderT, vector< ThreadOrderT > >::iterator nodeIt = threadsPerNode.find( numberNode - 1 );
           if( nodeIt == threadsPerNode.end() )
-            threadsPerNode[ numberNode - 1 ] = vector<ThreadOrderT>();
+            threadsPerNode[ numberNode - 1 ] = vector< ThreadOrderT >();
           threadsPerNode[ numberNode - 1 ].push_back( globalThreads );
 
           ++globalThreads;
@@ -306,7 +279,6 @@ ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::ProcessModel( 
 
     // Gets a useless character: ':' or ','
     headerInfo.get();
-
   }
   // End inserting applications
 
@@ -314,60 +286,41 @@ ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::ProcessModel( 
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
 TaskOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::getFirstTask( ApplOrderT inAppl ) const
 {
   return applications[ inAppl ].tasks[ 0 ].traceGlobalOrder;
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
 TaskOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::getLastTask( ApplOrderT inAppl ) const
 {
-  return applications[ inAppl ].tasks[
-           applications[ inAppl ].tasks.size() - 1 ].traceGlobalOrder;
+  return applications[ inAppl ].tasks[ applications[ inAppl ].tasks.size() - 1 ].traceGlobalOrder;
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
-ThreadOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::getFirstThread( ApplOrderT inAppl,
-                                                                                               TaskOrderT inTask ) const
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
+ThreadOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::getFirstThread( ApplOrderT inAppl, TaskOrderT inTask ) const
 {
   return applications[ inAppl ].tasks[ inTask ].threads[ 0 ].traceGlobalOrder;
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
-ThreadOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::getLastThread( ApplOrderT inAppl,
-                                                                                              TaskOrderT inTask )const
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
+ThreadOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::getLastThread( ApplOrderT inAppl, TaskOrderT inTask ) const
 {
-  return applications[ inAppl ].tasks[ inTask ].threads[
-           applications[ inAppl ].tasks[ inTask ].threads.size() - 1 ].traceGlobalOrder;
+  return applications[ inAppl ].tasks[ inTask ].threads[ applications[ inAppl ].tasks[ inTask ].threads.size() - 1 ].traceGlobalOrder;
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
-void ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::getThreadsPerNode( NodeOrderT inNode,
-                                                                                          vector<ThreadOrderT>& onVector ) const
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
+void ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::getThreadsPerNode( NodeOrderT inNode, vector< ThreadOrderT >& onVector ) const
 {
   onVector.clear();
 
-  if( inNode == 0 ) return;
+  if( inNode == 0 )
+    return;
 
   typename map< NodeOrderT, vector< ThreadOrderT > >::const_iterator nodeIt = threadsPerNode.find( inNode - 1 );
   if( nodeIt != threadsPerNode.end() )
@@ -375,20 +328,14 @@ void ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::getThread
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
 bool ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::isValidThread( ThreadOrderT whichThread ) const
 {
   return whichThread < threads.size();
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
 bool ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::isValidThread( ApplOrderT whichAppl,
                                                                                       TaskOrderT whichTask,
                                                                                       ThreadOrderT whichThread ) const
@@ -397,10 +344,7 @@ bool ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::isValidTh
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
 bool ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::isValidThread( ApplOrderT whichAppl,
                                                                                       TaskOrderT whichTask,
                                                                                       ThreadOrderT whichThread,
@@ -413,41 +357,28 @@ bool ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::isValidTh
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
 bool ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::isValidTask( TaskOrderT whichTask ) const
 {
   return whichTask < tasks.size();
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
-bool ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::isValidTask( ApplOrderT whichAppl,
-                                                                                    TaskOrderT whichTask ) const
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
+bool ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::isValidTask( ApplOrderT whichAppl, TaskOrderT whichTask ) const
 {
   return isValidAppl( whichAppl ) && whichTask < applications[ whichAppl ].tasks.size();
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
 bool ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::isValidAppl( ApplOrderT whichAppl ) const
 {
   return whichAppl < applications.size();
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
 ApplOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::addApplication()
 {
   applications.emplace_back( applications.size() );
@@ -455,10 +386,7 @@ ApplOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::add
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
 TaskOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::addTask( ApplOrderT whichAppl )
 {
   if( whichAppl > applications.size() )
@@ -466,8 +394,7 @@ TaskOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::add
     stringstream tmpstr;
     tmpstr << whichAppl;
 #ifdef USE_PARAVER_EXCEPTIONS
-    throw TraceHeaderException( TTraceHeaderErrorCode::invalidApplNumber,
-                                tmpstr.str().c_str() );
+    throw TraceHeaderException( TTraceHeaderErrorCode::invalidApplNumber, tmpstr.str().c_str() );
 #else
     std::cerr << "[Error] Invalid header time: " << tmpstr.str() << std::endl;
     exit( 1 );
@@ -483,11 +410,8 @@ TaskOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::add
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
-ThreadOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::addThread( ApplOrderT whichAppl, 
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
+ThreadOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::addThread( ApplOrderT whichAppl,
                                                                                           TaskOrderT whichTask,
                                                                                           NodeOrderT execNode )
 {
@@ -496,8 +420,7 @@ ThreadOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::a
     stringstream tmpstr;
     tmpstr << whichAppl;
 #ifdef USE_PARAVER_EXCEPTIONS
-    throw TraceHeaderException( TTraceHeaderErrorCode::invalidApplNumber,
-                                tmpstr.str().c_str() );
+    throw TraceHeaderException( TTraceHeaderErrorCode::invalidApplNumber, tmpstr.str().c_str() );
 #else
     std::cerr << "[Error] Invalid application number: " << tmpstr.str() << std::endl;
     exit( 1 );
@@ -508,8 +431,7 @@ ThreadOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::a
     stringstream tmpstr;
     tmpstr << whichAppl;
 #ifdef USE_PARAVER_EXCEPTIONS
-    throw TraceHeaderException( TTraceHeaderErrorCode::invalidTaskNumber,
-                                tmpstr.str().c_str() );
+    throw TraceHeaderException( TTraceHeaderErrorCode::invalidTaskNumber, tmpstr.str().c_str() );
 #else
     std::cerr << "[Error] Invalid task number: " << tmpstr.str() << std::endl;
     exit( 1 );
@@ -517,8 +439,8 @@ ThreadOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::a
   }
 
   threads.push_back( ThreadLocation() );
-  threads.back().appl = whichAppl;
-  threads.back().task = whichTask;
+  threads.back().appl   = whichAppl;
+  threads.back().task   = whichTask;
   threads.back().thread = applications[ whichAppl ].tasks[ whichTask ].threads.size();
   applications[ whichAppl ].tasks[ whichTask ].threads.emplace_back( threads.size() - 1, execNode );
 
@@ -526,10 +448,7 @@ ThreadOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::a
 }
 
 
-template< typename ApplOrderT, 
-          typename TaskOrderT, 
-          typename ThreadOrderT, 
-          typename NodeOrderT >
+template< typename ApplOrderT, typename TaskOrderT, typename ThreadOrderT, typename NodeOrderT >
 ThreadOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::addApplTaskThread( const ThreadLocation& whichLocation,
                                                                                                   NodeOrderT execNode )
 {
@@ -555,15 +474,15 @@ void dumpProcessModelToFile( ProcessModelT processModel, std::fstream& file, boo
   ostr.precision( 0 );
 
   ostr << processModel.size() << ':';
-  for ( auto iAppl = processModel.cbegin(); iAppl != processModel.cend(); ++iAppl )
+  for( auto iAppl = processModel.cbegin(); iAppl != processModel.cend(); ++iAppl )
   {
-    if ( iAppl != processModel.cbegin() )
+    if( iAppl != processModel.cbegin() )
       ostr << ',';
 
     ostr << iAppl->size() << '(';
-    for ( auto iTask = iAppl->cbegin(); iTask != iAppl->cend(); ++iTask )
+    for( auto iTask = iAppl->cbegin(); iTask != iAppl->cend(); ++iTask )
     {
-      if ( iTask != iAppl->cbegin() )
+      if( iTask != iAppl->cbegin() )
         ostr << ',';
 
       ostr << iTask->size() << ':';
