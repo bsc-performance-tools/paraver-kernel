@@ -106,6 +106,8 @@ class PlainBlocks : public MemoryBlocks
     virtual TRecordTime getLastRecordTime() const override;
     virtual void setFileLoaded( TRecordTime traceEndTime, ProgressController *whichProgress ) override;
 
+    virtual void removeEmptyEndRecords() override;
+
   protected:
   private:
     typedef enum

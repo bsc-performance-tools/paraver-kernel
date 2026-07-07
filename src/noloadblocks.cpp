@@ -704,6 +704,10 @@ void NoLoadBlocks::setFileLoaded( TRecordTime traceEndTime, ProgressController *
   fileLoaded = true;
 }
 
+void NoLoadBlocks::removeEmptyEndRecords()
+{
+}
+
 void NoLoadBlocks::setFirstOffset( PRV_INT64 whichOffset )
 {
   lastPos = whichOffset;

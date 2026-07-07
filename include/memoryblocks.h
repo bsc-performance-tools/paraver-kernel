@@ -116,6 +116,8 @@ class MemoryBlocks
 
     virtual void setFileLoaded( TRecordTime traceEndTime, ProgressController *whichProgress ) = 0;
 
+    virtual void removeEmptyEndRecords() = 0;
+
   protected:
     // Number of new records inserted in the last operation
     PRV_UINT32 countInserted;

@@ -423,3 +423,7 @@ void PlainBlocks::setFileLoaded( TRecordTime traceEndTime, ProgressController *w
     currentBlock[ i ][ currentRecord[ i ] ] = tmpEndRec;
   }
 }
+
+void PlainBlocks::removeEmptyEndRecords()
+{
+}

@@ -135,6 +135,8 @@ class NoLoadBlocks : public MemoryBlocks
     virtual void setFileLoaded( TRecordTime traceEndTime, ProgressController* whichProgress ) override;
     virtual void setFirstOffset( PRV_INT64 whichOffset );
 
+    virtual void removeEmptyEndRecords() override;
+
   protected:
   private:
     struct fileLineData

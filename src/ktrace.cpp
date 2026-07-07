@@ -752,12 +752,14 @@ void KTrace::appendCSV( const std::string& whichFile, ProgressController* progre
   for( unordered_set< TState >::iterator it = hashstates.begin(); it != hashstates.end(); ++it )
     states.insert( *it );
 
+  traceEndTime = memTrace->finish( traceEndTime, this );
 
   file->close();
   delete body;
   body = nullptr;
   delete file;
 
+  blocks->removeEmptyEndRecords();
   blocks->setFileLoaded( traceEndTime, progress );
 }
 

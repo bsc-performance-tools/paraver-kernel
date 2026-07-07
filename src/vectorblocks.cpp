@@ -465,6 +465,19 @@ void VectorBlocks::setFileLoaded( TRecordTime traceEndTime, ProgressController* 
   }
 }
 
+void VectorBlocks::removeEmptyEndRecords()
+{
+  for( size_t iThread = 0; iThread < processModel.totalThreads(); ++iThread )
+  {
+    threadRecords[ iThread ].erase( --threadRecords[ iThread ].end() );
+  }
+
+  for( size_t iCPU = 0; iCPU < resourceModel.totalCPUs(); ++iCPU )
+  {
+    cpuRecords[ iCPU ].erase( --cpuRecords[ iCPU ].end() );
+  }
+}
+
 void VectorBlocks::updateProgress( size_t& progressCounter, ProgressController* whichProgress )
 {
 #ifndef _WIN32

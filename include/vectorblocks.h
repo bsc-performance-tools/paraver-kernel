@@ -91,6 +91,8 @@ class VectorBlocks : public MemoryBlocks
 
     virtual void setFileLoaded( TRecordTime traceEndTime, ProgressController *whichProgress ) override;
 
+    virtual void removeEmptyEndRecords() override;
+
   private:
     std::vector< TThreadRecordContainer > threadRecords;
     std::vector< TCPURecordContainer > cpuRecords;
