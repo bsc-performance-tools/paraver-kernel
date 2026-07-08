@@ -349,8 +349,9 @@ class TraceProxy : public Trace
 
     TraceProxy( KernelConnection* whichKernel, const std::string& whichFile, bool noLoad, ProgressController* progress );
 
+    template< bool appendSymbols >
     void parseSymbolsFile( const std::string& whichFile );
-    template< typename Parser >
+    template< typename Parser, bool appendSymbols >
     void fillSymbols( Parser& whichParser );
     void parseROW( const std::string& whichFile );
 

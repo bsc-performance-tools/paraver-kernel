@@ -94,7 +94,7 @@ TraceProxy::TraceProxy( KernelConnection* whichKernel, const string& whichFile, 
 
   myTrace                = myKernel->newTrace( whichFile, noLoad, progress, traceSize );
   string symbolsFilename = myKernel->getSymbolsFileLocation( whichFile );
-  parseSymbolsFile( symbolsFilename );
+  parseSymbolsFile< false >( symbolsFilename );
   string rowFile = myKernel->getROWFileLocation( whichFile );
   parseROW( rowFile );
 
@@ -170,6 +170,8 @@ TraceProxy::~TraceProxy()
 void TraceProxy::appendCSV( const std::string& whichFile, ProgressController* progress )
 {
   myTrace->appendCSV( whichFile, progress );
+  string symbolsFilename = myKernel->getSymbolsFileLocation( whichFile );
+  parseSymbolsFile< true >( symbolsFilename );
 }
 
 string TraceProxy::getFileName() const
@@ -445,7 +447,7 @@ Trace* TraceProxy::getConcrete() const
   return myTrace;
 }
 
-template< typename Parser >
+template< typename Parser, bool appendSymbols >
 void TraceProxy::fillSymbols( Parser& whichParser )
 {
   rgb tmpColor;
@@ -456,8 +458,15 @@ void TraceProxy::fillSymbols( Parser& whichParser )
     mySemanticColor.setColor( it.first, tmpColor );
   }
 
-  myEventLabels = EventLabels( whichParser );
-  myStateLabels = StateLabels( whichParser );
+  if constexpr( appendSymbols )
+  {
+    myEventLabels.appendEvents( whichParser );
+  }
+  else
+  {
+    myEventLabels = EventLabels( whichParser );
+    myStateLabels = StateLabels( whichParser );
+  }
 
   vector< TEventType > types;
   whichParser.getEventTypes( types );
@@ -467,12 +476,13 @@ void TraceProxy::fillSymbols( Parser& whichParser )
   }
 }
 
+template< bool appendSymbols >
 void TraceProxy::parseSymbolsFile( const string& whichFile )
 {
   if( whichFile.substr( whichFile.length() - 3 ) == "pcf" )
   {
     PCFFileParser<> pcfParser( whichFile );
-    fillSymbols( pcfParser );
+    fillSymbols< PCFFileParser<>, appendSymbols >( pcfParser );
   }
   else if( whichFile.substr( whichFile.length() - 3 ) == "csv" )
   {
@@ -480,7 +490,7 @@ void TraceProxy::parseSymbolsFile( const string& whichFile )
     bool isGradientColor =
       getMetadata().getMetadata< MetadataManager::TAppID::CSV >( tmpMetadata ) && tmpMetadata->getColorMode() != TColorFunction::CODE_COLOR;
     CSVSymbolsParser csvParser( whichFile, isGradientColor );
-    fillSymbols( csvParser );
+    fillSymbols< CSVSymbolsParser, appendSymbols >( csvParser );
   }
 }
 

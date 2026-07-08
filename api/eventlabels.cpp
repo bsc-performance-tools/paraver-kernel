@@ -21,12 +21,13 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
+#include "eventlabels.h"
+
+#include "labelconstructor.h"
+
 #include <algorithm>
 #include <iostream>
 #include <regex>
-
-#include "eventlabels.h"
-#include "labelconstructor.h"
 
 using namespace std;
 
@@ -37,20 +38,21 @@ void initFromParser( EventLabels& eventLabels, const T& parser )
 {
   vector< TEventType > types;
   parser.getEventTypes( types );
-  for ( auto it : types )
+  for( auto it : types )
   {
-    auto tmpEventLabel = parser.getEventLabel( it );
-    eventLabels.eventType2Label[ it ] = tmpEventLabel;
-    eventLabels.label2eventType[ tmpEventLabel ] = it;
+    auto tmpEventLabel                                                                      = parser.getEventLabel( it );
+    eventLabels.eventType2Label[ it ]                                                       = tmpEventLabel;
+    eventLabels.label2eventType[ tmpEventLabel ]                                            = it;
     eventLabels.shortLabel2eventType[ LabelConstructor::transformToShort( tmpEventLabel ) ] = it;
-    eventLabels.eventValue2Label[ it ] = parser.getEventValues( it );
+    eventLabels.eventValue2Label[ it ]                                                      = parser.getEventValues( it );
     for( auto itValue : eventLabels.eventValue2Label[ it ] )
       eventLabels.label2eventValue[ itValue.second ].insert( make_pair( it, itValue.first ) );
   }
 }
 
 EventLabels::EventLabels()
-{}
+{
+}
 
 EventLabels::EventLabels( const PCFFileParser<>& pcfParser )
 {
@@ -63,16 +65,26 @@ EventLabels::EventLabels( const CSVSymbolsParser& csvParser )
 }
 
 EventLabels::~EventLabels()
-{}
-
-void EventLabels::getTypes( vector<TEventType>& onVector ) const
 {
-  for ( map<TEventType, string>::const_iterator it = eventType2Label.begin();
-        it != eventType2Label.end(); ++it )
+}
+
+void EventLabels::appendEvents( const PCFFileParser<>& pcfParser )
+{
+  initFromParser( *this, pcfParser );
+}
+
+void EventLabels::appendEvents( const CSVSymbolsParser& csvParser )
+{
+  initFromParser( *this, csvParser );
+}
+
+void EventLabels::getTypes( vector< TEventType >& onVector ) const
+{
+  for( map< TEventType, string >::const_iterator it = eventType2Label.begin(); it != eventType2Label.end(); ++it )
     onVector.push_back( ( *it ).first );
 }
 
-void EventLabels::getTypes( std::function<void( TEventType, const std::string& )> insert ) const
+void EventLabels::getTypes( std::function< void( TEventType, const std::string& ) > insert ) const
 {
   for( auto el : eventType2Label )
     insert( el.first, el.second );
@@ -80,8 +92,8 @@ void EventLabels::getTypes( std::function<void( TEventType, const std::string& )
 
 bool EventLabels::getEventTypeLabel( TEventType type, string& onStr ) const
 {
-  map<TEventType, string>::const_iterator it = eventType2Label.find( type );
-  if ( it == eventType2Label.end() )
+  map< TEventType, string >::const_iterator it = eventType2Label.find( type );
+  if( it == eventType2Label.end() )
   {
     onStr = unknownLabel;
     return false;
@@ -92,14 +104,14 @@ bool EventLabels::getEventTypeLabel( TEventType type, string& onStr ) const
 
 bool EventLabels::getEventValueLabel( TEventType type, TEventValue value, string& onStr ) const
 {
-  map<TEventType, map<TEventValue, string> >::const_iterator it = eventValue2Label.find( type );
-  if ( it == eventValue2Label.end() )
+  map< TEventType, map< TEventValue, string > >::const_iterator it = eventValue2Label.find( type );
+  if( it == eventValue2Label.end() )
   {
     onStr = unknownLabel;
     return false;
   }
-  map<TEventValue, string>::const_iterator itVal = ( *it ).second.find( value );
-  if ( itVal == ( *it ).second.end() )
+  map< TEventValue, string >::const_iterator itVal = ( *it ).second.find( value );
+  if( itVal == ( *it ).second.end() )
   {
     onStr = unknownLabel;
     return false;
@@ -111,13 +123,13 @@ bool EventLabels::getEventValueLabel( TEventType type, TEventValue value, string
 bool EventLabels::getEventValueLabel( TEventValue value, string& onStr ) const
 {
   bool found = false;
-  onStr = unknownLabel;
+  onStr      = unknownLabel;
 
-  map<TEventType, map<TEventValue, string> >::const_iterator it = eventValue2Label.begin();
-  while ( !found && it != eventValue2Label.end() )
+  map< TEventType, map< TEventValue, string > >::const_iterator it = eventValue2Label.begin();
+  while( !found && it != eventValue2Label.end() )
   {
-    map<TEventValue, string>::const_iterator itVal = ( *it ).second.find( value );
-    if ( itVal != ( *it ).second.end() )
+    map< TEventValue, string >::const_iterator itVal = ( *it ).second.find( value );
+    if( itVal != ( *it ).second.end() )
     {
       onStr = ( *itVal ).second;
       found = true;
@@ -129,44 +141,44 @@ bool EventLabels::getEventValueLabel( TEventValue value, string& onStr ) const
 }
 
 
-bool EventLabels::getValues( TEventType type, vector<string> &values ) const
+bool EventLabels::getValues( TEventType type, vector< string >& values ) const
 {
   map< TEventType, map< TEventValue, string > >::const_iterator it = eventValue2Label.find( type );
-  if ( it == eventValue2Label.end() )
+  if( it == eventValue2Label.end() )
   {
     return false;
   }
   else
   {
-    for ( map< TEventValue, string >::const_iterator it2 = (*it).second.begin(); it2 != (*it).second.end(); ++it2 )
-      values.push_back((*it2).second );
+    for( map< TEventValue, string >::const_iterator it2 = ( *it ).second.begin(); it2 != ( *it ).second.end(); ++it2 )
+      values.push_back( ( *it2 ).second );
   }
 
   return true;
 }
 
 
-bool EventLabels::getValues( TEventType type, map<TEventValue, string> &values ) const
+bool EventLabels::getValues( TEventType type, map< TEventValue, string >& values ) const
 {
   map< TEventType, map< TEventValue, string > >::const_iterator it = eventValue2Label.find( type );
-  if ( it == eventValue2Label.end() )
+  if( it == eventValue2Label.end() )
   {
     return false;
   }
   else
   {
-    for ( map<TEventValue, string>::const_iterator it2 = (*it).second.begin(); it2 != (*it).second.end(); ++it2 )
-      values[ (*it2).first ] = (*it2).second;
+    for( map< TEventValue, string >::const_iterator it2 = ( *it ).second.begin(); it2 != ( *it ).second.end(); ++it2 )
+      values[ ( *it2 ).first ] = ( *it2 ).second;
   }
 
   return true;
 }
 
 
-void EventLabels::getValues( TEventType type, std::function<void( TEventValue, const std::string& )> insert ) const
+void EventLabels::getValues( TEventType type, std::function< void( TEventValue, const std::string& ) > insert ) const
 {
   map< TEventType, map< TEventValue, string > >::const_iterator it = eventValue2Label.find( type );
-  if ( it == eventValue2Label.end() )
+  if( it == eventValue2Label.end() )
     return;
   else
   {
@@ -175,11 +187,11 @@ void EventLabels::getValues( TEventType type, std::function<void( TEventValue, c
   }
 }
 
-bool EventLabels::getEventType( const string& whichTypeLabel, vector<TEventType>& onVector ) const
+bool EventLabels::getEventType( const string& whichTypeLabel, vector< TEventType >& onVector ) const
 {
   if( whichTypeLabel.find( "*" ) == string::npos )
   {
-    map<string, TEventType>::const_iterator it = label2eventType.find( whichTypeLabel );
+    map< string, TEventType >::const_iterator it = label2eventType.find( whichTypeLabel );
     if( it == label2eventType.end() )
     {
       it = shortLabel2eventType.find( LabelConstructor::transformToShort( whichTypeLabel ) );
@@ -187,43 +199,51 @@ bool EventLabels::getEventType( const string& whichTypeLabel, vector<TEventType>
         return false;
     }
 
-    onVector.push_back( (*it).second );
+    onVector.push_back( ( *it ).second );
     return true;
   }
   else
   {
     string strRegex = "";
-    std::for_each( whichTypeLabel.begin(), whichTypeLabel.end(),
-                   [&strRegex]( char elem ) { switch( elem )
-                                              {
-                                                case '*':
-                                                  strRegex += ".*";
-                                                  break;
-                                                case '.':
-                                                case '+':
-                                                case '?':
-                                                case '$':
-                                                case '^':
-                                                case '|':
-                                                case '[':
-                                                case ']':
-                                                case '(':
-                                                case ')':
-                                                case '{':
-                                                case '}':
-                                                  strRegex += '\\';
-                                                  strRegex += elem;
-                                                  break;
-                                                default:
-                                                  strRegex += elem;
-                                                  break;
-                                              }
-                                            } );
+    std::for_each( whichTypeLabel.begin(),
+                   whichTypeLabel.end(),
+                   [ &strRegex ]( char elem )
+                   {
+                     switch( elem )
+                     {
+                       case '*':
+                         strRegex += ".*";
+                         break;
+                       case '.':
+                       case '+':
+                       case '?':
+                       case '$':
+                       case '^':
+                       case '|':
+                       case '[':
+                       case ']':
+                       case '(':
+                       case ')':
+                       case '{':
+                       case '}':
+                         strRegex += '\\';
+                         strRegex += elem;
+                         break;
+                       default:
+                         strRegex += elem;
+                         break;
+                     }
+                   } );
     std::regex tmpRegex( strRegex );
-    
+
     size_t prevSize = onVector.size();
-    std::for_each( eventType2Label.begin(), eventType2Label.end(),
-                   [&onVector, &tmpRegex]( auto elem ) { if( std::regex_match( elem.second, tmpRegex ) ) onVector.push_back( elem.first ); } );
+    std::for_each( eventType2Label.begin(),
+                   eventType2Label.end(),
+                   [ &onVector, &tmpRegex ]( auto elem )
+                   {
+                     if( std::regex_match( elem.second, tmpRegex ) )
+                       onVector.push_back( elem.first );
+                   } );
 
     return prevSize != onVector.size();
   }
@@ -234,11 +254,11 @@ bool EventLabels::getEventType( const string& whichTypeLabel, vector<TEventType>
 
 bool EventLabels::getEventValue( const string& whichValueLabel, multimap< TEventType, TEventValue >& onMap ) const
 {
-  map<string, multimap< TEventType, TEventValue > >::const_iterator it = label2eventValue.find( whichValueLabel );
+  map< string, multimap< TEventType, TEventValue > >::const_iterator it = label2eventValue.find( whichValueLabel );
 
   if( it == label2eventValue.end() )
     return false;
 
-  onMap = (*it).second;
+  onMap = ( *it ).second;
   return true;
 }

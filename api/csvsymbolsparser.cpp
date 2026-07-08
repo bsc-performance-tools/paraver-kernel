@@ -21,18 +21,21 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#include <exception>
-#include <fstream>
-#include <sys/stat.h>
-
 #include "csvsymbolsparser.h"
+
 #include "labelconstructor.h"
 #include "utils/traceparser/pcffileparser.h"
 #include "window.h"
 
+#include <exception>
+#include <fstream>
+#include <sys/stat.h>
+
 CSVSymbolsParser::CSVSymbolsParser( std::string filename, bool isGradientColor )
 {
-  #ifndef _WIN32
+  std::cout << "CSVSymbolsParser filename " << filename << std::endl;
+
+#ifndef _WIN32
   struct stat fileInfo;
 #else
   struct _stat64 fileInfo;
@@ -49,19 +52,19 @@ CSVSymbolsParser::CSVSymbolsParser( std::string filename, bool isGradientColor )
   std::string strLine;
 
   std::ifstream csvFile( filename.c_str() );
-  if ( !csvFile )
+  if( !csvFile )
     throw std::ios_base::failure( "Error opening csv symbols file." );
 
-  while ( !csvFile.eof() )
+  while( !csvFile.eof() )
   {
     getline( csvFile, strLine );
 
-    if ( strLine.length() == 0 )
+    if( strLine.length() == 0 )
       continue;
 
     PCFFileParser<>::trimAndCleanTabs( strLine );
 
-    if ( strLine[ 0 ] == '#' )
+    if( strLine[ 0 ] == '#' )
       continue;
 
     parseLine( strLine, isGradientColor );
@@ -74,67 +77,64 @@ void CSVSymbolsParser::parseLine( const std::string& whichLine, bool isGradientC
 {
   TSemanticValue value, secondValue;
   std::string label;
-  
+
   std::string currentField;
   std::string::size_type fromPos = 0, secondPos = 0;
 
   std::string::size_type toPos = whichLine.find_first_of( " ", fromPos );
-  currentField = whichLine.substr( fromPos, toPos - fromPos );
-  value = std::stod( currentField );
+  currentField                 = whichLine.substr( fromPos, toPos - fromPos );
+  value                        = std::stod( currentField );
+
   if( ( secondPos = currentField.find_first_of( "-" ) ) != std::string::npos )
     secondValue = std::stod( currentField.substr( secondPos + 1 ) );
-  fromPos = toPos + 2;
-  toPos = whichLine.find_first_of( "\"", fromPos );
+  fromPos      = toPos + 2;
+  toPos        = whichLine.find_first_of( "\"", fromPos );
   currentField = whichLine.substr( fromPos, toPos - fromPos );
-  label = currentField;
+  label        = currentField;
   eventLabels.insert( { value, label } );
   if( isGradientColor && secondPos != std::string::npos )
     eventLabels.insert( { secondValue, label } );
 
   if( !isGradientColor )
   {
-    fromPos = toPos + 2;
+    fromPos      = toPos + 2;
     currentField = whichLine.substr( fromPos );
 
     std::string currentColor;
     uint8_t red, green, blue;
 
-    fromPos = 0;
-    toPos = currentField.find_first_of( ",", fromPos );
+    fromPos      = 0;
+    toPos        = currentField.find_first_of( ",", fromPos );
     currentColor = currentField.substr( fromPos, toPos - fromPos );
-    red = std::stoul( currentColor );
-
-    fromPos = toPos + 1;
-    toPos = currentField.find_first_of( ",", fromPos );
+    red          = std::stoul( currentColor );
+    fromPos      = toPos + 1;
+    toPos        = currentField.find_first_of( ",", fromPos );
     currentColor = currentField.substr( fromPos, toPos - fromPos );
-    green = std::stoul( currentColor );
+    green        = std::stoul( currentColor );
 
-    fromPos = toPos + 1;
+    fromPos      = toPos + 1;
     currentColor = currentField.substr( fromPos );
-    blue = std::stoul( currentColor );
+    blue         = std::stoul( currentColor );
 
     CSVSymbolsParser::rgb tmprgb{ red, green, blue };
-      semanticColors.insert( { value, tmprgb } );
+    semanticColors.insert( { value, tmprgb } );
   }
 }
 
 template< typename T >
-void printEvent( std::ofstream& csvFile,
-                 const Timeline *whichTimeline,
-                 const T& firstEvent,
-                 const T& lastEvent = {},
-                 bool isGradientColor = false )
+void printEvent( std::ofstream& csvFile, const Timeline* whichTimeline, const T& firstEvent, const T& lastEvent = {}, bool isGradientColor = false )
 {
   csvFile << std::fixed;
 
   csvFile << firstEvent.first;
-  
+
   if( isGradientColor && firstEvent != lastEvent )
     csvFile << "-" << lastEvent.first;
 
   csvFile << " ";
 
-  auto itLabel = LabelConstructor::semanticLabel( whichTimeline, firstEvent.first, true, ParaverConfig::getInstance()->getTimelinePrecision(), false );
+  auto itLabel =
+    LabelConstructor::semanticLabel( whichTimeline, firstEvent.first, true, ParaverConfig::getInstance()->getTimelinePrecision(), false );
   csvFile << "\"";
   if( itLabel != "" )
     csvFile << itLabel;
@@ -146,19 +146,19 @@ void printEvent( std::ofstream& csvFile,
   }
   csvFile << "\"" << " ";
 
-  csvFile << std::to_string( std::get<0>( firstEvent.second ) ) << ",";
-  csvFile << std::to_string( std::get<1>( firstEvent.second ) ) << ",";
-  csvFile << std::to_string( std::get<2>( firstEvent.second ) );
+  csvFile << std::to_string( std::get< 0 >( firstEvent.second ) ) << ",";
+  csvFile << std::to_string( std::get< 1 >( firstEvent.second ) ) << ",";
+  csvFile << std::to_string( std::get< 2 >( firstEvent.second ) );
 
   csvFile << std::endl;
 }
 
-void CSVSymbolsParser::dumpToFile( const std::string& filename, const Timeline *whichTimeline, bool isGradientColor ) const
+void CSVSymbolsParser::dumpToFile( const std::string& filename, const Timeline* whichTimeline, bool isGradientColor ) const
 {
   std::ofstream csvFile( filename );
 
   std::pair< TSemanticValue, CSVSymbolsParser::rgb > rangeFirstColor = *semanticColors.begin();
-  auto rangeEndColor = rangeFirstColor;
+  auto rangeEndColor                                                 = rangeFirstColor;
 
   for( auto& event : semanticColors )
   {
