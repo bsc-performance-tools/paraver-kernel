@@ -33,8 +33,6 @@
 
 CSVSymbolsParser::CSVSymbolsParser( std::string filename, bool isGradientColor )
 {
-  std::cout << "CSVSymbolsParser filename " << filename << std::endl;
-
 #ifndef _WIN32
   struct stat fileInfo;
 #else
