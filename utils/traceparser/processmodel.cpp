@@ -139,10 +139,10 @@ ThreadOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::g
   if( inAppl >= applications.size() )
     throw TraceHeaderException( TTraceHeaderErrorCode::invalidApplNumber );
 
-  if( inTask >= applications[ inAppl ].tasks.size() )
+  if( inTask >= applications[ inAppl ].size() )
     throw TraceHeaderException( TTraceHeaderErrorCode::invalidTaskNumber );
 
-  if( inThread >= applications[ inAppl ].tasks[ inTask ].threads.size() )
+  if( inThread >= applications[ inAppl ].tasks[ inTask ].size() )
     throw TraceHeaderException( TTraceHeaderErrorCode::invalidThreadNumber );
 #endif
 
