@@ -44,7 +44,6 @@
 #include "kprogresscontroller.h"
 #include "ktracecutter.h"
 #include "paraverconfig.h"
-#include "utils/traceparser/rowfileparser.h"
 #include "utils/traceparser/tracebodyio_v1.h"
 #include "utils/traceparser/traceheader.h"
 
@@ -310,22 +309,28 @@ void KTraceCutter::parseInHeaderAndDumpOut( TraceStream *whichFile, std::fstream
   // This maps (appl, task, thread) -> node (0-based) for all threads in original trace
   for( TApplOrder iAppl = 0; iAppl < traceProcessModel.totalApplications(); ++iAppl )
   {
-    for( TTaskOrder iTask = 0; iTask < traceProcessModel.size(); ++iTask )
+    for( TTaskOrder iTask = traceProcessModel.getFirstTask( iAppl ); iTask <= traceProcessModel.getLastTask( iAppl ); ++iTask )
     {
       TApplOrder tmpAppl;
       TTaskOrder tmpTask;
       traceProcessModel.getTaskLocation( iTask, tmpAppl, tmpTask );
-      if( tmpAppl != iAppl )
-        continue;
 
-      for( TThreadOrder iThread = 0; iThread < traceProcessModel.totalThreads(); ++iThread )
+      for( TThreadOrder iThread = traceProcessModel.getFirstThread( iAppl, tmpTask ); iThread <= traceProcessModel.getLastThread( iAppl, tmpTask );
+           ++iThread )
       {
         TApplOrder threadAppl;
         TTaskOrder threadTask;
         TThreadOrder threadThread;
         traceProcessModel.getThreadLocation( iThread, threadAppl, threadTask, threadThread );
-        if( threadAppl != iAppl || threadTask != tmpTask )
-          continue;
+
+        if( modify_header )
+        {
+          if( ( cut_apps && is_selected_appl( iAppl + 1 ) ) || ( cut_tasks && is_selected_task( iAppl + 1, threadTask + 1 ) ) ||
+              ( cut_threads && is_selected_thread( iAppl + 1, threadTask + 1, threadThread + 1 ) ) )
+          {
+            writtenThreads.insert( { iAppl + 1, threadTask + 1, threadThread + 1 } );
+          }
+        }
 
         TNodeOrder node = traceProcessModel.getNode( iThread );
         // Store with 1-based IDs to match record format
@@ -365,116 +370,13 @@ void KTraceCutter::parseInHeaderAndDumpOut( TraceStream *whichFile, std::fstream
     app_idx++;
   }
 
-  // Dump header in outfile
-  dumpTraceHeader( outfile, tmpDate, traceEndTime, traceTimeUnit, traceResourceModel, traceProcessModel, communicators );
-}
-
-
-// #Paraver (12/03/2018 at 16:11:35.687574899):100:1:1:1(1:1)
-void KTraceCutter::proces_cutter_header( const std::string &header, TraceStream *whichFile, FILE *outfile )
-{
-  int num_comms;
-  char *word;
-  string auxLine;
-
-  char *tmpHeader = (char *)malloc( header.length() + 1 );
-  strcpy( tmpHeader, header.c_str() );
-
-  // PARSE variable header
-  // #Paraver (12/03/2018 at 16:11:35.687574899):
-  char *tmpHeader_r = nullptr;
-  word              = strtok_r( tmpHeader, ")", &tmpHeader_r );
-  current_size += fprintf( outfile, "%s):", word );
-
-  /* Obtaining the trace total time */
-  word = strtok_r( nullptr, ":", &tmpHeader_r );
-  if( strstr( word, "_ns" ) )
+  if( modify_header )
   {
-    word[ strlen( word ) - 3 ] = '\0';
-    trace_time                 = atoll( word );
-
-    if( !by_time )
-    {
-      trace_time = atoll( word );
-      time_min   = ( (double)( trace_time / 100 ) ) * min_perc;
-      time_max   = ( (double)( trace_time / 100 ) ) * max_perc;
-      total_time = time_max - time_min;
-    }
-
-    if( !originalTime )
-    {
-      // because time_min -> 0
-      current_size += fprintf( outfile, "%lld_ns:", total_time );
-    }
-    else
-    {
-      current_size += fprintf( outfile, "%s_ns:", word );
-    }
+    do_modify_header();
+    dumpTraceHeader( outfile, tmpDate, traceEndTime, traceTimeUnit, traceResourceModel, choppedProcessModel, communicators );
   }
   else
-  {
-    trace_time = atoll( word );
-    if( !by_time )
-    {
-      trace_time = atoll( word );
-      time_min   = ( (double)( trace_time / 100 ) ) * min_perc;
-      time_max   = ( (double)( trace_time / 100 ) ) * max_perc;
-      total_time = time_max - time_min;
-    }
-
-    if( !originalTime )
-      current_size += fprintf( outfile, "%lld:", total_time );
-    else
-      current_size += fprintf( outfile, "%s:", word );
-  }
-
-  /* Obtaining the number of communicators */
-  word = strtok_r( nullptr, "\n", &tmpHeader_r ); // put in word the rest of the line
-  current_size += fprintf( outfile, "%s\n", word );
-
-  // Do I have some "," looking back?
-  word = strrchr( word, ',' );
-  if( word != nullptr )
-  {
-    // Is it because some "1:1,1:1)\n" or the expected "1:1,1:1),16\n" ?
-    //                       -^-                               -^-
-    strcpy( tmpHeader_r, word + 1 );            // Copy "1:1)" or "16" in header
-    if( strchr( tmpHeader_r, ')' ) == nullptr ) // Do I have some ")"?
-    {
-      // Hope it's a number and it fits the number of communicator lines...
-      num_comms = atoi( tmpHeader_r );
-      while( num_comms > 0 )
-      {
-        whichFile->getline( auxLine );
-
-        if( auxLine.back() == '\n' )
-          current_size += fprintf( outfile, "%s", auxLine.c_str() );
-        else
-          current_size += fprintf( outfile, "%s\n", auxLine.c_str() );
-        --num_comms;
-      }
-    }
-  }
-
-
-  /* Writing in the header the offset of the cut regard original trace */
-
-  /* Reading first if we have old offsets into the trace */
-  std::streampos lastPos = whichFile->tellg();
-  whichFile->getline( auxLine );
-
-  while( auxLine[ 0 ] == '#' )
-  {
-    if( whichFile->eof() )
-      break;
-
-    current_size += fprintf( outfile, "%s", auxLine.c_str() );
-
-    lastPos = whichFile->tellg();
-    whichFile->getline( auxLine );
-  }
-
-  whichFile->seekg( lastPos );
+    dumpTraceHeader( outfile, tmpDate, traceEndTime, traceTimeUnit, traceResourceModel, traceProcessModel, communicators );
 }
 
 
@@ -716,6 +618,88 @@ constexpr void dump_fields( fstream &file, T current_field, Targs... Fargs )
   dump_fields( file, Fargs... );
 }
 
+void KTraceCutter::do_modify_header()
+{
+  TApplOrder newAppl     = 0;
+  TTaskOrder newTask     = 0;
+  TThreadOrder newThread = 0;
+
+  choppedProcessModel.setReady( true );
+
+  // Sort threads to ensure consistent ordering
+  std::vector< ObjectLocation > sortedThreads( writtenThreads.begin(), writtenThreads.end() );
+  std::sort( sortedThreads.begin(), sortedThreads.end() );
+
+  TApplOrder lastAppl     = 0;
+  TTaskOrder lastTask     = 0;
+  TThreadOrder lastThread = 0;
+
+  std::string tmpRowLabel;
+
+  auto copyRowLabelToNewRowFile = [ & ]( TTraceLevel whichLevel, auto whichObject )
+  {
+    tmpRowLabel = originalRowFile.getRowLabel( whichLevel, whichObject );
+    if( tmpRowLabel != "" )
+      newRowFile.pushBack( whichLevel, tmpRowLabel );
+  };
+
+  for( const auto &t : sortedThreads )
+  {
+    TApplOrder appl     = std::get< 0 >( t );
+    TTaskOrder task     = std::get< 1 >( t );
+    TThreadOrder thread = std::get< 2 >( t );
+
+    // Ensure application exists
+    if( choppedProcessModel.totalApplications() == 0 || appl != lastAppl )
+    {
+      choppedProcessModel.addApplication();
+      ++newAppl;
+      newTask = 0;
+      copyRowLabelToNewRowFile( TTraceLevel::APPLICATION, appl );
+
+      lastAppl   = appl;
+      lastTask   = 0;
+      lastThread = 0;
+    }
+
+    // Ensure task exists
+    if( !choppedProcessModel.isValidTask( 0 ) || task != lastTask )
+    {
+      choppedProcessModel.addTask( newAppl - 1 );
+      ++newTask;
+      copyRowLabelToNewRowFile( TTraceLevel::TASK, task );
+
+      lastTask   = task;
+      lastThread = 0;
+    }
+
+    // Add thread with node from original model
+    TNodeOrder node = 0;
+    auto nodeIt     = threadNodeMap.find( { appl, task, thread } );
+    if( nodeIt != threadNodeMap.end() )
+      node = nodeIt->second;
+
+    if( !choppedProcessModel.isValidThread( 0, 0, 0 ) || thread != lastThread )
+    {
+      newThread = choppedProcessModel.addThread( newAppl - 1, newTask - 1, node );
+
+      originalToNewObjectLocation[ { appl, task, thread } ] = { newAppl, newTask, newThread + 1 };
+
+      TThreadOrder tmpGlobalThread = traceProcessModel.getGlobalThread( appl - 1, task - 1, thread - 1 );
+      copyRowLabelToNewRowFile( TTraceLevel::THREAD, tmpGlobalThread );
+
+      lastThread = thread;
+    }
+  }
+
+  for( TNodeOrder iNode = 0; iNode < traceResourceModel.totalNodes(); ++iNode )
+    copyRowLabelToNewRowFile( TTraceLevel::NODE, iNode );
+
+  for( TNodeOrder iCPU = 0; iCPU < traceResourceModel.totalCPUs(); ++iCPU )
+    copyRowLabelToNewRowFile( TTraceLevel::CPU, iCPU );
+}
+
+
 // Substract to all the times in the trace the first time of the first record
 // Doesn't change header
 void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTraceName,
@@ -761,106 +745,13 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
     // The header ends after communicator lines
   }
 
-  using ObjectLocation = std::tuple< TApplOrder, TTaskOrder, TThreadOrder >;
-  std::map< ObjectLocation, ObjectLocation > originalToNewObjectLocation;
-
-  TApplOrder newAppl     = 0;
-  TTaskOrder newTask     = 0;
-  TThreadOrder newThread = 0;
-
-  std::string rowFileName = LocalKernel::composeName( originalTraceName, "row" );
-  RowFileParser<> originalRowFile( rowFileName );
-  std::string newRowFileName = LocalKernel::composeName( nameOut, "row" );
-
   if( modify_header )
   {
-    ProcessModel<> choppedProcessModel;
-    choppedProcessModel.setReady( true );
-
-    RowFileParser<> newRowFile;
-
-    // Sort threads to ensure consistent ordering
-    std::vector< ObjectLocation > sortedThreads( writtenThreads.begin(), writtenThreads.end() );
-    std::sort( sortedThreads.begin(), sortedThreads.end() );
-
-    TApplOrder lastAppl     = 0;
-    TTaskOrder lastTask     = 0;
-    TThreadOrder lastThread = 0;
-
-    std::string tmpRowLabel;
-
-    auto copyRowLabelToNewRowFile = [ &tmpRowLabel, &originalRowFile, &newRowFile ]( TTraceLevel whichLevel, auto whichObject )
-    {
-      tmpRowLabel = originalRowFile.getRowLabel( whichLevel, whichObject );
-      if( tmpRowLabel != "" )
-        newRowFile.pushBack( whichLevel, tmpRowLabel );
-    };
-
-    for( const auto &t : sortedThreads )
-    {
-      TApplOrder appl     = std::get< 0 >( t );
-      TTaskOrder task     = std::get< 1 >( t );
-      TThreadOrder thread = std::get< 2 >( t );
-
-      // Ensure application exists
-      if( choppedProcessModel.totalApplications() == 0 || appl != lastAppl )
-      {
-        choppedProcessModel.addApplication();
-        ++newAppl;
-        newTask = 0;
-        copyRowLabelToNewRowFile( TTraceLevel::APPLICATION, appl );
-
-        lastAppl   = appl;
-        lastTask   = 0;
-        lastThread = 0;
-      }
-
-      // Ensure task exists
-      if( !choppedProcessModel.isValidTask( 0 ) || task != lastTask )
-      {
-        choppedProcessModel.addTask( newAppl - 1 );
-        ++newTask;
-        copyRowLabelToNewRowFile( TTraceLevel::TASK, task );
-
-        lastTask   = task;
-        lastThread = 0;
-      }
-
-      // Add thread with node from original model
-      TNodeOrder node = 0;
-      auto nodeIt     = threadNodeMap.find( { appl, task, thread } );
-      if( nodeIt != threadNodeMap.end() )
-        node = nodeIt->second;
-
-      if( !choppedProcessModel.isValidThread( 0, 0, 0 ) || thread != lastThread )
-      {
-        newThread = choppedProcessModel.addThread( newAppl - 1, newTask - 1, node );
-
-        originalToNewObjectLocation[ { appl, task, thread } ] = { newAppl, newTask, newThread + 1 };
-
-        TThreadOrder tmpGlobalThread = traceProcessModel.getGlobalThread( appl - 1, task - 1, thread - 1 );
-        copyRowLabelToNewRowFile( TTraceLevel::THREAD, tmpGlobalThread );
-
-        lastThread = thread;
-      }
-    }
-
     dumpTraceHeader( outfile, originalDate, total_time, originalTimeUnit, traceResourceModel, choppedProcessModel, originalCommunicators );
-
-    for( TNodeOrder iNode = 0; iNode < traceResourceModel.totalNodes(); ++iNode )
-      copyRowLabelToNewRowFile( TTraceLevel::NODE, iNode );
-
-    for( TNodeOrder iCPU = 0; iCPU < traceResourceModel.totalCPUs(); ++iCPU )
-      copyRowLabelToNewRowFile( TTraceLevel::CPU, iCPU );
-
-    newRowFile.dumpToFile( newRowFileName );
   }
   else
   {
     dumpTraceHeader( outfile, originalDate, total_time, originalTimeUnit, traceResourceModel, traceProcessModel, originalCommunicators );
-
-    RowFileParser<> newRowFile( originalRowFile );
-    newRowFile.dumpToFile( newRowFileName );
   }
 
   bool end_read = false;
@@ -881,10 +772,6 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
 
   writeOffsetLine( outfile, originalTraceName, timeOffset, time_min, time_max );
 
-  TApplOrder newAppl_2;
-  TTaskOrder newTask_2;
-  TThreadOrder newThread_2;
-
   while( !end_read )
   {
     show_cutter_progress_bar( progress, infile );
@@ -903,16 +790,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
         time_1 = time_1 - timeOffset;
         time_2 = time_2 - timeOffset;
 
-        if( modify_header )
-          std::tie( newAppl, newTask, newThread ) = originalToNewObjectLocation[ { appl, task, thread } ];
-        else
-        {
-          newAppl   = appl;
-          newTask   = task;
-          newThread = thread;
-        }
-
-        dump_fields( outfile, recordType, cpu, newAppl, newTask, newThread, time_1, time_2, state );
+        dump_fields( outfile, recordType, cpu, appl, task, thread, time_1, time_2, state );
         outfile << "\n";
 
         ++current_tmp_lines;
@@ -927,16 +805,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
 
         time_1 = time_1 - timeOffset;
 
-        if( modify_header )
-          std::tie( newAppl, newTask, newThread ) = originalToNewObjectLocation[ { appl, task, thread } ];
-        else
-        {
-          newAppl   = appl;
-          newTask   = task;
-          newThread = thread;
-        }
-
-        dump_fields( outfile, recordType, cpu, newAppl, newTask, newThread, time_1 );
+        dump_fields( outfile, recordType, cpu, appl, task, thread, time_1 );
         outfile << ":";
         std::for_each( itBegin,
                        itEnd,
@@ -961,36 +830,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
         time_3 = time_3 - timeOffset;
         time_4 = time_4 - timeOffset;
 
-        if( modify_header )
-        {
-          std::tie( newAppl, newTask, newThread )       = originalToNewObjectLocation[ { appl, task, thread } ];
-          std::tie( newAppl_2, newTask_2, newThread_2 ) = originalToNewObjectLocation[ { appl_2, task_2, thread_2 } ];
-        }
-        else
-        {
-          newAppl   = appl;
-          newTask   = task;
-          newThread = thread;
-
-          newAppl_2   = appl_2;
-          newTask_2   = task_2;
-          newThread_2 = thread_2;
-        }
-
-        dump_fields( outfile,
-                     recordType,
-                     cpu,
-                     newAppl,
-                     newTask,
-                     newThread,
-                     time_1,
-                     time_2,
-                     cpu_2,
-                     newAppl_2,
-                     newTask_2,
-                     newThread_2,
-                     time_3,
-                     time_4 );
+        dump_fields( outfile, recordType, cpu, appl, task, thread, time_1, time_2, cpu_2, appl_2, task_2, thread_2, time_3, time_4 );
         outfile << ":";
         std::for_each( itBegin,
                        itEnd,
@@ -1066,6 +906,11 @@ void KTraceCutter::execute( std::string trace_in, std::string trace_out, Progres
 
   KProgressController *tmpKProgressControler = nullptr;
 
+  std::string rowFileName    = LocalKernel::composeName( trace_in, "row" );
+  std::string newRowFileName = LocalKernel::composeName( trace_out, "row" );
+
+  originalRowFile = RowFileParser<>( rowFileName );
+
   if( progress != nullptr )
     tmpKProgressControler = (KProgressController *)progress->getConcrete();
 
@@ -1083,7 +928,6 @@ void KTraceCutter::execute( std::string trace_in, std::string trace_out, Progres
 
   // Clear tracking sets for object cutting header rebuild
   writtenThreads.clear();
-  writtenCPUs.clear();
   threadNodeMap.clear();
 
   /* Reading of the program arguments */
@@ -1139,6 +983,14 @@ void KTraceCutter::execute( std::string trace_in, std::string trace_out, Progres
   /* Process header */
   parseInHeaderAndDumpOut( inFile, outfile );
 
+  if( !modify_header )
+  {
+    newRowFile = originalRowFile;
+  }
+
+  if( !newRowFile.empty() )
+    newRowFile.dumpToFile( newRowFileName );
+
   if( !writeToTmpFile )
   {
     writeOffsetLine( outfile, trace_in.c_str(), time_min, time_min, time_max );
@@ -1153,6 +1005,14 @@ void KTraceCutter::execute( std::string trace_in, std::string trace_out, Progres
 
   if( tmpKProgressControler != nullptr )
     end_parsing = tmpKProgressControler->getStop();
+
+  TApplOrder newAppl     = 0;
+  TTaskOrder newTask     = 0;
+  TThreadOrder newThread = 0;
+
+  TApplOrder newAppl_2     = 0;
+  TTaskOrder newTask_2     = 0;
+  TThreadOrder newThread_2 = 0;
 
   /* Processing the trace records */
   while( !end_parsing && !maxTimeReached )
@@ -1307,14 +1167,19 @@ void KTraceCutter::execute( std::string trace_in, std::string trace_out, Progres
           if( time_2 > last_record_time )
             last_record_time = time_2;
 
-          dump_fields( outfile, id, cpu, appl, task, thread, time_1, time_2, state );
+          if( modify_header )
+            std::tie( newAppl, newTask, newThread ) = originalToNewObjectLocation[ { appl, task, thread } ];
+          else
+          {
+            newAppl   = appl;
+            newTask   = task;
+            newThread = thread;
+          }
+
+          dump_fields( outfile, id, cpu, newAppl, newTask, newThread, time_1, time_2, state );
           outfile << "\n";
           if( writeToTmpFile )
             ++total_tmp_lines;
-
-          // Track written objects for header rebuild
-          writtenThreads.insert( { appl, task, thread } );
-          writtenCPUs.insert( cpu );
         }
 
         break;
@@ -1378,7 +1243,16 @@ void KTraceCutter::execute( std::string trace_in, std::string trace_out, Progres
           if( time_1 > last_record_time )
             last_record_time = time_1;
 
-          dump_fields( outfile, id, cpu, appl, task, thread, time_1 );
+          if( modify_header )
+            std::tie( newAppl, newTask, newThread ) = originalToNewObjectLocation[ { appl, task, thread } ];
+          else
+          {
+            newAppl   = appl;
+            newTask   = task;
+            newThread = thread;
+          }
+
+          dump_fields( outfile, id, cpu, newAppl, newTask, newThread, time_1 );
 
           while( itBegin != itEnd )
           {
@@ -1406,10 +1280,6 @@ void KTraceCutter::execute( std::string trace_in, std::string trace_out, Progres
 
           if( writeToTmpFile )
             ++total_tmp_lines;
-
-          // Track written objects for header rebuild
-          writtenThreads.insert( { appl, task, thread } );
-          writtenCPUs.insert( cpu );
 
           /* For closing all the opened calls */
           threadsInfo( appl - 1, task - 1, thread - 1 ).last_time = time_1;
@@ -1476,16 +1346,41 @@ void KTraceCutter::execute( std::string trace_in, std::string trace_out, Progres
             if( times[ 3 ] > last_record_time )
               last_record_time = times[ 3 ];
 
-            dump_fields( outfile, id, cpu, appl, task, thread, time_1, time_2, cpu_2, appl_2, task_2, thread_2, time_3, time_4, size, tag );
+            if( modify_header )
+            {
+              std::tie( newAppl, newTask, newThread )       = originalToNewObjectLocation[ { appl, task, thread } ];
+              std::tie( newAppl_2, newTask_2, newThread_2 ) = originalToNewObjectLocation[ { appl_2, task_2, thread_2 } ];
+            }
+            else
+            {
+              newAppl   = appl;
+              newTask   = task;
+              newThread = thread;
+
+              newAppl_2   = appl_2;
+              newTask_2   = task_2;
+              newThread_2 = thread_2;
+            }
+
+            dump_fields( outfile,
+                         id,
+                         cpu,
+                         newAppl,
+                         newTask,
+                         newThread,
+                         time_1,
+                         time_2,
+                         cpu_2,
+                         newAppl_2,
+                         newTask_2,
+                         newThread_2,
+                         time_3,
+                         time_4,
+                         size,
+                         tag );
             outfile << "\n";
             if( writeToTmpFile )
               ++total_tmp_lines;
-
-            // Track written objects for header rebuild (both sender and receiver)
-            writtenThreads.insert( { appl, task, thread } );
-            writtenThreads.insert( { appl_2, task_2, thread_2 } );
-            writtenCPUs.insert( cpu );
-            writtenCPUs.insert( cpu_2 );
           }
         }
 

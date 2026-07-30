@@ -50,6 +50,8 @@ class RowFileParser
     // whichLevel == NONE (by default) ==> all levels MaxLength
     size_t getMaxLength( TTraceLevel whichLevel = TTraceLevel::NONE ) const;
 
+    bool empty() const;
+
   protected:
   private:
     static const size_t LEVEL_NAME      = 0;
