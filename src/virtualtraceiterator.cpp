@@ -40,7 +40,10 @@ void VirtualTraceIterator::operator--()
 MemoryTrace::iterator &VirtualTraceIterator::operator=( const MemoryTrace::iterator &copy )
 {
   virtualRecord.time = copy.getTime();
-  assignedContent    = copy.clone();
+
+  if( assignedContent != nullptr )
+    delete assignedContent;
+  assignedContent = copy.clone();
 
   return *this;
 }
