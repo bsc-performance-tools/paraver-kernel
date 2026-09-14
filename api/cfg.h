@@ -2053,6 +2053,35 @@ class Analyzer2DIdentifiers : public TagFunction
     static std::string tagCFG;
 };
 
+class Analyzer2DDerivedOperations : public TagFunction
+{
+  public:
+    Analyzer2DDerivedOperations()
+    {
+    }
+
+    virtual ~Analyzer2DDerivedOperations()
+    {
+    }
+    virtual bool parseLine( KernelConnection *whichKernel,
+                            std::istringstream &line,
+                            Trace *whichTrace,
+                            std::vector< Timeline * > &windows,
+                            std::vector< Histogram * > &histograms ) override;
+    static void printLine( std::ostream &cfgFile,
+                           const std::vector< Histogram * > &allHistograms,
+                           const std::vector< Histogram * >::const_iterator it );
+
+    static const std::string &getTagCFG()
+    {
+      return tagCFG;
+    }
+
+
+  protected:
+    static std::string tagCFG;
+};
+
 
 class Analyzer2DName : public TagFunction
 {

@@ -134,6 +134,7 @@ constexpr char OLDCFG_TAG_AN2D_HEIGHT[]               = "Analyzer2D.Height:";
 constexpr char OLDCFG_TAG_AN2D_CONTROL_WINDOW[]       = "Analyzer2D.ControlWindow:";
 constexpr char OLDCFG_TAG_AN2D_DATA_WINDOW[]          = "Analyzer2D.DataWindow:";
 constexpr char CFG_TAG_AN2D_IDENTIFIERS[]             = "Analyzer2D.Identifiers:";
+constexpr char CFG_TAG_AN2D_DERIVED_OPERATIONS[]      = "Analyzer2D.DerivedOperations:";
 constexpr char OLDCFG_TAG_AN2D_STATISTIC[]            = "Analyzer2D.Statistic:";
 constexpr char OLDCFG_TAG_AN2D_CALCULATE_ALL[]        = "Analyzer2D.CalculateAll:";
 constexpr char OLDCFG_TAG_AN2D_NUM_COLUMNS[]          = "Analyzer2D.num_columns:";

@@ -904,6 +904,7 @@ bool CFGLoader::saveCFG( std::ostream& cfgFile,
     if( ( *it )->isDerivedHistogram() )
     {
       Analyzer2DIdentifiers::printLine( cfgFile, allHistograms, it );
+      Analyzer2DDerivedOperations::printLine( cfgFile, allHistograms, it );
     }
     Analyzer2DName::printLine( cfgFile, it );
     Analyzer2DX::printLine( cfgFile, it );
@@ -1174,23 +1175,24 @@ void CFGLoader::loadMap()
 
   // Histogram options
 
-  cfgTagFunctions[ OLDCFG_TAG_AN2D_NEW ]            = new Analyzer2DCreate();
-  cfgTagFunctions[ CFG_TAG_AN2D_TYPE ]              = new Analyzer2DType();
-  cfgTagFunctions[ CFG_TAG_AN2D_IDENTIFIERS ]       = new Analyzer2DIdentifiers();
-  cfgTagFunctions[ OLDCFG_TAG_AN2D_NAME ]           = new Analyzer2DName();
-  cfgTagFunctions[ OLDCFG_TAG_AN2D_X ]              = new Analyzer2DX();
-  cfgTagFunctions[ OLDCFG_TAG_AN2D_Y ]              = new Analyzer2DY();
-  cfgTagFunctions[ OLDCFG_TAG_AN2D_WIDTH ]          = new Analyzer2DWidth();
-  cfgTagFunctions[ OLDCFG_TAG_AN2D_HEIGHT ]         = new Analyzer2DHeight();
-  cfgTagFunctions[ OLDCFG_TAG_AN2D_CONTROL_WINDOW ] = new Analyzer2DControlWindow();
-  cfgTagFunctions[ OLDCFG_TAG_AN2D_DATA_WINDOW ]    = new Analyzer2DDataWindow();
-  cfgTagFunctions[ OLDCFG_TAG_AN2D_STATISTIC ]      = new Analyzer2DStatistic();
-  cfgTagFunctions[ OLDCFG_TAG_AN2D_CALCULATE_ALL ]  = new Analyzer2DCalculateAll();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_NEW ]             = new Analyzer2DCreate();
+  cfgTagFunctions[ CFG_TAG_AN2D_TYPE ]               = new Analyzer2DType();
+  cfgTagFunctions[ CFG_TAG_AN2D_IDENTIFIERS ]        = new Analyzer2DIdentifiers();
+  cfgTagFunctions[ CFG_TAG_AN2D_DERIVED_OPERATIONS ] = new Analyzer2DDerivedOperations();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_NAME ]            = new Analyzer2DName();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_X ]               = new Analyzer2DX();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_Y ]               = new Analyzer2DY();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_WIDTH ]           = new Analyzer2DWidth();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_HEIGHT ]          = new Analyzer2DHeight();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_CONTROL_WINDOW ]  = new Analyzer2DControlWindow();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_DATA_WINDOW ]     = new Analyzer2DDataWindow();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_STATISTIC ]       = new Analyzer2DStatistic();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_CALCULATE_ALL ]   = new Analyzer2DCalculateAll();
   // --> Analyzer2D.hide_empty_cols:
-  cfgTagFunctions[ OLDCFG_TAG_AN2D_HIDE_COLS ]      = new Analyzer2DHideColumns();
-  cfgTagFunctions[ OLDCFG_TAG_AN2D_HORIZONTAL ]     = new Analyzer2DHorizontal();
-  cfgTagFunctions[ OLDCFG_TAG_AN2D_COLOR ]          = new Analyzer2DColor();
-  cfgTagFunctions[ OLDCFG_TAG_AN2D_SEMANTIC_COLOR ] = new Analyzer2DSemanticColor();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_HIDE_COLS ]       = new Analyzer2DHideColumns();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_HORIZONTAL ]      = new Analyzer2DHorizontal();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_COLOR ]           = new Analyzer2DColor();
+  cfgTagFunctions[ OLDCFG_TAG_AN2D_SEMANTIC_COLOR ]  = new Analyzer2DSemanticColor();
   // --> Analyzer2D.TextMode:
   cfgTagFunctions[ OLDCFG_TAG_AN2D_ZOOM ] = new Analyzer2DZoom();
   // --> Analyzer2D.Expanded:
@@ -4534,6 +4536,71 @@ void Analyzer2DIdentifiers::printLine( ostream &cfgFile, const vector< Histogram
       cfgFile << " ";
   }
   cfgFile << endl;
+}
+
+
+string Analyzer2DDerivedOperations::tagCFG = CFG_TAG_AN2D_DERIVED_OPERATIONS;
+
+bool Analyzer2DDerivedOperations::parseLine( KernelConnection *whichKernel,
+                                             istringstream &line,
+                                             Trace *whichTrace,
+                                             vector< Timeline * > &windows,
+                                             vector< Histogram * > &histograms )
+{
+  string tmpString;
+  string strNumOperations;
+  PRV_UINT16 numOperations;
+  string strOperation;
+
+  auto tmpf = []( int c )
+  {
+    return !std::isspace( c );
+  };
+
+  getline( line, tmpString, ' ' );
+  getline( line, strNumOperations, ',' );
+  istringstream tmpNumFunctions( strNumOperations );
+
+  if( !( tmpNumFunctions >> numOperations ) )
+    return false;
+
+  getline( line, tmpString, '{' );
+  for( PRV_UINT16 i = 0; i < numOperations; i++ )
+  {
+    if( i == numOperations - 1 )
+      getline( line, strOperation, '}' );
+    else
+      getline( line, strOperation, ',' );
+    
+    // trim
+    strOperation.erase( std::find_if( strOperation.rbegin(), strOperation.rend(), tmpf ).base(), strOperation.end() );
+    strOperation.erase( strOperation.begin(), std::find_if( strOperation.begin(), strOperation.end(), tmpf ) );
+
+    histograms[ histograms.size() - 1 ]->setDerivedOperation( i, strOperation );
+  }
+  
+  return true;
+}
+
+void Analyzer2DDerivedOperations::printLine( ostream &cfgFile,
+                                             const vector< Histogram * > &histograms,
+                                             const vector< Histogram * >::const_iterator it )
+{
+  auto derivedOperations = ( *it )->getDerivedOperations();
+  PRV_UINT16 numOperations = derivedOperations.size();
+
+  cfgFile << CFG_TAG_AN2D_DERIVED_OPERATIONS << " { " << numOperations << ", { ";
+  int currentOp = 0;
+  for( auto op: derivedOperations )
+  {
+    cfgFile << op;
+    if( ++currentOp == numOperations )
+      cfgFile << " }";
+    else
+      cfgFile << ", ";    
+  }
+
+  cfgFile << " }" << std::endl;
 }
 
 
