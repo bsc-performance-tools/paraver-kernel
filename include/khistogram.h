@@ -535,8 +535,10 @@ class KDerivedHistogram : public KHistogram
     //virtual Histogram *getParent( PRV_UINT16 whichParent ) const override;
     virtual bool isDerivedHistogram() const override;
 
-    virtual void setDerivedOperation( const std::string& whichOperation ) override;
-    virtual std::string getDerivedOperation() const override;
+    virtual void setDerivedOperation( PRV_UINT16 numOp, const std::string& whichOperation ) override;
+    virtual void setDerivedOperations( const std::vector< std::string >& whichOperations ) override;
+    virtual std::string getDerivedOperation( PRV_UINT16 numOp = 0 ) const override;
+    virtual std::vector< std::string > getDerivedOperations() const override;
 
     virtual void getDerivedOperationGroupsLabels( std::vector<std::string>& onVector ) const override;
     virtual void getDerivedOperationLabels( std::vector<std::string>& onVector,
@@ -557,7 +559,7 @@ class KDerivedHistogram : public KHistogram
     THistoCoordsCorrespondenceIndex cellCorrespondence {};
     THistoCoordsCorrespondenceIndex cellCommCorrespondence {};
 
-    std::string currentDerivedOperation = "add";
+    std::vector< std::string > derivedOperations {};
 
   private:
 
@@ -630,24 +632,46 @@ void KDerivedHistogram::combineCellValues( const THistogramCoordinates whichMain
         }
       };
 
-  SemanticDerivedHistogram *op = FunctionManagement<SemanticDerivedHistogram>::getInstance()->getFunction( getDerivedOperation() );
-
+  SemanticDerivedHistogram *op;
+  std::vector< std::string >::iterator currentOp;
   for ( size_t currentStat = 0; currentStat < NUM_STATS; ++currentStat )
   {
-    DerivedHistogramFunctionInfo tmpValues {};
-
-    bool foundVal = getCellValueForStat( MAIN, currentStat, whichMainParentCoordinates, tmpValues );
-
+    DerivedHistogramFunctionInfo relatedCellValues {};
+    
+    //
+    // Read cell values from different histograms
+    //
+    bool foundVal = getCellValueForStat( MAIN, currentStat, whichMainParentCoordinates, relatedCellValues );
     for( const auto& parentCoordinate: whichSecondaryParentsCoordinates )
     {
       auto parentId = std::get<0>( parentCoordinate );
       auto parentCoords = std::get<1>( parentCoordinate );
-
-      foundVal = getCellValueForStat( parentId, currentStat, parentCoords, tmpValues );
-
-      resultSemVals[ currentStat ] = op->execute( &tmpValues );
       
-      updateTotals( resultSemVals[ currentStat ], currentStat, whichMainParentCoordinates );
+      foundVal = getCellValueForStat( parentId, currentStat, parentCoords, relatedCellValues );
     }
+    
+    //
+    // Compute derived operation 
+    //
+    TSemanticValue currentResult = relatedCellValues.values[0];
+    
+    // TODO: prev check: if operations are the same avoid accumulate by pairs
+    
+    // Computed by pairs 
+    DerivedHistogramFunctionInfo tmpPairOfValues {};
+    currentOp = derivedOperations.begin();
+    for( auto currentPos = relatedCellValues.values.cbegin(), nextVal = currentPos + 1; nextVal != relatedCellValues.values.cend(); ++currentPos, ++nextVal )
+    {
+      // std::cout << "combine : read op = " << *currentOp << std::endl;
+      tmpPairOfValues.values = { currentResult, *nextVal };
+      op = FunctionManagement<SemanticDerivedHistogram>::getInstance()->getFunction( *currentOp );
+      currentResult = op->execute( &tmpPairOfValues );
+
+      ++currentOp;
+    }
+
+    // Save result
+    resultSemVals[ currentStat ] = currentResult;
+    updateTotals( currentResult, currentStat, whichMainParentCoordinates );
   }
 };

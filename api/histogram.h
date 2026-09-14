@@ -108,11 +108,18 @@ class Histogram
     virtual void completeClone( Histogram *clonedHistogram )
     {
     }
-    virtual std::string getDerivedOperation() const
+    virtual std::string getDerivedOperation( PRV_UINT16 numOp = 0 ) const
+    {
+      return "add";
+    }
+    virtual std::vector< std::string > getDerivedOperations() const
     {
       return {};
     }
-    virtual void setDerivedOperation( const std::string &whichOperation )
+    virtual void setDerivedOperation( PRV_UINT16 numOp, const std::string &whichOperation )
+    {
+    }
+    virtual void setDerivedOperations( const std::vector< std::string >& whichOperations )
     {
     }
     virtual void getDerivedOperationGroupsLabels( std::vector< std::string > &onVector ) const
@@ -888,8 +895,10 @@ class HistogramProxy : public Histogram
     virtual void removeChild( Histogram *whichHistogram ) override;
     virtual bool haveChildren() const override;
     virtual std::multiset< Histogram * > getChildren() const override;
-    virtual std::string getDerivedOperation() const override;
-    virtual void setDerivedOperation( const std::string &whichOperation ) override;
+    virtual std::string getDerivedOperation( PRV_UINT16 numOp = 0 ) const override;
+    virtual std::vector< std::string > getDerivedOperations() const override;
+    virtual void setDerivedOperation( PRV_UINT16 numOp, const std::string &whichOperation ) override;
+    virtual void setDerivedOperations( const std::vector< std::string >& whichOperations ) override;
     virtual void getDerivedOperationGroupsLabels( std::vector< std::string > &onVector ) const override;
     virtual void getDerivedOperationLabels( std::vector< std::string > &onVector, PRV_UINT32 whichGroup, bool getOriginalList = true ) const override;
     virtual void getDerivedOperationLabelsAndSymbols( std::map< std::string, std::string > &onVector,

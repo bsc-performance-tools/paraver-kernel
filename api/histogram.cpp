@@ -1488,7 +1488,7 @@ Histogram *HistogramProxy::clone()
     // Commented on purpose: histogram SHOULD NOT clone its children
     // clonedHistogramProxy->children = children;
 
-    clonedHistogramProxy->setDerivedOperation( getDerivedOperation() );
+    clonedHistogramProxy->setDerivedOperations( getDerivedOperations() );
 
     // extracted from setParents
     // clonedHistogramProxy->setParents( clonedParents );
@@ -2304,14 +2304,24 @@ std::multiset< Histogram * > HistogramProxy::getChildren() const
   return children;
 }
 
-std::string HistogramProxy::getDerivedOperation() const
+std::string HistogramProxy::getDerivedOperation( PRV_UINT16 numOp ) const
 {
-  return myHisto->getDerivedOperation();
+  return myHisto->getDerivedOperation( numOp );   
 }
 
-void HistogramProxy::setDerivedOperation( const std::string &whichOperation )
+std::vector< std::string > HistogramProxy::getDerivedOperations() const
 {
-  myHisto->setDerivedOperation( whichOperation );
+  return myHisto->getDerivedOperations();
+}
+
+void HistogramProxy::setDerivedOperation( PRV_UINT16 numOp, const std::string &whichOperation )
+{
+  myHisto->setDerivedOperation( numOp, whichOperation );
+}
+
+void HistogramProxy::setDerivedOperations( const std::vector< std::string > &whichOperations )
+{
+  myHisto->setDerivedOperations( whichOperations );
 }
 
 void HistogramProxy::getDerivedOperationGroupsLabels( vector< string > &onVector ) const

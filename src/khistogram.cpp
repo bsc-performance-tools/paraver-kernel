@@ -2643,7 +2643,7 @@ void KDerivedHistogram::completeClone( Histogram *whichSourceHistogram )
   setExtraControlDelta( whichSourceHistogram->getExtraControlDelta() );
 
   rowSelection            = ( ( KDerivedHistogram * )whichSourceHistogram )->rowSelection;
-  currentDerivedOperation = ( ( KDerivedHistogram * )whichSourceHistogram )->currentDerivedOperation;
+  setDerivedOperations( ( ( KDerivedHistogram * )whichSourceHistogram )->getDerivedOperations() );
   cellCorrespondence      = ( ( KDerivedHistogram * )whichSourceHistogram )->cellCorrespondence;
   cellCommCorrespondence  = ( ( KDerivedHistogram * )whichSourceHistogram )->cellCommCorrespondence;
 }
@@ -2653,14 +2653,30 @@ bool KDerivedHistogram::isDerivedHistogram() const
   return true;
 }
 
-void KDerivedHistogram::setDerivedOperation( const std::string &whichOperation )
+void KDerivedHistogram::setDerivedOperation( PRV_UINT16 numOp, const std::string &whichOperation )
 {
-  currentDerivedOperation = whichOperation;
+  if( numOp == derivedOperations.size() )
+    derivedOperations.emplace_back( whichOperation );
+  else if( numOp < derivedOperations.size() )
+    derivedOperations[ numOp ] = whichOperation;
 }
 
-std::string KDerivedHistogram::getDerivedOperation() const
+void KDerivedHistogram::setDerivedOperations( const std::vector< std::string > &whichOperation )
 {
-  return currentDerivedOperation;
+  derivedOperations = whichOperation;
+}
+
+std::string KDerivedHistogram::getDerivedOperation( PRV_UINT16 numOp ) const
+{
+  if( numOp >= derivedOperations.size() )
+    numOp = 0;
+
+  return derivedOperations[ numOp ];
+}
+
+std::vector< std::string > KDerivedHistogram::getDerivedOperations() const
+{
+  return derivedOperations;
 }
 
 void KDerivedHistogram::getDerivedOperationGroupsLabels( vector< std::string > &onVector ) const
