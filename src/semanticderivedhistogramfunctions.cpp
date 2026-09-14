@@ -34,7 +34,9 @@ TSemanticValue DerivedHistogramAdd::execute( const SemanticInfo *info )
 {
   const DerivedHistogramFunctionInfo *myInfo = ( const DerivedHistogramFunctionInfo * ) info;
 
-  TSemanticValue tmp = std::accumulate( myInfo->values.cbegin(), myInfo->values.cend(), tmp );
+  TSemanticValue tmp {};
+  
+  tmp = std::accumulate( myInfo->values.cbegin(), myInfo->values.cend(), tmp );
 
   return tmp;
 }
