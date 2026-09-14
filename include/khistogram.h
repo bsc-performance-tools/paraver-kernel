@@ -634,6 +634,8 @@ void KDerivedHistogram::combineCellValues( const THistogramCoordinates whichMain
 
   SemanticDerivedHistogram *op;
   std::vector< std::string >::iterator currentOp;
+  bool sameDerivedOperationForAll = std::all_of( derivedOperations.cbegin(), derivedOperations.cend(),
+                                                 [ first = derivedOperations.cbegin() ]( auto &op ) { return op == *first; } );
   for ( size_t currentStat = 0; currentStat < NUM_STATS; ++currentStat )
   {
     DerivedHistogramFunctionInfo relatedCellValues {};
@@ -653,21 +655,29 @@ void KDerivedHistogram::combineCellValues( const THistogramCoordinates whichMain
     //
     // Compute derived operation 
     //
-    TSemanticValue currentResult = relatedCellValues.values[0];
+    TSemanticValue currentResult {};
     
-    // TODO: prev check: if operations are the same avoid accumulate by pairs
-    
-    // Computed by pairs 
-    DerivedHistogramFunctionInfo tmpPairOfValues {};
-    currentOp = derivedOperations.begin();
-    for( auto currentPos = relatedCellValues.values.cbegin(), nextVal = currentPos + 1; nextVal != relatedCellValues.values.cend(); ++currentPos, ++nextVal )
+    // Performance: if operations are the same avoid operate by pairs
+    if( sameDerivedOperationForAll )
     {
-      // std::cout << "combine : read op = " << *currentOp << std::endl;
-      tmpPairOfValues.values = { currentResult, *nextVal };
-      op = FunctionManagement<SemanticDerivedHistogram>::getInstance()->getFunction( *currentOp );
-      currentResult = op->execute( &tmpPairOfValues );
+      // Compute alltogether
+      op = FunctionManagement< SemanticDerivedHistogram >::getInstance()->getFunction( *derivedOperations.cbegin() );
+      currentResult = op->execute( &relatedCellValues );
+    }
+    else
+    {
+      // Computed by pairs 
+      DerivedHistogramFunctionInfo tmpPairOfValues {};
+      currentOp = derivedOperations.begin();
+      currentResult = relatedCellValues.values[0];
+      for( auto currentPos = relatedCellValues.values.cbegin(), nextVal = currentPos + 1; nextVal != relatedCellValues.values.cend(); ++currentPos, ++nextVal )
+      {
+        tmpPairOfValues.values = { currentResult, *nextVal };
+        op = FunctionManagement< SemanticDerivedHistogram >::getInstance()->getFunction( *currentOp );
+        currentResult = op->execute( &tmpPairOfValues );
 
-      ++currentOp;
+        ++currentOp;
+      }
     }
 
     // Save result
