@@ -23,6 +23,7 @@
 
 #include "cfg.h"
 
+#include "customalgorithms.h"
 #include "drawmode.h"
 #include "filter.h"
 #include "functionmanagement.h"
@@ -4552,11 +4553,6 @@ bool Analyzer2DDerivedOperations::parseLine( KernelConnection *whichKernel,
   PRV_UINT16 numOperations;
   string strOperation;
 
-  auto tmpf = []( int c )
-  {
-    return !std::isspace( c );
-  };
-
   getline( line, tmpString, ' ' );
   getline( line, strNumOperations, ',' );
   istringstream tmpNumFunctions( strNumOperations );
@@ -4572,11 +4568,7 @@ bool Analyzer2DDerivedOperations::parseLine( KernelConnection *whichKernel,
     else
       getline( line, strOperation, ',' );
     
-    // trim
-    strOperation.erase( std::find_if( strOperation.rbegin(), strOperation.rend(), tmpf ).base(), strOperation.end() );
-    strOperation.erase( strOperation.begin(), std::find_if( strOperation.begin(), strOperation.end(), tmpf ) );
-
-    histograms[ histograms.size() - 1 ]->setDerivedOperation( i, strOperation );
+    histograms[ histograms.size() - 1 ]->setDerivedOperation( i, cepba_tools<std::string>::trim( strOperation ) );
   }
   
   return true;
