@@ -149,3 +149,49 @@ inline int calculate_precision( double value )
 
   return i - pointPos;
 }
+
+/******************************************************************************
+******************   cepba_tools:: ltrim, rtrim, trim   ***********************
+******************************************************************************/
+
+template< typename T >
+class cepba_tools
+{
+  public:
+    ~cepba_tools();
+
+    static T& ltrim( T& s ); // left
+    static T& rtrim( T& s ); // right
+    static T& trim( T& s );  // both sides
+};
+
+
+template< typename T >
+T& cepba_tools<T>::ltrim( T& s )
+{
+  auto tmpf = []( int c )
+  {
+    return !std::isspace( c );
+  };
+  s.erase( s.begin(), std::find_if( s.begin(), s.end(), tmpf ) );
+  return s;
+}
+
+
+template< typename T >
+T& cepba_tools<T>::rtrim( T& s )
+{
+  auto tmpf = []( int c )
+  {
+    return !std::isspace( c );
+  };
+  s.erase( std::find_if( s.rbegin(), s.rend(), tmpf ).base(), s.end() );
+  return s;
+}
+
+
+template< typename T >
+T& cepba_tools<T>::trim( T& s )
+{
+  return ltrim( rtrim( s ) );
+}

@@ -23,6 +23,8 @@
 
 #include "ParaverMetadataManager.h"
 
+#include "customalgorithms.h"
+
 #include <algorithm>
 #include <ctime>
 #include <iomanip>
@@ -36,44 +38,6 @@
 #include "cfg.h"
 
 using namespace std;
-
-class cepba_tools
-{
-  public:
-    ~cepba_tools();
-
-    static std::string& ltrim( std::string& s );
-    static std::string& rtrim( std::string& s );
-    static std::string& trim( std::string& s );
-};
-
-// trim from start
-std::string& cepba_tools::ltrim( std::string& s )
-{
-  auto tmpf = []( int c )
-  {
-    return !std::isspace( c );
-  };
-  s.erase( s.begin(), std::find_if( s.begin(), s.end(), tmpf ) );
-  return s;
-}
-
-// trim from end
-std::string& cepba_tools::rtrim( std::string& s )
-{
-  auto tmpf = []( int c )
-  {
-    return !std::isspace( c );
-  };
-  s.erase( std::find_if( s.rbegin(), s.rend(), tmpf ).base(), s.end() );
-  return s;
-}
-
-// trim from both ends
-std::string& cepba_tools::trim( std::string& s )
-{
-  return ltrim( rtrim( s ) );
-}
 
 
 /******************************************************************************
@@ -470,7 +434,6 @@ void MetadataManager::populateRecord( vector< string >& record, const string& li
   int linepos  = 0;
   int inquotes = false;
   char c;
-  int i;
   int linemax = line.length();
   string curstring;
   record.clear();
@@ -502,12 +465,12 @@ void MetadataManager::populateRecord( vector< string >& record, const string& li
     else if( !inquotes && c == delimiter )
     {
       // end of field
-      record.push_back( cepba_tools::trim( curstring ) );
+      record.push_back( cepba_tools<std::string>::trim( curstring ) );
       curstring = "";
     }
     else if( !inquotes && ( c == '\r' || c == '\n' ) )
     {
-      record.push_back( cepba_tools::trim( curstring ) );
+      record.push_back( cepba_tools<std::string>::trim( curstring ) );
       return;
     }
     else
@@ -517,6 +480,6 @@ void MetadataManager::populateRecord( vector< string >& record, const string& li
     ++linepos;
   }
 
-  record.push_back( cepba_tools::trim( curstring ) );
+  record.push_back( cepba_tools<std::string>::trim( curstring ) );
   return;
 }
