@@ -558,6 +558,7 @@ enum THistogramProperties
   HISTOGRAM_3DDELTA,
   HISTOGRAM_3DPLANE,
   HISTOGRAM_DERIVED_OP,
+  HISTOGRAM_DERIVED_PARENT,
 
   TOTAL_HISTOGRAM_PROPERTIES,
   HISTOGRAM_NULL
@@ -566,7 +567,7 @@ enum THistogramProperties
 static const std::string HistogramPropertyLabels[ TOTAL_HISTOGRAM_PROPERTIES ] = {
   "Name",        "Begin time", "End time",  "Control.Window",   "Control.Minimum",  "Control.Maximum", "Control.Delta",
   "Num Columns", "Type",       "Statistic", "Minimum Gradient", "Maximum Gradient", "Data.Window",     "3D.3rd Window",
-  "3D.Minimum",  "3D.Maximum", "3D.Delta",  "3D.Plane",         "Derived"
+  "3D.Minimum",  "3D.Maximum", "3D.Delta",  "3D.Plane",         "Derived",          "Histogram"
 };
 
 // DIMEMAS
