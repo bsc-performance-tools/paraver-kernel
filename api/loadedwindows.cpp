@@ -111,6 +111,16 @@ Histogram *LoadedWindows::getHisto( TWindowID id ) const
   return histograms.find( id )->second;
 }
 
+TWindowID LoadedWindows::getHistogramID( Histogram *whichHistogram ) const
+{
+  for ( map<TWindowID, Histogram *>::const_iterator it = histograms.begin();
+        it != histograms.end(); ++it )
+    if( ( *it ).second == whichHistogram )
+      return ( *it ).first;
+  
+  return TWindowID{};
+}
+
 void LoadedWindows::getAll( vector<Timeline *>& onVector ) const
 {
   for ( map<TWindowID, Timeline *>::const_iterator it = windows.begin();

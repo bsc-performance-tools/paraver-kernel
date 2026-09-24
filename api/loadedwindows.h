@@ -53,6 +53,7 @@ class LoadedWindows
     void eraseHisto( Histogram *whichHisto );
     Timeline *getWindow( TWindowID id ) const;
     Histogram *getHisto( TWindowID id ) const;
+    TWindowID getHistogramID( Histogram *whichID ) const;
     bool emptyWindows() const;
     bool emptyHistograms() const;
     void getAll( std::vector<Timeline *>& onVector ) const;
