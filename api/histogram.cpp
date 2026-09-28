@@ -2314,6 +2314,19 @@ std::vector< std::string > HistogramProxy::getDerivedOperations() const
   return myHisto->getDerivedOperations();
 }
 
+bool HistogramProxy::sameDerivedOperationsBetweenChildren() const
+{
+  auto tmpOps = myHisto->getDerivedOperations();
+  bool differentOps = std::any_of( tmpOps.cbegin(), tmpOps.cend(),
+                                  [ first = tmpOps.cbegin() ]( const auto& op )
+                                  {
+                                    return op != *first;
+                                  } );
+
+  return !differentOps;
+}
+
+
 void HistogramProxy::setDerivedOperation( PRV_UINT16 numOp, const std::string &whichOperation )
 {
   myHisto->setDerivedOperation( numOp, whichOperation );

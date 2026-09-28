@@ -116,6 +116,11 @@ class Histogram
     {
       return {};
     }
+    virtual bool sameDerivedOperationsBetweenChildren() const
+    {
+      return true;
+    }
+
     virtual void setDerivedOperation( PRV_UINT16 numOp, const std::string &whichOperation )
     {
     }
@@ -897,6 +902,7 @@ class HistogramProxy : public Histogram
     virtual std::multiset< Histogram * > getChildren() const override;
     virtual std::string getDerivedOperation( PRV_UINT16 numOp = 0 ) const override;
     virtual std::vector< std::string > getDerivedOperations() const override;
+    virtual bool sameDerivedOperationsBetweenChildren() const override;
     virtual void setDerivedOperation( PRV_UINT16 numOp, const std::string &whichOperation ) override;
     virtual void setDerivedOperations( const std::vector< std::string >& whichOperations ) override;
     virtual void getDerivedOperationGroupsLabels( std::vector< std::string > &onVector ) const override;
