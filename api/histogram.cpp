@@ -2316,6 +2316,9 @@ std::vector< std::string > HistogramProxy::getDerivedOperations() const
 
 bool HistogramProxy::sameDerivedOperationsBetweenChildren() const
 {
+  if( getNumParents() == 2 )
+    return true;
+
   auto tmpOps = myHisto->getDerivedOperations();
   bool differentOps = std::any_of( tmpOps.cbegin(), tmpOps.cend(),
                                   [ first = tmpOps.cbegin() ]( const auto& op )
