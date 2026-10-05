@@ -561,7 +561,7 @@ TSemanticValue ComposeBurstTime::execute( const SemanticInfo *info )
   if( parameters[ NOT_NULL ][ 0 ] == 1.0 && myInfo->values[ 0 ] == 0.0 )
     return 0.0;
 
-  TSemanticValue result = myInfo->callingInterval->getEnd()->getTime() - myInfo->callingInterval->getBegin()->getTime();
+  TSemanticValue result = std::abs( myInfo->callingInterval->getEnd()->getTime() - myInfo->callingInterval->getBegin()->getTime() );
   result                = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( result );
   return result;
 }
@@ -572,7 +572,7 @@ TSemanticValue ComposeDivideByBurstTime::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
-  TSemanticValue duration = myInfo->callingInterval->getEnd()->getTime() - myInfo->callingInterval->getBegin()->getTime();
+  TSemanticValue duration = std::abs( myInfo->callingInterval->getEnd()->getTime() - myInfo->callingInterval->getBegin()->getTime() );
   if( duration == 0.0 )
     return 0.0;
 

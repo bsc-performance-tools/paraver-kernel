@@ -917,7 +917,7 @@ class ControlDerivedAverage : public SemanticDerived
     }
 
   private:
-    static const bool initFromBegin  = false;
+    static const bool initFromBegin  = true;
     static const bool controlDerived = true;
     static std::string name;
 

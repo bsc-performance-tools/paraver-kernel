@@ -261,3 +261,10 @@ size_t RowFileParser< dummy >::getMaxLength( TTraceLevel whichLevel ) const
 
   return std::get< LEVEL_MAXLENGTH >( currentLevelLabels->second );
 }
+
+
+template< typename dummy >
+bool RowFileParser< dummy >::empty() const
+{
+  return levelLabels.empty();
+}

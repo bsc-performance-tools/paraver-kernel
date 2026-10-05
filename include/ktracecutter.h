@@ -30,6 +30,7 @@
 #include "tracestream.h"
 #include "utils/traceparser/processmodel.h"
 #include "utils/traceparser/resourcemodel.h"
+#include "utils/traceparser/rowfileparser.h"
 
 #include <list>
 #include <map>
@@ -69,7 +70,6 @@ class KTraceCutter : public TraceCutter
     bool originalTime;
     unsigned int max_size;
     bool is_zip;
-    bool modify_header = false;
     unsigned int cut_tasks;
     unsigned int cut_apps;
     unsigned int cut_threads;
@@ -166,8 +166,16 @@ class KTraceCutter : public TraceCutter
 
     // Tracking of actually-written objects for header rebuild
     std::set< std::tuple< int, int, int > > writtenThreads;     // (appl, task, thread) - 1-based
-    std::set< int > writtenCPUs;                                // 1-based CPU IDs
     std::map< std::tuple< int, int, int >, int > threadNodeMap; // (appl, task, thread) -> node (0-based)
+
+    bool modify_header   = false;
+    using ObjectLocation = std::tuple< TApplOrder, TTaskOrder, TThreadOrder >;
+    std::map< ObjectLocation, ObjectLocation > originalToNewObjectLocation;
+
+    ProcessModel<> choppedProcessModel;
+
+    RowFileParser<> originalRowFile;
+    RowFileParser<> newRowFile;
 
     // Original header metadata to preserve
     std::string originalDate;
@@ -175,8 +183,9 @@ class KTraceCutter : public TraceCutter
     std::vector< std::string > originalCommunicators;
 
     void read_cutter_params();
-    void proces_cutter_header( const std::string &header, TraceStream *whichFile, FILE *outfile );
     void parseInHeaderAndDumpOut( TraceStream *whichFile, std::fstream &outfile );
+
+    void do_modify_header();
 
     template< typename T >
     void writeOffsetLine( T &outfile,
