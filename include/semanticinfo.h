@@ -25,32 +25,34 @@
 #pragma once
 
 
-#include <vector>
-#include "paraverkerneltypes.h"
 #include "interval.h"
 #include "memorytrace.h"
+#include "paraverkerneltypes.h"
+
+#include <vector>
 
 struct SemanticInfo
 {
-  Interval *callingInterval;
+    Interval *callingInterval;
 };
 
 
-struct SemanticThreadInfo: public SemanticInfo
+struct SemanticThreadInfo : public SemanticInfo
 {
-  MemoryTrace::iterator *it;
+    MemoryTrace::iterator *it;
 };
 
 
-struct SemanticHighInfo: public SemanticInfo
+struct SemanticHighInfo : public SemanticInfo
 {
-  std::vector<TSemanticValue> values;
-  TObjectOrder lastChanged;
-  TRecordTime controlBeginTime;
-  TRecordTime controlEndTime;
-  TRecordTime dataBeginTime;
-  TRecordTime dataEndTime;
-  bool newControlBurst;
+    std::vector< TSemanticValue > values;
+    TObjectOrder lastChanged;
+    TRecordTime controlBeginTime;
+    TRecordTime controlEndTime;
+    TSemanticValue controlValue;
+    TRecordTime dataBeginTime;
+    TRecordTime dataEndTime;
+    bool newControlBurst;
 };
 
 // TODO: possible second version to avoid SemanticInfo empty *callingInterval
@@ -58,7 +60,5 @@ struct SemanticHighInfo: public SemanticInfo
 // struct DerivedHistogramFunctionInfo
 struct DerivedHistogramFunctionInfo : public SemanticInfo
 {
-  std::vector<TSemanticValue> values; // Intermediate common struct?
+    std::vector< TSemanticValue > values; // Intermediate common struct?
 };
-
-
