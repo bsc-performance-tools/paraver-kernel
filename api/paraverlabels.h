@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "utils/traceparser/tracelabels.h"
 #include "prvtime.h"
+#include "utils/traceparser/tracelabels.h"
 
 constexpr char CFG_CURRENT_VERSION[] = "3.4";
 
@@ -34,6 +34,7 @@ constexpr char OLDCFG_HEADER_NUM_WINDOWS[]       = "number_of_windows";
 constexpr char OLDCFG_HEADER_BEGIN_DESCRIPTION[] = "begin_description";
 constexpr char OLDCFG_HEADER_END_DESCRIPTION[]   = "end_description";
 
+constexpr char CFG_LVL_DERIVED[]     = "derived";
 constexpr char OLDCFG_LVL_APPL[]     = "appl";
 constexpr char OLDCFG_LVL_PTASK[]    = "ptask";
 constexpr char OLDCFG_LVL_WORKLOAD[] = "workload";
@@ -275,27 +276,10 @@ constexpr char CFG_TAG_AN2D_USE_FIXED_DELTA[]    = "Analyzer2D.UseFixedDelta:";
 constexpr char CFG_VAL_AN2D_TYPE_SINGLE[]   = "single";
 constexpr char CFG_VAL_AN2D_TYPE_COMPOSED[] = "composed";
 
-static const std::string LABEL_TIMEUNIT[ TIME_SCALE_SIZE ] =
-{
-  "ns",
-  "us",
-  "ms",
-  "s",
-  "m",
-  "h",
-  "d"
-};
+static const std::string LABEL_TIMEUNIT[ TIME_SCALE_SIZE ] = { "ns", "us", "ms", "s", "m", "h", "d" };
 
-static const std::string FULL_LABEL_TIMEUNIT[ TIME_SCALE_SIZE ] =
-{
-  "Nanoseconds",
-  "Microseconds",
-  "Milliseconds",
-  "Seconds",
-  "Minutes",
-  "Hours",
-  "Days"
-};
+static const std::string FULL_LABEL_TIMEUNIT[ TIME_SCALE_SIZE ] = { "Nanoseconds", "Microseconds", "Milliseconds", "Seconds",
+                                                                    "Minutes",     "Hours",        "Days" };
 
 // New cfg label definitions
 constexpr char CFG_SHEBANG[]                  = "#ParaverCFG";
