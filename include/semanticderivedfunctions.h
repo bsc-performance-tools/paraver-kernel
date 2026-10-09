@@ -580,7 +580,8 @@ class ControlDerivedMaximum : public SemanticDerived
   public:
     typedef enum
     {
-      MAXPARAM = 0
+      NOT_NULL = 0,
+      MAXPARAM
     } TParam;
 
     ControlDerivedMaximum()
@@ -625,13 +626,20 @@ class ControlDerivedMaximum : public SemanticDerived
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if( whichParam >= getMaxParam() )
+      TParamValue tmp;
+
+      if( whichParam == TParam::NOT_NULL )
+        tmp.push_back( 0.0 );
+      else if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return (TParamValue)0;
+
+      return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if( whichParam >= getMaxParam() )
+      if( whichParam == TParam::NOT_NULL )
+        return "Not Null";
+      else if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
@@ -648,7 +656,8 @@ class ControlDerivedMinimum : public SemanticDerived
   public:
     typedef enum
     {
-      MAXPARAM = 0
+      NOT_NULL = 0,
+      MAXPARAM
     } TParam;
 
     ControlDerivedMinimum()
@@ -693,13 +702,20 @@ class ControlDerivedMinimum : public SemanticDerived
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if( whichParam >= getMaxParam() )
+      TParamValue tmp;
+
+      if( whichParam == TParam::NOT_NULL )
+        tmp.push_back( 0.0 );
+      else if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return (TParamValue)0;
+
+      return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if( whichParam >= getMaxParam() )
+      if( whichParam == TParam::NOT_NULL )
+        return "Not Null";
+      else if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
@@ -716,7 +732,8 @@ class ControlDerivedAdd : public SemanticDerived
   public:
     typedef enum
     {
-      MAXPARAM = 0
+      NOT_NULL = 0,
+      MAXPARAM
     } TParam;
 
     ControlDerivedAdd()
@@ -761,13 +778,20 @@ class ControlDerivedAdd : public SemanticDerived
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if( whichParam >= getMaxParam() )
+      TParamValue tmp;
+
+      if( whichParam == TParam::NOT_NULL )
+        tmp.push_back( 0.0 );
+      else if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return (TParamValue)0;
+
+      return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if( whichParam >= getMaxParam() )
+      if( whichParam == TParam::NOT_NULL )
+        return "Not Null";
+      else if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
@@ -784,7 +808,8 @@ class ControlDerivedEnumerate : public SemanticDerived
   public:
     typedef enum
     {
-      MAXPARAM = 0
+      NOT_NULL = 0,
+      MAXPARAM
     } TParam;
 
     ControlDerivedEnumerate()
@@ -831,13 +856,20 @@ class ControlDerivedEnumerate : public SemanticDerived
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if( whichParam >= getMaxParam() )
+      TParamValue tmp;
+
+      if( whichParam == TParam::NOT_NULL )
+        tmp.push_back( 0.0 );
+      else if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return (TParamValue)0;
+
+      return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if( whichParam >= getMaxParam() )
+      if( whichParam == TParam::NOT_NULL )
+        return "Not Null";
+      else if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
@@ -858,7 +890,8 @@ class ControlDerivedAverage : public SemanticDerived
   public:
     typedef enum
     {
-      MAXPARAM = 0
+      NOT_NULL = 0,
+      MAXPARAM
     } TParam;
 
     ControlDerivedAverage()
@@ -905,13 +938,20 @@ class ControlDerivedAverage : public SemanticDerived
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
-      if( whichParam >= getMaxParam() )
+      TParamValue tmp;
+
+      if( whichParam == TParam::NOT_NULL )
+        tmp.push_back( 0.0 );
+      else if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return (TParamValue)0;
+
+      return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
-      if( whichParam >= getMaxParam() )
+      if( whichParam == TParam::NOT_NULL )
+        return "Not Null";
+      else if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }

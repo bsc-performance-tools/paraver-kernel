@@ -159,6 +159,9 @@ TSemanticValue ControlDerivedMaximum::execute( const SemanticInfo *info )
   TSemanticValue tmp             = 0;
   const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
+  if( parameters[ NOT_NULL ][ 0 ] == 1.0 && myInfo->controlValue == 0.0 )
+    return 0.0;
+
   tmp = myInfo->values[ 0 ] > myInfo->values[ 1 ] ? myInfo->values[ 0 ] : myInfo->values[ 1 ];
 
   return tmp;
@@ -170,6 +173,9 @@ TSemanticValue ControlDerivedMinimum::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp             = 0;
   const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
+
+  if( parameters[ NOT_NULL ][ 0 ] == 1.0 && myInfo->controlValue == 0.0 )
+    return 0.0;
 
   if( myInfo->newControlBurst || myInfo->values[ 0 ] == 0.0 )
     tmp = myInfo->values[ 1 ];
@@ -186,6 +192,9 @@ TSemanticValue ControlDerivedAdd::execute( const SemanticInfo *info )
   TSemanticValue tmp             = 0;
   const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
 
+  if( parameters[ NOT_NULL ][ 0 ] == 1.0 && myInfo->controlValue == 0.0 )
+    return 0.0;
+
   tmp = myInfo->values[ 0 ] + myInfo->values[ 1 ];
 
   return tmp;
@@ -197,6 +206,9 @@ TSemanticValue ControlDerivedEnumerate::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
   TObjectOrder tmpOrder          = myInfo->callingInterval->getOrder();
+
+  if( parameters[ NOT_NULL ][ 0 ] == 1.0 && myInfo->controlValue == 0.0 )
+    return 0.0;
 
   if( prevControlValue.find( tmpOrder ) == prevControlValue.end() )
   {
@@ -230,6 +242,9 @@ TSemanticValue ControlDerivedAverage::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = static_cast< const SemanticHighInfo * >( info );
   TObjectOrder tmpOrder          = myInfo->callingInterval->getOrder();
+
+  if( parameters[ NOT_NULL ][ 0 ] == 1.0 && myInfo->controlValue == 0.0 )
+    return 0.0;
 
   if( totalValue.find( tmpOrder ) == totalValue.end() || myInfo->newControlBurst )
   {
