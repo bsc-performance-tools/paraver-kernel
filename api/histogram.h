@@ -877,7 +877,9 @@ class Histogram
 class HistogramProxy : public Histogram
 {
   public:
-    static bool compatibleForDerivation( Histogram *whichHistogram1, Histogram *whichHistogram2 );
+    static bool compatibleForDerivation( Histogram *whichHistogram1,
+                                         Histogram *whichHistogram2,
+                                         std::string& compatibilityMessage );
 
     virtual ~HistogramProxy();
 

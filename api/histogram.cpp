@@ -2249,18 +2249,41 @@ bool HistogramProxy::isDerivedHistogram() const
   return derivedHistogram;
 }
 
-bool HistogramProxy::compatibleForDerivation( Histogram *whichHistogram1, Histogram *whichHistogram2 )
+bool HistogramProxy::compatibleForDerivation( Histogram *whichHistogram1,
+                                              Histogram *whichHistogram2,
+                                              std::string& compatibilityMessage )
 {
+  compatibilityMessage  = ""; // Default for compatible histograms: no message
+
   std::string tmpStat1 = whichHistogram1->getCurrentStat();
   std::string tmpStat2 = whichHistogram2->getCurrentStat();
   bool sameStatType    = ( !whichHistogram1->isCommunicationStat( tmpStat1 ) && !whichHistogram2->isCommunicationStat( tmpStat2 ) ) ||
                          ( whichHistogram1->isCommunicationStat( tmpStat1 ) && whichHistogram2->isCommunicationStat( tmpStat2 ) );
+  if( !sameStatType )
+  {
+    compatibilityMessage = "Semantic and Communication histograms can't be derived.";
+    return false;
+  }
 
-  // TODO: 3D? only showed plane or whole cube?
-  bool sameRows    = whichHistogram1->getNumRows() == whichHistogram2->getNumRows();
+
+  bool sameRows = whichHistogram1->getNumRows() == whichHistogram2->getNumRows();
+  if( !sameRows )
+  {
+    compatibilityMessage = "Histograms with different number of rows can't be derived.";
+    return false;
+  }
+
+
   bool sameColumns = whichHistogram1->getNumColumns() == whichHistogram2->getNumColumns();
+  if( !sameColumns )
+  {
+    compatibilityMessage = "Histograms with different number of columns can't be derived.";
+    return false;
+  }
 
-  return ( sameStatType && sameRows && sameColumns );
+  
+  //return ( sameStatType && sameRows && sameColumns );
+  return true;
 }
 
 Histogram *HistogramProxy::getConcrete() const
