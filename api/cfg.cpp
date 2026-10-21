@@ -6607,3 +6607,52 @@ void TagAliasParamCFG4D::printAliasList( std::ostream &cfgFile, const vector< Ti
     cfgFile << level << "|" << function << "|" << param << "|" << aliasName << endl;
   }
 }
+
+
+string TagAliasDerivedHistogramOperationCFG4D::tagCFG = "";
+
+
+bool TagAliasDerivedHistogramOperationCFG4D::parseLine( KernelConnection *whichKernel,
+                                                        istringstream &line,
+                                                        Trace *whichTrace,
+                                                        vector< Timeline * > &windows,
+                                                        vector< Histogram * > &histograms )
+
+{
+  string currentOperationCFG4DTag;
+  string currentOperationCFG4DNum;
+  string currentOperationCFG4DAlias;
+
+  getline( line, currentOperationCFG4DTag, '|' );
+  getline( line, currentOperationCFG4DNum, '|' );
+  getline( line, currentOperationCFG4DAlias );
+
+  if( !isWindowTag )
+  {
+    if( histograms[ histograms.size() - 1 ] == nullptr )
+      return false;
+
+    if( !histograms[ histograms.size() - 1 ]->isDerivedHistogram() )
+      return false;
+
+    PRV_UINT32 auxNumOperation;
+    istringstream tmpValue( currentOperationCFG4DNum );
+    if( !( tmpValue >> auxNumOperation ) )
+      return false;
+
+    histograms[ histograms.size() - 1 ]->setCFG4DOperationAlias( currentOperationCFG4DTag, auxNumOperation, currentOperationCFG4DAlias );
+  }
+
+  return true;
+}
+
+void TagAliasDerivedHistogramOperationCFG4D::printAliasList( std::ostream &cfgFile, const vector< Histogram * >::const_iterator it )
+{
+  map< std::pair< std::string, int >, std::string > tmpAlias( ( *it )->getCFG4DOperationsAliasList() );
+
+  for( auto item: tmpAlias )
+  {
+    cfgFile << CFG_TAG_DERIVED_HISTOGRAM_OPERATION_ALIAS_CFG4D << " ";
+    cfgFile << item.first.first << "|" << std::to_string( item.first.second ) << "|" << item.second << endl;
+  }
+}

@@ -1586,6 +1586,7 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->CFG4DMode            = CFG4DMode;
   clonedHistogramProxy->propertiesAliasCFG4D = propertiesAliasCFG4D;
   clonedHistogramProxy->statisticsAliasCFG4D = statisticsAliasCFG4D;
+  clonedHistogramProxy->operationsAliasCFG4D = operationsAliasCFG4D;
 
   clonedHistogramProxy->setReady( isReady() );
 
@@ -1952,6 +1953,23 @@ bool HistogramProxy::existsCFG4DAlias( const THistogramProperties &propertyIndex
   return found;
 }
 
+bool HistogramProxy::existsCFG4DAlias( const TDerivedHistogramProperties &propertyIndex ) const
+{
+  bool found = false;
+
+  if( propertiesAliasCFG4D.size() > 0 )
+  {
+    string property( DerivedHistogramPropertyLabels[ propertyIndex ] );
+
+    map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
+    if( itAlias != propertiesAliasCFG4D.end() )
+    {
+      found = true;
+    }
+  }
+
+  return found;
+}
 
 string HistogramProxy::getCFG4DAlias( const string &property ) const
 {
@@ -1988,6 +2006,23 @@ string HistogramProxy::getCFG4DAlias( const THistogramProperties &propertyIndex 
   return alias;
 }
 
+string HistogramProxy::getCFG4DAlias( const TDerivedHistogramProperties &propertyIndex ) const
+{
+  string alias = "";
+
+  if( propertiesAliasCFG4D.size() > 0 )
+  {
+    string property( DerivedHistogramPropertyLabels[ propertyIndex ] );
+
+    map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
+    if( itAlias != propertiesAliasCFG4D.end() )
+    {
+      alias = itAlias->second;
+    }
+  }
+
+  return alias;
+}
 
 void HistogramProxy::setCFG4DAlias( const string &property, const string &alias )
 {
@@ -1997,6 +2032,11 @@ void HistogramProxy::setCFG4DAlias( const string &property, const string &alias 
 void HistogramProxy::setCFG4DStatisticAlias( const string &statistic, const string &alias )
 {
   statisticsAliasCFG4D[ statistic ] = alias;
+}
+
+void HistogramProxy::setCFG4DOperationAlias( const std::string &operation, const int numOperation, const std::string &alias )
+{
+  operationsAliasCFG4D[ std::make_pair( operation, numOperation ) ] = alias;
 }
 
 
@@ -2011,6 +2051,12 @@ void HistogramProxy::setCFG4DStatisticsAliasList( const map< string, string > &s
   statisticsAliasCFG4D = statisticsAliasList;
 }
 
+
+void HistogramProxy::setCFG4DOperationsAliasList( const map< std::pair< std::string, int >, std::string > &operationsAliasList )
+{
+  operationsAliasCFG4D = operationsAliasList;
+}
+
 const map< string, string > HistogramProxy::getCFG4DAliasList() const
 {
   return propertiesAliasCFG4D;
@@ -2021,13 +2067,28 @@ const map< string, string > HistogramProxy::getCFG4DStatisticsAliasList() const
   return statisticsAliasCFG4D;
 }
 
+const map< std::pair< string, int >, string > HistogramProxy::getCFG4DOperationsAliasList() const
+{
+  return operationsAliasCFG4D;
+}
+
 const vector< string > HistogramProxy::getCFG4DFullTagList()
 {
   vector< string > tags;
 
-  for( int iTag = 0; iTag < TOTAL_HISTOGRAM_PROPERTIES; ++iTag )
+  if( isDerivedHistogram() )
   {
-    tags.push_back( HistogramPropertyLabels[ iTag ] );
+    for( int iTag = 0; iTag < TOTAL_DERIVED_HISTOGRAM_PROPERTIES; ++iTag )
+    {
+      tags.push_back( DerivedHistogramPropertyLabels[ iTag ] );
+    }
+  }
+  else
+  {
+    for( int iTag = 0; iTag < TOTAL_HISTOGRAM_PROPERTIES; ++iTag )
+    {
+      tags.push_back( HistogramPropertyLabels[ iTag ] );
+    }
   }
 
   return tags;
@@ -2370,49 +2431,14 @@ void HistogramProxy::getDerivedOperationGroupsLabels( vector< string > &onVector
 
 void HistogramProxy::getDerivedOperationLabels( vector< string > &onVector, PRV_UINT32 whichGroup, bool getOriginalList ) const
 {
-  if( getOriginalList )
-  {
-    myHisto->getDerivedOperationLabels( onVector, whichGroup, getOriginalList );
-  }
-  else
-  {
-    // TODO: decide if derived operation can be renamed in CFG4D
-    // vector< string > fullList;
-    // myHisto->getDerivedOperationLabels( fullList, whichGroup );
-    // map< string, string >::const_iterator itStat;
-
-    // for( vector< string >::iterator it = fullList.begin(); it != fullList.end(); ++it )
-    // {
-    //   itStat = histogramDerivedOperationAliasCFG4D.find( *it );
-    //   if ( itStat != histogramDerivedOperationAliasCFG4D.end() )
-    //   onVector.push_back( itStat->second );
-    // }
-  }
+  myHisto->getDerivedOperationLabels( onVector, whichGroup, getOriginalList );
 }
 
 void HistogramProxy::getDerivedOperationLabelsAndSymbols( std::map< std::string, std::string > &onVector,
                                                           PRV_UINT32 whichGroup,
                                                           bool getOriginalList ) const
 {
-  // TODO check again: cut & paste of previous method
-  if( getOriginalList )
-  {
-    myHisto->getDerivedOperationLabelsAndSymbols( onVector, whichGroup, getOriginalList );
-  }
-  else
-  {
-    // TODO: decide if derived operation can be renamed in CFG4D
-    // vector< string > fullList;
-    // myHisto->getDerivedOperationLabels( fullList, whichGroup );
-    // map< string, string >::const_iterator itStat;
-
-    // for( vector< string >::iterator it = fullList.begin(); it != fullList.end(); ++it )
-    // {
-    //   itStat = histogramDerivedOperationAliasCFG4D.find( *it );
-    //   if ( itStat != histogramDerivedOperationAliasCFG4D.end() )
-    //   onVector.push_back( itStat->second );
-    // }
-  }
+  myHisto->getDerivedOperationLabelsAndSymbols( onVector, whichGroup, getOriginalList );
 }
 
 void HistogramProxy::setReady( bool whichReady = true )

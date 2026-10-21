@@ -3592,3 +3592,32 @@ class TagAliasParamCFG4D : public TagFunction
   protected:
     static std::string tagCFG;
 };
+
+
+class TagAliasDerivedHistogramOperationCFG4D : public TagFunction
+{
+  public:
+    TagAliasDerivedHistogramOperationCFG4D()
+    {
+    }
+
+    virtual ~TagAliasDerivedHistogramOperationCFG4D()
+    {
+    }
+    virtual bool parseLine( KernelConnection *whichKernel,
+                            std::istringstream &line,
+                            Trace *whichTrace,
+                            std::vector< Timeline * > &windows,
+                            std::vector< Histogram * > &histograms ) override;
+
+    static const std::string &getTagCFG()
+    {
+      return tagCFG;
+    }
+
+    static void printAliasList( std::ostream& cfgFile,
+                                const std::vector<Histogram *>::const_iterator it );
+
+  protected:
+    static std::string tagCFG;
+};

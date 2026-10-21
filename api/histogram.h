@@ -744,6 +744,11 @@ class Histogram
       return false;
     }
 
+    virtual bool existsCFG4DAlias( const TDerivedHistogramProperties &propertyIndex ) const
+    {
+      return false;
+    }
+
     virtual std::string getCFG4DAlias( const std::string &property ) const
     {
       return std::string( "" );
@@ -754,19 +759,31 @@ class Histogram
       return std::string( "" );
     }
 
+    virtual std::string getCFG4DAlias( const TDerivedHistogramProperties &propertyIndex ) const
+    {
+      return std::string( "" );
+    }
+
     virtual void setCFG4DAlias( const std::string &property, const std::string &alias )
     {
     }
     virtual void setCFG4DStatisticAlias( const std::string &statistic, const std::string &alias )
     {
     }
-
+    virtual void setCFG4DOperationAlias( const std::string &operation, const int numOperation, const std::string &alias )
+    {
+    }
+    
     virtual void setCFG4DAliasList( const std::map< std::string, std::string > &aliasList )
     {
     }
-
+   
     virtual void setCFG4DStatisticsAliasList( const std::map< std::string, std::string > &statisticsAliasList )
     {
+    }
+
+    virtual void setCFG4DOperationsAliasList( const std::map< std::pair< std::string, int >, std::string > &operationsAliasList )
+    {      
     }
 
     virtual const std::map< std::string, std::string > getCFG4DAliasList() const
@@ -778,6 +795,12 @@ class Histogram
     {
       return std::map< std::string, std::string >();
     }
+
+    virtual const std::map< std::pair< std::string, int >, std::string > getCFG4DOperationsAliasList() const
+    {
+      return {};
+    }
+
 
     virtual const std::vector< std::string > getCFG4DFullTagList()
     {
@@ -1169,17 +1192,23 @@ class HistogramProxy : public Histogram
 
     virtual bool existsCFG4DAlias( const std::string &property ) const override; // DEPRECATED
     virtual bool existsCFG4DAlias( const THistogramProperties &propertyIndex ) const override;
+    virtual bool existsCFG4DAlias( const TDerivedHistogramProperties &propertyIndex ) const override;
 
     virtual void setCFG4DAlias( const std::string &property, const std::string &alias ) override;
     virtual void setCFG4DStatisticAlias( const std::string &statistic, const std::string &alias ) override;
-
+    virtual void setCFG4DOperationAlias( const std::string &operation, const int numOperation, const std::string &alias ) override;
+    
     virtual std::string getCFG4DAlias( const std::string &property ) const override; // DEPRECATED
     virtual std::string getCFG4DAlias( const THistogramProperties &propertyIndex ) const override;
-
+    virtual std::string getCFG4DAlias( const TDerivedHistogramProperties &propertyIndex ) const override;
+    
     virtual void setCFG4DAliasList( const std::map< std::string, std::string > &aliasList ) override;
     virtual void setCFG4DStatisticsAliasList( const std::map< std::string, std::string > &aliasList ) override;
+    virtual void setCFG4DOperationsAliasList( const std::map< std::pair< std::string, int >, std::string > &operationsAliasList ) override;
     virtual const std::map< std::string, std::string > getCFG4DAliasList() const override;
     virtual const std::map< std::string, std::string > getCFG4DStatisticsAliasList() const override;
+    virtual const std::map< std::pair< std::string, int >, std::string > getCFG4DOperationsAliasList() const override;
+
 
     virtual const std::vector< std::string > getCFG4DFullTagList() override;
 
@@ -1303,6 +1332,7 @@ class HistogramProxy : public Histogram
     bool CFG4DMode;
     std::map< std::string, std::string > propertiesAliasCFG4D;
     std::map< std::string, std::string > statisticsAliasCFG4D;
+    std::map< std::pair< std::string, int >, std::string > operationsAliasCFG4D;
     std::map< std::string, TCFGS4DGroup > groupLinkFromPropName;
     TCFGS4DIndexLink globalIndexLink;
 

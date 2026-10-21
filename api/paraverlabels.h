@@ -259,11 +259,12 @@ constexpr char CFG_VAL_SYNC_OBJECT_AXIS[]   = "Object_Axis";
 
 constexpr char OLDCFG_VAL_AN2D_ACCUM_SEMANTIC[] = "Semantic";
 
-constexpr char CFG_TAG_ALIAS_CFG4D[]           = "cfg4d";
-constexpr char CFG_TAG_LINK_CFG4D[]            = "cfg4dlink";
-constexpr char CFG_TAG_STATISTIC_ALIAS_CFG4D[] = "cfg4dstatistic";
-constexpr char CFG_TAG_PARAM_ALIAS_CFG4D[]     = "cfg4dparam";
-constexpr char CFG_TAG_CFG4D_ENABLED[]         = "CFG4D_ENABLED";
+constexpr char CFG_TAG_ALIAS_CFG4D[]                             = "cfg4d";
+constexpr char CFG_TAG_LINK_CFG4D[]                              = "cfg4dlink";
+constexpr char CFG_TAG_STATISTIC_ALIAS_CFG4D[]                   = "cfg4dstatistic";
+constexpr char CFG_TAG_PARAM_ALIAS_CFG4D[]                       = "cfg4dparam";
+constexpr char CFG_TAG_DERIVED_HISTOGRAM_OPERATION_ALIAS_CFG4D[] = "cfg4dDerivedHistogramOperation";
+constexpr char CFG_TAG_CFG4D_ENABLED[]                           = "CFG4D_ENABLED";
 
 constexpr char CFG_TAG_AN2D_OBJECTS[]            = "Analyzer2D.Objects:"; // Old implementation. Keep it for compatibility with old cfgs.
 constexpr char CFG_TAG_AN2D_OBJECT[]             = "Analyzer2D.Object:";
@@ -553,6 +554,36 @@ static const std::string HistogramPropertyLabels[ TOTAL_HISTOGRAM_PROPERTIES ] =
   "Num Columns", "Type",       "Statistic", "Minimum Gradient", "Maximum Gradient", "Data.Window",     "3D.3rd Window",
   "3D.Minimum",  "3D.Maximum", "3D.Delta",  "3D.Plane",         "Derived",          "Histogram"
 };
+
+
+enum TDerivedHistogramProperties
+{
+  DERIVED_HISTOGRAM_NAME = 0,
+  DERIVED_HISTOGRAM_BEGINTIME,
+  DERIVED_HISTOGRAM_ENDTIME,
+  DERIVED_HISTOGRAM_TYPE,
+  DERIVED_HISTOGRAM_STATISTIC,
+  DERIVED_HISTOGRAM_MINIMUMGRADIENT,
+  DERIVED_HISTOGRAM_MAXIMUMGRADIENT,
+  DERIVED_HISTOGRAM_PARENT,
+  DERIVED_HISTOGRAM_OP,
+
+  TOTAL_DERIVED_HISTOGRAM_PROPERTIES,
+  DERIVED_HISTOGRAM_NULL
+};
+
+static const std::string DerivedHistogramPropertyLabels[ TOTAL_DERIVED_HISTOGRAM_PROPERTIES ] = {
+  "Name",
+  "Begin time",
+  "End time",
+  "Type",
+  "Statistic",
+  "Minimum Gradient",
+  "Maximum Gradient",
+  "Histogram",
+  "Operation"
+};
+
 
 // DIMEMAS
 constexpr char OLD_DIMEMAS_SHEBANG[] = "SDDFA";
