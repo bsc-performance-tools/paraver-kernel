@@ -1031,6 +1031,12 @@ KDerivedWindow::~KDerivedWindow()
     if( functions[ (TWindowLevel)twlIdx ] != nullptr )
       delete functions[ (TWindowLevel)twlIdx ];
   }
+
+  if( ownsParents )
+  {
+    for( vector<KTimeline *>::iterator it = parents.begin(); it != parents.end(); ++it )
+      delete *it;
+  }
 }
 
 void KDerivedWindow::setup( KTrace* whichTrace )
@@ -1679,6 +1685,7 @@ TTraceLevel KDerivedWindow::getMinAcceptableLevel() const
 KTimeline *KDerivedWindow::clone( bool recursiveClone )
 {
   KDerivedWindow *clonedKDerivedWindow = new KDerivedWindow();
+  clonedKDerivedWindow->ownsParents = recursiveClone;
 
   for( size_t i = 0; i < parents.size(); ++i )
   {
