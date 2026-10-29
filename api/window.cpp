@@ -38,6 +38,7 @@
 #include <cmath>
 #include <iostream>
 #include <sstream>
+#include <tuple>
 
 #ifdef PARALLEL_ENABLED
 #  include "omp.h"
@@ -2223,6 +2224,28 @@ void TimelineProxy::addOffsetPosition( int posXDiff, int posYDiff )
     SyncWindows::getInstance()->broadcastPositionAll( syncGroup, posYDiff, posXDiff );
 }
 
+
+// Starting from currentObj returns [firstObject, lastObject] among objects in selectedSet where objectPosList is the same.
+// WARNING: advances currentObj for convenience with calling loops.
+std::pair< TObjectOrder, TObjectOrder> TimelineProxy::getRangeOfObjectsWithSamePosition( std::vector< TObjectOrder > &selectedSet,
+                                                                                         std::vector< TObjectOrder >::iterator &currentObj,
+                                                                                         std::vector< PRV_INT32 > &objectPosList )
+{
+  TObjectOrder firstObject = *currentObj; 
+
+  vector< TObjectOrder >::iterator nextObj = currentObj + 1;
+  while( nextObj != selectedSet.end() && objectPosList[ *nextObj ] == objectPosList[ *currentObj ] )
+  {
+    ++currentObj;
+    ++nextObj;
+  }
+
+  TObjectOrder lastObject = *currentObj;
+
+  return { firstObject, lastObject };
+}
+
+
 #ifdef _MSC_VER
 void TimelineProxy::computeSemanticParallel( vector< TObjectOrder > &selectedSet,
                                              vector< bool > &selected,
@@ -2271,14 +2294,8 @@ void TimelineProxy::computeSemanticParallel( vector< TObjectOrder > &selectedSet
   {
     for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
     {
-      TObjectOrder firstObj = *obj;
-      TObjectOrder lastObj  = firstObj;
-      while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
-      {
-        ++obj;
-        lastObj = *obj;
-      }
-
+      auto [ firstObj, lastObj ] = getRangeOfObjectsWithSamePosition( selectedSet, obj, objectPosList );
+  
       ++numRows;
     }
   }
@@ -2324,12 +2341,9 @@ void TimelineProxy::computeSemanticParallel( vector< TObjectOrder > &selectedSet
         TObjectOrder lastObj  = firstObj;
         if( !isFusedLinesColorSet() )
         {
-          while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
-          {
-            ++obj;
-            lastObj = *obj;
-          }
+          std::tie( firstObj, lastObj ) = getRangeOfObjectsWithSamePosition( selectedSet, obj, objectPosList );
         }
+
         valuesToDraw.push_back( vector< TSemanticValue >() );
 
         eventsToDraw.push_back( unordered_set< PRV_INT32 >() );
@@ -2756,13 +2770,7 @@ void TimelineProxy::computeSemanticPunctualParallel( vector< TObjectOrder > &sel
   int numRows = 0;
   for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
   {
-    TObjectOrder firstObj = *obj;
-    TObjectOrder lastObj  = firstObj;
-    while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
-    {
-      ++obj;
-      lastObj = *obj;
-    }
+    auto [ firstObj, lastObj ] = getRangeOfObjectsWithSamePosition( selectedSet, obj, objectPosList );
 
     ++numRows;
   }
@@ -2802,13 +2810,8 @@ void TimelineProxy::computeSemanticPunctualParallel( vector< TObjectOrder > &sel
       int currentRow = 0;
       for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
       {
-        TObjectOrder firstObj = *obj;
-        TObjectOrder lastObj  = firstObj;
-        while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
-        {
-          ++obj;
-          lastObj = *obj;
-        }
+        auto [ firstObj, lastObj ] = getRangeOfObjectsWithSamePosition( selectedSet, obj, objectPosList );
+
         valuesToDraw.push_back( vector< vector< pair< TSemanticValue, TSemanticValue > > >() );
 
         eventsToDraw.push_back( unordered_set< PRV_INT32 >() );
