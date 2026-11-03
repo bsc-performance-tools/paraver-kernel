@@ -6384,17 +6384,22 @@ bool TagAliasCFG4D::parseLine( KernelConnection *whichKernel,
 {
   string currentCFG4DTag;
   string currentCFG4DAlias;
+  string tmpSecondParameter;
 
+  // Support for standard and numbered/extended tags: parameter|alias, parameter|num|alias
   getline( line, currentCFG4DTag, '|' );
-  getline( line, currentCFG4DAlias );
+  getline( line, tmpSecondParameter, '|' );
+  if( !getline( line, currentCFG4DAlias ) )
+    currentCFG4DAlias = tmpSecondParameter;
+  else
+    currentCFG4DTag = currentCFG4DTag + " " + tmpSecondParameter;
 
   if( isWindowTag )
   {
-    // WINDOW/TIMELINE
+    // TIMELINE
     if( windows[ windows.size() - 1 ] == nullptr )
       return false;
 
-    // It has been created
     windows[ windows.size() - 1 ]->setCFG4DAlias( currentCFG4DTag, currentCFG4DAlias );
   }
   else
@@ -6403,7 +6408,6 @@ bool TagAliasCFG4D::parseLine( KernelConnection *whichKernel,
     if( histograms[ histograms.size() - 1 ] == nullptr )
       return false;
 
-    // It has been created
     histograms[ histograms.size() - 1 ]->setCFG4DAlias( currentCFG4DTag, currentCFG4DAlias );
   }
 
