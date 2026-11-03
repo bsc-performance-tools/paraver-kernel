@@ -170,6 +170,22 @@ bool HistogramProxy::setParents( const std::vector< Histogram * > &whichParents 
   if( !createLinkToParents( whichParents ) )
     return false;
 
+  // Initialize DerivedHistogramPropertyLabelsExpandedList
+  for( int iTag = 0; iTag < DERIVED_HISTOGRAM_PARENT; ++iTag )
+  {
+    // First, common static tags.
+    DerivedHistogramPropertyLabelsExpandedList.emplace_back( DerivedHistogramPropertyLabels[ iTag ] );
+  }
+  // Second, expand with dynamic list of numbered n parents alternated with n-1 operations.
+  PRV_UINT16 numParent;
+  for( numParent = 1; numParent < getNumParents(); ++numParent )
+  {
+    DerivedHistogramPropertyLabelsExpandedList.emplace_back( DerivedHistogramPropertyLabels[ DERIVED_HISTOGRAM_PARENT ] + " " + std::to_string( numParent ) );
+    DerivedHistogramPropertyLabelsExpandedList.emplace_back( DerivedHistogramPropertyLabels[ DERIVED_HISTOGRAM_OP ] + " " + std::to_string( numParent ) );
+  }
+  DerivedHistogramPropertyLabelsExpandedList.emplace_back( DerivedHistogramPropertyLabels[ DERIVED_HISTOGRAM_PARENT ] + " " + std::to_string( numParent ) );
+
+
   // Parents related info
   Histogram *mainHistogram = parents.front();
 
@@ -1582,11 +1598,12 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->rowSelection = rowSelection;
 
   // CFG4D
-  clonedHistogramProxy->isCFG4DEnabled       = isCFG4DEnabled;
-  clonedHistogramProxy->CFG4DMode            = CFG4DMode;
-  clonedHistogramProxy->propertiesAliasCFG4D = propertiesAliasCFG4D;
-  clonedHistogramProxy->statisticsAliasCFG4D = statisticsAliasCFG4D;
-  clonedHistogramProxy->operationsAliasCFG4D = operationsAliasCFG4D;
+  clonedHistogramProxy->isCFG4DEnabled                             = isCFG4DEnabled;
+  clonedHistogramProxy->CFG4DMode                                  = CFG4DMode;
+  clonedHistogramProxy->propertiesAliasCFG4D                       = propertiesAliasCFG4D;
+  clonedHistogramProxy->statisticsAliasCFG4D                       = statisticsAliasCFG4D;
+  clonedHistogramProxy->operationsAliasCFG4D                       = operationsAliasCFG4D;
+  clonedHistogramProxy->DerivedHistogramPropertyLabelsExpandedList = DerivedHistogramPropertyLabelsExpandedList;
 
   clonedHistogramProxy->setReady( isReady() );
 
@@ -1924,7 +1941,7 @@ bool HistogramProxy::existsCFG4DAlias( const string &property ) const
 
   if( propertiesAliasCFG4D.size() > 0 )
   {
-    map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
+    THistogramPropertiesAlias::const_iterator itAlias = propertiesAliasCFG4D.find( property );
     if( itAlias != propertiesAliasCFG4D.end() )
     {
       found = true;
@@ -1943,7 +1960,7 @@ bool HistogramProxy::existsCFG4DAlias( const THistogramProperties &propertyIndex
   {
     string property( HistogramPropertyLabels[ propertyIndex ] );
 
-    map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
+    THistogramPropertiesAlias::const_iterator itAlias = propertiesAliasCFG4D.find( property );
     if( itAlias != propertiesAliasCFG4D.end() )
     {
       found = true;
@@ -1959,9 +1976,9 @@ bool HistogramProxy::existsCFG4DAlias( const TDerivedHistogramProperties &proper
 
   if( propertiesAliasCFG4D.size() > 0 )
   {
-    string property( DerivedHistogramPropertyLabels[ propertyIndex ] );
+    string property( DerivedHistogramPropertyLabelsExpandedList[ propertyIndex ] );
 
-    map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
+    THistogramPropertiesAlias::const_iterator itAlias = propertiesAliasCFG4D.find( property );
     if( itAlias != propertiesAliasCFG4D.end() )
     {
       found = true;
@@ -1977,7 +1994,7 @@ string HistogramProxy::getCFG4DAlias( const string &property ) const
 
   if( propertiesAliasCFG4D.size() > 0 )
   {
-    map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
+    THistogramPropertiesAlias::const_iterator itAlias = propertiesAliasCFG4D.find( property );
     if( itAlias != propertiesAliasCFG4D.end() )
     {
       alias = itAlias->second;
@@ -1996,7 +2013,7 @@ string HistogramProxy::getCFG4DAlias( const THistogramProperties &propertyIndex 
   {
     string property( HistogramPropertyLabels[ propertyIndex ] );
 
-    map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
+    THistogramPropertiesAlias::const_iterator itAlias = propertiesAliasCFG4D.find( property );
     if( itAlias != propertiesAliasCFG4D.end() )
     {
       alias = itAlias->second;
@@ -2012,9 +2029,9 @@ string HistogramProxy::getCFG4DAlias( const TDerivedHistogramProperties &propert
 
   if( propertiesAliasCFG4D.size() > 0 )
   {
-    string property( DerivedHistogramPropertyLabels[ propertyIndex ] );
+    string property( DerivedHistogramPropertyLabelsExpandedList[ propertyIndex ] );
 
-    map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
+    THistogramPropertiesAlias::const_iterator itAlias = propertiesAliasCFG4D.find( property );
     if( itAlias != propertiesAliasCFG4D.end() )
     {
       alias = itAlias->second;
@@ -2022,6 +2039,16 @@ string HistogramProxy::getCFG4DAlias( const TDerivedHistogramProperties &propert
   }
 
   return alias;
+}
+
+std::string HistogramProxy::getCFG4DDerivedHistogramPropertyLabel( const size_t propertyIndex ) const
+{
+  return DerivedHistogramPropertyLabelsExpandedList[ propertyIndex ];
+}
+
+int HistogramProxy::getNumCFG4DDerivedHistogramPropertyLabels() const
+{
+  return DerivedHistogramPropertyLabelsExpandedList.size();
 }
 
 void HistogramProxy::setCFG4DAlias( const string &property, const string &alias )
@@ -2078,9 +2105,9 @@ const vector< string > HistogramProxy::getCFG4DFullTagList()
 
   if( isDerivedHistogram() )
   {
-    for( int iTag = 0; iTag < TOTAL_DERIVED_HISTOGRAM_PROPERTIES; ++iTag )
+    for( auto t: DerivedHistogramPropertyLabelsExpandedList )
     {
-      tags.push_back( DerivedHistogramPropertyLabels[ iTag ] );
+      tags.push_back( t );
     }
   }
   else

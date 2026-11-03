@@ -764,6 +764,16 @@ class Histogram
       return std::string( "" );
     }
 
+    virtual std::string getCFG4DDerivedHistogramPropertyLabel( const size_t propertyIndex ) const
+    {
+      return {};
+    }
+    virtual int getNumCFG4DDerivedHistogramPropertyLabels() const
+    {
+      return -1;
+    }
+
+
     virtual void setCFG4DAlias( const std::string &property, const std::string &alias )
     {
     }
@@ -1201,6 +1211,8 @@ class HistogramProxy : public Histogram
     virtual std::string getCFG4DAlias( const std::string &property ) const override; // DEPRECATED
     virtual std::string getCFG4DAlias( const THistogramProperties &propertyIndex ) const override;
     virtual std::string getCFG4DAlias( const TDerivedHistogramProperties &propertyIndex ) const override;
+    virtual std::string getCFG4DDerivedHistogramPropertyLabel( const size_t propertyIndex ) const override;
+    virtual int getNumCFG4DDerivedHistogramPropertyLabels() const override;
     
     virtual void setCFG4DAliasList( const std::map< std::string, std::string > &aliasList ) override;
     virtual void setCFG4DStatisticsAliasList( const std::map< std::string, std::string > &aliasList ) override;
@@ -1330,7 +1342,10 @@ class HistogramProxy : public Histogram
     // CFG4D
     bool isCFG4DEnabled;
     bool CFG4DMode;
-    std::map< std::string, std::string > propertiesAliasCFG4D;
+
+    using THistogramPropertiesAlias = std::map< std::string, std::string >;
+    std::vector< std::string > DerivedHistogramPropertyLabelsExpandedList;
+    THistogramPropertiesAlias propertiesAliasCFG4D;
     std::map< std::string, std::string > statisticsAliasCFG4D;
     std::map< std::pair< std::string, int >, std::string > operationsAliasCFG4D;
     std::map< std::string, TCFGS4DGroup > groupLinkFromPropName;
