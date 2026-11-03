@@ -482,6 +482,8 @@ class KDerivedWindow: public KTimeline
 
   protected:
     std::vector<KTimeline *> parents;
+    // true only for recursive clones, which own their cloned parents
+    bool ownsParents = false;
     std::vector<TSemanticValue> factor;
     std::vector<PRV_INT16> shift;
 

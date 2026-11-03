@@ -938,6 +938,13 @@ class Timeline
     {
     }
 
+    virtual std::pair< TObjectOrder, TObjectOrder> getRangeOfObjectsWithSamePosition( std::vector< TObjectOrder > &selectedSet,
+                                                                                      std::vector< TObjectOrder >::iterator &currentObj,
+                                                                                      std::vector< PRV_INT32 > &objectPosList )
+    {
+      return {};
+    }
+
 #ifdef _MSC_VER
     virtual void computeSemanticParallel( std::vector< TObjectOrder > &selectedSet,
                                           std::vector< bool > &selected,
@@ -1317,6 +1324,10 @@ class TimelineProxy : public Timeline
     virtual void registerPositionFunctionCallback( const std::function< void( int, int ) > &callbackFunction ) override;
     virtual void onPositionFunctionCallback( int height, int width ) override;
     virtual void addOffsetPosition( int height, int width ) override;
+
+    virtual std::pair< TObjectOrder, TObjectOrder> getRangeOfObjectsWithSamePosition( std::vector< TObjectOrder > &selectedSet,
+                                                                                      std::vector< TObjectOrder >::iterator &currentObj,
+                                                                                      std::vector< PRV_INT32 > &objectPosList );
 
 #ifdef _MSC_VER
     virtual void computeSemanticParallel( std::vector< TObjectOrder > &selectedSet,
