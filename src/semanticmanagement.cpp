@@ -101,6 +101,7 @@ void createSemantic()
   functions[ 1 ].push_back( new DerivedMaximum() );
   functions[ 1 ].push_back( new DerivedMinimum() );
   functions[ 1 ].push_back( new DerivedDifferent() );
+  functions[ 1 ].push_back( new DerivedDistributeByTime() );
   functions[ 1 ].push_back( new ControlDerivedClearBy() );
   functions[ 1 ].push_back( new ControlDerivedMaximum() );
   functions[ 1 ].push_back( new ControlDerivedMinimum() );

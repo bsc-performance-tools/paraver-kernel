@@ -124,6 +124,7 @@ KRecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,
   }
 
   info.dataBeginTime = childIntervals[ 0 ]->getBegin()->getTime();
+  info.dataEndTime = childIntervals[ 0 ]->getEnd()->getTime();
   currentValue = function->execute( &info );
 
   while ( end->getTime() < initialTime )
@@ -183,6 +184,7 @@ KRecordList *IntervalDerived::calcNext( KRecordList *displayList, bool initCalc 
     end = childIntervals[ 0 ]->getTraceEnd();
 
   info.dataBeginTime = childIntervals[ 0 ]->getBegin()->getTime();
+  info.dataEndTime = childIntervals[ 0 ]->getEnd()->getTime();
   currentValue = function->execute( &info );
 
   return displayList;
@@ -232,6 +234,7 @@ KRecordList *IntervalDerived::calcPrev( KRecordList *displayList, bool initCalc 
   }
 
   info.dataBeginTime = childIntervals[ 0 ]->getBegin()->getTime();
+  info.dataEndTime = childIntervals[ 0 ]->getEnd()->getTime();
   currentValue = function->execute( &info );
 
   return displayList;

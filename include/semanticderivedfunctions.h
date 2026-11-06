@@ -506,6 +506,82 @@ class DerivedDifferent : public SemanticDerived
 };
 
 
+class DerivedDistributeByTime : public SemanticDerived
+{
+  public:
+    typedef enum
+    {
+      NOT_NULL = 0,
+      MAXPARAM
+    } TParam;
+
+    DerivedDistributeByTime()
+    {
+      setDefaultParam();
+    }
+
+    ~DerivedDistributeByTime()
+    {
+    }
+
+    virtual TParamIndex getMaxParam() const override
+    {
+      return MAXPARAM;
+    }
+
+    virtual bool isControlDerived() override
+    {
+      return controlDerived;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+
+    virtual void init( KTimeline *whichWindow ) override
+    {
+    }
+
+    virtual std::string getName() override
+    {
+      return DerivedDistributeByTime::name;
+    }
+
+    virtual SemanticFunction *clone() override
+    {
+      return new DerivedDistributeByTime( *this );
+    }
+
+  protected:
+    virtual const bool getMyInitFromBegin() override
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
+    {
+      TParamValue tmp;
+
+      if( whichParam == TParam::NOT_NULL )
+        tmp.push_back( 0.0 );
+      else if( whichParam >= getMaxParam() )
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+
+      return tmp;
+    }
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
+    {
+      if( whichParam == TParam::NOT_NULL )
+        return "Not Null";
+      else if( whichParam >= getMaxParam() )
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+      return "";
+    }
+
+  private:
+    static const bool initFromBegin  = false;
+    static const bool controlDerived = false;
+    static std::string name;
+};
+
+
 class ControlDerivedClearBy : public SemanticDerived
 {
   public:
