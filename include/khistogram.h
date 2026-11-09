@@ -81,7 +81,7 @@ class WindowCloneManager
   private:
     std::unordered_map< Timeline *, std::vector< Timeline * > > clonedWindows;
 
-    void clone( Timeline *whichWindow );
+    void addWindow( Timeline *whichWindow );
 #endif
 };
 

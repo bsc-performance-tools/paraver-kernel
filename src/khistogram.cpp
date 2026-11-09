@@ -78,39 +78,54 @@ Timeline* WindowCloneManager::operator()( Timeline* originalWindow ) const
 
 
 #ifdef PARALLEL_ENABLED
+// Must be called by all threads of the enclosing parallel region.
+// Each thread allocates (and later frees) its own clones.
 void WindowCloneManager::update( const KHistogram* whichHistogram )
 {
-  clone( whichHistogram->getControlWindow() );
+#  pragma omp single
+  {
+    addWindow( whichHistogram->getControlWindow() );
 
-  if( whichHistogram->getDataWindow() != whichHistogram->getControlWindow() )
-    clone( whichHistogram->getDataWindow() );
+    if( whichHistogram->getDataWindow() != whichHistogram->getControlWindow() )
+      addWindow( whichHistogram->getDataWindow() );
 
-  if( whichHistogram->getExtraControlWindow() != nullptr && whichHistogram->getExtraControlWindow() != whichHistogram->getControlWindow() &&
-      whichHistogram->getExtraControlWindow() != whichHistogram->getDataWindow() )
-    clone( whichHistogram->getExtraControlWindow() );
+    if( whichHistogram->getExtraControlWindow() != nullptr && whichHistogram->getExtraControlWindow() != whichHistogram->getControlWindow() &&
+        whichHistogram->getExtraControlWindow() != whichHistogram->getDataWindow() )
+      addWindow( whichHistogram->getExtraControlWindow() );
+  } // implicit barrier: all slots exist before any thread fills its own
+
+  for( auto& it : clonedWindows )
+  {
+    Timeline* tmpClone;
+#  pragma omp critical( parallelCloneLifecycle )
+    tmpClone = it.first->clone( true );
+    it.second[ omp_get_thread_num() ] = tmpClone;
+  }
+
+#  pragma omp barrier
 }
 
 
+// Must be called by all threads
 void WindowCloneManager::clear()
 {
-  for( auto it : clonedWindows )
+  for( auto& it : clonedWindows )
   {
-    for( auto itWin : it.second )
-      delete itWin;
+    // deletes must be serialized
+#  pragma omp critical( parallelCloneLifecycle )
+    delete it.second[ omp_get_thread_num() ];
+    it.second[ omp_get_thread_num() ] = nullptr;
   }
 
+#  pragma omp barrier
+#  pragma omp single
   clonedWindows.clear();
 }
 
 
-void WindowCloneManager::clone( Timeline* whichWindow )
+void WindowCloneManager::addWindow( Timeline* whichWindow )
 {
-  vector<Timeline*> tmpClones;
-
-  for( int i = 0; i != omp_get_num_threads(); ++i )
-    tmpClones.push_back( whichWindow->clone( true ) );
-
-  clonedWindows[ whichWindow ] = tmpClones;
+  clonedWindows[ whichWindow ] = vector<Timeline*>( omp_get_num_threads(), nullptr );
 }
 #endif // PARALLEL_ENABLED
 
@@ -840,6 +855,12 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime, 
 
 #ifdef PARALLEL_ENABLED
   finishAllRows();
+
+  // Temporary per-row buffers are not needed after finishAllRows
+  delete semanticBuffer;
+  semanticBuffer = nullptr;
+  delete commBuffer;
+  commBuffer = nullptr;
 #endif
 
   finishOutLimits();
@@ -1225,10 +1246,10 @@ void KHistogram::parallelExecution( TRecordTime fromTime,
 
 #  pragma omp parallel
   {
+    windowCloneManager.update( this );
+
 #  pragma omp single
     {
-      windowCloneManager.update( this );
-
       for( TObjectOrder i = fromRow; i <= toRow; ++i )
       {
 #  pragma omp task firstprivate( fromTime, toTime, i ) shared( selectedRows, progress, progressDelta )
@@ -1248,10 +1269,10 @@ void KHistogram::parallelExecution( TRecordTime fromTime,
           }
         }
       }
-    }
-  }
+    } // end omp single
 
-  windowCloneManager.clear();
+    windowCloneManager.clear();
+  }
 }
 
 
