@@ -115,6 +115,29 @@ TSemanticValue DerivedDifferent::execute( const SemanticInfo *info )
 }
 
 
+string DerivedDistributeByTime::name = "distribute by time";
+TSemanticValue DerivedDistributeByTime::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
+
+  // values[0] -> counter value
+  // values[1] -> function value
+
+  if( parameters[ NOT_NULL ][ 0 ] == 1.0 && myInfo->values[ 1 ] == 0 )
+    return 0;
+
+  TRecordTime interval_begin = myInfo->callingInterval->getBegin()->getTime();
+  TRecordTime interval_end   = myInfo->callingInterval->getEnd()->getTime();
+  TRecordTime interval_time  = interval_end - interval_begin;
+
+  TRecordTime counter_time = myInfo->dataEndTime - myInfo->dataBeginTime;
+  if( counter_time <= 0 )
+    return 0;
+
+  return myInfo->values[ 0 ] * interval_time / counter_time;
+}
+
+
 string ControlDerivedClearBy::name = "controlled: clear by";
 TSemanticValue ControlDerivedClearBy::execute( const SemanticInfo *info )
 {
