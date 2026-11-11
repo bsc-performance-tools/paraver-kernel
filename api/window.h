@@ -293,7 +293,7 @@ class Timeline
     {
       return nullptr;
     }
-    
+
 
     virtual bool getShowProgressBar() const
     {
@@ -764,7 +764,8 @@ class Timeline
     }
 
     virtual void setObjectAxisCustomSize( PRV_UINT16 whichSize )
-    {}
+    {
+    }
     virtual PRV_UINT16 getObjectAxisCustomSize() const
     {
       return 10;
@@ -955,7 +956,7 @@ class Timeline
                                           TObjectOrder maxObj,
                                           bool &drawCaution,                                          // I/O
                                           std::vector< std::vector< TSemanticValue > > &valuesToDraw, // I/O
-                                          std::vector< int > &rowWithSemanticValuesNotZero,          // I/O
+                                          std::vector< int > &rowWithSemanticValuesNotZero,           // I/O
                                           std::vector< hash_set< PRV_INT32 > > &eventsToDraw,         // I/O
                                           std::vector< hash_set< commCoord > > &commsToDraw,          // I/O
                                           ProgressController *progress )
@@ -969,7 +970,7 @@ class Timeline
                                           TObjectOrder maxObj,
                                           bool &drawCaution,                                                          // I/O
                                           std::vector< std::vector< TSemanticValue > > &valuesToDraw,                 // I/O
-                                          std::vector< int > &rowWithSemanticValuesNotZero,                          // I/O
+                                          std::vector< int > &rowWithSemanticValuesNotZero,                           // I/O
                                           std::vector< std::unordered_set< PRV_INT32 > > &eventsToDraw,               // I/O
                                           std::vector< std::unordered_set< commCoord, hashCommCoord > > &commsToDraw, // I/O
                                           ProgressController *progress )
@@ -1339,7 +1340,7 @@ class TimelineProxy : public Timeline
                                           TObjectOrder maxObj,
                                           bool &drawCaution,                                          // O
                                           std::vector< std::vector< TSemanticValue > > &valuesToDraw, // O
-                                          std::vector< int > &rowWithSemanticValuesNotZero,          // O
+                                          std::vector< int > &rowWithSemanticValuesNotZero,           // O
                                           std::vector< hash_set< PRV_INT32 > > &eventsToDraw,         // O
                                           std::vector< hash_set< commCoord > > &commsToDraw,          // O
                                           ProgressController *progress ) override;
@@ -1354,7 +1355,7 @@ class TimelineProxy : public Timeline
                                           TObjectOrder maxObj,
                                           bool &drawCaution,                                                          // I/O
                                           std::vector< std::vector< TSemanticValue > > &valuesToDraw,                 // I/O
-                                          std::vector< int > &rowWithSemanticValuesNotZero,                          // I/O
+                                          std::vector< int > &rowWithSemanticValuesNotZero,                           // I/O
                                           std::vector< std::unordered_set< PRV_INT32 > > &eventsToDraw,               // I/O
                                           std::vector< std::unordered_set< commCoord, hashCommCoord > > &commsToDraw, // I/O
                                           ProgressController *progress ) override;
@@ -1394,6 +1395,11 @@ class TimelineProxy : public Timeline
     Timeline *myWindow;
 #ifdef PARALLEL_ENABLED
     std::vector< Timeline * > parallelClone;
+
+    // Called by every thread of a parallel region: each thread clones and frees its own copy
+    bool parallelCloneNeeded( size_t numSelected ) const;
+    void createParallelClone( bool doClone );
+    void deleteParallelClone( bool doClone );
 #endif // PARALLEL_ENABLED
 
     Trace *myTrace;
@@ -1522,9 +1528,9 @@ class TimelineProxy : public Timeline
                                      TSemanticValue &rowComputedMaxY,
                                      TSemanticValue &rowComputedMinY,
                                      int &rowComputedZeros,
-                                     std::vector< TSemanticValue > &valuesToDraw,       // O
+                                     std::vector< TSemanticValue > &valuesToDraw,      // O
                                      std::vector< int > &rowWithSemanticValuesNotZero, // O
-                                     hash_set< PRV_INT32 > &eventsToDraw,               // O
+                                     hash_set< PRV_INT32 > &eventsToDraw,              // O
                                      hash_set< commCoord > &commsToDraw,
                                      ProgressController *progress ); // O
 
@@ -1570,9 +1576,9 @@ class TimelineProxy : public Timeline
                                      TSemanticValue &rowComputedMaxY,
                                      TSemanticValue &rowComputedMinY,
                                      int &rowComputedZeros,
-                                     std::vector< TSemanticValue > &valuesToDraw,       // I/O
-                                     std::vector< int > &rowWithSemanticValuesNotZero,  // I/O
-                                     std::unordered_set< PRV_INT32 > &eventsToDraw,     // I/O
+                                     std::vector< TSemanticValue > &valuesToDraw,      // I/O
+                                     std::vector< int > &rowWithSemanticValuesNotZero, // I/O
+                                     std::unordered_set< PRV_INT32 > &eventsToDraw,    // I/O
                                      std::unordered_set< commCoord, hashCommCoord > &commsToDraw,
                                      ProgressController *progress ); // I/O
 
