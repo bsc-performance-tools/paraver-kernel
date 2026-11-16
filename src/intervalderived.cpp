@@ -22,8 +22,11 @@
 \*****************************************************************************/
 
 
+#include <typeinfo>
+
 #include "intervalderived.h"
 #include "kwindow.h"
+#include "semanticderivedfunctions.h"
 
 
 IntervalDerived::IntervalDerived()
@@ -39,6 +42,7 @@ IntervalDerived::IntervalDerived( KDerivedWindow *whichWindow,
   function = nullptr;
   shift1 = IntervalShift( whichWindow, whichLevel, whichOrder );
   shift2 = IntervalShift( whichWindow, whichLevel, whichOrder );
+  lookAhead = IntervalLookAhead( whichWindow, whichLevel, whichOrder );
 }
 
 IntervalDerived::~IntervalDerived()
@@ -125,6 +129,9 @@ KRecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,
 
   info.dataBeginTime = childIntervals[ 0 ]->getBegin()->getTime();
   info.dataEndTime = childIntervals[ 0 ]->getEnd()->getTime();
+  // The semantic function cannot read ahead: give it the active time computed by the look-ahead
+  if ( useLookAhead )
+    info.activeTime = lookAhead.getActiveTime( displayList );
   currentValue = function->execute( &info );
 
   while ( end->getTime() < initialTime )
@@ -185,6 +192,8 @@ KRecordList *IntervalDerived::calcNext( KRecordList *displayList, bool initCalc 
 
   info.dataBeginTime = childIntervals[ 0 ]->getBegin()->getTime();
   info.dataEndTime = childIntervals[ 0 ]->getEnd()->getTime();
+  if ( useLookAhead )
+    info.activeTime = lookAhead.getActiveTime( displayList );
   currentValue = function->execute( &info );
 
   return displayList;
@@ -235,6 +244,8 @@ KRecordList *IntervalDerived::calcPrev( KRecordList *displayList, bool initCalc 
 
   info.dataBeginTime = childIntervals[ 0 ]->getBegin()->getTime();
   info.dataEndTime = childIntervals[ 0 ]->getEnd()->getTime();
+  if ( useLookAhead )
+    info.activeTime = lookAhead.getActiveTime( displayList );
   currentValue = function->execute( &info );
 
   return displayList;
@@ -407,5 +418,15 @@ void IntervalDerived::setChildren()
       childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1,
                                                            window2->getTrace()->getGlobalCPU( tmpNode, tmpCPU + 1 ),
                                                            true ) );
+  }
+
+  // "distribute by time" with Not Null = 1 distributes the counter (child 0) only
+  // along the time with function (child 1), so it needs to know the function ahead
+  useLookAhead = typeid( *function ) == typeid( DerivedDistributeByTime ) &&
+                 function->getParam( DerivedDistributeByTime::NOT_NULL )[ 0 ] == 1.0;
+  if ( useLookAhead )
+  {
+    lookAhead.setIntervals( childIntervals[ 1 ], childIntervals[ 0 ] );
+    childIntervals[ 1 ] = &lookAhead;
   }
 }

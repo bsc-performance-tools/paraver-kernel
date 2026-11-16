@@ -22,6 +22,7 @@ noinst_HEADERS = \
                           interval.h\
                           intervalhigh.h\
                           intervalnotthread.h\
+                          intervallookahead.h\
                           intervalshift.h\
                           intervalthread.h\
                           keventdrivencutter.h\

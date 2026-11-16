@@ -551,16 +551,18 @@ class DerivedDistributeByTime : public SemanticDerived
     }
 
   protected:
+    // With Not Null = 1 IntervalLookAhead needs the function pieces from the
+    // beginning of the counter interval, that can start before initialTime
     virtual const bool getMyInitFromBegin() override
     {
-      return initFromBegin;
+      return getParam( TParam::NOT_NULL )[ 0 ] == 1.0;
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
       if( whichParam == TParam::NOT_NULL )
-        tmp.push_back( 0.0 );
+        tmp.push_back( 1.0 );
       else if( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
@@ -576,7 +578,6 @@ class DerivedDistributeByTime : public SemanticDerived
     }
 
   private:
-    static const bool initFromBegin  = false;
     static const bool controlDerived = false;
     static std::string name;
 };

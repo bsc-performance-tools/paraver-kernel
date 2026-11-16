@@ -26,6 +26,7 @@
 
 
 #include "intervalhigh.h"
+#include "intervallookahead.h"
 #include "intervalshift.h"
 #include "semanticderived.h"
 
@@ -72,6 +73,9 @@ class IntervalDerived: public IntervalHigh
     IntervalShift shift1;
     IntervalShift shift2;
 
+    // Only used by "distribute by time" with Not Null = 1
+    IntervalLookAhead lookAhead;
+    bool useLookAhead = false;
 };
 
 
