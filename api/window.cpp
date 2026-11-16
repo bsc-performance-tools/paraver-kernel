@@ -159,8 +159,8 @@ void TimelineProxy::init()
 
   punctualColorWindow = nullptr;
 
-  objectLabels   = ParaverConfig::getInstance()->getTimelineLabels();
-  objectAxisSize = ParaverConfig::getInstance()->getTimelineObjectAxisSize();
+  objectLabels         = ParaverConfig::getInstance()->getTimelineLabels();
+  objectAxisSize       = ParaverConfig::getInstance()->getTimelineObjectAxisSize();
   objectAxisCustomSize = 10;
 
   if( myTrace != nullptr )
@@ -363,17 +363,17 @@ void TimelineProxy::copy( TimelineProxy *clonedWindow )
   clonedWindow->isCFG4DEnabled       = isCFG4DEnabled;
   clonedWindow->CFG4DMode            = CFG4DMode;
   clonedWindow->propertiesAliasCFG4D = propertiesAliasCFG4D;
-  clonedWindow->paramAliasCFG4D = paramAliasCFG4D;
+  clonedWindow->paramAliasCFG4D      = paramAliasCFG4D;
 }
 
-// Makes a copy of 
+// Makes a copy of
 Timeline *TimelineProxy::clone( Trace *whichTrace, TTimeUnit whichTimeUnit, bool recursiveClone )
 {
   TimelineProxy *clonedWindow = new TimelineProxy();
   clonedWindow->myKernel      = myKernel;
   clonedWindow->myTrace       = whichTrace;
   clonedWindow->myWindow      = myWindow->clone();
-  
+
   copy( clonedWindow );
 
   clonedWindow->setTimeUnit( whichTimeUnit );
@@ -520,6 +520,43 @@ void TimelineProxy::computeYScaleMax()
   maximumY = computedMaxY;
 }
 
+#ifdef PARALLEL_ENABLED
+bool TimelineProxy::parallelCloneNeeded( size_t numSelected ) const
+{
+  return numSelected > 1 || ( myWindow->isDerivedWindow() && myWindow->getTrace()->getLevelObjects( myWindow->getParent( 0 )->getLevel() ) !=
+                                                               myWindow->getTrace()->getLevelObjects( myWindow->getParent( 1 )->getLevel() ) );
+}
+
+// Must be called by all threads of the enclosing parallel region.
+// Each thread allocates (and later frees) its own clone, so its memory stays in that thread's malloc arena.
+void TimelineProxy::createParallelClone( bool doClone )
+{
+  if( !doClone )
+    return;
+
+#  pragma omp single
+  parallelClone.resize( omp_get_num_threads() );
+
+  Timeline *tmpClone;
+// Cloning trace iterators may touch shared trace state (NoLoad block counters)
+#  pragma omp critical( parallelCloneCreation )
+  tmpClone                              = myWindow->clone( true );
+  parallelClone[ omp_get_thread_num() ] = tmpClone;
+
+#  pragma omp barrier
+}
+
+// Must be called by all threads after every task using the clones has finished
+void TimelineProxy::deleteParallelClone( bool doClone )
+{
+  if( !doClone )
+    return;
+
+  delete parallelClone[ omp_get_thread_num() ];
+  parallelClone[ omp_get_thread_num() ] = nullptr;
+}
+#endif // PARALLEL_ENABLED
+
 void TimelineProxy::computeYScale( ProgressController *progress )
 {
   vector< TSemanticValue > tmpComputedMaxY;
@@ -549,19 +586,18 @@ void TimelineProxy::computeYScale( ProgressController *progress )
     tmpComputedMinY.reserve( selected.size() );
     tmpComputedZeros.reserve( selected.size() );
 
+#ifdef PARALLEL_ENABLED
+    bool doClone = parallelCloneNeeded( selected.size() );
+#endif // PARALLEL_ENABLED
+
 #pragma omp parallel
     {
+#ifdef PARALLEL_ENABLED
+      createParallelClone( doClone );
+#endif // PARALLEL_ENABLED
+
 #pragma omp single
       {
-#ifdef PARALLEL_ENABLED
-        if( selected.size() > 1 ||
-            ( myWindow->isDerivedWindow() && myWindow->getTrace()->getLevelObjects( myWindow->getParent( 0 )->getLevel() ) !=
-                                               myWindow->getTrace()->getLevelObjects( myWindow->getParent( 1 )->getLevel() ) ) )
-        {
-          for( int i = 0; i != omp_get_num_threads(); ++i )
-            parallelClone.push_back( myWindow->clone( true ) );
-        }
-#endif // PARALLEL_ENABLED
         for( int i = 0; i < selected.size(); ++i )
         {
           tmpComputedMaxY.push_back( 0.0 );
@@ -612,8 +648,16 @@ void TimelineProxy::computeYScale( ProgressController *progress )
           }
         }
 
-      } // omp single
+      } // omp single (implicit barrier: all tasks finished)
+
+#ifdef PARALLEL_ENABLED
+      deleteParallelClone( doClone );
+#endif // PARALLEL_ENABLED
     } // omp parallel
+
+#ifdef PARALLEL_ENABLED
+    parallelClone.clear();
+#endif // PARALLEL_ENABLED
 
     for( int pos = 0; pos < selected.size(); ++pos )
     {
@@ -624,13 +668,6 @@ void TimelineProxy::computeYScale( ProgressController *progress )
       else if( tmpComputedMinY[ pos ] != 0.0 )
         computedMinY = computedMinY < tmpComputedMinY[ pos ] ? computedMinY : tmpComputedMinY[ pos ];
     }
-
-
-#ifdef PARALLEL_ENABLED
-    for( vector< Timeline * >::iterator it = parallelClone.begin(); it != parallelClone.end(); ++it )
-      delete *it;
-    parallelClone.clear();
-#endif // PARALLEL_ENABLED
 
     if( progress != nullptr )
     {
@@ -2320,20 +2357,19 @@ void TimelineProxy::computeSemanticParallel( vector< TObjectOrder > &selectedSet
     progress->setCurrentProgress( 0 );
   }
 
+#ifdef PARALLEL_ENABLED
+  bool doClone = parallelCloneNeeded( selected.size() );
+#endif // PARALLEL_ENABLED
+
 // Drawmode: Group objects with same wxCoord in objectPosList
 #pragma omp parallel
   {
-#pragma omp single
-    {
 #ifdef PARALLEL_ENABLED
-      if( selected.size() > 1 || ( myWindow->isDerivedWindow() && myWindow->getTrace()->getLevelObjects( myWindow->getParent( 0 )->getLevel() ) !=
-                                                                    myWindow->getTrace()->getLevelObjects( myWindow->getParent( 1 )->getLevel() ) ) )
-      {
-        for( int i = 0; i != omp_get_num_threads(); ++i )
-          parallelClone.push_back( myWindow->clone( true ) );
-      }
+    createParallelClone( doClone );
 #endif // PARALLEL_ENABLED
 
+#pragma omp single
+    {
       int currentRow = 0;
       for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
       {
@@ -2389,28 +2425,26 @@ void TimelineProxy::computeSemanticParallel( vector< TObjectOrder > &selectedSet
         }
         else if( numRows > 1 )
         {
-#pragma omp task firstprivate( numRows, firstObj, lastObj, timeStep, timePos, objectAxisPos ) \
-                 shared( currentRow,                    \
-                         paramProgress,                 \
-                         selectedSet,                   \
-                         selected,                      \
-                         objectPosList,                 \
-                         tmpDrawCaution,                \
-                         tmpComputedMaxY,               \
-                         tmpComputedMinY,               \
-                         tmpComputedZeros,              \
-                         valuesToDraw,                  \
-                         rowWithSemanticValuesNotZero, \
-                         eventsToDraw,                  \
-                         commsToDraw )                  \
-                 firstprivate( tmpDrawCautionSize,   \
-                               tmpComputedMaxYSize,  \
-                               tmpComputedMinYSize,  \
-                               tmpComputedZerosSize, \
-                               valuesToDrawSize,     \
-                               eventsToDrawSize,     \
-                               commsToDrawSize )     \
-                 default( none )
+#pragma omp task firstprivate( numRows, firstObj, lastObj, timeStep, timePos, objectAxisPos ) shared( currentRow,                     \
+                                                                                                        paramProgress,                \
+                                                                                                        selectedSet,                  \
+                                                                                                        selected,                     \
+                                                                                                        objectPosList,                \
+                                                                                                        tmpDrawCaution,               \
+                                                                                                        tmpComputedMaxY,              \
+                                                                                                        tmpComputedMinY,              \
+                                                                                                        tmpComputedZeros,             \
+                                                                                                        valuesToDraw,                 \
+                                                                                                        rowWithSemanticValuesNotZero, \
+                                                                                                        eventsToDraw,                 \
+                                                                                                        commsToDraw )                 \
+  firstprivate( tmpDrawCautionSize,                                                                                                   \
+                  tmpComputedMaxYSize,                                                                                                \
+                  tmpComputedMinYSize,                                                                                                \
+                  tmpComputedZerosSize,                                                                                               \
+                  valuesToDrawSize,                                                                                                   \
+                  eventsToDrawSize,                                                                                                   \
+                  commsToDrawSize ) default( none )
           {
             if( paramProgress == nullptr || ( paramProgress != nullptr && !paramProgress->getStop() ) )
             {
@@ -2446,8 +2480,16 @@ void TimelineProxy::computeSemanticParallel( vector< TObjectOrder > &selectedSet
 
       } // end for selectedSet
 
-    } // end omp single
+    } // end omp single (implicit barrier: all tasks finished)
+
+#ifdef PARALLEL_ENABLED
+    deleteParallelClone( doClone );
+#endif // PARALLEL_ENABLED
   } // end omp parallel
+
+#ifdef PARALLEL_ENABLED
+  parallelClone.clear();
+#endif // PARALLEL_ENABLED
 
   for( size_t pos = 0; pos < tmpComputedMaxY.size(); ++pos )
   {
@@ -2459,12 +2501,6 @@ void TimelineProxy::computeSemanticParallel( vector< TObjectOrder > &selectedSet
     else if( tmpComputedMinY[ pos ] != 0.0 )
       computedMinY = computedMinY < tmpComputedMinY[ pos ] ? computedMinY : tmpComputedMinY[ pos ];
   }
-
-#ifdef PARALLEL_ENABLED
-  for( vector< Timeline * >::iterator it = parallelClone.begin(); it != parallelClone.end(); ++it )
-    delete *it;
-  parallelClone.clear();
-#endif // PARALLEL_ENABLED
 }
 
 #ifdef _MSC_VER
@@ -2539,7 +2575,7 @@ void TimelineProxy::computeSemanticRowParallel( int numRows,
 
       TSemanticValue currentValue = getValue( *row );
       timeValues.push_back( currentValue );
-      if( currentValue != 0 ) 
+      if( currentValue != 0 )
       {
         rowWithSemanticValuesNotZero[ *row ] = 1;
       }
@@ -2554,10 +2590,10 @@ void TimelineProxy::computeSemanticRowParallel( int numRows,
 
         currentValue = getValue( *row );
         timeValues.push_back( currentValue );
-        if( currentValue != 0 ) 
+        if( currentValue != 0 )
         {
           rowWithSemanticValuesNotZero[ *row ] = 1; // Before drawmode.
-          
+
           if( currentValue < getMinimumY() || currentValue > getMaximumY() )
           {
             drawCaution = true;
@@ -2794,19 +2830,19 @@ void TimelineProxy::computeSemanticPunctualParallel( vector< TObjectOrder > &sel
   }
 #endif // PARALLEL_ENABLED
 
+#ifdef PARALLEL_ENABLED
+  bool doClone = parallelCloneNeeded( selected.size() );
+#endif // PARALLEL_ENABLED
+
 // Drawmode: Group objects with same wxCoord in objectPosList
 #pragma omp parallel
   {
+#ifdef PARALLEL_ENABLED
+    createParallelClone( doClone );
+#endif // PARALLEL_ENABLED
+
 #pragma omp single
     {
-#ifdef PARALLEL_ENABLED
-      if( selected.size() > 1 || ( myWindow->isDerivedWindow() && myWindow->getTrace()->getLevelObjects( myWindow->getParent( 0 )->getLevel() ) !=
-                                                                    myWindow->getTrace()->getLevelObjects( myWindow->getParent( 1 )->getLevel() ) ) )
-      {
-        for( int i = 0; i != omp_get_num_threads(); ++i )
-          parallelClone.push_back( myWindow->clone( true ) );
-      }
-#endif // PARALLEL_ENABLED
       int currentRow = 0;
       for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
       {
@@ -2881,8 +2917,16 @@ void TimelineProxy::computeSemanticPunctualParallel( vector< TObjectOrder > &sel
         ++currentRow;
 #endif // PARALLEL_ENABLED
       }
-    }
-  }
+    } // end omp single (implicit barrier: all tasks finished)
+
+#ifdef PARALLEL_ENABLED
+    deleteParallelClone( doClone );
+#endif // PARALLEL_ENABLED
+  } // end omp parallel
+
+#ifdef PARALLEL_ENABLED
+  parallelClone.clear();
+#endif // PARALLEL_ENABLED
 
   for( vector< int >::iterator it = tmpDrawCaution.begin(); it != tmpDrawCaution.end(); ++it )
   {
@@ -2903,12 +2947,6 @@ void TimelineProxy::computeSemanticPunctualParallel( vector< TObjectOrder > &sel
     else if( tmpComputedMinY[ pos ] != 0.0 )
       computedMinY = computedMinY < tmpComputedMinY[ pos ] ? computedMinY : tmpComputedMinY[ pos ];
   }
-
-#ifdef PARALLEL_ENABLED
-  for( vector< Timeline * >::iterator it = parallelClone.begin(); it != parallelClone.end(); ++it )
-    delete *it;
-  parallelClone.clear();
-#endif // PARALLEL_ENABLED
 }
 
 #ifdef _MSC_VER
