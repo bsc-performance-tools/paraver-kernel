@@ -53,6 +53,7 @@ struct SemanticHighInfo : public SemanticInfo
     TRecordTime dataBeginTime;
     TRecordTime dataEndTime;
     bool newControlBurst;
+    TRecordTime activeTime = 0; // Time with function != 0 inside the data interval (distribute by time)
 };
 
 // TODO: possible second version to avoid SemanticInfo empty *callingInterval

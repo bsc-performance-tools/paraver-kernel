@@ -115,16 +115,21 @@ TSemanticValue DerivedDifferent::execute( const SemanticInfo *info )
 }
 
 
+// Distributes a counter (parent 0) along time,
+// using a function window (parent 1) as reference.
+// Each sub-interval gets the part of the counter value that corresponds to its duration:
+//   - Not Null = 0: proportional to the whole counter interval.
+//   - Not Null = 1: only the time with function != 0 counts,
+//     the counter is split among the functions inside its interval and its total is kept.
+//     If there is no function inside the counter interval, the result is 0.
+//     The active time (function != 0) is computed by IntervalLookAhead and
+//     given by IntervalDerived (info->activeTime).
 string DerivedDistributeByTime::name = "distribute by time";
 TSemanticValue DerivedDistributeByTime::execute( const SemanticInfo *info )
 {
+  static const int counterIdx    = 0;
+  static const int functionIdx   = 1;
   const SemanticHighInfo *myInfo = (const SemanticHighInfo *)info;
-
-  // values[0] -> counter value
-  // values[1] -> function value
-
-  if( parameters[ NOT_NULL ][ 0 ] == 1.0 && myInfo->values[ 1 ] == 0 )
-    return 0;
 
   TRecordTime interval_begin = myInfo->callingInterval->getBegin()->getTime();
   TRecordTime interval_end   = myInfo->callingInterval->getEnd()->getTime();
@@ -134,7 +139,16 @@ TSemanticValue DerivedDistributeByTime::execute( const SemanticInfo *info )
   if( counter_time <= 0 )
     return 0;
 
-  return myInfo->values[ 0 ] * interval_time / counter_time;
+  // Not Null = 0: distribute the counter over its whole interval
+  if( parameters[ NOT_NULL ][ 0 ] != 1.0 )
+    return myInfo->values[ counterIdx ] * interval_time / counter_time;
+
+  // Not Null = 1: sub-intervals without function get nothing,
+  // and with no function inside the counter interval there is nothing to distribute
+  if( myInfo->values[ functionIdx ] == 0 || myInfo->activeTime <= 0 )
+    return 0;
+
+  return myInfo->values[ counterIdx ] * interval_time / myInfo->activeTime;
 }
 
 

@@ -10,6 +10,7 @@ libparaver_kernel_la_SOURCES = \
     intervalcpu.cpp \
     intervalderived.cpp \
     intervalnotthread.cpp \
+    intervallookahead.cpp \
     intervalshift.cpp \
     intervalthread.cpp \
     keventdrivencutter.cpp \
